@@ -9,7 +9,6 @@ import CheckboxContent from '@/app/checkbox';
 import ColorsContent from '@/app/colors';
 import ElevationContent from '@/app/elevation';
 import IconsContent from '@/app/icons';
-import InputsContent from '@/app/inputs';
 import SizesContent from '@/app/sizes';
 import SpacingContent from '@/app/spacing';
 import TypographyMobileContent from '@/app/typography-mobile';
@@ -49,8 +48,6 @@ export default function AdminPanel() {
         return <CheckboxContent />;
       case 'card':
         return <CardContent />;
-      case 'inputs':
-        return <InputsContent />;
       case 'icons':
         return <IconsContent />;
       default:
