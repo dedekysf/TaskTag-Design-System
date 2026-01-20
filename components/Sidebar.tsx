@@ -2,14 +2,13 @@
  * Sidebar Component
  */
 
+import { Theme } from '@/constants/theme';
+import { useTheme } from '@shopify/restyle';
 import React, { useState } from 'react';
-import { ScrollView, View, Pressable, Platform } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { Platform, Pressable, ScrollView } from 'react-native';
 import { Box, Text } from './primitives';
 import { SidebarDropdown } from './SidebarDropdown';
 import { SidebarMenuItem } from './SidebarMenuItem';
-import { useTheme } from '@shopify/restyle';
-import { Theme } from '@/constants/theme';
 
 interface SidebarProps {
   activeSection: string;
@@ -83,12 +82,12 @@ export function Sidebar({ activeSection, onSectionChange, isSidebarOpen, setIsSi
           height: '100%',
           ...(Platform.OS === 'web' && typeof window !== 'undefined' && window.innerWidth < 1080
             ? {
-                position: 'absolute',
-                left: isSidebarOpen ? 0 : -256,
-                top: 64,
-                bottom: 0,
-                zIndex: 40,
-              }
+              position: 'absolute',
+              left: isSidebarOpen ? 0 : -256,
+              top: 64,
+              bottom: 0,
+              zIndex: 40,
+            }
             : {}),
         }}
       >

@@ -1,15 +1,15 @@
 /**
  * Side Menu Component
  * 
- * Navigation menu untuk foundation styles dan components
+ * Navigation menu for foundation styles and components
  */
 
-import React from 'react';
-import { ScrollView, Pressable, Platform } from 'react-native';
-import { useRouter, usePathname } from 'expo-router';
-import { Box, Text } from './primitives';
-import { useTheme } from '@shopify/restyle';
 import { Theme } from '@/constants/theme';
+import { useTheme } from '@shopify/restyle';
+import { usePathname, useRouter } from 'expo-router';
+import React from 'react';
+import { Pressable, ScrollView } from 'react-native';
+import { Box, Text } from './primitives';
 
 interface MenuItem {
   id: string;

@@ -12,10 +12,10 @@
  * - Type-safe styling with Restyle
  */
 
-import React from 'react';
-import { Pressable, PressableProps, ActivityIndicator, Platform, StyleSheet, ViewStyle, TextStyle } from 'react-native';
-import { useTheme } from '@shopify/restyle';
 import { Theme } from '@/constants/theme';
+import { useTheme } from '@shopify/restyle';
+import React from 'react';
+import { ActivityIndicator, Platform, Pressable, PressableProps, ViewStyle } from 'react-native';
 import { Text } from './primitives';
 
 export type ButtonVariant = 'fill' | 'outline' | 'ghost';
@@ -94,9 +94,9 @@ export function Button({
   const getButtonVariant = (): keyof Theme['buttonVariants'] => {
     if (buttonVariant) return buttonVariant;
     if (disabled) return 'disabled';
-    
+
     const colorCapitalized = color.charAt(0).toUpperCase() + color.slice(1);
-    
+
     if (variant === 'outline') {
       const variantKey = `outline${colorCapitalized}` as keyof Theme['buttonVariants'];
       if (variantKey in theme.buttonVariants) {
@@ -105,7 +105,7 @@ export function Button({
       // Fallback to primary if variant doesn't exist
       return 'outlinePrimary';
     }
-    
+
     if (variant === 'ghost') {
       const variantKey = `ghost${colorCapitalized}` as keyof Theme['buttonVariants'];
       if (variantKey in theme.buttonVariants) {
@@ -114,7 +114,7 @@ export function Button({
       // Fallback to primary if variant doesn't exist
       return 'ghostPrimary';
     }
-    
+
     // Fill variant - return color directly
     return color as keyof Theme['buttonVariants'];
   };
@@ -122,14 +122,14 @@ export function Button({
   // Determine text color based on variant and color
   const getTextColor = (): keyof Theme['colors'] => {
     if (disabled) return 'mutedForeground';
-    
+
     if (variant === 'outline' || variant === 'ghost') {
       if (color === 'primary') return 'primary';
       if (color === 'secondary') return 'black';
       if (color === 'destructive') return 'alertRed';
       if (color === 'blue') return 'blue';
     }
-    
+
     // Fill variant
     if (color === 'secondary') return 'white';
     if (color === 'destructive') return 'white';
@@ -154,8 +154,8 @@ export function Button({
     flexDirection: 'row',
     backgroundColor: theme.colors[variantStyles.backgroundColor as keyof typeof theme.colors] || theme.colors.primary,
     borderWidth: variantStyles.borderWidth ?? 0,
-    ...(variantStyles.borderColor ? { 
-      borderColor: theme.colors[variantStyles.borderColor as keyof typeof theme.colors] 
+    ...(variantStyles.borderColor ? {
+      borderColor: theme.colors[variantStyles.borderColor as keyof typeof theme.colors]
     } : {}),
     ...(variantStyles.opacity !== undefined ? { opacity: variantStyles.opacity } : {}),
   };
