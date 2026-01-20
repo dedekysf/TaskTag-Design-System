@@ -2,21 +2,25 @@
  * Admin Panel Layout
  */
 
-import React, { useState } from 'react';
-import { View, Platform, Pressable } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import BorderRadiusContent from '@/app/border-radius';
+import ButtonContent from '@/app/button';
+import CardContent from '@/app/card';
+import CheckboxContent from '@/app/checkbox';
+import ColorsContent from '@/app/colors';
+import ElevationContent from '@/app/elevation';
+import IconsContent from '@/app/icons';
+import InputsContent from '@/app/inputs';
+import SizesContent from '@/app/sizes';
+import SpacingContent from '@/app/spacing';
+import TypographyMobileContent from '@/app/typography-mobile';
+import TypographyWebContent from '@/app/typography-web';
 import { Box, Text } from '@/components/primitives';
 import { Sidebar } from '@/components/Sidebar';
-import { useTheme } from '@shopify/restyle';
 import { Theme } from '@/constants/theme';
-import ColorsContent from '@/app/(tabs)/colors';
-import TypographyContent from '@/app/(tabs)/typography';
-import SpacingContent from '@/app/(tabs)/spacing';
-import BorderRadiusContent from '@/app/(tabs)/border-radius';
-import ElevationContent from '@/app/(tabs)/elevation';
-import SizesContent from '@/app/(tabs)/sizes';
-import ButtonContent from '@/app/(tabs)/button';
-import HomeContent from '@/app/(tabs)/index';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useTheme } from '@shopify/restyle';
+import React, { useState } from 'react';
+import { Platform, Pressable, View } from 'react-native';
 
 export default function AdminPanel() {
   const theme = useTheme<Theme>();
@@ -27,8 +31,10 @@ export default function AdminPanel() {
     switch (activeSection) {
       case 'colors':
         return <ColorsContent />;
-      case 'typography':
-        return <TypographyContent />;
+      case 'typography-web':
+        return <TypographyWebContent />;
+      case 'typography-mobile':
+        return <TypographyMobileContent />;
       case 'radius':
         return <BorderRadiusContent />;
       case 'elevation':
@@ -39,8 +45,16 @@ export default function AdminPanel() {
         return <SizesContent />;
       case 'button':
         return <ButtonContent />;
+      case 'checkbox':
+        return <CheckboxContent />;
+      case 'card':
+        return <CardContent />;
+      case 'inputs':
+        return <InputsContent />;
+      case 'icons':
+        return <IconsContent />;
       default:
-        return <HomeContent />;
+        return <ColorsContent />;
     }
   };
 

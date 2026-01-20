@@ -19,13 +19,13 @@ interface SidebarProps {
 
 export function Sidebar({ activeSection, onSectionChange, isSidebarOpen, setIsSidebarOpen }: SidebarProps) {
   const theme = useTheme<Theme>();
-  const [openSections, setOpenSections] = useState<string[]>(['foundation', 'components']);
+  const [openSections, setOpenSections] = useState<string[]>(['foundation']);
 
   const toggleSection = (sectionId: string) => {
     setOpenSections((prev) =>
       prev.includes(sectionId)
-        ? prev.filter((id) => id !== sectionId)
-        : [...prev, sectionId]
+        ? [] // Collapse if already open (optional: could leave it open) - user said "only one expanded", implies toggle behavior. often accordion allows collapsing self.
+        : [sectionId] // Expand this one, collapse others
     );
   };
 
@@ -39,15 +39,22 @@ export function Sidebar({ activeSection, onSectionChange, isSidebarOpen, setIsSi
 
   const foundationItems = [
     { id: 'colors', label: 'Colors' },
-    { id: 'typography', label: 'Typography' },
+    { id: 'typography-web', label: 'Typography Web' },
+    { id: 'typography-mobile', label: 'Typography Mobile' },
     { id: 'radius', label: 'Border Radius' },
     { id: 'elevation', label: 'Elevation' },
     { id: 'spacing', label: 'Spacing' },
     { id: 'sizes', label: 'Sizes' },
+    // { id: 'logos', label: 'Logos' },
+    { id: 'icons', label: 'Icons' },
+    // { id: 'images', label: 'Images' },
   ];
 
   const componentItems = [
     { id: 'button', label: 'Button' },
+    { id: 'checkbox', label: 'Checkbox' },
+    { id: 'card', label: 'Card' },
+    // { id: 'inputs', label: 'Inputs' },
   ];
 
   const isSectionActive = (sectionId: string, items: Array<{ id: string }>) => {
@@ -93,7 +100,7 @@ export function Sidebar({ activeSection, onSectionChange, isSidebarOpen, setIsSi
       >
         {/* Logo */}
         <Box padding="lg" borderBottomWidth={1} borderBottomColor="border">
-          <Text variant="h2" color="textPrimary">
+          <Text variant="h2" color="textPrimary" fontWeight="400">
             TaskTag DS
           </Text>
         </Box>

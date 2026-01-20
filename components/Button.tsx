@@ -2,14 +2,7 @@
  * Button Component - TaskTag Design System
  * 
  * Refactored from React web component to React Native with Restyle
- * Original source: https://github.com/dedekysf/Tasktagdesignsystem
- * 
- * Features:
- * - Multiple variants: fill (default), outline, ghost
- * - Multiple colors: primary, secondary, destructive, blue
- * - Multiple sizes: xl, lg, md, sm, xs
- * - Disabled state support
- * - Type-safe styling with Restyle
+ * Source: https://github.com/dedekysf/Tasktagdesignsystem/blob/main/src/components/Button.tsx
  */
 
 import { Theme } from '@/constants/theme';
@@ -33,46 +26,60 @@ export interface ButtonProps extends Omit<PressableProps, 'style'> {
   children?: React.ReactNode;
   /** Show loading indicator */
   loading?: boolean;
-  /** Custom button variant from theme */
+  /** Custom button variant from theme (overrides standard logic) */
+  isIconOnly?: boolean;
+  /** Custom button variant from theme (overrides standard logic) */
   buttonVariant?: keyof Theme['buttonVariants'];
+  /** Custom style */
+  style?: ViewStyle;
 }
 
-// Size configurations
+// Size configurations matching source CSS variables
 const sizeConfig = {
   xl: {
-    paddingVertical: 'lg' as const,
-    paddingHorizontal: '2xl' as const,
-    gap: 'md' as const,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    gap: 12,
     minHeight: 56,
+    iconSize: 56, // For icon only
     fontSize: 18,
+    borderRadius: 8,
   },
   lg: {
-    paddingVertical: 'md' as const,
-    paddingHorizontal: 'xl' as const,
-    gap: 'sm' as const,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    gap: 8,
     minHeight: 48,
+    iconSize: 48,
     fontSize: 16,
+    borderRadius: 8,
   },
   md: {
-    paddingVertical: 'md' as const,
-    paddingHorizontal: 'lg' as const,
-    gap: 'sm' as const,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    gap: 8,
     minHeight: 40,
+    iconSize: 40,
     fontSize: 16,
+    borderRadius: 8,
   },
   sm: {
-    paddingVertical: 'md' as const,
-    paddingHorizontal: 'md' as const,
-    gap: 'sm' as const,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    gap: 8,
     minHeight: 32,
+    iconSize: 32,
     fontSize: 14,
+    borderRadius: 8,
   },
   xs: {
-    paddingVertical: 'xs' as const,
-    paddingHorizontal: 'sm' as const,
-    gap: 'xs' as const,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    gap: 4,
     minHeight: 24,
+    iconSize: 24,
     fontSize: 12,
+    borderRadius: 8,
   },
 };
 
@@ -83,109 +90,129 @@ export function Button({
   children,
   disabled = false,
   loading = false,
+  isIconOnly = false,
   buttonVariant,
   style,
   ...rest
 }: ButtonProps) {
   const theme = useTheme<Theme>();
+  const [isHovered, setIsHovered] = React.useState(false);
   const sizeStyle = sizeConfig[size];
 
-  // Determine button variant based on variant and color
-  const getButtonVariant = (): keyof Theme['buttonVariants'] => {
-    if (buttonVariant) return buttonVariant;
-    if (disabled) return 'disabled';
+  // Determine button styles based on variant and color
+  const getButtonStyles = (): ViewStyle => {
+    if (buttonVariant) {
+      const styles = theme.buttonVariants[buttonVariant] as any;
+      return {
+        backgroundColor: theme.colors[styles.backgroundColor as keyof Theme['colors']] || styles.backgroundColor,
+      };
+    }
 
-    const colorCapitalized = color.charAt(0).toUpperCase() + color.slice(1);
+    const baseStyle: ViewStyle = {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: sizeStyle.borderRadius,
+      paddingVertical: isIconOnly ? 0 : sizeStyle.paddingVertical,
+      paddingHorizontal: isIconOnly ? 0 : sizeStyle.paddingHorizontal,
+      minHeight: sizeStyle.minHeight,
+      minWidth: isIconOnly ? sizeStyle.iconSize : 0,
+      // Force square if icon only
+      ...(isIconOnly ? { width: sizeStyle.iconSize, height: sizeStyle.iconSize } : {}),
+    };
+
+    if (disabled) {
+      if (variant === 'fill') return { ...baseStyle, backgroundColor: theme.colors.grey03 };
+      if (variant === 'outline') return { ...baseStyle, backgroundColor: 'transparent', borderWidth: 1, borderColor: theme.colors.grey03 };
+      if (variant === 'ghost') return { ...baseStyle, backgroundColor: 'transparent' };
+      return baseStyle;
+    }
+
+    if (variant === 'fill') {
+      if (color === 'primary') return { ...baseStyle, backgroundColor: theme.colors.primary };
+      if (color === 'secondary') return { ...baseStyle, backgroundColor: theme.colors.black };
+      if (color === 'destructive') return { ...baseStyle, backgroundColor: theme.colors.alertRed };
+      if (color === 'blue') return { ...baseStyle, backgroundColor: theme.colors.blue };
+    }
+
+    const getHoverBackgroundColor = () => {
+      if (color === 'primary') return theme.colors.lightMint;
+      if (color === 'secondary') return 'rgba(0, 0, 0, 0.08)';
+      if (color === 'destructive') return theme.colors.lightPink; // mapped from theme
+      if (color === 'blue') return theme.colors.lightSky;
+      return theme.colors.grey02;
+    };
 
     if (variant === 'outline') {
-      const variantKey = `outline${colorCapitalized}` as keyof Theme['buttonVariants'];
-      if (variantKey in theme.buttonVariants) {
-        return variantKey;
-      }
-      // Fallback to primary if variant doesn't exist
-      return 'outlinePrimary';
+      const bg = (isHovered && !disabled) ? getHoverBackgroundColor() : 'transparent';
+      const outlineBase = { ...baseStyle, backgroundColor: bg, borderWidth: 1 };
+      if (color === 'primary') return { ...outlineBase, borderColor: theme.colors.primary };
+      if (color === 'secondary') return { ...outlineBase, borderColor: theme.colors.black };
+      if (color === 'destructive') return { ...outlineBase, borderColor: theme.colors.alertRed };
+      if (color === 'blue') return { ...outlineBase, borderColor: theme.colors.blue };
     }
 
     if (variant === 'ghost') {
-      const variantKey = `ghost${colorCapitalized}` as keyof Theme['buttonVariants'];
-      if (variantKey in theme.buttonVariants) {
-        return variantKey;
-      }
-      // Fallback to primary if variant doesn't exist
-      return 'ghostPrimary';
+      const bg = (isHovered && !disabled) ? getHoverBackgroundColor() : 'transparent';
+      return { ...baseStyle, backgroundColor: bg };
     }
 
-    // Fill variant - return color directly
-    return color as keyof Theme['buttonVariants'];
+    return { ...baseStyle, backgroundColor: theme.colors.primary };
   };
 
-  // Determine text color based on variant and color
-  const getTextColor = (): keyof Theme['colors'] => {
-    if (disabled) return 'mutedForeground';
+  const getTextColor = (): string => {
+    if (disabled) return theme.colors.grey05;
 
-    if (variant === 'outline' || variant === 'ghost') {
-      if (color === 'primary') return 'primary';
-      if (color === 'secondary') return 'black';
-      if (color === 'destructive') return 'alertRed';
-      if (color === 'blue') return 'blue';
+    if (variant === 'fill') {
+      if (color === 'secondary') return theme.colors.white;
+      if (color === 'destructive') return theme.colors.white;
+      if (color === 'blue') return theme.colors.white;
+      return theme.colors.primaryForeground;
     }
 
-    // Fill variant
-    if (color === 'secondary') return 'white';
-    if (color === 'destructive') return 'white';
-    if (color === 'blue') return 'white';
-    return 'primaryForeground'; // primary
+    // Outline and Ghost
+    if (color === 'primary') return theme.colors.primary;
+    if (color === 'secondary') return theme.colors.black;
+    if (color === 'destructive') return theme.colors.alertRed;
+    if (color === 'blue') return theme.colors.blue;
+
+    return theme.colors.primary;
   };
 
-  const buttonVariantKey = getButtonVariant();
-  const textColorKey = getTextColor();
-
-  // Get variant styles from theme
-  const variantStyles = theme.buttonVariants[buttonVariantKey] || theme.buttonVariants.defaults;
-
-  // Build style object manually using theme values
-  const buttonStyle: ViewStyle = {
-    borderRadius: theme.borderRadii.button,
-    paddingVertical: theme.spacing[sizeStyle.paddingVertical],
-    paddingHorizontal: theme.spacing[sizeStyle.paddingHorizontal],
-    minHeight: sizeStyle.minHeight,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    backgroundColor: theme.colors[variantStyles.backgroundColor as keyof typeof theme.colors] || theme.colors.primary,
-    borderWidth: variantStyles.borderWidth ?? 0,
-    ...(variantStyles.borderColor ? {
-      borderColor: theme.colors[variantStyles.borderColor as keyof typeof theme.colors]
-    } : {}),
-    ...(variantStyles.opacity !== undefined ? { opacity: variantStyles.opacity } : {}),
-  };
+  const buttonStyle = getButtonStyles();
+  const textColor = getTextColor();
 
   return (
     <Pressable
       disabled={disabled || loading}
+      onHoverIn={() => setIsHovered(true)}
+      onHoverOut={() => setIsHovered(false)}
       style={({ pressed }) => [
         buttonStyle,
         {
-          opacity: pressed && !disabled && !loading ? 0.7 : (buttonStyle.opacity ?? 1),
+          opacity: pressed && !disabled && !loading ? 0.7 : (isHovered && variant === 'fill' ? 0.9 : 1),
+          transform: [{ scale: pressed && !disabled && !loading ? 0.98 : 1 }],
         },
         style,
+        Platform.OS === 'web' && ({ cursor: disabled || loading ? 'not-allowed' : 'pointer' } as any),
       ]}
       {...rest}
     >
       {loading && (
         <ActivityIndicator
           size="small"
-          color={variant === 'fill' && color !== 'secondary' ? '#ffffff' : undefined}
-          style={{ marginRight: sizeStyle.gap === 'sm' ? 4 : sizeStyle.gap === 'md' ? 12 : 8 }}
+          color={textColor}
+          style={{ marginRight: sizeStyle.gap }}
         />
       )}
       {typeof children === 'string' ? (
         <Text
           variant="button"
-          color={textColorKey}
           style={{
+            color: textColor,
             fontSize: sizeStyle.fontSize,
-            fontWeight: Platform.select({ ios: '500', android: '500', default: '500' }),
+            fontWeight: '500', // var(--font-weight-medium)
+            gap: sizeStyle.gap,
           }}
         >
           {children}

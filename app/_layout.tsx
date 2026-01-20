@@ -9,6 +9,7 @@ import 'react-native-reanimated';
 
 import { theme } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import '@/styles/globals.css';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -42,7 +43,6 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
           <Stack.Screen name="admin" />
-          <Stack.Screen name="(tabs)" />
           <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
         </Stack>
 

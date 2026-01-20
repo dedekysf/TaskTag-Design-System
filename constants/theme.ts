@@ -1,38 +1,33 @@
-/**
- * TaskTag Design System - Restyle Theme
- * 
- * This theme is adapted from the TaskTag Design System repository
- * (https://github.com/dedekysf/Tasktagdesignsystem) for use with React Native
- * and Shopify Restyle.
- * 
- * Original design system uses CSS variables, which have been converted to
- * Restyle theme tokens for React Native compatibility.
- */
 
 import { createTheme } from '@shopify/restyle';
 
-const palette = {
-  // Brand Colors
+// Brand Colors
+const brand = {
   brandGreen: '#00d9a5',
   secondaryGreen: '#18a87d',
   darkGreen: '#035b60',
   vividYellow: '#fbbd42',
   alertRed: '#ff4444',
+};
 
-  // Text Colors
+// Text Colors
+const textColors = {
   textPrimary: '#0a1629',
   textSecondary: '#303742',
-  textSecondary70: 'rgba(48, 55, 66, 0.7)',
+};
 
-  // Pastel Colors
+// Pastel Colors
+const pastel = {
   pastelBlue: '#1572a1',
   pastelPurple: '#655d8a',
   pastelMagenta: '#a85796',
   pastelOrange: '#cc7351',
   pastelYellow: '#e6b566',
   brightYellow: '#fbe676',
+};
 
-  // Light Background Colors
+// Light Background Colors
+const lightBackground = {
   lightPeach: '#ffece6',
   lightPurple: '#f2def3',
   lightLavender: '#f6eaf8',
@@ -41,8 +36,10 @@ const palette = {
   lightSky: '#dceeff',
   lightPink: '#ffdada',
   lightCream: '#fdf4e0',
+};
 
-  // Neutrals
+// Neutrals
+const neutrals = {
   white: '#ffffff',
   grey01: '#fafbfc',
   grey02: '#f7f8fa',
@@ -53,273 +50,391 @@ const palette = {
   grey07: '#303742',
   black: '#000000',
   overlay: 'rgba(0, 0, 0, 0.5)',
+};
 
-  // Vivid Colors
+// Vivid Colors
+const vivid = {
   blue: '#138eff',
   purple: '#7b61ff',
   lightMagenta: '#c072cd',
   darkMagenta: '#a620b2',
   orange: '#fc7f5b',
+};
 
-  // Transparent
+// Semantic Colors
+const semantic = {
+  background: neutrals.white,
+  foreground: textColors.textPrimary,
+  card: neutrals.white,
+  cardForeground: textColors.textPrimary,
+  popover: neutrals.white,
+  popoverForeground: textColors.textPrimary,
+  primary: brand.secondaryGreen,
+  primaryForeground: neutrals.white,
+  secondary: neutrals.grey02,
+  secondaryForeground: textColors.textPrimary,
+  muted: neutrals.grey03,
+  mutedForeground: textColors.textSecondary,
+  accent: brand.brandGreen,
+  accentForeground: neutrals.white,
+  destructive: 'rgba(255, 68, 68, 0.1)',
+  destructiveForeground: brand.alertRed,
+  border: neutrals.grey03,
+  input: neutrals.white,
+  inputBackground: neutrals.white,
+  ring: brand.brandGreen,
+
+  // Sidebar
+  sidebar: neutrals.grey02,
+  sidebarForeground: textColors.textSecondary,
+  sidebarPrimary: 'rgba(0, 217, 165, 0.1)',
+  sidebarPrimaryForeground: brand.brandGreen,
+  sidebarAccent: brand.brandGreen,
+  sidebarAccentForeground: neutrals.white,
+  sidebarBorder: neutrals.grey03,
+  sidebarRing: brand.brandGreen,
+
+  // Chart
+  chart1: brand.secondaryGreen,
+  chart2: vivid.blue,
+  chart3: brand.alertRed,
+  chart4: brand.vividYellow,
+  chart5: vivid.purple,
+};
+
+const colors = {
+  ...brand,
+  ...textColors,
+  ...pastel,
+  ...lightBackground,
+  ...neutrals,
+  ...vivid,
+  ...semantic,
   transparent: 'transparent',
 };
 
+const spacing = {
+  '0': 0,
+  '4': 4,
+  '8': 8,
+  '12': 12,
+  '16': 16,
+  '20': 20,
+  '24': 24,
+  '32': 32,
+  '36': 36,
+  '40': 40,
+  '48': 48,
+  '56': 56,
+  '64': 64,
+  '80': 80,
+  '96': 96,
+  '128': 128,
+  'xs': 4,
+  'sm': 8,
+  'md': 16,
+  'lg': 24,
+  'xl': 32,
+  '2xl': 40,
+  '3xl': 48,
+};
+
+const borderRadii = {
+  none: 0,
+  '2': 2,
+  '4': 4,
+  '8': 8,
+  '12': 12,
+  '16': 16,
+  '20': 20,
+  '24': 24,
+  full: 9999,
+  sm: 4,
+  md: 6,
+  lg: 8,
+  xl: 12,
+  button: 8,
+  card: 24,
+  // Keeping these for backward compatibility if used elsewhere, but they map to the new values
+  s: 4,
+  m: 8,
+  l: 16,
+};
+
+// Component Sizes
+const componentSizes = {
+  xs: 24,
+  sm: 32,
+  md: 40,
+  lg: 48,
+  xl: 56,
+};
+
 export const theme = createTheme({
-  colors: {
-    // Semantic Colors
-    background: palette.white,
-    foreground: palette.textPrimary,
-    card: palette.white,
-    cardForeground: palette.textPrimary,
-    popover: palette.white,
-    popoverForeground: palette.textPrimary,
-    primary: palette.secondaryGreen,
-    primaryForeground: palette.white,
-    secondary: palette.grey02,
-    secondaryForeground: palette.textPrimary,
-    muted: palette.grey03,
-    mutedForeground: palette.textSecondary,
-    accent: palette.brandGreen,
-    accentForeground: palette.white,
-    destructive: 'rgba(255, 68, 68, 0.1)',
-    destructiveForeground: palette.alertRed,
-    border: palette.grey03,
-    input: palette.white,
-    inputBackground: palette.white,
-    ring: palette.brandGreen,
-
-    // Brand Colors
-    brandGreen: palette.brandGreen,
-    secondaryGreen: palette.secondaryGreen,
-    darkGreen: palette.darkGreen,
-    vividYellow: palette.vividYellow,
-    alertRed: palette.alertRed,
-
-    // Text Colors
-    textPrimary: palette.textPrimary,
-    textSecondary: palette.textSecondary,
-    textSecondary70: palette.textSecondary70,
-
-    // Pastel Colors
-    pastelBlue: palette.pastelBlue,
-    pastelPurple: palette.pastelPurple,
-    pastelMagenta: palette.pastelMagenta,
-    pastelOrange: palette.pastelOrange,
-    pastelYellow: palette.pastelYellow,
-    brightYellow: palette.brightYellow,
-
-    // Light Background Colors
-    lightPeach: palette.lightPeach,
-    lightPurple: palette.lightPurple,
-    lightLavender: palette.lightLavender,
-    lightLavenderBlue: palette.lightLavenderBlue,
-    lightMint: palette.lightMint,
-    lightSky: palette.lightSky,
-    lightPink: palette.lightPink,
-    lightCream: palette.lightCream,
-
-    // Neutrals
-    white: palette.white,
-    grey01: palette.grey01,
-    grey02: palette.grey02,
-    grey03: palette.grey03,
-    grey04: palette.grey04,
-    grey05: palette.grey05,
-    grey06: palette.grey06,
-    grey07: palette.grey07,
-    black: palette.black,
-    overlay: palette.overlay,
-
-    // Vivid Colors
-    blue: palette.blue,
-    purple: palette.purple,
-    lightMagenta: palette.lightMagenta,
-    darkMagenta: palette.darkMagenta,
-    orange: palette.orange,
-
-    // Chart Colors
-    chart1: palette.secondaryGreen,
-    chart2: palette.blue,
-    chart3: palette.alertRed,
-    chart4: palette.vividYellow,
-    chart5: palette.purple,
-
-    // Transparent
-    transparent: palette.transparent,
+  colors,
+  spacing,
+  borderRadii,
+  breakpoints: {
+    phone: 0,
+    tablet: 768,
+    largeTablet: 1024,
+    desktop: 1280,
   },
-
-  spacing: {
-    none: 0,
-    xs: 4,
-    sm: 8,
-    md: 12,
-    lg: 16,
-    xl: 20,
-    '2xl': 24,
-    '3xl': 32,
-    '4xl': 40,
-    '5xl': 48,
-    '6xl': 56,
-    '7xl': 64,
-  },
-
-  sizes: {
-    xs: 24,
-    sm: 32,
-    md: 40,
-    lg: 48,
-    xl: 56,
-  },
-
-  shadows: {
-    sm: {
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.05,
-      shadowRadius: 3,
-      elevation: 1,
-    },
-    md: {
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.1,
-      shadowRadius: 6,
-      elevation: 4,
-    },
-    lg: {
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 10 },
-      shadowOpacity: 0.1,
-      shadowRadius: 15,
-      elevation: 10,
-    },
-    xl: {
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 20 },
-      shadowOpacity: 0.1,
-      shadowRadius: 25,
-      elevation: 20,
-    },
-  },
-
-  borderRadii: {
-    none: 0,
-    xs: 2,
-    sm: 4,
-    md: 8,
-    lg: 12,
-    xl: 16,
-    '2xl': 20,
-    '3xl': 24,
-    full: 9999,
-    // Semantic tokens
-    button: 8,
-    card: 24,
-  },
-
   textVariants: {
     defaults: {
-      color: 'foreground',
+      fontSize: 16,
+      lineHeight: 24,
       fontFamily: 'Inter_400Regular',
+      color: 'foreground',
     },
-  
     h1: {
       fontSize: 32,
-      lineHeight: 36,
+      fontWeight: '600',
+      lineHeight: 48, // 1.5 * 32
       fontFamily: 'Inter_600SemiBold',
+      color: 'foreground',
     },
-  
     h2: {
       fontSize: 22,
-      lineHeight: 32,
+      fontWeight: '600',
+      lineHeight: 33, // 1.5 * 22
       fontFamily: 'Inter_600SemiBold',
+      color: 'foreground',
     },
-  
     h3: {
       fontSize: 18,
-      lineHeight: 24,
+      fontWeight: '500', // Medium
+      lineHeight: 27, // 1.5 * 18
       fontFamily: 'Inter_500Medium',
+      color: 'foreground',
     },
-  
     h4: {
       fontSize: 16,
+      fontWeight: '600',
       lineHeight: 24,
       fontFamily: 'Inter_600SemiBold',
+      color: 'foreground',
     },
-  
     body: {
       fontSize: 16,
+      fontWeight: '400',
       lineHeight: 24,
       fontFamily: 'Inter_400Regular',
+      color: 'foreground',
     },
-  
     label: {
       fontSize: 14,
-      lineHeight: 16,
+      fontWeight: '500', // Medium in CSS
+      lineHeight: 21,
       fontFamily: 'Inter_500Medium',
+      color: 'foreground',
     },
-  
-    labelEmphasized: {
-      fontSize: 16,
-      lineHeight: 24,
-      fontFamily: 'Inter_600SemiBold',
+    labelMedium: {
+      fontSize: 14,
+      fontWeight: '500',
+      lineHeight: 21,
+      fontFamily: 'Inter_500Medium',
+      color: 'foreground',
     },
-  
-    caption: {
-      fontSize: 12,
-      lineHeight: 16,
-      fontFamily: 'Inter_400Regular',
-    },
-  
     button: {
       fontSize: 16,
+      fontWeight: '500', // Medium in CSS
       lineHeight: 24,
       fontFamily: 'Inter_500Medium',
-      color: 'primaryForeground',
+      color: 'foreground',
     },
-  
-    link: {
+    caption: {
+      fontSize: 12,
+      fontWeight: '400',
+      lineHeight: 18,
+      fontFamily: 'Inter_400Regular',
+      color: 'mutedForeground', // Updated from grey05 in CSS .text-metadata
+    },
+    // Web Variants explicitly matched
+    webHeading32: {
+      fontSize: 32,
+      fontWeight: '600',
+      lineHeight: 36,
+      fontFamily: 'Inter_600SemiBold',
+      color: 'foreground',
+    },
+    webHeading22: {
+      fontSize: 22,
+      fontWeight: '600',
+      lineHeight: 32,
+      fontFamily: 'Inter_600SemiBold',
+      color: 'foreground',
+    },
+    webLargeLabel: {
+      fontSize: 18,
+      fontWeight: '500',
+      lineHeight: 24,
+      fontFamily: 'Inter_500Medium',
+      color: 'foreground',
+    },
+    webLabelEmphasized: {
+      fontSize: 16,
+      fontWeight: '600',
+      lineHeight: 24,
+      fontFamily: 'Inter_600SemiBold',
+      color: 'foreground',
+    },
+    webButton: {
+      fontSize: 16,
+      fontWeight: '500',
+      lineHeight: 24,
+      fontFamily: 'Inter_500Medium',
+      color: 'foreground',
+    },
+    webLabelSmall: {
       fontSize: 14,
+      fontWeight: '500',
+      lineHeight: 16,
+      fontFamily: 'Inter_500Medium',
+      color: 'foreground',
+    },
+    webBody: {
+      fontSize: 16,
+      fontWeight: '400',
+      lineHeight: 24,
+      fontFamily: 'Inter_400Regular',
+      color: 'foreground',
+    },
+    webEmphasizedBody: {
+      fontSize: 16,
+      fontWeight: '600',
+      lineHeight: 24,
+      fontFamily: 'Inter_600SemiBold',
+      color: 'foreground',
+    },
+    webLink: {
+      fontSize: 14,
+      fontWeight: '400',
       lineHeight: 16,
       fontFamily: 'Inter_400Regular',
       color: 'blue',
       textDecorationLine: 'underline',
     },
-  
-    metadata: {
-      fontSize: 12,
+    webSecondaryBody: {
+      fontSize: 14,
+      fontWeight: '400',
       lineHeight: 16,
       fontFamily: 'Inter_400Regular',
-      color: 'grey05',
+      color: 'foreground',
+    },
+    webMetadataPrimary: {
+      fontSize: 12,
+      fontWeight: '400',
+      lineHeight: 16,
+      fontFamily: 'Inter_400Regular',
+      color: 'mutedForeground',
+    },
+    webMetadataSecondary: {
+      fontSize: 10,
+      fontWeight: '500',
+      lineHeight: 12,
+      fontFamily: 'Inter_500Medium',
+      color: 'mutedForeground',
+    },
+    // Mobile Variants explicitly matched
+    mobileHeading28: {
+      fontSize: 28,
+      fontWeight: '600',
+      lineHeight: 32,
+      fontFamily: 'Inter_600SemiBold',
+      color: 'foreground',
+    },
+    mobileHeading22: {
+      fontSize: 22,
+      fontWeight: '600',
+      lineHeight: 32,
+      fontFamily: 'Inter_600SemiBold',
+      color: 'foreground',
+    },
+    mobileLargeLabel: {
+      fontSize: 18,
+      fontWeight: '500',
+      lineHeight: 24,
+      fontFamily: 'Inter_500Medium',
+      color: 'foreground',
+    },
+    mobileLabelEmphasized: {
+      fontSize: 16,
+      fontWeight: '600',
+      lineHeight: 21,
+      fontFamily: 'Inter_600SemiBold',
+      color: 'foreground',
+    },
+    mobileButton: {
+      fontSize: 16,
+      fontWeight: '400',
+      lineHeight: 21,
+      fontFamily: 'Inter_400Regular',
+      color: 'foreground',
+    },
+    mobileLabelSmall: {
+      fontSize: 14,
+      fontWeight: '500',
+      lineHeight: 16,
+      fontFamily: 'Inter_500Medium',
+      color: 'foreground',
+    },
+    mobileBody: {
+      fontSize: 16,
+      fontWeight: '400',
+      lineHeight: 21,
+      fontFamily: 'Inter_400Regular',
+      color: 'foreground',
+    },
+    mobileLink: {
+      fontSize: 14,
+      fontWeight: '400',
+      lineHeight: 16,
+      fontFamily: 'Inter_400Regular',
+      color: 'blue',
+      textDecorationLine: 'underline',
+    },
+    mobileSecondaryBody: {
+      fontSize: 14,
+      fontWeight: '400',
+      lineHeight: 16,
+      fontFamily: 'Inter_400Regular',
+      color: 'foreground',
+      letterSpacing: 0.28,
+    },
+    mobileMetadataPrimary: {
+      fontSize: 12,
+      fontWeight: '400',
+      lineHeight: 16,
+      fontFamily: 'Inter_400Regular',
+      color: 'mutedForeground',
+    },
+    mobileMetadataSecondary: {
+      fontSize: 10,
+      fontWeight: '500',
+      lineHeight: 12,
+      fontFamily: 'Inter_500Medium',
+      color: 'mutedForeground',
     },
   },
-  
-
   buttonVariants: {
     defaults: {
-      borderRadius: 'button',
+      backgroundColor: 'primary',
       paddingVertical: 'md',
       paddingHorizontal: 'lg',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: 40,
+      borderRadius: 'button',
     },
     primary: {
       backgroundColor: 'primary',
-      borderWidth: 0,
     },
     secondary: {
-      backgroundColor: 'black',
-      borderWidth: 0,
+      backgroundColor: 'black', // CSS .btn-secondary
     },
     destructive: {
-      backgroundColor: 'alertRed',
-      borderWidth: 0,
+      backgroundColor: 'alertRed', // CSS .btn-destructive
     },
     blue: {
       backgroundColor: 'blue',
-      borderWidth: 0,
     },
     outlinePrimary: {
       backgroundColor: 'transparent',
@@ -343,75 +458,57 @@ export const theme = createTheme({
     },
     ghostPrimary: {
       backgroundColor: 'transparent',
-      borderWidth: 0,
     },
     ghostSecondary: {
       backgroundColor: 'transparent',
-      borderWidth: 0,
     },
     ghostDestructive: {
       backgroundColor: 'transparent',
-      borderWidth: 0,
     },
     ghostBlue: {
       backgroundColor: 'transparent',
-      borderWidth: 0,
     },
     disabled: {
       backgroundColor: 'muted',
-      borderWidth: 0,
       opacity: 0.5,
     },
   },
-
-  breakpoints: {
-    phone: 0,
-    tablet: 768,
+  cardVariants: {
+    defaults: {
+      backgroundColor: 'card',
+      borderRadius: 'card',
+      padding: '16',
+      shadowColor: 'black',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.1,
+      shadowRadius: 6,
+      elevation: 4,
+    },
   },
+  inputVariants: {
+    defaults: {
+      backgroundColor: 'inputBackground',
+      borderWidth: 1,
+      borderColor: 'border',
+      borderRadius: '8', // string key
+      paddingHorizontal: '12',
+      paddingVertical: '8',
+    },
+    focused: {
+      borderColor: 'black',
+    },
+    error: {
+      borderColor: 'alertRed',
+    },
+  },
+  zIndices: {
+    '10': 10,
+    '20': 20,
+    '30': 30,
+    '40': 40,
+    '50': 50,
+  },
+  componentSizes,
 });
 
 export type Theme = typeof theme;
-
-// Legacy Colors export for backwards compatibility
-export const Colors = {
-  light: {
-    text: palette.textPrimary,
-    background: palette.white,
-    tint: palette.blue,
-    icon: palette.grey05,
-    tabIconDefault: palette.grey05,
-    tabIconSelected: palette.blue,
-  },
-  dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: '#fff',
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: '#fff',
-  },
-};
-
-// Legacy Fonts export for backwards compatibility
-import { Platform } from 'react-native';
-
-export const Fonts = Platform.select({
-  ios: {
-    sans: 'system-ui',
-    serif: 'ui-serif',
-    rounded: 'ui-rounded',
-    mono: 'ui-monospace',
-  },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
-  },
-  web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    serif: "Georgia, 'Times New Roman', serif",
-    rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
-    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
-  },
-});

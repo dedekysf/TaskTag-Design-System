@@ -2,12 +2,12 @@
  * Sidebar Dropdown Component
  */
 
-import React, { ReactNode } from 'react';
-import { Pressable } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
-import { Box, Text } from './primitives';
-import { useTheme } from '@shopify/restyle';
 import { Theme } from '@/constants/theme';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useTheme } from '@shopify/restyle';
+import React, { ReactNode, useState } from 'react';
+import { Pressable } from 'react-native';
+import { Box, Text } from './primitives';
 
 interface SidebarDropdownProps {
   label: string;
@@ -19,10 +19,15 @@ interface SidebarDropdownProps {
 
 export function SidebarDropdown({ label, isOpen, isActive, onToggle, children }: SidebarDropdownProps) {
   const theme = useTheme<Theme>();
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <Box>
-      <Pressable onPress={onToggle}>
+      <Pressable
+        onPress={onToggle}
+        onHoverIn={() => setIsHovered(true)}
+        onHoverOut={() => setIsHovered(false)}
+      >
         <Box
           flexDirection="row"
           alignItems="center"
@@ -30,24 +35,24 @@ export function SidebarDropdown({ label, isOpen, isActive, onToggle, children }:
           paddingVertical="md"
           paddingHorizontal="md"
           marginBottom="xs"
-          borderRadius="md"
-          backgroundColor={isActive ? 'lightMint' : 'transparent'}
+          borderRadius="m"
+          backgroundColor={isActive || isHovered ? 'grey02' : 'transparent'}
         >
           <Text
-            variant="label"
-            color={isActive ? 'primary' : 'textSecondary'}
-            fontWeight={isActive ? '600' : '400'}
+            variant="webLabelEmphasized"
+            color="textPrimary"
+            fontWeight="400"
           >
             {label}
           </Text>
           <MaterialIcons
             name={isOpen ? 'keyboard-arrow-down' : 'keyboard-arrow-right'}
             size={20}
-            color={isActive ? theme.colors.primary : theme.colors.textSecondary}
+            color={theme.colors.textPrimary}
           />
         </Box>
       </Pressable>
-      
+
       {isOpen && (
         <Box marginLeft="md" marginBottom="xs">
           {children}

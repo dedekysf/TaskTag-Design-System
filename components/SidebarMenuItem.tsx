@@ -2,7 +2,7 @@
  * Sidebar Menu Item Component
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Pressable } from 'react-native';
 import { Box, Text } from './primitives';
 
@@ -13,19 +13,26 @@ interface SidebarMenuItemProps {
 }
 
 export function SidebarMenuItem({ label, isActive, onClick }: SidebarMenuItemProps) {
+  const [isHovered, setIsHovered] = useState(false);
+  const showActiveColor = isActive || isHovered;
+
   return (
-    <Pressable onPress={onClick}>
+    <Pressable
+      onPress={onClick}
+      onHoverIn={() => setIsHovered(true)}
+      onHoverOut={() => setIsHovered(false)}
+    >
       <Box
         paddingVertical="sm"
         paddingHorizontal="md"
         marginBottom="xs"
-        borderRadius="md"
-        backgroundColor={isActive ? 'lightMint' : 'transparent'}
+        borderRadius="m"
+        backgroundColor="transparent"
       >
         <Text
-          variant="caption"
-          color={isActive ? 'primary' : 'textSecondary'}
-          fontWeight={isActive ? '600' : '400'}
+          variant="webSecondaryBody"
+          color={showActiveColor ? 'secondaryGreen' : 'textSecondary'}
+          fontWeight="400"
         >
           {label}
         </Text>
