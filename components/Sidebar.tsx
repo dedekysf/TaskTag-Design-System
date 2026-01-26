@@ -54,6 +54,7 @@ export function Sidebar({ activeSection, onSectionChange, isSidebarOpen, setIsSi
     { id: 'button', label: 'Button' },
     { id: 'checkbox', label: 'Checkbox' },
     { id: 'card', label: 'Card' },
+    { id: 'alert', label: 'Alert' },
     // { id: 'inputs', label: 'Inputs' },
   ];
 

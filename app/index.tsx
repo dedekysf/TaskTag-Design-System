@@ -2,6 +2,7 @@
  * Admin Panel Layout
  */
 
+import AlertContent from '@/app/alert';
 import BorderRadiusContent from '@/app/border-radius';
 import ButtonContent from '@/app/button';
 import CardContent from '@/app/card';
@@ -48,6 +49,8 @@ export default function AdminPanel() {
         return <CheckboxContent />;
       case 'card':
         return <CardContent />;
+      case 'alert':
+        return <AlertContent />;
       case 'icons':
         return <IconsContent />;
       default:
