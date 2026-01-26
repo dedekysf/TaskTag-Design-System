@@ -1,0 +1,9 @@
+# Vercel ignore file
+node_modules
+.expo
+.git
+.vscode
+ios
+android
+*.log
+.DS_Store
