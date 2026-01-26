@@ -38,6 +38,9 @@ yarn-error.*
 
 app-example
 
+# Reference files (local only)
+Reference/
+
 # generated native folders
 /ios
 /android

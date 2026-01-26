@@ -5,5 +5,6 @@ node_modules
 .vscode
 ios
 android
+Reference
 *.log
 .DS_Store
