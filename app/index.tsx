@@ -10,9 +10,12 @@ import CheckboxContent from '@/app/checkbox';
 import ColorsContent from '@/app/colors';
 import ElevationContent from '@/app/elevation';
 import IconsContent from '@/app/icons';
-import InputsContent from '@/app/inputs';
 import SizesContent from '@/app/sizes';
 import SpacingContent from '@/app/spacing';
+import TabContent from '@/app/tab';
+import TextInputContent from '@/app/text-input';
+import TextareaContent from '@/app/textarea';
+import TooltipContent from '@/app/tooltip';
 import TypographyMobileContent from '@/app/typography-mobile';
 import TypographyWebContent from '@/app/typography-web';
 import { Box, Text } from '@/components/primitives';
@@ -52,8 +55,14 @@ export default function AdminPanel() {
         return <CardContent />;
       case 'alert':
         return <AlertContent />;
-      case 'inputs':
-        return <InputsContent />;
+      case 'tab':
+        return <TabContent />;
+      case 'text-input':
+        return <TextInputContent />;
+      case 'textarea':
+        return <TextareaContent />;
+      case 'tooltip':
+        return <TooltipContent />;
       case 'icons':
         return <IconsContent />;
       default:

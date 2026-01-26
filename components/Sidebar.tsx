@@ -51,11 +51,14 @@ export function Sidebar({ activeSection, onSectionChange, isSidebarOpen, setIsSi
   ];
 
   const componentItems = [
-    { id: 'button', label: 'Button' },
-    { id: 'checkbox', label: 'Checkbox' },
-    { id: 'card', label: 'Card' },
     { id: 'alert', label: 'Alert' },
-    { id: 'inputs', label: 'Inputs' },
+    { id: 'button', label: 'Button' },
+    { id: 'card', label: 'Card' },
+    { id: 'checkbox', label: 'Checkbox' },
+    { id: 'tab', label: 'Tab' },
+    { id: 'text-input', label: 'Text Input' },
+    { id: 'textarea', label: 'Textarea' },
+    { id: 'tooltip', label: 'Tooltip' },
   ];
 
   const isSectionActive = (sectionId: string, items: Array<{ id: string }>) => {
