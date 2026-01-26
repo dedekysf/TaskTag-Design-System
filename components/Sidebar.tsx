@@ -55,7 +55,7 @@ export function Sidebar({ activeSection, onSectionChange, isSidebarOpen, setIsSi
     { id: 'checkbox', label: 'Checkbox' },
     { id: 'card', label: 'Card' },
     { id: 'alert', label: 'Alert' },
-    // { id: 'inputs', label: 'Inputs' },
+    { id: 'inputs', label: 'Inputs' },
   ];
 
   const isSectionActive = (sectionId: string, items: Array<{ id: string }>) => {
