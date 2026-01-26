@@ -43,7 +43,7 @@ export function TabsContainer({
                 style={{
                     flexDirection: 'row',
                     gap: 4,
-                    marginBottom: theme.spacing['24'],
+                    marginBottom: theme.spacing['8'],
                     borderBottomWidth: 1,
                     borderBottomColor: theme.colors.grey03,
                 }}

@@ -14,9 +14,9 @@ import React, { useState } from 'react';
 import { Platform, Pressable, View, ViewStyle } from 'react-native';
 import { Text } from './primitives';
 
-export type TooltipVariant = 'top' | 'bottom' | 'left' | 'right';
+export type TooltipVariant = 'top-left' | 'top-center' | 'top-right' | 'left' | 'right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
 export type TooltipSize = 'sm' | 'md' | 'lg';
-export type TooltipStyle = 'default' | 'success';
+export type TooltipStyle = 'default' | 'success' | 'custom';
 
 interface TooltipProps {
     /** Tooltip position variant */
@@ -31,35 +31,41 @@ interface TooltipProps {
     children: React.ReactNode;
     /** Force tooltip to show (controlled mode) */
     forceShow?: boolean;
+    /** Make wrapper take full width */
+    fullWidth?: boolean;
     /** Disabled tooltip */
     disabled?: boolean;
     /** Custom style */
     style?: ViewStyle;
 }
 
-// Size configurations
+// Size configurations matching reference
 const sizeConfig = {
     sm: {
-        padding: 8,
+        paddingVertical: 8,
+        paddingHorizontal: 12,
         fontSize: 12,
     },
     md: {
-        padding: 12,
+        paddingVertical: 12,
+        paddingHorizontal: 16,
         fontSize: 14,
     },
     lg: {
-        padding: 16,
+        paddingVertical: 16,
+        paddingHorizontal: 20,
         fontSize: 16,
     },
 };
 
 export function Tooltip({
-    variant = 'top',
+    variant = 'top-center',
     size = 'md',
     tooltipStyle = 'default',
     content,
     children,
     forceShow = false,
+    fullWidth = false,
     disabled = false,
     style,
 }: TooltipProps) {
@@ -80,6 +86,19 @@ export function Tooltip({
         }
     };
 
+    // Web specific handlers
+    const handleMouseEnter = () => {
+        if (Platform.OS === 'web' && !disabled) {
+            setIsVisible(true);
+        }
+    };
+
+    const handleMouseLeave = () => {
+        if (Platform.OS === 'web' && !disabled) {
+            setIsVisible(false);
+        }
+    };
+
     const handleLayout = (event: any) => {
         const { x, y, width, height } = event.nativeEvent.layout;
         setLayout({ x, y, width, height });
@@ -88,53 +107,80 @@ export function Tooltip({
     const shouldShow = (forceShow || isVisible) && !disabled;
 
     const backgroundColor =
-        tooltipStyle === 'success' ? theme.colors.secondaryGreen : theme.colors.black;
+        tooltipStyle === 'success' ? theme.colors.secondaryGreen :
+            tooltipStyle === 'custom' ? 'transparent' : theme.colors.black;
 
     // Calculate tooltip position based on variant
     const getTooltipPosition = (): ViewStyle => {
         const offset = 8;
         switch (variant) {
-            case 'top':
+            case 'top-left':
+                return {
+                    bottom: layout.height + offset,
+                    left: 0,
+                };
+            case 'top-center':
                 return {
                     bottom: layout.height + offset,
                     left: '50%',
-                    transform: [{ translateX: -50 }],
+                    transform: [{ translateX: '-50%' as any }],
                 };
-            case 'bottom':
+            case 'top-right':
+                return {
+                    bottom: layout.height + offset,
+                    right: 0,
+                    // If right: 0 doesn't align perfectly with right edge of trigger because of parent width, 
+                    // absolute positioning relative to trigger works if trigger is layout measurement reference.
+                    // Assuming Tooltip container wraps Trigger exactly.
+                };
+            case 'bottom-left':
+                return {
+                    top: layout.height + offset,
+                    left: 0,
+                };
+            case 'bottom-center':
                 return {
                     top: layout.height + offset,
                     left: '50%',
-                    transform: [{ translateX: -50 }],
+                    transform: [{ translateX: '-50%' as any }],
+                };
+            case 'bottom-right':
+                return {
+                    top: layout.height + offset,
+                    right: 0,
                 };
             case 'left':
                 return {
                     right: layout.width + offset,
                     top: '50%',
-                    transform: [{ translateY: -50 }],
+                    transform: [{ translateY: '-50%' as any }],
                 };
             case 'right':
                 return {
                     left: layout.width + offset,
                     top: '50%',
-                    transform: [{ translateY: -50 }],
+                    transform: [{ translateY: '-50%' as any }],
                 };
             default:
                 return {
                     bottom: layout.height + offset,
+                    left: '50%',
+                    transform: [{ translateX: '-50%' as any }],
                 };
         }
     };
 
     return (
-        <View style={[{ position: 'relative' }, style]}>
+        <View style={[{ position: 'relative', zIndex: shouldShow ? 9999 : 1, alignSelf: fullWidth ? 'stretch' : 'flex-start' }, style]}>
             <Pressable
                 onPressIn={handlePressIn}
                 onPressOut={handlePressOut}
                 onLayout={handleLayout}
-                {...(Platform.OS === 'web' && {
-                    onHoverIn: handlePressIn,
-                    onHoverOut: handlePressOut,
-                } as any)}
+                {...(Platform.OS === 'web' ? {
+                    onMouseEnter: handleMouseEnter,
+                    onMouseLeave: handleMouseLeave,
+                    style: { cursor: 'pointer', width: fullWidth ? '100%' : 'auto' } as any
+                } : {})}
             >
                 {children}
             </Pressable>
@@ -145,9 +191,10 @@ export function Tooltip({
                         {
                             position: 'absolute',
                             backgroundColor,
-                            borderRadius: theme.borderRadii['8'],
-                            padding: currentSize.padding,
-                            maxWidth: 300,
+                            borderRadius: tooltipStyle === 'custom' ? 0 : theme.borderRadii['8'],
+                            paddingVertical: tooltipStyle === 'custom' ? 0 : currentSize.paddingVertical,
+                            paddingHorizontal: tooltipStyle === 'custom' ? 0 : currentSize.paddingHorizontal,
+                            maxWidth: 200,
                             zIndex: 9999,
                             ...Platform.select({
                                 ios: {
@@ -161,6 +208,9 @@ export function Tooltip({
                                 },
                                 web: {
                                     boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+                                    whiteSpace: 'normal',
+                                    wordWrap: 'break-word',
+                                    width: 'max-content',
                                 } as any,
                             }),
                         },

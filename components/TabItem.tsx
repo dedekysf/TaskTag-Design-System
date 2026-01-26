@@ -139,19 +139,17 @@ export function TabItem({
                         backgroundColor: disabled ? theme.colors.grey04 : theme.colors.secondaryGreen,
                         borderRadius: theme.borderRadii.full,
                         paddingHorizontal: 4,
-                        paddingVertical: 2,
-                        minWidth: 18,
-                        height: 18,
+                        minWidth: 16,
+                        height: 16,
                         alignItems: 'center',
                         justifyContent: 'center',
                         marginLeft: 4,
                     }}
                 >
                     <Text
+                        variant="webMetadataSecondary"
                         style={{
                             color: theme.colors.white,
-                            fontSize: 10,
-                            fontFamily: 'Inter_500Medium',
                         }}
                     >
                         {badge}

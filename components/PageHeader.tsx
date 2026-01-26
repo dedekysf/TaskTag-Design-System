@@ -20,7 +20,7 @@ export function PageHeader({ title, totalItems, description, itemLabel = 'items'
                 </Text>
             ) : totalItems !== undefined ? (
                 <Text variant="webLabelSmall" color="grey05">
-                    Total: {totalItems} {itemLabel}
+                    Total Variant: {totalItems}
                 </Text>
             ) : null}
         </Box>
