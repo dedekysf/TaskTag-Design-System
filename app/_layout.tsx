@@ -44,6 +44,7 @@ export default function RootLayout() {
           <Stack.Screen name="index" />
           <Stack.Screen name="admin" />
           <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+          <Stack.Screen name="sign-up-non-tt-user" />
         </Stack>
 
         <StatusBar style="auto" />

@@ -6,7 +6,6 @@ import React from 'react';
 import { Box, Text } from './primitives';
 import { ChatImageGrid } from './ChatImageGrid';
 import { ChatImageViewer } from './ChatImageViewer';
-import { ChatImageSelector } from './ChatImageSelector';
 import { Check } from 'lucide-react-native';
 import { ChatMessageMenu } from './ChatMessageMenu';
 import { View, Pressable, StyleSheet, Platform, Modal, useWindowDimensions } from 'react-native';
@@ -21,7 +20,7 @@ interface ChatMessageProps {
   id?: string;
 }
 
-export function ChatMessage({ id, sender, time, message, images }: ChatMessageProps) {
+export function ChatMessage({ sender, time, message, images }: ChatMessageProps) {
   const theme = useTheme<Theme>();
   const isMe = sender.toLowerCase() === 'you';
   const isDedek = sender.toLowerCase().includes('dedek');
@@ -30,12 +29,22 @@ export function ChatMessage({ id, sender, time, message, images }: ChatMessagePr
   const [isHovered,       setIsHovered]       = React.useState(false);
   const [viewerVisible,   setViewerVisible]   = React.useState(false);
   const [viewerIndex,     setViewerIndex]     = React.useState(0);
-  const [selectorVisible, setSelectorVisible] = React.useState(false);
+  const [singleImgW,      setSingleImgW]      = React.useState<number | null>(null);
   const { height: windowHeight, width: windowWidth } = useWindowDimensions();
+
+  // Reset when the image set changes (different message)
+  React.useEffect(() => { setSingleImgW(null); }, [images]);
 
   const isDesktopWeb = Platform.OS === 'web' && windowWidth > 500;
   const screenW = isDesktopWeb ? 470 : windowWidth;
-  const bubbleMaxWidth = Math.round(screenW * 0.72) + (isMe ? 0 : 20) + 8;
+  const bubbleMaxWidth = (() => {
+    if (!images || images.length === 0)
+      return Math.round(screenW * 0.72) + (isMe ? 0 : 20) + 8;
+    // All image messages: container is driven by first image dims (via onLayoutWidth
+    // callback). Default 288 (portrait/square max + padding) so first render is
+    // already correct for portrait/square. Landscape will expand once callback fires.
+    return (singleImgW ?? 280) + 8;
+  })();
 
   const avatarBg = isDedek ? 'orange' : 'blue';
   const initials = isMe ? 'JH' : (sender.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase());
@@ -54,12 +63,8 @@ export function ChatMessage({ id, sender, time, message, images }: ChatMessagePr
 
   const handleImagePress = (index: number) => {
     if (!images) return;
-    if (images.length === 1) {
-      setViewerIndex(index);
-      setViewerVisible(true);
-    } else {
-      setSelectorVisible(true);
-    }
+    setViewerIndex(index);
+    setViewerVisible(true);
   };
 
   const stringImages = images?.filter((img): img is string => typeof img === 'string') ?? [];
@@ -124,12 +129,17 @@ export function ChatMessage({ id, sender, time, message, images }: ChatMessagePr
                     }}
                   >
                     {message && (
-                      <Box style={{ paddingHorizontal: 8, paddingTop: 4, paddingBottom: images && images.length > 0 ? 8 : 4 }}>
+                      <Box style={{ paddingHorizontal: 8, paddingTop: 4, paddingBottom: images && images.length > 0 ? 8 : 4, maxWidth: bubbleMaxWidth - 8 }}>
                         <Text variant="body" color="textSecondary">{message}</Text>
                       </Box>
                     )}
                     {images && images.length > 0 && (
-                      <ChatImageGrid images={images} sent={isMe} onImagePress={handleImagePress} />
+                      <ChatImageGrid
+                        images={images}
+                        maxWidth={bubbleMaxWidth - 8}
+                        onLayoutWidth={setSingleImgW}
+                        onImagePress={handleImagePress}
+                      />
                     )}
                   </Box>
                 </Pressable>
@@ -140,8 +150,8 @@ export function ChatMessage({ id, sender, time, message, images }: ChatMessagePr
           </Box>
         </Box>
 
-        {/* Single-image viewer */}
-        {stringImages.length === 1 && (
+        {/* Image viewer — handles single and multi-image with swipe navigation */}
+        {stringImages.length >= 1 && (
           <ChatImageViewer
             images={stringImages}
             initialIndex={viewerIndex}
@@ -149,17 +159,6 @@ export function ChatMessage({ id, sender, time, message, images }: ChatMessagePr
             time={time}
             visible={viewerVisible}
             onClose={() => setViewerVisible(false)}
-          />
-        )}
-
-        {/* Multi-image selector */}
-        {stringImages.length > 1 && (
-          <ChatImageSelector
-            images={stringImages}
-            sender={sender}
-            time={time}
-            visible={selectorVisible}
-            onClose={() => setSelectorVisible(false)}
           />
         )}
 
