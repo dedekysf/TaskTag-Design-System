@@ -19,6 +19,8 @@ import { ChatHeader } from '@/components/ChatHeader';
 import { ChatInput } from '@/components/ChatInput';
 import { ChatMessage } from '@/components/ChatMessage';
 import { Box, Text } from '@/components/primitives';
+import { Theme } from '@/constants/theme';
+import { useTheme } from '@shopify/restyle';
 import React from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 
@@ -105,6 +107,13 @@ const MESSAGES = [
 
 export default function StandaloneChatScreen() {
   const scrollViewRef = React.useRef<any>(null);
+  const theme = useTheme<Theme>();
+
+  const shadowStyle = Platform.select({
+    web: { boxShadow: 'rgba(0, 0, 0, 0.1) 0px 10px 30px' } as any,
+    ios: { shadowColor: theme.colors.black, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 12 },
+    android: { elevation: 8 },
+  });
 
   return (
     <Box flex={1} backgroundColor="grey01" alignItems="center" justifyContent="center">
@@ -115,13 +124,7 @@ export default function StandaloneChatScreen() {
         backgroundColor="background"
         borderRadius="xl"
         overflow="hidden"
-        style={{
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.1,
-          shadowRadius: 12,
-          elevation: 8,
-        }}
+        style={shadowStyle}
       >
         <ChatHeader />
 
@@ -133,13 +136,13 @@ export default function StandaloneChatScreen() {
             ref={scrollViewRef}
             onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
             style={{ flex: 1 }}
-            contentContainerStyle={{ padding: 16 }}
+            contentContainerStyle={{ padding: theme.spacing['16'] }}
           >
             {/* Date Divider */}
             <Box flexDirection="row" alignItems="center" marginVertical="xl">
               <Box flex={1} height={1} backgroundColor="grey03" />
               <Box marginHorizontal="md">
-                <Text style={{ fontSize: 12, color: '#bdbdbd', fontWeight: '600' }}>Today</Text>
+                <Text variant="caption" color="grey05" fontWeight="600">Today</Text>
               </Box>
               <Box flex={1} height={1} backgroundColor="grey03" />
             </Box>

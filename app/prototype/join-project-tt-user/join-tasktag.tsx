@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Platform, View } from 'react-native';
+import { Platform } from 'react-native';
 import { Box, Text } from '@/components/primitives';
 import { Button } from '@/components/Button';
 import { Tooltip } from '@/components/Tooltip';
@@ -34,37 +34,39 @@ export default function JoinTasktag() {
   const theme = useTheme<Theme>();
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
+  const shadowStyle = Platform.select({
+    web: { boxShadow: 'rgba(0, 0, 0, 0.05) 0px 1px 3px 0px' } as any,
+    ios: { shadowColor: theme.colors.black, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 3 },
+    android: { elevation: 1 },
+  });
+
   return (
     <Box flex={1} justifyContent="center" alignItems="center" backgroundColor="grey02" padding="lg">
       <Box
         backgroundColor="card"
-        style={{
-          width: '100%',
-          maxWidth: 460,
-          borderRadius: theme.borderRadii.xl,
-          padding: theme.spacing['24'],
-          ...Platform.select({
-            web: { boxShadow: 'rgba(0, 0, 0, 0.05) 0px 1px 3px 0px' } as any,
-            ios: { shadowColor: theme.colors.black, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 3 },
-            android: { elevation: 1 },
-          }),
-        }}
+        width="100%"
+        maxWidth={460}
+        borderRadius="xl"
+        padding="24"
+        style={shadowStyle}
       >
         {/* Header */}
-        <Text variant="webMetadataPrimary" color="mutedForeground" style={{ textAlign: 'center' }} marginBottom="20">
+        <Text variant="webMetadataPrimary" color="mutedForeground" textAlign="center" marginBottom="20">
           {"You've been invited to this project by "}
-          <Text style={{ fontSize: 12, fontWeight: '700', color: theme.colors.foreground }}>{INVITE.inviterName}</Text>
+          <Text variant="webMetadataPrimary" fontWeight="700" color="foreground">{INVITE.inviterName}</Text>
         </Text>
 
         {/* Project card */}
         <Box
           backgroundColor="lightMint"
-          style={{ borderRadius: theme.borderRadii.xl, position: 'relative', zIndex: 1 }}
+          borderRadius="xl"
+          position="relative"
+          zIndex="10"
           padding="md"
           marginBottom="20"
         >
           <Text variant="webLabelEmphasized" marginBottom="4">{INVITE.projectName}</Text>
-          <Box flexDirection="row" alignItems="center" style={{ gap: 4 }} marginBottom="md">
+          <Box flexDirection="row" alignItems="center" gap="4" marginBottom="md">
             <MapPin size={14} color={theme.colors.textSecondary} />
             <Text variant="webSecondaryBody" color="mutedForeground">
               {INVITE.address}
@@ -77,11 +79,13 @@ export default function JoinTasktag() {
           </Text>
 
           {/* Avatar stack */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', overflow: 'visible' } as any}>
+          <Box flexDirection="row" alignItems="center">
             {INVITE.members.map((member, index) => (
-              <View
+              <Box
                 key={index}
-                style={{ position: 'relative', marginLeft: index === 0 ? 0 : -8, zIndex: hoveredIndex === index ? 9999 : INVITE.members.length - index }}
+                position="relative"
+                zIndex={hoveredIndex === index ? "50" : "10"}
+                style={{ marginLeft: index === 0 ? 0 : -8 }}
                 {...(Platform.OS === 'web' ? { onMouseEnter: () => setHoveredIndex(index), onMouseLeave: () => setHoveredIndex(null) } as any : {})}
               >
                 <Tooltip
@@ -90,29 +94,30 @@ export default function JoinTasktag() {
                   size="sm"
                   tooltipStyle="default"
                 >
-                  <View
-                    style={{
-                      width: 34,
-                      height: 34,
-                      borderRadius: 17,
-                      backgroundColor: member.color,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderWidth: 2,
-                      borderColor: theme.colors.lightMint,
-                    }}
+                  <Box
+                    width={34}
+                    height={34}
+                    borderRadius="full"
+                    backgroundColor="transparent"
+                    alignItems="center"
+                    justifyContent="center"
+                    borderWidth={2}
+                    borderColor="lightMint"
+                    style={{ backgroundColor: member.color }}
                   >
-                    <Text style={{ fontSize: 11, fontWeight: '700', color: theme.colors.white }}>
+                    <Text variant="webMetadataSecondary" fontWeight="700" color="white">
                       {member.initials}
                     </Text>
-                  </View>
+                  </Box>
                 </Tooltip>
-              </View>
+              </Box>
             ))}
 
             {/* +N badge */}
-            <View
-              style={{ position: 'relative', marginLeft: -8, zIndex: hoveredIndex === INVITE.members.length ? 9999 : 0 }}
+            <Box
+              position="relative"
+              zIndex={hoveredIndex === INVITE.members.length ? "50" : "10"}
+              style={{ marginLeft: -8 }}
               {...(Platform.OS === 'web' ? { onMouseEnter: () => setHoveredIndex(INVITE.members.length), onMouseLeave: () => setHoveredIndex(null) } as any : {})}
             >
               <Tooltip
@@ -122,38 +127,36 @@ export default function JoinTasktag() {
                 tooltipStyle="default"
               >
                 <Box
-                  style={{
-                    width: 34,
-                    height: 34,
-                    borderRadius: 17,
-                    backgroundColor: theme.colors.white,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderWidth: 2,
-                    borderColor: theme.colors.lightMint,
-                  }}
+                  width={34}
+                  height={34}
+                  borderRadius="full"
+                  backgroundColor="white"
+                  alignItems="center"
+                  justifyContent="center"
+                  borderWidth={2}
+                  borderColor="lightMint"
                 >
-                  <Text style={{ fontSize: 11, fontWeight: '600', color: theme.colors.primary }}>
+                  <Text variant="webMetadataSecondary" fontWeight="600" color="primary">
                     +{INVITE.extraMembers}
                   </Text>
                 </Box>
               </Tooltip>
-            </View>
-          </View>
+            </Box>
+          </Box>
         </Box>
 
         {/* Role permissions */}
-        <Box marginBottom="lg" backgroundColor="grey02" padding="md" style={{ borderRadius: theme.borderRadii.xl }}>
+        <Box marginBottom="lg" backgroundColor="grey02" padding="md" borderRadius="xl">
           <Text variant="labelMedium" marginBottom="sm">
             {`As an ${INVITE.role}, you'll be able to:`}
           </Text>
           {ROLE_PERMISSIONS.map(([left, right], rowIndex) => (
-            <Box key={rowIndex} flexDirection="row" style={{ marginBottom: theme.spacing['8'] }}>
-              <Box flex={1} flexDirection="row" alignItems="center" style={{ gap: theme.spacing['8'] }}>
+            <Box key={rowIndex} flexDirection="row" marginBottom="8">
+              <Box flex={1} flexDirection="row" alignItems="center" gap="8">
                 <Check size={14} color={theme.colors.primary} strokeWidth={2.5} />
                 <Text variant="webMetadataPrimary" color="mutedForeground">{left}</Text>
               </Box>
-              <Box flex={1} flexDirection="row" alignItems="center" style={{ gap: theme.spacing['8'] }}>
+              <Box flex={1} flexDirection="row" alignItems="center" gap="8">
                 <Check size={14} color={theme.colors.primary} strokeWidth={2.5} />
                 <Text variant="webMetadataPrimary" color="mutedForeground">{right}</Text>
               </Box>
@@ -167,15 +170,15 @@ export default function JoinTasktag() {
           color="primary"
           size="lg"
           style={{ width: '100%' }}
-          onPress={() => router.push('/sign-up-non-tt-user/join-tasktag-signup')}
+          onPress={() => router.push('/prototype/join-project-tt-user/project-dashboard')}
         >
           Accept & Join
         </Button>
 
         {/* Expiry notice */}
-        <Box flexDirection="row" alignItems="center" justifyContent="center" style={{ gap: theme.spacing['4'], marginTop: theme.spacing['12'] }}>
+        <Box flexDirection="row" alignItems="center" justifyContent="center" gap="4" marginTop="12">
           <Clock size={13} color={theme.colors.grey05} />
-          <Text variant="caption">Invitations expire after 7 days</Text>
+          <Text variant="caption" color="mutedForeground">Invitations expire after 7 days</Text>
         </Box>
 
       </Box>

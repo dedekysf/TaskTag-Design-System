@@ -42,9 +42,9 @@ export default function RootLayout() {
       <NavigationThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
-          <Stack.Screen name="admin" />
+          <Stack.Screen name="design-system" />
+          <Stack.Screen name="prototype" />
           <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-          <Stack.Screen name="sign-up-non-tt-user" />
         </Stack>
 
         <StatusBar style="auto" />

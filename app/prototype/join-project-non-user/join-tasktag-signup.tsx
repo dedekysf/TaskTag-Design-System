@@ -64,83 +64,90 @@ export default function JoinTasktagSignup() {
     if (!valid || emailError) return;
 
     // Simulate join API wait, then redirect to dashboard showing the modal
-    router.push('/sign-up-non-tt-user/project-dashboard');
+    router.push('/prototype/join-project-non-user/project-dashboard');
   };
+
+  const shadowStyle = Platform.select({
+    web: { boxShadow: 'rgba(0, 0, 0, 0.05) 0px 1px 3px 0px' } as any,
+    ios: { shadowColor: theme.colors.black, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 3 },
+    android: { elevation: 1 },
+  });
 
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: theme.colors.grey02 }}
       contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: theme.spacing.lg }}
     >
-      <Box alignItems="center" style={{ width: '100%', maxWidth: 480, marginBottom: theme.spacing.lg }}>
+      <Box alignItems="center" width="100%" maxWidth={480} marginBottom="lg">
         <Image
-          source={require('../../assets/images/ttlogo.png')}
+          source={require('@/assets/images/tasktag-logo.png')}
           style={{ height: 36, width: 120, resizeMode: 'contain' }}
         />
       </Box>
 
       <Box
         backgroundColor="card"
-        style={{
-          width: '100%',
-          maxWidth: 480,
-          borderRadius: theme.borderRadii['16'],
-          padding: theme.spacing['24'],
-          ...Platform.select({
-            web: { boxShadow: 'rgba(0, 0, 0, 0.05) 0px 1px 3px 0px' } as any,
-            ios: { shadowColor: theme.colors.black, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 3 },
-            android: { elevation: 1 },
-          }),
-        }}
+        width="100%"
+        maxWidth={480}
+        borderRadius="16"
+        padding="24"
+        style={shadowStyle}
       >
         {/* Heading */}
-        <Text variant="h2" style={{ textAlign: 'center', marginBottom: theme.spacing['4'] }}>
+        <Text variant="h2" textAlign="center" marginBottom="4">
           Create an account
         </Text>
-        <Text variant="webMetadataPrimary" color="mutedForeground" style={{ textAlign: 'center', marginBottom: theme.spacing['16'] }}>
-          {"You've been invited to this project by "}
-          <Text style={{ fontSize: 12, fontWeight: '700', color: theme.colors.foreground }}>{INVITE.inviterName}</Text>
-        </Text>
+        <Box flexDirection="row" justifyContent="center" flexWrap="wrap" marginBottom="16">
+          <Text variant="webMetadataPrimary" color="mutedForeground">
+            {"You've been invited to this project by "}
+          </Text>
+          <Text variant="webMetadataPrimary" color="foreground" fontWeight="700">
+            {INVITE.inviterName}
+          </Text>
+        </Box>
 
         {/* Context banner */}
         <Box
           backgroundColor="lightMint"
           alignItems="flex-start"
           padding="md"
-          style={{ borderRadius: theme.borderRadii.xl, marginBottom: theme.spacing.lg, width: '100%', position: 'relative', zIndex: 1 }}
+          borderRadius="xl"
+          marginBottom="lg"
+          width="100%"
+          position="relative"
+          zIndex="10"
         >
           <Text variant="webLabelEmphasized" marginBottom="4">
             {INVITE.projectName}
           </Text>
-          <Box flexDirection="row" alignItems="center" style={{ gap: 4, marginBottom: theme.spacing['16'] }}>
+          <Box flexDirection="row" alignItems="center" gap="4" marginBottom="16">
             <MapPin size={14} color={theme.colors.textSecondary} />
             <Text variant="webSecondaryBody" color="mutedForeground">
               {INVITE.address}
             </Text>
           </Box>
 
-          <Text variant="webSecondaryBody" color="mutedForeground">
-            {"Your Role : "}
+          <Box flexDirection="row" alignItems="center" gap="4">
+            <Text variant="webSecondaryBody" color="mutedForeground">Your Role : </Text>
             <Tooltip
               variant="bottom-left"
               tooltipStyle="default"
               size="sm"
               content={
-                <View style={{ gap: 4 }}>
+                <Box gap="4">
                   {['View and manage tasks', 'Upload files & media', 'Collaborate with team', 'Track project progress'].map((item, i) => (
-                    <Text key={i} style={{ color: theme.colors.white, fontSize: 12, fontFamily: 'Inter_400Regular' }}>
+                    <Text key={i} variant="caption" color="white" style={{ fontFamily: 'Inter_400Regular' }}>
                       {'• '}{item}
                     </Text>
                   ))}
-                </View>
+                </Box>
               }
             >
               <Text
                 variant="webSecondaryBody"
-                color="mutedForeground"
+                color="foreground"
+                fontWeight="700"
                 style={{
-                  fontWeight: '700',
-                  color: theme.colors.foreground,
                   ...Platform.select({
                     web: { borderBottomWidth: 1, borderBottomColor: theme.colors.mutedForeground, borderStyle: 'dashed', cursor: 'help' } as any,
                     default: { borderBottomWidth: 1, borderBottomColor: theme.colors.mutedForeground },
@@ -150,12 +157,12 @@ export default function JoinTasktagSignup() {
                 {INVITE.role}
               </Text>
             </Tooltip>
-          </Text>
+          </Box>
         </Box>
 
-        <Box style={{ gap: 0, marginBottom: theme.spacing.md }}>
+        <Box gap="md" marginBottom="md">
           {/* Email — pre-filled and locked */}
-          <Box style={{ marginBottom: 16 }}>
+          <Box>
             <TextInput
               label="Email"
               value={INVITE.email}
@@ -163,7 +170,7 @@ export default function JoinTasktagSignup() {
               showClearButton={false}
               errorMessage={emailError}
             />
-            <Text variant="webMetadataSecondary" color="mutedForeground" style={{ marginTop: -10 }}>
+            <Text variant="webMetadataSecondary" color="mutedForeground" style={{ marginTop: -8 }}>
               A verification email will be sent to you to verify your address.
             </Text>
           </Box>
@@ -173,7 +180,6 @@ export default function JoinTasktagSignup() {
             <TextInput
               label="Name"
               placeholder="Enter your name"
-              placeholderTextColor={theme.colors.grey04}
               value={name}
               onChangeText={setName}
               errorMessage={nameError}
@@ -182,29 +188,25 @@ export default function JoinTasktagSignup() {
             />
           </Box>
 
-          {/* Password — manual for eye toggle */}
-          <Box style={{ width: '100%' }}>
+          {/* Password — custom for compliance audit */}
+          <Box width="100%">
             <Text
               variant="labelMedium"
-              style={{
-                marginBottom: theme.spacing['8'],
-                color: passwordError ? theme.colors.alertRed : theme.colors.textPrimary,
-              }}
+              marginBottom="sm"
+              color={passwordError ? "alertRed" : "textPrimary"}
             >
-              Password <Text style={{ color: theme.colors.alertRed }}>*</Text>
+              Password <Text color="alertRed">*</Text>
             </Text>
             <Box
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                borderWidth: 1,
-                borderColor: passwordError ? theme.colors.alertRed : isPasswordFocused ? theme.colors.black : theme.colors.border,
-                borderRadius: theme.borderRadii['8'],
-                backgroundColor: theme.colors.inputBackground,
-                minHeight: theme.componentSizes.md,
-                paddingHorizontal: theme.spacing['12'],
-                paddingVertical: theme.spacing['8'],
-              }}
+              flexDirection="row"
+              alignItems="center"
+              borderWidth={1}
+              borderColor={passwordError ? "alertRed" : isPasswordFocused ? "black" : "border"}
+              borderRadius="8"
+              backgroundColor="inputBackground"
+              minHeight={theme.componentSizes.md}
+              paddingHorizontal="12"
+              paddingVertical="8"
             >
               <RNTextInput
                 ref={passwordRef}
@@ -220,8 +222,8 @@ export default function JoinTasktagSignup() {
                   fontSize: 16,
                   color: theme.colors.foreground,
                   fontFamily: 'Inter_400Regular',
-                  outline: 'none',
-                } as any}
+                  ...Platform.select({ web: { outline: 'none' } as any })
+                }}
               />
               <Pressable
                 onPress={() => {
@@ -237,46 +239,43 @@ export default function JoinTasktagSignup() {
               </Pressable>
             </Box>
             {passwordError ? (
-              <Box flexDirection="row" alignItems="center" style={{ gap: theme.spacing['4'], marginTop: theme.spacing['4'] }}>
+              <Box flexDirection="row" alignItems="center" gap="4" marginTop="4">
                 <AlertTriangle size={14} color={theme.colors.alertRed} />
-                <Text variant="caption" style={{ color: theme.colors.alertRed }}>
+                <Text variant="caption" color="alertRed">
                   {passwordError}
                 </Text>
               </Box>
             ) : null}
 
-            {isPasswordFocused ? (
-              <Box style={{ gap: 4, marginTop: theme.spacing['12'] }}>
-                <Text variant="webMetadataPrimary" style={{ color: theme.colors.textSecondary }}>Your password must contain:</Text>
-                <Box flexDirection="row" alignItems="center" style={{ gap: theme.spacing['4'] }}>
-                  {validLength ? <Check size={12} color={theme.colors.secondaryGreen} strokeWidth={3} /> : <Text variant="webMetadataPrimary" color="textSecondary">{'•'}</Text>}
-                  <Text variant="webMetadataPrimary" style={{ color: validLength ? theme.colors.secondaryGreen : theme.colors.textSecondary }}>At least 8 characters</Text>
-                </Box>
-                <Box flexDirection="row" alignItems="center" style={{ gap: theme.spacing['4'] }}>
-                  {validNumber ? <Check size={12} color={theme.colors.secondaryGreen} strokeWidth={3} /> : <Text variant="webMetadataPrimary" color="textSecondary">{'•'}</Text>}
-                  <Text variant="webMetadataPrimary" style={{ color: validNumber ? theme.colors.secondaryGreen : theme.colors.textSecondary }}>At least 1 number (0-9)</Text>
-                </Box>
-                <Box flexDirection="row" alignItems="center" style={{ gap: theme.spacing['4'] }}>
-                  {validUppercase ? <Check size={12} color={theme.colors.secondaryGreen} strokeWidth={3} /> : <Text variant="webMetadataPrimary" color="textSecondary">{'•'}</Text>}
-                  <Text variant="webMetadataPrimary" style={{ color: validUppercase ? theme.colors.secondaryGreen : theme.colors.textSecondary }}>At least 1 uppercase letter (A-Z)</Text>
-                </Box>
-                <Box flexDirection="row" alignItems="center" style={{ gap: theme.spacing['4'] }}>
-                  {validSpecial ? <Check size={12} color={theme.colors.secondaryGreen} strokeWidth={3} /> : <Text variant="webMetadataPrimary" color="textSecondary">{'•'}</Text>}
-                  <Text variant="webMetadataPrimary" style={{ color: validSpecial ? theme.colors.secondaryGreen : theme.colors.textSecondary }}>At least 1 special character (e.g. !@#$%^&*)</Text>
-                </Box>
+            {isPasswordFocused && (
+              <Box gap="4" marginTop="12">
+                <Text variant="webMetadataPrimary" color="textSecondary">Your password must contain:</Text>
+                {[
+                  { label: 'At least 8 characters', valid: validLength },
+                  { label: 'At least 1 number (0-9)', valid: validNumber },
+                  { label: 'At least 1 uppercase letter (A-Z)', valid: validUppercase },
+                  { label: 'At least 1 special character (e.g. !@#$%^&*)', valid: validSpecial },
+                ].map((rule, idx) => (
+                  <Box key={idx} flexDirection="row" alignItems="center" gap="4">
+                    {rule.valid ? <Check size={12} color={theme.colors.secondaryGreen} strokeWidth={3} /> : <Text variant="webMetadataPrimary" color="textSecondary">{'•'}</Text>}
+                    <Text variant="webMetadataPrimary" color={rule.valid ? "secondaryGreen" : "textSecondary"}>{rule.label}</Text>
+                  </Box>
+                ))}
               </Box>
-            ) : null}
+            )}
           </Box>
         </Box>
 
         {/* Terms */}
-        <Text variant="webMetadataSecondary" style={{ textAlign: 'left', marginBottom: theme.spacing['16'], lineHeight: 16 }}>
-          {'By signing up, I agree to the TaskTag '}
-          <Text variant="webMetadataSecondary" color="primary" style={{ fontWeight: '500' }}>Terms and Conditions</Text>
-          {' and '}
-          <Text variant="webMetadataSecondary" color="primary" style={{ fontWeight: '500' }}>Privacy Policy</Text>
-          {'.'}
-        </Text>
+        <Box marginBottom="16">
+          <Text variant="webMetadataSecondary" style={{ lineHeight: 16 }}>
+            {'By signing up, I agree to the TaskTag '}
+            <Text variant="webMetadataSecondary" color="primary" fontWeight="500">Terms and Conditions</Text>
+            {' and '}
+            <Text variant="webMetadataSecondary" color="primary" fontWeight="500">Privacy Policy</Text>
+            {'.'}
+          </Text>
+        </Box>
 
         {/* CTA */}
         <Button
@@ -289,9 +288,6 @@ export default function JoinTasktagSignup() {
         >
           Join This Project
         </Button>
-
-
-
       </Box>
     </ScrollView>
   );

@@ -1,133 +1,134 @@
-/**
- * Admin Panel Layout
- */
-
-import AlertContent from '@/app/alert';
-import BorderRadiusContent from '@/app/border-radius';
-import ButtonContent from '@/app/button';
-import CardContent from '@/app/card';
-import CheckboxContent from '@/app/checkbox';
-import ColorsContent from '@/app/colors';
-import ElevationContent from '@/app/elevation';
-import IconsContent from '@/app/icons';
-import SizesContent from '@/app/sizes';
-import SpacingContent from '@/app/spacing';
-import TabContent from '@/app/tab';
-import TextInputContent from '@/app/text-input';
-import TextareaContent from '@/app/textarea';
-import TooltipContent from '@/app/tooltip';
-import TypographyMobileContent from '@/app/typography-mobile';
-import TypographyWebContent from '@/app/typography-web';
+import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
-import { Sidebar } from '@/components/Sidebar';
 import { Theme } from '@/constants/theme';
-import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '@shopify/restyle';
-import React, { useState } from 'react';
-import { Platform, Pressable, View } from 'react-native';
+import { router } from 'expo-router';
+import React from 'react';
+import { Linking, Platform, Pressable, ScrollView } from 'react-native';
 
-export default function AdminPanel() {
-  const theme = useTheme<Theme>();
-  const [activeSection, setActiveSection] = useState('colors');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-  const renderContent = () => {
-    switch (activeSection) {
-      case 'colors':
-        return <ColorsContent />;
-      case 'typography-web':
-        return <TypographyWebContent />;
-      case 'typography-mobile':
-        return <TypographyMobileContent />;
-      case 'radius':
-        return <BorderRadiusContent />;
-      case 'elevation':
-        return <ElevationContent />;
-      case 'spacing':
-        return <SpacingContent />;
-      case 'sizes':
-        return <SizesContent />;
-      case 'button':
-        return <ButtonContent />;
-      case 'checkbox':
-        return <CheckboxContent />;
-      case 'card':
-        return <CardContent />;
-      case 'alert':
-        return <AlertContent />;
-      case 'tab':
-        return <TabContent />;
-      case 'text-input':
-        return <TextInputContent />;
-      case 'textarea':
-        return <TextareaContent />;
-      case 'tooltip':
-        return <TooltipContent />;
-      case 'icons':
-        return <IconsContent />;
-      default:
-        return <ColorsContent />;
-    }
+interface PrototypeCardProps {
+  item: {
+    title: string;
+    jiraTicket: string;
+    jiraLabel: string;
+    route: string;
   };
+  theme: Theme;
+}
+
+function PrototypeCard({ item, theme }: PrototypeCardProps) {
+  const [isHovered, setIsHovered] = React.useState(false);
 
   return (
-    <Box flex={1} flexDirection="row" backgroundColor="grey02" style={{ height: '100%' }}>
-      {/* Sidebar */}
-      <Sidebar
-        activeSection={activeSection}
-        onSectionChange={setActiveSection}
-        isSidebarOpen={isSidebarOpen}
-        setIsSidebarOpen={setIsSidebarOpen}
-      />
+    <Pressable
+      onHoverIn={() => setIsHovered(true)}
+      onHoverOut={() => setIsHovered(false)}
+      onPress={() => router.push(item.route as any)}
+      style={{
+        width: Platform.OS === 'web' ? 320 : '100%',
+      }}
+    >
+      <Box
+        minHeight={160}
+        borderWidth={1}
+        borderColor={isHovered ? "primary" : "border"}
+        borderRadius="lg"
+        padding="lg"
+        backgroundColor="card"
+        justifyContent="space-between"
+        style={{
+          transition: 'all 0.2s ease-in-out',
+          ...(isHovered ? {
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 12 },
+            shadowOpacity: 0.15,
+            shadowRadius: 30,
+            elevation: 12,
+            transform: [{ translateY: -6 }, { scale: 1.01 }]
+          } : {})
+        } as any}
+      >
+        <Box>
+          <Text variant="webLabelEmphasized" marginBottom="sm">{item.title}</Text>
 
-      {/* Main Content */}
-      <Box flex={1} style={{ height: '100%' }}>
-        {/* Mobile Header */}
-        {Platform.OS === 'web' && (
-          <View
-            style={{
-              display: typeof window !== 'undefined' && window.innerWidth < 1080 ? 'flex' : 'none',
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: 64,
-              backgroundColor: theme.colors.background,
-              borderBottomWidth: 1,
-              borderBottomColor: theme.colors.border,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              paddingHorizontal: 16,
-              zIndex: 50,
-            }}
-          >
-            <Pressable
-              style={{ position: 'absolute', left: 16, padding: 8 }}
-              onPress={() => setIsSidebarOpen(!isSidebarOpen)}
+          {item.jiraLabel ? (
+            <Text
+              variant="webSecondaryBody"
+              color="blue"
+              marginBottom="lg"
+              style={{ textDecorationLine: 'underline' }}
+              onPress={(e) => {
+                e.stopPropagation();
+                Linking.openURL(item.jiraTicket);
+              }}
             >
-              <MaterialIcons
-                name={isSidebarOpen ? 'close' : 'menu'}
-                size={24}
-                color={theme.colors.textPrimary}
-              />
-            </Pressable>
-            <Text variant="h3" color="textPrimary">
-              TaskTag DS
+              Jira Ticket ({item.jiraLabel})
             </Text>
-          </View>
-        )}
+          ) : null}
+        </Box>
 
-        {/* Content */}
-        <Box
-          flex={1}
-          style={{
-            height: '100%',
-          }}
+        <Button
+          variant="outline"
+          color="secondary"
+          size="xs"
+          style={{ width: '100%' }}
+          onPress={() => router.push(item.route as any)}
+          // Explicitly pass hover to the button to trigger card's hover state if bubbling fails
+          onHoverIn={() => setIsHovered(true)}
+          onHoverOut={() => setIsHovered(false)}
         >
-          {renderContent()}
+          View
+        </Button>
+      </Box>
+    </Pressable>
+  );
+}
+
+export default function PrototypeIndex() {
+  const theme = useTheme<Theme>();
+
+  const prototypes = [
+    {
+      title: 'Design System',
+      jiraTicket: '',
+      jiraLabel: '',
+      route: '/design-system'
+    },
+    {
+      title: 'Thumbnail and Preview',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-276?atlOrigin=eyJpIjoiNGU5N2UzZjVkNDJhNGZlZmI1NzJhY2MzNGMyYzg4ODMiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-276',
+      route: '/prototype/thumbnail-and-preview'
+    },
+    {
+      title: 'Join Project Non User',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-302?atlOrigin=eyJpIjoiNTk4MTIzZDUxOGVmNDYxN2IyOGNmZTkzYTQzOGQ2MjAiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-302',
+      route: '/prototype/join-project-non-user'
+    },
+    {
+      title: 'Join Project TT User',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-302?atlOrigin=eyJpIjoiNTk4MTIzZDUxOGVmNDYxN2IyOGNmZTkzYTQzOGQ2MjAiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-302',
+      route: '/prototype/join-project-tt-user'
+    }
+  ];
+
+  return (
+    <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <Box padding="xl" paddingBottom="80">
+        <Text variant="webHeading22" marginBottom="xl">Prototypes Design</Text>
+
+        <Box 
+          flexDirection="row" 
+          flexWrap="wrap" 
+          gap="lg"
+        >
+          {prototypes.map((item, index) => (
+            <PrototypeCard key={index} item={item} theme={theme} />
+          ))}
         </Box>
       </Box>
-    </Box>
+    </ScrollView>
   );
 }

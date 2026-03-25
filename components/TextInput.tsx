@@ -136,7 +136,7 @@ export function TextInput({
                     value={currentValue}
                     onChangeText={handleChangeText}
                     placeholder={placeholder}
-                    placeholderTextColor={theme.colors.mutedForeground}
+                    placeholderTextColor={theme.colors.grey04}
                     editable={!disabled}
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
