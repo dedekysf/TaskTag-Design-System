@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "WebFetch(domain:www.figma.com)",
-      "Bash(cp \"d:/masrama.com/TaskTag/DS/TaskTag-Design-System/app/join-tasktag-signup.tsx\" /dev/null)",
-      "Bash(mv \"d:/masrama.com/TaskTag/DS/TaskTag-Design-System/app/join-tasktag.tsx.bak\" /dev/null)"
-    ]
-  }
-}

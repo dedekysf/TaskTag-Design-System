@@ -29,7 +29,7 @@ function PrototypeCard({ item, theme }: PrototypeCardProps) {
       }}
     >
       <Box
-        minHeight={160}
+        minHeight={200}
         borderWidth={1}
         borderColor={isHovered ? "primary" : "border"}
         borderRadius="lg"
@@ -49,6 +49,21 @@ function PrototypeCard({ item, theme }: PrototypeCardProps) {
         } as any}
       >
         <Box>
+          {item.title !== 'Design System' && (
+            <Box
+              width={80}
+              alignItems="center"
+              justifyContent="center"
+              backgroundColor="grey01"
+              paddingHorizontal="4"
+              paddingVertical="4"
+              borderRadius="xl"
+              marginBottom="xs"
+              style={{ borderWidth: 1, borderColor: theme.colors.border }}
+            >
+              <Text style={{ fontSize: 10, fontWeight: '700', color: theme.colors.textSecondary, textTransform: 'uppercase' }}>Web</Text>
+            </Box>
+          )}
           <Text variant="webLabelEmphasized" marginBottom="sm">{item.title}</Text>
 
           {item.jiraLabel ? (
@@ -111,6 +126,12 @@ export default function PrototypeIndex() {
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-302?atlOrigin=eyJpIjoiNTk4MTIzZDUxOGVmNDYxN2IyOGNmZTkzYTQzOGQ2MjAiLCJwIjoiaiJ9',
       jiraLabel: 'TD-302',
       route: '/prototype/join-project-tt-user'
+    },
+    {
+      title: 'Join Project Non User by Link',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-303?atlOrigin=eyJpIjoiZDE1Yzk1MzExNDhjNGEwZWEwZTk0YjE3NTk2NGRmZGQiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-303',
+      route: '/prototype/join-project-non-user-by-link'
     }
   ];
 
@@ -119,9 +140,9 @@ export default function PrototypeIndex() {
       <Box padding="xl" paddingBottom="80">
         <Text variant="webHeading22" marginBottom="xl">Prototypes Design</Text>
 
-        <Box 
-          flexDirection="row" 
-          flexWrap="wrap" 
+        <Box
+          flexDirection="row"
+          flexWrap="wrap"
           gap="lg"
         >
           {prototypes.map((item, index) => (

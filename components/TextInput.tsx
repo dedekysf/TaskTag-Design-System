@@ -121,6 +121,7 @@ export function TextInput({
                     backgroundColor: disabled ? theme.colors.grey03 : theme.colors.inputBackground,
                     minHeight: currentSize.height,
                     paddingHorizontal: currentSize.paddingHorizontal,
+                    overflow: 'hidden', // Ensure "X" doesn't overflow outside borders
                 }}
             >
                 {Icon && (
@@ -147,8 +148,9 @@ export function TextInput({
                         fontSize: currentSize.fontSize,
                         color: disabled ? theme.colors.grey04 : theme.colors.textPrimary,
                         fontFamily: 'Inter_400Regular',
-                        height: '100%', // Ensure it fills container height logic
-                        outline: 'none', // For web
+                        height: '100%',
+                        outline: 'none',
+                        minWidth: 0, // Prevent overflow in flex items on Web
                     } as any}
                     {...rest}
                 />

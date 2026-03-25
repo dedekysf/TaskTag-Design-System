@@ -26,11 +26,13 @@ export default function JoinTasktagSignup() {
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const passwordRef = useRef<any>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [firstNameError, setFirstNameError] = useState('');
   const [lastNameError, setLastNameError] = useState('');
+  const [emailStateError, setEmailStateError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [isProjectNameHovered, setIsProjectNameHovered] = useState(false);
@@ -40,19 +42,20 @@ export default function JoinTasktagSignup() {
   const validUppercase = /[A-Z]/.test(password);
   const validSpecial = /[!@#$%^&*]/.test(password);
 
-  const emailError = REGISTERED_EMAILS.includes(INVITE.email)
-    ? 'This email is already registered. Please log in instead.'
+  const emailError = (REGISTERED_EMAILS.includes(email) || emailStateError)
+    ? (emailStateError || 'This email is already registered. Please log in instead.')
     : '';
 
   const isFormValid =
+    email.trim() !== '' &&
+    !emailError &&
     firstName.trim() !== '' &&
     lastName.trim() !== '' &&
     password.trim() !== '' &&
     validLength &&
     validNumber &&
     validUppercase &&
-    validSpecial &&
-    !emailError;
+    validSpecial;
 
   const handleSubmit = () => {
     let valid = true;
@@ -71,6 +74,16 @@ export default function JoinTasktagSignup() {
       setLastNameError('');
     }
 
+    if (!email.trim()) {
+      setEmailStateError('Email is required.');
+      valid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setEmailStateError('Invalid email address.');
+      valid = false;
+    } else {
+      setEmailStateError('');
+    }
+
     if (!password) {
       setPasswordError('Password is required.');
       valid = false;
@@ -84,7 +97,7 @@ export default function JoinTasktagSignup() {
     if (!valid || emailError) return;
 
     // Simulate join API wait, then redirect to dashboard showing the modal
-    router.push('/prototype/join-project-non-user/project-dashboard');
+    router.push('/prototype/join-project-non-user-by-link/project-dashboard');
   };
 
   const shadowStyle = Platform.select({
@@ -119,16 +132,13 @@ export default function JoinTasktagSignup() {
         </Text>
         <Box flexDirection="row" justifyContent="center" flexWrap="wrap" marginBottom="16">
           <Text variant="webMetadataPrimary" color="mutedForeground">
-            {"You've been invited to this project by "}
-          </Text>
-          <Text variant="webMetadataPrimary" color="foreground" fontWeight="700">
-            {INVITE.inviterName}
+            {"You've been shared a project on TaskTag"}
           </Text>
         </Box>
 
         {/* Context banner */}
         <Box
-          backgroundColor="lightMint"
+          backgroundColor="lightSky"
           alignItems="flex-start"
           padding="md"
           borderRadius="xl"
@@ -138,7 +148,7 @@ export default function JoinTasktagSignup() {
           zIndex="10"
         >
           <Pressable
-            onPress={() => router.push('/prototype/join-project-non-user/join-tasktag')}
+            onPress={() => router.push('/prototype/join-project-non-user-by-link/join-tasktag')}
             onHoverIn={() => setIsProjectNameHovered(true)}
             onHoverOut={() => setIsProjectNameHovered(false)}
             style={({ pressed }) => [
@@ -154,7 +164,7 @@ export default function JoinTasktagSignup() {
               <Text
                 variant="webLabelEmphasized"
                 style={{
-                  color: (pressed || isProjectNameHovered) ? theme.colors.secondaryGreen : theme.colors.foreground
+                  color: (pressed || isProjectNameHovered) ? '#138eff' : theme.colors.foreground
                 }}
               >
                 {INVITE.projectName}
@@ -170,33 +180,20 @@ export default function JoinTasktagSignup() {
 
           <Box flexDirection="row" alignItems="center" gap="4">
             <Text variant="webSecondaryBody" color="mutedForeground">Your Role : </Text>
-            <Tooltip
-              variant="bottom-left"
-              content={
-                <View style={{ gap: 4 }}>
-                  {['View and manage tasks', 'Upload files & media', 'Collaborate with team', 'Track project progress'].map((item, i) => (
-                    <Text key={i} style={{ color: theme.colors.white, fontSize: 12, fontFamily: 'Inter_400Regular' }}>
-                      {'• '}{item}
-                    </Text>
-                  ))}
-                </View>
-              }
-            >
-              <Box borderBottomWidth={1} borderColor="foreground" style={{ borderStyle: 'dotted' }}>
-                <Text variant="webSecondaryBody" color="foreground" fontWeight="700">Editor</Text>
-              </Box>
-            </Tooltip>
+            <Text variant="webSecondaryBody" color="foreground" fontWeight="700">
+              Viewer <Text variant="webMetadataPrimary" fontWeight="400" style={{ fontStyle: 'italic' }}>(Pending Approval)</Text>
+            </Text>
           </Box>
         </Box>
 
         <Box marginBottom="md">
-          {/* Email — pre-filled and locked */}
+          {/* Email */}
           <Box marginBottom="24">
             <TextInput
               label="Email"
-              value={INVITE.email}
-              disabled
-              showClearButton={false}
+              placeholder="johndoe@tasktag.com"
+              value={email}
+              onChangeText={setEmail}
               errorMessage={emailError}
             />
             <Text variant="webMetadataSecondary" color="mutedForeground" style={{ marginTop: -8 }}>
@@ -324,7 +321,7 @@ export default function JoinTasktagSignup() {
           onPress={handleSubmit}
           disabled={!isFormValid}
         >
-          Join This Project
+          Request to Join
         </Button>
 
         <Box marginTop="16" alignItems="center">

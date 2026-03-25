@@ -13,6 +13,7 @@ import {
   MessageSquare,
   Plus,
   Search,
+  Share,
   UserPlus,
   Users
 } from 'lucide-react-native';
@@ -242,34 +243,34 @@ export default function JoinTasktag() {
           {/* ── Tab Content ── */}
           {activeTab === 'members' ? (
             <Box flex={1} style={{ position: 'relative', minHeight: 520 }}>
-                  <Box
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    zIndex: 10,
-                    backdropFilter: 'blur(2px)',
-                    backgroundColor: 'rgba(247, 248, 250, 0.5)',
-                  } as any}
-                >
-                  <Box flex={1} justifyContent="center" alignItems="center" gap="16">
-                    <UserPlus size={40} color={theme.colors.textSecondary} strokeWidth={1.5} />
-                    <Box minHeight={64} justifyContent="center" width="100%">
-                      <Text variant="webHeading22" color="foreground" textAlign="center" style={{ fontWeight: '400' }}>
-                        {"You've been invited to this project by "}
-                        <Text variant="webHeading22" fontWeight="700">James Hammer</Text>
-                      </Text>
-                    </Box>
-                    <Button
-                      variant="fill"
-                      size="lg"
-                      style={{ borderRadius: 40, minWidth: 220, backgroundColor: theme.colors.foreground }}
-                      onPress={() => router.push('/prototype/join-project-non-user/join-tasktag-signup')}
-                    >
-                      <Text color="white" variant="labelMedium">Join This Project</Text>
-                    </Button>
+              {/* ── Overlay ── */}
+              <Box
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  zIndex: 10,
+                  backdropFilter: 'blur(2px)',
+                  backgroundColor: 'rgba(247, 248, 250, 0.5)',
+                } as any}
+              >
+                <Box flex={1} justifyContent="center" alignItems="center" gap="16">
+                  <Share size={40} color={theme.colors.textSecondary} strokeWidth={1.5} />
+                  <Box minHeight={64} justifyContent="center" width="100%">
+                    <Text variant="webHeading22" color="foreground" textAlign="center" style={{ fontWeight: '400' }}>
+                      {"You've been shared a project on TaskTag"}
+                    </Text>
+                  </Box>
+                  <Button
+                    variant="fill"
+                    size="lg"
+                    style={{ borderRadius: 40, minWidth: 220, backgroundColor: theme.colors.foreground }}
+                    onPress={() => router.push('/prototype/join-project-non-user-by-link/join-tasktag-signup')}
+                  >
+                    <Text color="white" variant="labelMedium">Request to Join</Text>
+                  </Button>
                 </Box>
               </Box>
 
@@ -295,8 +296,6 @@ export default function JoinTasktag() {
 
               {/* ── Members Table ── */}
               <Box>
-
-                {/* Table column headers: Name, Skills, Role only */}
                 <Box
                   flexDirection="row"
                   alignItems="center"
@@ -311,7 +310,6 @@ export default function JoinTasktag() {
                   <Text variant="webBody" color="textSecondary" style={{ flex: 2 }}>Role</Text>
                 </Box>
 
-                {/* Member rows (7 active) */}
                 {[
                   { name: 'James Hammer', skills: [], role: 'Owner', avatarColor: '#18a87d', avatarBg: '#dcf2ec' },
                   { name: 'John Doe', skills: ['Carpenter'], role: 'Editor', avatarColor: '#7b61ff', avatarBg: '#ebe7ff' },
@@ -330,7 +328,6 @@ export default function JoinTasktag() {
                     borderBottomWidth={idx === arr.length - 1 ? 0 : 1}
                     borderColor="border"
                   >
-                    {/* Name + avatar */}
                     <Box style={{ flex: 3 }} flexDirection="row" alignItems="center" gap="12">
                       <Box
                         width={32}
@@ -347,7 +344,6 @@ export default function JoinTasktag() {
                       <Text variant="webBody" color="textSecondary">{member.name}</Text>
                     </Box>
 
-                    {/* Skills */}
                     <Box style={{ flex: 3 }}>
                       {member.skills.length === 0 ? (
                         <Text variant="webBody" color="textSecondary">-</Text>
@@ -363,15 +359,14 @@ export default function JoinTasktag() {
                       )}
                     </Box>
 
-                    {/* Role */}
                     <Box style={{ flex: 2 }}>
                       <Text variant="webBody" color="textSecondary">{member.role}</Text>
                     </Box>
                   </Box>
                 ))}
               </Box>
-              </Box>
-            ) : (
+            </Box>
+          ) : (
             /* ── Default Tab Content (Empty State) ── */
             <Box
               flex={1}
@@ -383,20 +378,19 @@ export default function JoinTasktag() {
                 backgroundImage: 'linear-gradient(to bottom, #FFFFFF, #F7F8FA)',
               } as any}
             >
-              <UserPlus size={40} color={theme.colors.textSecondary} strokeWidth={1.5} />
+              <Share size={40} color={theme.colors.textSecondary} strokeWidth={1.5} />
               <Box minHeight={64} justifyContent="center" width="100%">
                 <Text variant="webHeading22" color="foreground" textAlign="center" style={{ fontWeight: '400' }}>
-                  {"You've been invited to this project by "}
-                  <Text variant="webHeading22" fontWeight="700">James Hammer</Text>
+                  {"You've been shared a project on TaskTag"}
                 </Text>
               </Box>
               <Button
                 variant="fill"
                 size="lg"
                 style={{ borderRadius: 40, minWidth: 220, backgroundColor: theme.colors.foreground }}
-                onPress={() => router.push('/prototype/join-project-non-user/join-tasktag-signup')}
+                onPress={() => router.push('/prototype/join-project-non-user-by-link/join-tasktag-signup')}
               >
-                <Text color="white" variant="labelMedium">Join This Project</Text>
+                <Text color="white" variant="labelMedium">Request to Join</Text>
               </Button>
             </Box>
           )}

@@ -38,6 +38,7 @@ import {
   Send,
   Smile,
   SortDesc,
+  TriangleAlert,
   UserCheck,
   UserPlus,
   Users,
@@ -242,7 +243,13 @@ export function TableSection({
 
 // ─── Main Layout ─────────────────────────────────────────────────────────────
 
-export default function ProjectDashboardBase({ modalVariant = 'non-user' }: { modalVariant?: 'non-user' | 'tt-user' }) {
+export default function ProjectDashboardBase({
+  modalVariant = 'non-user',
+  viewVariant = 'default',
+}: {
+  modalVariant?: 'non-user' | 'tt-user';
+  viewVariant?: 'default' | 'pending';
+}) {
   const theme = useTheme<Theme>();
   const [activeTab, setActiveTab] = useState('tasks');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -368,9 +375,22 @@ export default function ProjectDashboardBase({ modalVariant = 'non-user' }: { mo
             </Box>
             <Box flexDirection="row" alignItems="center" gap="16">
               <Pressable hitSlop={8}><Search size={22} color={theme.colors.grey05} /></Pressable>
-              <Pressable style={{ flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#000', borderRadius: 40, paddingHorizontal: 16, paddingVertical: 10, minWidth: 120, justifyContent: 'center' }}>
-                <Plus size={18} color="#fff" />
-                <Text style={{ fontSize: 14, fontWeight: '600', color: '#fff' }}>New Task</Text>
+              <Pressable
+                disabled={viewVariant === 'pending'}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 8,
+                  backgroundColor: viewVariant === 'pending' ? theme.colors.grey02 : '#000',
+                  borderRadius: 40,
+                  paddingHorizontal: 16,
+                  paddingVertical: 10,
+                  minWidth: 120,
+                  justifyContent: 'center',
+                }}
+              >
+                <Plus size={18} color={viewVariant === 'pending' ? theme.colors.grey05 : "#fff"} />
+                <Text style={{ fontSize: 13, fontWeight: '500', color: viewVariant === 'pending' ? theme.colors.grey05 : "#fff" }}>New Task</Text>
               </Pressable>
             </Box>
           </Box>
@@ -418,10 +438,21 @@ export default function ProjectDashboardBase({ modalVariant = 'non-user' }: { mo
             </ScrollView>
             <Box flexDirection="row" alignItems="center" gap="md" style={{ paddingLeft: 16 }}>
               <Pressable hitSlop={8}><Link size={20} color={theme.colors.textSecondary} /></Pressable>
-              <Button variant="outline" color="secondary" size="sm" style={{ borderRadius: 40, minWidth: 120 }}>
+              <Button
+                variant="outline"
+                color="secondary"
+                size="sm"
+                disabled={viewVariant === 'pending'}
+                style={{
+                  borderRadius: 40,
+                  minWidth: 120,
+                  borderColor: viewVariant === 'pending' ? theme.colors.border : theme.colors.secondary,
+                  backgroundColor: 'transparent'
+                }}
+              >
                 <Box flexDirection="row" alignItems="center" style={{ gap: 8 }}>
-                  <UserPlus size={16} color={theme.colors.textSecondary} />
-                  <Text variant="labelMedium" color="textSecondary">Invite</Text>
+                  <UserPlus size={16} color={viewVariant === 'pending' ? theme.colors.grey04 : theme.colors.textSecondary} />
+                  <Text variant="labelMedium" color={viewVariant === 'pending' ? "grey04" : "textSecondary"}>Invite</Text>
                 </Box>
               </Button>
             </Box>
@@ -440,9 +471,44 @@ export default function ProjectDashboardBase({ modalVariant = 'non-user' }: { mo
           </Box>
 
           <Box style={{ paddingTop: 12 }}>
-            <TableSection title="Current" badge={CURRENT_TASKS.length} tasks={CURRENT_TASKS} showAddRow defaultOpen />
-            <TableSection title="Overdue" tasks={[]} defaultOpen={false} />
-            <TableSection title="Completed" tasks={[]} defaultOpen={false} />
+            {viewVariant === 'pending' ? (
+              <Box
+                flex={1}
+                alignItems="center"
+                justifyContent="center"
+                minHeight={520}
+                gap="16"
+              >
+                <UserPlus size={40} color={theme.colors.textSecondary} strokeWidth={1.5} />
+                <Box minHeight={64} justifyContent="center" width="100%">
+                  <Text variant="webHeading22" color="foreground" textAlign="center" style={{ fontWeight: '400' }}>
+                    You’re not a member of this project
+                  </Text>
+                </Box>
+                <Button
+                  variant="fill"
+                  disabled
+                  style={{
+                    backgroundColor: theme.colors.grey02,
+                    borderRadius: 40,
+                    minWidth: 220,
+                    height: 54, // Looks a bit taller/larger in screenshot
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 12,
+                  }}
+                >
+                  <UserCheck size={20} color={theme.colors.grey05} />
+                  <Text style={{ color: theme.colors.grey05, fontSize: 18, fontWeight: '500' }}>Pending Request</Text>
+                </Button>
+              </Box>
+            ) : (
+              <>
+                <TableSection title="Current" badge={CURRENT_TASKS.length} tasks={CURRENT_TASKS} showAddRow defaultOpen />
+                <TableSection title="Overdue" tasks={[]} defaultOpen={false} />
+                <TableSection title="Completed" tasks={[]} defaultOpen={false} />
+              </>
+            )}
           </Box>
 
         </ScrollView>
@@ -545,7 +611,7 @@ export default function ProjectDashboardBase({ modalVariant = 'non-user' }: { mo
       </Pressable>
 
       {/* ── Modal: Project Onboarding 5 ── */}
-      {modalVisible && (
+      {modalVisible && viewVariant !== 'pending' && (
         <Box style={{ position: 'absolute' as any, right: 550 + 72 + 16, bottom: 16, zIndex: 50 }}>
           <Box backgroundColor="card" width={440} style={{ borderRadius: 16, padding: 24, ...Platform.select({ web: { boxShadow: '0px 5px 12px rgba(0,0,0,0.1)' } as any, default: { elevation: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.1, shadowRadius: 12 } }) }}>
             <Box flexDirection="row" alignItems="center" gap="8" style={{ marginBottom: 24 }}>
