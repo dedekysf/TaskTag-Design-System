@@ -1,13 +1,12 @@
 import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
 import { TextInput } from '@/components/TextInput';
-import { Tooltip } from '@/components/Tooltip';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import { AlertTriangle, Check, Eye, EyeOff, MapPin } from 'lucide-react-native';
 import { router } from 'expo-router';
+import { AlertTriangle, Check, Eye, EyeOff, MapPin } from 'lucide-react-native';
 import React, { useRef, useState } from 'react';
-import { Image, Platform, Pressable, TextInput as RNTextInput, ScrollView, View } from 'react-native';
+import { Image, Platform, Pressable, TextInput as RNTextInput, ScrollView } from 'react-native';
 
 // Simulated invite token data
 const INVITE = {
@@ -36,6 +35,8 @@ export default function JoinTasktagSignup() {
   const [passwordError, setPasswordError] = useState('');
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [isProjectNameHovered, setIsProjectNameHovered] = useState(false);
+  const [isGoogleHovered, setIsGoogleHovered] = useState(false);
+  const [isAppleHovered, setIsAppleHovered] = useState(false);
 
   const validLength = password.length >= 8;
   const validNumber = /\d/.test(password);
@@ -323,6 +324,71 @@ export default function JoinTasktagSignup() {
         >
           Request to Join
         </Button>
+
+        {/* Social Join Section */}
+        <Box marginTop="24" marginBottom="24" alignItems="center">
+          <Box flexDirection="row" alignItems="center" width="100%" gap="12">
+            <Box flex={1} height={1} backgroundColor="border" />
+            <Text variant="webMetadataPrimary" color="mutedForeground">or join project with</Text>
+            <Box flex={1} height={1} backgroundColor="border" />
+          </Box>
+
+          <Box flexDirection="row" gap="md" width="100%" marginTop="20">
+            <Pressable
+              onHoverIn={() => setIsGoogleHovered(true)}
+              onHoverOut={() => setIsGoogleHovered(false)}
+              style={({ pressed }) => [
+                {
+                  flex: 1,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: 52,
+                  borderRadius: 8,
+                  borderWidth: 1,
+                  borderColor: theme.colors.border,
+                  backgroundColor: isGoogleHovered ? theme.colors.grey01 : theme.colors.card,
+                  gap: 12,
+                  opacity: pressed ? 0.8 : 1,
+                } as any,
+                Platform.OS === 'web' && { cursor: 'pointer' } as any
+              ]}
+            >
+              <Image
+                source={require('@/assets/images/google-logo.svg')}
+                style={{ width: 22, height: 22, resizeMode: 'contain' }}
+              />
+              <Text variant="labelMedium" color="foreground">Google</Text>
+            </Pressable>
+
+            <Pressable
+              onHoverIn={() => setIsAppleHovered(true)}
+              onHoverOut={() => setIsAppleHovered(false)}
+              style={({ pressed }) => [
+                {
+                  flex: 1,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: 52,
+                  borderRadius: 8,
+                  borderWidth: 1,
+                  borderColor: theme.colors.border,
+                  backgroundColor: isAppleHovered ? theme.colors.grey01 : theme.colors.card,
+                  gap: 12,
+                  opacity: pressed ? 0.8 : 1,
+                } as any,
+                Platform.OS === 'web' && { cursor: 'pointer' } as any
+              ]}
+            >
+              <Image
+                source={require('@/assets/images/apple-logo.svg')}
+                style={{ width: 22, height: 22, resizeMode: 'contain' }}
+              />
+              <Text variant="labelMedium" color="foreground">Apple</Text>
+            </Pressable>
+          </Box>
+        </Box>
 
         <Box marginTop="16" alignItems="center">
           <Text variant="webMetadataPrimary" color="textSecondary">
