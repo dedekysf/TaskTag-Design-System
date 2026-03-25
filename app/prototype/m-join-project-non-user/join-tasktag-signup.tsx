@@ -1,12 +1,13 @@
 import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
 import { TextInput } from '@/components/TextInput';
+import { Tooltip } from '@/components/Tooltip';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import { router } from 'expo-router';
 import { AlertTriangle, Check, Eye, EyeOff, MapPin } from 'lucide-react-native';
+import { router } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
-import { Image, Platform, Pressable, TextInput as RNTextInput, ScrollView } from 'react-native';
+import { Image, Platform, Pressable, TextInput as RNTextInput, ScrollView, View } from 'react-native';
 
 // Simulated invite token data
 const INVITE = {
@@ -25,20 +26,16 @@ export default function JoinTasktagSignup() {
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const passwordRef = useRef<any>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [firstNameError, setFirstNameError] = useState('');
   const [lastNameError, setLastNameError] = useState('');
-  const [emailStateError, setEmailStateError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [hasTouchedPassword, setHasTouchedPassword] = useState(false);
   const [hasTypedPassword, setHasTypedPassword] = useState(false);
   const [isProjectNameHovered, setIsProjectNameHovered] = useState(false);
-  const [isGoogleHovered, setIsGoogleHovered] = useState(false);
-  const [isAppleHovered, setIsAppleHovered] = useState(false);
 
   useEffect(() => {
     if (password.length > 0) {
@@ -56,20 +53,19 @@ export default function JoinTasktagSignup() {
   const validUppercase = /[A-Z]/.test(password);
   const validSpecial = /[!@#$%^&*]/.test(password);
 
-  const emailError = (REGISTERED_EMAILS.includes(email) || emailStateError)
-    ? (emailStateError || 'This email is already registered. Please log in instead.')
+  const emailError = REGISTERED_EMAILS.includes(INVITE.email)
+    ? 'This email is already registered. Please log in instead.'
     : '';
 
   const isFormValid =
-    email.trim() !== '' &&
-    !emailError &&
     firstName.trim() !== '' &&
     lastName.trim() !== '' &&
     password.trim() !== '' &&
     validLength &&
     validNumber &&
     validUppercase &&
-    validSpecial;
+    validSpecial &&
+    !emailError;
 
   const handleSubmit = () => {
     let valid = true;
@@ -88,16 +84,6 @@ export default function JoinTasktagSignup() {
       setLastNameError('');
     }
 
-    if (!email.trim()) {
-      setEmailStateError('Email is required.');
-      valid = false;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setEmailStateError('Invalid email address.');
-      valid = false;
-    } else {
-      setEmailStateError('');
-    }
-
     if (!password) {
       setPasswordError('Password is required.');
       valid = false;
@@ -111,19 +97,13 @@ export default function JoinTasktagSignup() {
     if (!valid || emailError) return;
 
     // Simulate join API wait, then redirect to dashboard showing the modal
-    router.push('/prototype/join-project-non-user-by-link/project-dashboard');
+    router.push('/prototype/m-join-project-non-user/download-app');
   };
-
-  const shadowStyle = Platform.select({
-    web: { boxShadow: 'rgba(0, 0, 0, 0.05) 0px 1px 3px 0px' } as any,
-    ios: { shadowColor: theme.colors.black, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 3 },
-    android: { elevation: 1 },
-  });
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: theme.colors.grey02 }}
-      contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: theme.spacing.lg }}
+      style={{ flex: 1, backgroundColor: theme.colors.background }}
+      contentContainerStyle={{ flexGrow: 1, alignItems: 'center', paddingHorizontal: 16, paddingVertical: 24 }}
     >
       <Box alignItems="center" width="100%" maxWidth={480} marginBottom="lg">
         <Image
@@ -132,27 +112,23 @@ export default function JoinTasktagSignup() {
         />
       </Box>
 
-      <Box
-        backgroundColor="card"
-        width="100%"
-        maxWidth={480}
-        borderRadius="16"
-        padding="24"
-        style={shadowStyle}
-      >
+      <Box width="100%" maxWidth={480}>
         {/* Heading */}
         <Text variant="h2" textAlign="center" marginBottom="4">
           Create an account
         </Text>
         <Box flexDirection="row" justifyContent="center" flexWrap="wrap" marginBottom="16">
           <Text variant="webMetadataPrimary" color="mutedForeground">
-            {"You've been shared a project on TaskTag"}
+            {"You've been invited to this project by "}
+          </Text>
+          <Text variant="webMetadataPrimary" color="foreground" fontWeight="700">
+            {INVITE.inviterName}
           </Text>
         </Box>
 
         {/* Context banner */}
         <Box
-          backgroundColor="lightSky"
+          backgroundColor="lightMint"
           alignItems="flex-start"
           padding="md"
           borderRadius="xl"
@@ -162,7 +138,7 @@ export default function JoinTasktagSignup() {
           zIndex="10"
         >
           <Pressable
-            onPress={() => router.push('/prototype/join-project-non-user-by-link/join-tasktag')}
+            onPress={() => router.push('/prototype/m-join-project-non-user/join-tasktag')}
             onHoverIn={() => setIsProjectNameHovered(true)}
             onHoverOut={() => setIsProjectNameHovered(false)}
             style={({ pressed }) => [
@@ -178,7 +154,7 @@ export default function JoinTasktagSignup() {
               <Text
                 variant="webLabelEmphasized"
                 style={{
-                  color: (pressed || isProjectNameHovered) ? '#138eff' : theme.colors.foreground
+                  color: (pressed || isProjectNameHovered) ? theme.colors.secondaryGreen : theme.colors.foreground
                 }}
               >
                 {INVITE.projectName}
@@ -194,20 +170,34 @@ export default function JoinTasktagSignup() {
 
           <Box flexDirection="row" alignItems="center" gap="4">
             <Text variant="webSecondaryBody" color="mutedForeground">Your Role : </Text>
-            <Text variant="webSecondaryBody" color="foreground" fontWeight="700">
-              Viewer <Text variant="webMetadataPrimary" fontWeight="400" style={{ fontStyle: 'italic' }}>(Pending Approval)</Text>
-            </Text>
+            <Tooltip
+              variant="bottom-left"
+              trigger="press"
+              content={
+                <View style={{ gap: 4 }}>
+                  {['View and manage tasks', 'Upload files & media', 'Collaborate with team', 'Track project progress'].map((item, i) => (
+                    <Text key={i} style={{ color: theme.colors.white, fontSize: 12, fontFamily: 'Inter_400Regular' }}>
+                      {'• '}{item}
+                    </Text>
+                  ))}
+                </View>
+              }
+            >
+              <Box borderBottomWidth={1} borderColor="foreground" style={{ borderStyle: 'dotted' }}>
+                <Text variant="webSecondaryBody" color="foreground" fontWeight="700">Editor</Text>
+              </Box>
+            </Tooltip>
           </Box>
         </Box>
 
         <Box marginBottom="md">
-          {/* Email */}
+          {/* Email — pre-filled and locked */}
           <Box marginBottom="24">
             <TextInput
               label="Email"
-              placeholder="johndoe@tasktag.com"
-              value={email}
-              onChangeText={setEmail}
+              value={INVITE.email}
+              disabled
+              showClearButton={false}
               errorMessage={emailError}
             />
             <Text variant="webMetadataSecondary" color="mutedForeground" style={{ marginTop: -8 }}>
@@ -216,7 +206,7 @@ export default function JoinTasktagSignup() {
           </Box>
 
           {/* Name Row */}
-          <Box flexDirection="row" gap="md" marginBottom="12">
+          <Box flexDirection="row" gap="md" marginBottom="8">
             <Box flex={1}>
               <TextInput
                 label="First Name"
@@ -338,75 +328,10 @@ export default function JoinTasktagSignup() {
           onPress={handleSubmit}
           disabled={!isFormValid}
         >
-          Request to Join
+          Join This Project
         </Button>
 
-        {/* Social Join Section */}
-        <Box marginTop="24" marginBottom="24" alignItems="center">
-          <Box flexDirection="row" alignItems="center" width="100%" gap="12">
-            <Box flex={1} height={1} backgroundColor="border" />
-            <Text variant="webMetadataPrimary" color="mutedForeground">or join project with</Text>
-            <Box flex={1} height={1} backgroundColor="border" />
-          </Box>
-
-          <Box flexDirection="row" gap="md" width="100%" marginTop="20">
-            <Pressable
-              onHoverIn={() => setIsGoogleHovered(true)}
-              onHoverOut={() => setIsGoogleHovered(false)}
-              style={({ pressed }) => [
-                {
-                  flex: 1,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: 52,
-                  borderRadius: 8,
-                  borderWidth: 1,
-                  borderColor: theme.colors.border,
-                  backgroundColor: isGoogleHovered ? theme.colors.grey01 : theme.colors.card,
-                  gap: 12,
-                  opacity: pressed ? 0.8 : 1,
-                } as any,
-                Platform.OS === 'web' && { cursor: 'pointer' } as any
-              ]}
-            >
-              <Image
-                source={require('@/assets/images/google-logo.svg')}
-                style={{ width: 22, height: 22, resizeMode: 'contain' }}
-              />
-              <Text variant="labelMedium" color="foreground">Google</Text>
-            </Pressable>
-
-            <Pressable
-              onHoverIn={() => setIsAppleHovered(true)}
-              onHoverOut={() => setIsAppleHovered(false)}
-              style={({ pressed }) => [
-                {
-                  flex: 1,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: 52,
-                  borderRadius: 8,
-                  borderWidth: 1,
-                  borderColor: theme.colors.border,
-                  backgroundColor: isAppleHovered ? theme.colors.grey01 : theme.colors.card,
-                  gap: 12,
-                  opacity: pressed ? 0.8 : 1,
-                } as any,
-                Platform.OS === 'web' && { cursor: 'pointer' } as any
-              ]}
-            >
-              <Image
-                source={require('@/assets/images/apple-logo.svg')}
-                style={{ width: 22, height: 22, resizeMode: 'contain' }}
-              />
-              <Text variant="labelMedium" color="foreground">Apple</Text>
-            </Pressable>
-          </Box>
-        </Box>
-
-        <Box marginTop="16" alignItems="center">
+        <Box marginTop="16" marginBottom="48" alignItems="center">
           <Text variant="webMetadataPrimary" color="textSecondary">
             Already have an account?{' '}
             <Text

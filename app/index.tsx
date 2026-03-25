@@ -12,6 +12,7 @@ interface PrototypeCardProps {
     jiraTicket: string;
     jiraLabel: string;
     route: string;
+    platform?: 'Web' | 'Mobile';
   };
   theme: Theme;
 }
@@ -61,7 +62,7 @@ function PrototypeCard({ item, theme }: PrototypeCardProps) {
               marginBottom="xs"
               style={{ borderWidth: 1, borderColor: theme.colors.border }}
             >
-              <Text style={{ fontSize: 10, fontWeight: '700', color: theme.colors.textSecondary, textTransform: 'uppercase' }}>Web</Text>
+              <Text style={{ fontSize: 10, fontWeight: '700', color: theme.colors.textSecondary, textTransform: 'uppercase' }}>{item.platform || 'Web'}</Text>
             </Box>
           )}
           <Text variant="webLabelEmphasized" marginBottom="sm">{item.title}</Text>
@@ -101,7 +102,6 @@ function PrototypeCard({ item, theme }: PrototypeCardProps) {
 
 export default function PrototypeIndex() {
   const theme = useTheme<Theme>();
-
   const prototypes = [
     {
       title: 'Design System',
@@ -119,21 +119,31 @@ export default function PrototypeIndex() {
       title: 'Join Project Non User',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-302?atlOrigin=eyJpIjoiNTk4MTIzZDUxOGVmNDYxN2IyOGNmZTkzYTQzOGQ2MjAiLCJwIjoiaiJ9',
       jiraLabel: 'TD-302',
-      route: '/prototype/join-project-non-user'
+      route: '/prototype/join-project-non-user',
+      platform: 'Web'
     },
     {
       title: 'Join Project TT User',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-302?atlOrigin=eyJpIjoiNTk4MTIzZDUxOGVmNDYxN2IyOGNmZTkzYTQzOGQ2MjAiLCJwIjoiaiJ9',
       jiraLabel: 'TD-302',
-      route: '/prototype/join-project-tt-user'
+      route: '/prototype/join-project-tt-user',
+      platform: 'Web'
     },
     {
       title: 'Join Project Non User by Link',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-303?atlOrigin=eyJpIjoiZDE1Yzk1MzExNDhjNGEwZWEwZTk0YjE3NTk2NGRmZGQiLCJwIjoiaiJ9',
       jiraLabel: 'TD-303',
-      route: '/prototype/join-project-non-user-by-link'
+      route: '/prototype/join-project-non-user-by-link',
+      platform: 'Web'
+    },
+    {
+      title: 'Join Project Non User',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-304?atlOrigin=eyJpIjoiOTI4NjRmN2ZlMzk0NDAwNDgwMWFiMWZmNjkzYWNjMzYiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-304',
+      route: '/prototype/m-join-project-non-user',
+      platform: 'Mobile'
     }
-  ];
+  ] as const;
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }}>

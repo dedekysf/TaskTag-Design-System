@@ -37,6 +37,8 @@ interface TooltipProps {
     disabled?: boolean;
     /** Custom style */
     style?: ViewStyle;
+    /** Trigger mode: hover (default) or press */
+    trigger?: 'hover' | 'press';
 }
 
 // Size configurations matching reference
@@ -68,6 +70,7 @@ export function Tooltip({
     fullWidth = false,
     disabled = false,
     style,
+    trigger = 'hover',
 }: TooltipProps) {
     const theme = useTheme<Theme>();
     const [isVisible, setIsVisible] = useState(false);
@@ -75,26 +78,32 @@ export function Tooltip({
     const currentSize = sizeConfig[size];
 
     const handlePressIn = () => {
-        if (!disabled) {
+        if (!disabled && trigger !== 'press') {
             setIsVisible(true);
         }
     };
 
     const handlePressOut = () => {
-        if (!disabled) {
+        if (!disabled && trigger !== 'press') {
             setIsVisible(false);
+        }
+    };
+
+    const handlePress = () => {
+        if (!disabled && trigger === 'press') {
+            setIsVisible(!isVisible);
         }
     };
 
     // Web specific handlers
     const handleMouseEnter = () => {
-        if (Platform.OS === 'web' && !disabled) {
+        if (Platform.OS === 'web' && !disabled && trigger !== 'press') {
             setIsVisible(true);
         }
     };
 
     const handleMouseLeave = () => {
-        if (Platform.OS === 'web' && !disabled) {
+        if (Platform.OS === 'web' && !disabled && trigger !== 'press') {
             setIsVisible(false);
         }
     };
@@ -173,6 +182,7 @@ export function Tooltip({
     return (
         <View style={[{ position: 'relative', zIndex: shouldShow ? 9999 : 1, alignSelf: fullWidth ? 'stretch' : 'flex-start' }, style]}>
             <Pressable
+                onPress={handlePress}
                 onPressIn={handlePressIn}
                 onPressOut={handlePressOut}
                 onLayout={handleLayout}

@@ -6,7 +6,7 @@ import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import { AlertTriangle, Check, Eye, EyeOff, MapPin } from 'lucide-react-native';
 import { router } from 'expo-router';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Image, Platform, Pressable, TextInput as RNTextInput, ScrollView, View } from 'react-native';
 
 // Simulated invite token data
@@ -33,7 +33,20 @@ export default function JoinTasktagSignup() {
   const [lastNameError, setLastNameError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [hasTouchedPassword, setHasTouchedPassword] = useState(false);
+  const [hasTypedPassword, setHasTypedPassword] = useState(false);
   const [isProjectNameHovered, setIsProjectNameHovered] = useState(false);
+
+  useEffect(() => {
+    if (password.length > 0) {
+      setHasTypedPassword(true);
+      if (passwordError === 'Password is required.') {
+        setPasswordError('');
+      }
+    } else if (hasTypedPassword && password === '') {
+      setPasswordError('Password is required.');
+    }
+  }, [password, hasTypedPassword, passwordError]);
 
   const validLength = password.length >= 8;
   const validNumber = /\d/.test(password);
@@ -253,7 +266,10 @@ export default function JoinTasktagSignup() {
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
-                onFocus={() => setIsPasswordFocused(true)}
+                onFocus={() => {
+                  setIsPasswordFocused(true);
+                  setHasTouchedPassword(true);
+                }}
                 onBlur={() => setIsPasswordFocused(false)}
                 style={{
                   flex: 1,
@@ -271,8 +287,8 @@ export default function JoinTasktagSignup() {
                 style={{ padding: theme.spacing['4'], marginLeft: theme.spacing['8'] }}
               >
                 {showPassword
-                  ? <EyeOff size={18} color={theme.colors.grey05} />
-                  : <Eye size={18} color={theme.colors.grey05} />
+                  ? <Eye size={18} color={theme.colors.grey05} />
+                  : <EyeOff size={18} color={theme.colors.grey05} />
                 }
               </Pressable>
             </Box>
@@ -285,7 +301,7 @@ export default function JoinTasktagSignup() {
               </Box>
             ) : null}
 
-            {isPasswordFocused && (
+            {(isPasswordFocused || hasTouchedPassword) && (
               <Box gap="4" marginTop="12">
                 <Text variant="webMetadataPrimary" color="textSecondary">Your password must contain:</Text>
                 {[
