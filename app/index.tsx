@@ -142,6 +142,13 @@ export default function PrototypeIndex() {
       jiraLabel: 'TD-304',
       route: '/prototype/m-join-project-non-user',
       platform: 'Mobile'
+    },
+    {
+      title: 'Join Project TT User',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-304?atlOrigin=eyJpIjoiOTI4NjRmN2ZlMzk0NDAwNDgwMWFiMWZmNjkzYWNjMzYiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-304',
+      route: '/prototype/m-join-project-tt-user',
+      platform: 'Mobile'
     }
   ] as const;
 
