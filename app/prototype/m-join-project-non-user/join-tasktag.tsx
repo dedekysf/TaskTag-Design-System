@@ -25,7 +25,7 @@ export default function JoinTasktag() {
           
           {/* Top Card */}
           <Box
-            style={{ backgroundColor: '#7B61FF' }}
+            style={{ backgroundColor: theme.colors.purple }}
             borderRadius="16"
             padding="16"
             marginBottom="12"
@@ -78,7 +78,7 @@ export default function JoinTasktag() {
                   borderRadius="full"
                   alignItems="center"
                   justifyContent="center"
-                  style={{ backgroundColor: '#cc7351' }}
+                  style={{ backgroundColor: theme.colors.pastelOrange }}
                 >
                   <Text variant="webMetadataSecondary" color="white" textAlign="center" style={{ width: 24, lineHeight: 24 }}>
                     AS
@@ -171,15 +171,14 @@ export default function JoinTasktag() {
           </Box>
 
           {/* Alert & Action */}
-          <Box flex={1} alignItems="center" justifyContent="center" marginTop="8" gap="16" minHeight={240}>
-            <UserPlus size={40} color={theme.colors.textSecondary} strokeWidth={1.5} />
-            <Box width="100%" paddingHorizontal="16">
+          <Box flex={1} alignItems="center" justifyContent="center" marginTop="8" minHeight={240}>
+            <Box alignItems="center" style={{ gap: 16 }}>
+              <UserPlus size={40} color={theme.colors.textSecondary} strokeWidth={1.5} />
               <Text variant="webLabelEmphasized" color="foreground" textAlign="center" style={{ fontWeight: '400' }}>
                 {"You've been invited to this project by "}
                 <Text variant="webLabelEmphasized" fontWeight="700">James Hammer</Text>
               </Text>
             </Box>
-            
             <Button
               variant="fill"
               size="lg"
@@ -188,6 +187,7 @@ export default function JoinTasktag() {
                 borderRadius: 40,
                 alignSelf: 'stretch',
                 marginHorizontal: 16,
+                marginTop: 16,
               }}
               onPress={() => router.push('/prototype/m-join-project-non-user/join-tasktag-signup')}
             >

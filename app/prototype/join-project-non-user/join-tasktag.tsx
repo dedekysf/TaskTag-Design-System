@@ -36,6 +36,7 @@ const TABS = [
 ];
 
 function SkillsTooltip({ skills }: { skills: string[] }) {
+  const theme = useTheme<Theme>();
   const [visible, setVisible] = React.useState(false);
   const overflow = skills.length - 2;
   return (
@@ -54,7 +55,7 @@ function SkillsTooltip({ skills }: { skills: string[] }) {
             position: 'absolute',
             top: 28,
             left: 0,
-            backgroundColor: '#1a1a1a',
+            backgroundColor: theme.colors.black,
             borderRadius: 6,
             paddingHorizontal: 12,
             paddingVertical: 8,
@@ -68,7 +69,7 @@ function SkillsTooltip({ skills }: { skills: string[] }) {
           } as any}
         >
           {skills.map((s, i) => (
-            <Text key={i} variant="webBody" style={{ color: '#fff', lineHeight: 22 }}>{s}</Text>
+            <Text key={i} variant="webBody" style={{ color: theme.colors.white, lineHeight: 22 }}>{s}</Text>
           ))}
         </Box>
       )}
@@ -254,9 +255,9 @@ export default function JoinTasktag() {
                     backgroundColor: 'rgba(247, 248, 250, 0.5)',
                   } as any}
                 >
-                  <Box flex={1} justifyContent="center" alignItems="center" gap="16">
-                    <UserPlus size={40} color={theme.colors.textSecondary} strokeWidth={1.5} />
-                    <Box minHeight={64} justifyContent="center" width="100%">
+                  <Box flex={1} justifyContent="center" alignItems="center">
+                    <Box alignItems="center" style={{ gap: 16 }}>
+                      <UserPlus size={40} color={theme.colors.textSecondary} strokeWidth={1.5} />
                       <Text variant="webHeading22" color="foreground" textAlign="center" style={{ fontWeight: '400' }}>
                         {"You've been invited to this project by "}
                         <Text variant="webHeading22" fontWeight="700">James Hammer</Text>
@@ -265,7 +266,7 @@ export default function JoinTasktag() {
                     <Button
                       variant="fill"
                       size="lg"
-                      style={{ borderRadius: 40, minWidth: 220, backgroundColor: theme.colors.foreground }}
+                      style={{ borderRadius: 40, minWidth: 220, backgroundColor: theme.colors.foreground, marginTop: 16 }}
                       onPress={() => router.push('/prototype/join-project-non-user/join-tasktag-signup')}
                     >
                       <Text color="white" variant="labelMedium">Join This Project</Text>
@@ -313,13 +314,13 @@ export default function JoinTasktag() {
 
                 {/* Member rows (7 active) */}
                 {[
-                  { name: 'James Hammer', skills: [], role: 'Owner', avatarColor: '#18a87d', avatarBg: '#dcf2ec' },
-                  { name: 'John Doe', skills: ['Carpenter'], role: 'Editor', avatarColor: '#7b61ff', avatarBg: '#ebe7ff' },
-                  { name: 'Jane Smith', skills: [], role: 'Editor', avatarColor: '#fc7f5b', avatarBg: '#ffece6' },
-                  { name: 'Chelsea Smith', skills: ['Carpenter', 'Electrician', 'Plumber', 'Welder'], role: 'Viewer', avatarColor: '#1572a1', avatarBg: '#dceeff' },
-                  { name: 'Logan Jack', skills: [], role: 'Viewer', avatarColor: '#655d8a', avatarBg: '#f2def3' },
-                  { name: 'Oscar Edison', skills: [], role: 'Editor', avatarColor: '#cc7351', avatarBg: '#ffece6' },
-                  { name: 'Abby Monroe', skills: ['Painter', 'Plumber', 'Welder', 'HVAC', 'Roofer'], role: 'Editor', avatarColor: '#a85796', avatarBg: '#f6eaf8' },
+                  { name: 'James Hammer', skills: [], role: 'Owner', avatarColor: theme.colors.secondaryGreen, avatarBg: theme.colors.lightMint },
+                  { name: 'John Doe', skills: ['Carpenter'], role: 'Editor', avatarColor: theme.colors.purple, avatarBg: theme.colors.lightLavenderBlue },
+                  { name: 'Jane Smith', skills: [], role: 'Editor', avatarColor: theme.colors.orange, avatarBg: theme.colors.lightPeach },
+                  { name: 'Chelsea Smith', skills: ['Carpenter', 'Electrician', 'Plumber', 'Welder'], role: 'Viewer', avatarColor: theme.colors.pastelBlue, avatarBg: theme.colors.lightSky },
+                  { name: 'Logan Jack', skills: [], role: 'Viewer', avatarColor: theme.colors.pastelPurple, avatarBg: theme.colors.lightPurple },
+                  { name: 'Oscar Edison', skills: [], role: 'Editor', avatarColor: theme.colors.pastelOrange, avatarBg: theme.colors.lightPeach },
+                  { name: 'Abby Monroe', skills: ['Painter', 'Plumber', 'Welder', 'HVAC', 'Roofer'], role: 'Editor', avatarColor: theme.colors.pastelMagenta, avatarBg: theme.colors.lightLavender },
                 ].map((member, idx, arr) => (
                   <Box
                     key={member.name}
@@ -378,13 +379,12 @@ export default function JoinTasktag() {
               alignItems="center"
               justifyContent="center"
               minHeight={520}
-              gap="16"
               style={{
                 backgroundImage: 'linear-gradient(to bottom, #FFFFFF, #F7F8FA)',
               } as any}
             >
-              <UserPlus size={40} color={theme.colors.textSecondary} strokeWidth={1.5} />
-              <Box minHeight={64} justifyContent="center" width="100%">
+              <Box alignItems="center" style={{ gap: 16 }}>
+                <UserPlus size={40} color={theme.colors.textSecondary} strokeWidth={1.5} />
                 <Text variant="webHeading22" color="foreground" textAlign="center" style={{ fontWeight: '400' }}>
                   {"You've been invited to this project by "}
                   <Text variant="webHeading22" fontWeight="700">James Hammer</Text>
@@ -393,7 +393,7 @@ export default function JoinTasktag() {
               <Button
                 variant="fill"
                 size="lg"
-                style={{ borderRadius: 40, minWidth: 220, backgroundColor: theme.colors.foreground }}
+                style={{ borderRadius: 40, minWidth: 220, backgroundColor: theme.colors.foreground, marginTop: 16 }}
                 onPress={() => router.push('/prototype/join-project-non-user/join-tasktag-signup')}
               >
                 <Text color="white" variant="labelMedium">Join This Project</Text>

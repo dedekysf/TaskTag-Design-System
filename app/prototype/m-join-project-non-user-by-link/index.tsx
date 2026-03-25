@@ -12,11 +12,16 @@ export default function InviteLinkEntry() {
       <Box
         backgroundColor="card"
         borderRadius="xl"
-        padding="24"
+        paddingHorizontal="16"
+        paddingVertical="24"
+        width="100%"
         style={{ boxShadow: 'rgba(0, 0, 0, 0.05) 0px 1px 3px 0px' } as any}
       >
+        <Text variant="webLabelEmphasized" color="foreground" marginBottom="12">
+          Please click this link
+        </Text>
         <Pressable onPress={() => router.push('/prototype/m-join-project-non-user-by-link/join-tasktag')}>
-          <Text variant="webMetadataPrimary" color="primary" style={{ textDecorationLine: 'underline', textAlign: 'center' }}>
+          <Text variant="webMetadataPrimary" color="primary" style={{ textDecorationLine: 'underline' }}>
             {INVITE_URL}
           </Text>
         </Pressable>

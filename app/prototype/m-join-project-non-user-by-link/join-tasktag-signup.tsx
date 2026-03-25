@@ -165,7 +165,7 @@ export default function JoinTasktagSignup() {
               <Text
                 variant="webLabelEmphasized"
                 style={{
-                  color: (pressed || isProjectNameHovered) ? '#138eff' : theme.colors.foreground
+                  color: (pressed || isProjectNameHovered) ? theme.colors.blue : theme.colors.foreground
                 }}
               >
                 {INVITE.projectName}
@@ -182,7 +182,7 @@ export default function JoinTasktagSignup() {
           <Box flexDirection="row" alignItems="center" gap="4">
             <Text variant="webSecondaryBody" color="mutedForeground">Your Role : </Text>
             <Text variant="webSecondaryBody" color="foreground" fontWeight="700">
-              Viewer <Text variant="webMetadataPrimary" fontWeight="400" style={{ fontStyle: 'italic' }}>(Pending Approval)</Text>
+              Viewer <Text variant="webMetadataPrimary" fontWeight="400" >(Pending Approval)</Text>
             </Text>
           </Box>
         </Box>
