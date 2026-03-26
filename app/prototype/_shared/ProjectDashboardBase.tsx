@@ -93,11 +93,12 @@ export const WHAT_YOU_CAN_DO = [
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 export function MiniAvatar({ colorIndex, size = 30 }: { colorIndex: number; size?: number }) {
+  const theme = useTheme<Theme>();
   const p = AVATAR_PHOTOS[colorIndex % AVATAR_PHOTOS.length];
   return (
     <Image
       source={p.src}
-      style={{ width: size, height: size, borderRadius: size / 2, borderWidth: 2, borderColor: '#fff' }}
+      style={{ width: size, height: size, borderRadius: size / 2, borderWidth: 2, borderColor: theme.colors.white }}
     />
   );
 }
@@ -105,9 +106,9 @@ export function MiniAvatar({ colorIndex, size = 30 }: { colorIndex: number; size
 export function PriorityBadge({ priority }: { priority: 'high' | 'medium' | 'low' }) {
   const theme = useTheme<Theme>();
   const config = {
-    high:   { color: '#fc7f5b', Icon: ChevronsUp },
+    high:   { color: theme.colors.orange, Icon: ChevronsUp },
     medium: { color: '#f59e0b', Icon: Equal },
-    low:    { color: '#18a87d', Icon: ChevronsDown },
+    low:    { color: theme.colors.secondaryGreen, Icon: ChevronsDown },
   }[priority];
   return (
     <Box
@@ -300,12 +301,12 @@ export default function ProjectDashboardBase({
               {NAV_ITEMS.map(({ key, label, Icon, active }) => (
                 sidebarCollapsed ? (
                   <Box key={key} alignItems="center" justifyContent="center" style={{ height: 54 }}>
-                    <Box alignItems="center" justifyContent="center" style={{ width: 44, height: 44, borderRadius: 10, backgroundColor: active ? '#dcf2ec' : theme.colors.card }}>
+                    <Box alignItems="center" justifyContent="center" style={{ width: 44, height: 44, borderRadius: 10, backgroundColor: active ? theme.colors.lightMint : theme.colors.card }}>
                       <Icon size={22} color={active ? theme.colors.secondaryGreen : theme.colors.textSecondary} />
                     </Box>
                   </Box>
                 ) : (
-                  <Box key={key} flexDirection="row" alignItems="center" gap="16" style={{ height: 54, borderRadius: 8, paddingHorizontal: 16, paddingVertical: 15, backgroundColor: active ? '#dcf2ec' : 'transparent' }}>
+                  <Box key={key} flexDirection="row" alignItems="center" gap="16" style={{ height: 54, borderRadius: 8, paddingHorizontal: 16, paddingVertical: 15, backgroundColor: active ? theme.colors.lightMint : 'transparent' }}>
                     <Icon size={24} color={active ? theme.colors.secondaryGreen : theme.colors.textSecondary} />
                     <Text variant="labelMedium" style={{ color: active ? theme.colors.secondaryGreen : theme.colors.textSecondary }}>{label}</Text>
                   </Box>
@@ -345,13 +346,13 @@ export default function ProjectDashboardBase({
 
               {sidebarCollapsed ? (
                 <Box alignItems="center" justifyContent="center" style={{ height: 54 }}>
-                  <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: '#dcf2ec' }}>
+                  <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.lightMint }}>
                     <Text style={{ fontWeight: '700', color: theme.colors.secondaryGreen, fontSize: 14 }}>JH</Text>
                   </Box>
                 </Box>
               ) : (
                 <Box flexDirection="row" alignItems="center" gap="8" style={{ height: 54, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 15 }}>
-                  <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: '#dcf2ec' }}>
+                  <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.lightMint }}>
                     <Text style={{ fontWeight: '700', color: theme.colors.secondaryGreen, fontSize: 14 }}>JH</Text>
                   </Box>
                   <Text variant="labelMedium" style={{ color: theme.colors.textSecondary }}>My Profile</Text>
@@ -381,7 +382,7 @@ export default function ProjectDashboardBase({
                   flexDirection: 'row',
                   alignItems: 'center',
                   gap: 8,
-                  backgroundColor: viewVariant === 'pending' ? theme.colors.grey02 : '#000',
+                  backgroundColor: viewVariant === 'pending' ? theme.colors.grey02 : theme.colors.black,
                   borderRadius: 40,
                   paddingHorizontal: 16,
                   paddingVertical: 10,
@@ -389,8 +390,8 @@ export default function ProjectDashboardBase({
                   justifyContent: 'center',
                 }}
               >
-                <Plus size={18} color={viewVariant === 'pending' ? theme.colors.grey05 : "#fff"} />
-                <Text style={{ fontSize: 13, fontWeight: '500', color: viewVariant === 'pending' ? theme.colors.grey05 : "#fff" }}>New Task</Text>
+                <Plus size={18} color={viewVariant === 'pending' ? theme.colors.grey05 : theme.colors.white} />
+                <Text style={{ fontSize: 13, fontWeight: '500', color: viewVariant === 'pending' ? theme.colors.grey05 : theme.colors.white }}>New Task</Text>
               </Pressable>
             </Box>
           </Box>
@@ -426,7 +427,7 @@ export default function ProjectDashboardBase({
                         <Text variant="labelMedium" style={{ color: isActive ? theme.colors.secondaryGreen : theme.colors.textSecondary, transition: 'color 0.2s ease' as any } as any}>{label}</Text>
                         {count !== undefined && (
                           <Box backgroundColor={isActive ? 'black' : 'textSecondary'} borderRadius="full" width={20} height={20} alignItems="center" justifyContent="center" style={{ transition: 'background-color 0.2s ease' } as any}>
-                            <Text style={{ fontSize: 10, color: '#fff', fontWeight: '600' }}>{count}</Text>
+                            <Text style={{ fontSize: 10, color: theme.colors.white, fontWeight: '600' }}>{count}</Text>
                           </Box>
                         )}
                       </Box>
@@ -544,14 +545,14 @@ export default function ProjectDashboardBase({
                 </Box>
                 <Box borderWidth={1} borderColor="border" style={{ borderRadius: 10, overflow: 'hidden' as any }}>
                   <Box flexDirection="row" alignItems="center" gap="8" style={{ padding: 10, backgroundColor: '#f9eefa' }}>
-                    <UserCheck size={13} color="#a620b2" />
-                    <Text style={{ fontSize: 12, color: '#a620b2', fontWeight: '500' }}>Member Activity</Text>
+                    <UserCheck size={13} color={theme.colors.darkMagenta} />
+                    <Text style={{ fontSize: 12, color: theme.colors.darkMagenta, fontWeight: '500' }}>Member Activity</Text>
                   </Box>
                   <Box backgroundColor="card" style={{ padding: 12 }}>
                     <Text style={{ fontSize: 14, color: theme.colors.textSecondary, marginBottom: 10, lineHeight: 20 }}>You've been added to this project</Text>
                     <Box flexDirection="row" alignItems="center" gap="8" style={{ backgroundColor: theme.colors.secondaryGreen, borderRadius: 6, paddingHorizontal: 8, paddingVertical: 5, alignSelf: 'flex-start' as any }}>
-                      <Folder size={12} color="#fff" />
-                      <Text style={{ fontSize: 12, color: '#fff', fontWeight: '500' }}>Raintree Hollow Court Ren...</Text>
+                      <Folder size={12} color={theme.colors.white} />
+                      <Text style={{ fontSize: 12, color: theme.colors.white, fontWeight: '500' }}>Raintree Hollow Court Ren...</Text>
                     </Box>
                   </Box>
                 </Box>
@@ -570,7 +571,7 @@ export default function ProjectDashboardBase({
                 ))}
               </Box>
               <Pressable style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: theme.colors.foreground, alignItems: 'center', justifyContent: 'center' }}>
-                <Send size={18} color="#fff" />
+                <Send size={18} color={theme.colors.white} />
               </Pressable>
             </Box>
           </Box>
@@ -582,14 +583,14 @@ export default function ProjectDashboardBase({
         <Pressable style={{ padding: 8, marginBottom: 12 }}>
           <ChevronsLeft size={20} color={theme.colors.grey04} />
         </Pressable>
-        <Box alignItems="center" justifyContent="center" style={{ width: 56, height: 56, borderRadius: 14, backgroundColor: '#dcf2ec', marginBottom: 8 }}>
-          <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: '#7b61ff' }}>
-            <Text style={{ fontWeight: '700', color: '#fff', fontSize: 15 }}>AZ</Text>
+        <Box alignItems="center" justifyContent="center" style={{ width: 56, height: 56, borderRadius: 14, backgroundColor: theme.colors.lightMint, marginBottom: 8 }}>
+          <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.purple }}>
+            <Text style={{ fontWeight: '700', color: theme.colors.white, fontSize: 15 }}>AZ</Text>
           </Box>
         </Box>
         <Image source={require('@/assets/images/sample-two.jpg')} style={{ width: 44, height: 44, borderRadius: 22, marginBottom: 8 }} />
-        <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: '#fc7f5b' }}>
-          <Text style={{ fontWeight: '700', color: '#fff', fontSize: 14 }}>TH</Text>
+        <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.orange }}>
+          <Text style={{ fontWeight: '700', color: theme.colors.white, fontSize: 14 }}>TH</Text>
         </Box>
       </Box>
 
@@ -607,7 +608,7 @@ export default function ProjectDashboardBase({
           }),
         }}
       >
-        <MessageCircle size={22} color="#fff" />
+        <MessageCircle size={22} color={theme.colors.white} />
       </Pressable>
 
       {/* ── Modal: Project Onboarding 5 ── */}
@@ -615,8 +616,8 @@ export default function ProjectDashboardBase({
         <Box style={{ position: 'absolute' as any, right: 550 + 72 + 16, bottom: 16, zIndex: 50 }}>
           <Box backgroundColor="card" width={440} style={{ borderRadius: 16, padding: 24, ...Platform.select({ web: { boxShadow: '0px 5px 12px rgba(0,0,0,0.1)' } as any, default: { elevation: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.1, shadowRadius: 12 } }) }}>
             <Box flexDirection="row" alignItems="center" gap="8" style={{ marginBottom: 24 }}>
-              <Box width={40} height={40} alignItems="center" justifyContent="center" style={{ backgroundColor: '#7b61ff', borderRadius: 8 }}>
-                <HardHat size={20} color="#fff" />
+              <Box width={40} height={40} alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.purple, borderRadius: 8 }}>
+                <HardHat size={20} color={theme.colors.white} />
               </Box>
               <Box flex={1}>
                 <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.foreground, lineHeight: 21, marginBottom: 2 }}>Raintree Hollow Court Renovation</Text>
@@ -637,8 +638,8 @@ export default function ProjectDashboardBase({
                 </Box>
               ))}
             </Box>
-            <Pressable onPress={() => setModalVisible(false)} style={{ marginTop: 24, height: 48, backgroundColor: '#000', borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={{ fontSize: 14, fontWeight: '500', color: '#fff' }}>Go to Project</Text>
+            <Pressable onPress={() => setModalVisible(false)} style={{ marginTop: 24, height: 48, backgroundColor: theme.colors.black, borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.white }}>Go to Project</Text>
             </Pressable>
           </Box>
         </Box>

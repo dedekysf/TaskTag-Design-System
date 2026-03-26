@@ -17,6 +17,8 @@ export interface TextInputProps extends Omit<RNTextInputProps, 'style'> {
     errorMessage?: string;
     /** Icon component from lucide-react-native */
     icon?: LucideIcon;
+    /** Override icon color */
+    iconColor?: string;
     /** Show clear button (X icon) when input has value */
     showClearButton?: boolean;
     /** Show character counter (only works when no icon) */
@@ -34,6 +36,7 @@ export function TextInput({
     label,
     errorMessage,
     icon: Icon,
+    iconColor,
     showClearButton = true,
     showCounter = false,
     onChangeText,
@@ -128,7 +131,7 @@ export function TextInput({
                     <View style={{ marginRight: 8 }}>
                         <Icon
                             size={currentSize.iconSize}
-                            color={disabled ? theme.colors.grey04 : theme.colors.grey05}
+                            color={disabled ? theme.colors.grey04 : (iconColor ?? theme.colors.grey05)}
                         />
                     </View>
                 )}
