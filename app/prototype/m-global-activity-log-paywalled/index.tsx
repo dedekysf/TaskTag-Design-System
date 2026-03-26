@@ -441,20 +441,20 @@ function InfoBanner({ onUpgrade }: { onUpgrade: () => void }) {
       } as any}
     >
       <Text variant="webLabelEmphasized" color="textPrimary" marginBottom="8">
-        You're seeing the last 3 events across all projects
+        There's more activity waiting for you
       </Text>
       <Text variant="webMetadataPrimary" color="textSecondary" style={{ lineHeight: 18 }} marginBottom="12">
-        The full activity log for each individual project is available for free — open any project and tap Activity Log.{' '}
-        <Text variant="webMetadataPrimary" color="textSecondary" fontWeight="600">
+        {"You're seeing just 3 events. "}
+        <Text variant="webMetadataPrimary" color="textSecondary" style={{ fontWeight: '600', fontFamily: 'Inter_600SemiBold' }}>
           Upgrade to Teams
         </Text>
-        {' '}to see the complete cross-project feed here.
+        {" for full visibility across all your projects."}
       </Text>
       <Button
         variant="fill"
         size="md"
         onPress={() => Linking.openURL('https://portal.tasktag.com/blog/how-do-i-upgrade-to-a-team-plan')}
-        style={{ width: '100%', borderRadius: 40, backgroundColor: theme.colors.black }}
+        style={{ width: '100%', backgroundColor: theme.colors.black }}
       >
         <Text variant="labelMedium" color="white">Learn More</Text>
       </Button>

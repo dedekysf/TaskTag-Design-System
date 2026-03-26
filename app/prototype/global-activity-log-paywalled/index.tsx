@@ -439,26 +439,24 @@ function InfoBanner({ onUpgrade }: { onUpgrade: () => void }) {
       } as any}
     >
       <Box flexDirection="row" alignItems="center" gap="12">
+        <Info size={24} color={theme.colors.secondaryGreen} />
         <Box flex={1}>
-          <Box flexDirection="row" alignItems="center" gap="8" marginBottom="4">
-            <Info size={24} color={theme.colors.secondaryGreen} />
-            <Text variant="webLargeLabel" color="textPrimary">
-              You're seeing the last 3 events across all projects
-            </Text>
-          </Box>
+          <Text variant="webLargeLabel" color="textPrimary" marginBottom="4">
+            There's more activity waiting for you
+          </Text>
           <Text variant="webSecondaryBody" color="textSecondary" style={{ lineHeight: 18 }}>
-            The full activity log for each individual project is available for free — open any project and tap Activity Log.{' '}
-            <Text variant="webSecondaryBody" color="textSecondary" fontWeight="600">
+            {"You're seeing just 3 events. "}
+            <Text variant="webSecondaryBody" color="textSecondary" style={{ fontWeight: '600', fontFamily: 'Inter_600SemiBold' }}>
               Upgrade to Teams
             </Text>
-            {' '}to see the complete cross-project feed here.
+            {" for full visibility across all your projects."}
           </Text>
         </Box>
         <Button
           variant="fill"
           size="sm"
           onPress={onUpgrade}
-          style={{ borderRadius: 40, backgroundColor: theme.colors.black, minWidth: 100 }}
+          style={{ backgroundColor: theme.colors.black, minWidth: 100 }}
         >
           <Text variant="labelMedium" color="white">Upgrade</Text>
         </Button>
@@ -499,7 +497,7 @@ export default function GlobalActivityLogPaywalled() {
               <Pressable hitSlop={8} style={{ height: 32, alignItems: 'center', justifyContent: 'center' }}>
                 <Search size={20} color={(theme.colors as any).grey06} />
               </Pressable>
-              <Button variant="fill" size="sm" style={{ borderRadius: 40, minWidth: 120, backgroundColor: theme.colors.black }}>
+              <Button variant="fill" size="sm" style={{ minWidth: 120, backgroundColor: theme.colors.black }}>
                 <Box flexDirection="row" alignItems="center" gap="8">
                   <Plus size={15} color={theme.colors.white} />
                   <Text variant="labelMedium" color="white">New Task</Text>
