@@ -1,148 +1,257 @@
+import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import { Clock, Hammer, HardHat, X } from 'lucide-react-native';
+import { BatteryFull, ChevronRight, Clock, FileText, Hammer, HardHat, Hash, Image as ImageIcon, Lock, SignalHigh, User, WifiHigh, Zap } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
 
 const PROJECT = {
-  name: 'Raintree Hollow Court Renovation',
+  name: 'Raintree Hollow',
   address: '11 N Raintree Hollow Ln, Houston, Texas 77027, USA',
   description:
     'This project involves a full residential home renovation aimed at improving functionality, comfort, safety, and visual appeal of the property.',
 };
 
-const APPROVER = 'Kang Shen';
-
 export default function ProjectOverview() {
   const theme = useTheme<Theme>();
-  const [bannerVisible, setBannerVisible] = useState(true);
+  const [sheetVisible, setSheetVisible] = useState(true);
 
   return (
-    <View style={{ flex: 1 }}>
-      {/* Top Banner */}
-      {bannerVisible && (
-        <View style={{ backgroundColor: theme.colors.black, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 16, gap: 10 }}>
-          <View style={{ flex: 1 }}>
-            <Text variant="webLabelSmall" color="white" style={{ marginBottom: 4 }}>Get TaskTag</Text>
-            <Text variant="webMetadataPrimary" style={{ color: 'rgba(255,255,255,0.7)' }}>Get notified faster in the app</Text>
-          </View>
-          <Pressable style={{ backgroundColor: theme.colors.white, borderRadius: 6, paddingHorizontal: 12, paddingVertical: 6 }}>
-            <Text variant="webMetadataPrimary" color="textPrimary" style={{ fontWeight: '600' }}>Download</Text>
-          </Pressable>
-          <Pressable onPress={() => setBannerVisible(false)} style={{ padding: 4 }}>
-            <X size={16} color="rgba(255,255,255,0.7)" />
-          </Pressable>
-        </View>
-      )}
+    <Box flex={1} backgroundColor="background" alignItems="center">
+      {/* Mobile Frame Container */}
+      <Box flex={1} width="100%" maxWidth={480} backgroundColor="grey02">
 
-      {/* Scrollable content */}
-      <ScrollView
-        style={{ flex: 1, backgroundColor: theme.colors.grey01 }}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 40 }}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Top Card */}
-        <Box style={{ backgroundColor: theme.colors.purple }} borderRadius="16" padding="16" marginBottom="12">
-          <Box flexDirection="row" alignItems="center" gap="8" marginBottom="4">
-            <Box width={24} height={24} borderRadius="4" alignItems="center" justifyContent="center">
-              <HardHat size={20} color={theme.colors.white} />
-            </Box>
-            <Text variant="h3" color="white">{PROJECT.name.split(' ').slice(0, 2).join(' ')}</Text>
-          </Box>
-          <Box paddingLeft="32" marginBottom="16">
-            <Text variant="webMetadataPrimary" color="white" style={{ opacity: 0.9 }}>{PROJECT.address}</Text>
-          </Box>
-          <Box flexDirection="row" gap="16">
-            <Box flexDirection="row" alignItems="center" gap="8">
-              <Box width={24} height={24} backgroundColor="black" borderRadius="4" alignItems="center" justifyContent="center" overflow="hidden">
-                <Hammer size={14} color={theme.colors.white} />
-              </Box>
-              <Text variant="webMetadataPrimary" color="white">Aquaworks Construct...</Text>
-            </Box>
-            <Box flexDirection="row" alignItems="center" gap="8">
-              <Box width={24} height={24} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: (theme.colors as any).pastelOrange }}>
-                <Text variant="webMetadataSecondary" color="white" textAlign="center" style={{ width: 24, lineHeight: 24 }}>AS</Text>
-              </Box>
-              <Text variant="webMetadataPrimary" color="white">Alex Smith</Text>
-            </Box>
+        {/* Status Bar Mock */}
+        <Box
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="space-between"
+          paddingHorizontal="xl"
+          paddingTop="md"
+          paddingBottom="sm"
+          backgroundColor="background"
+        >
+          <Text color="foreground" style={{ fontWeight: '600', fontSize: 15, paddingLeft: 8 }}>9:41</Text>
+          <Box flexDirection="row" alignItems="center" gap="8" paddingRight="8">
+            <SignalHigh size={15} color={theme.colors.foreground} strokeWidth={2.5} />
+            <WifiHigh size={15} color={theme.colors.foreground} strokeWidth={2.5} />
+            <BatteryFull size={22} color={theme.colors.foreground} strokeWidth={2} />
           </Box>
         </Box>
 
-        {/* Description Card */}
-        <Box backgroundColor="card" borderRadius="16" padding="16" marginBottom="12">
-          <Text variant="webLabelEmphasized" color="foreground" marginBottom="12">Description</Text>
-          <Text variant="webMetadataPrimary" color="textSecondary" style={{ lineHeight: 18 }}>{PROJECT.description}</Text>
-        </Box>
-
-        {/* Members Card */}
-        <Box backgroundColor="card" borderRadius="16" padding="16" marginBottom="12">
-          <Text variant="webLabelEmphasized" color="foreground" marginBottom="16">Members (3)</Text>
-          <Box flexDirection="row" gap="16">
-            <Box alignItems="center" gap="8">
-              <Box width={56} height={56} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: '#cd714f' }}>
-                <Text variant="h2" color="white" style={{ fontSize: 22, fontWeight: '400' }}>AS</Text>
-              </Box>
-              <Text variant="webMetadataPrimary" color="textSecondary">Alex S...</Text>
-            </Box>
-            <Box alignItems="center" gap="8">
-              <Image source={{ uri: 'https://i.pravatar.cc/150?img=49' }} style={{ width: 56, height: 56, borderRadius: 28 }} />
-              <Text variant="webMetadataPrimary" color="textSecondary">Chelse...</Text>
-            </Box>
-            <Box alignItems="center" gap="8">
-              <Box width={56} height={56} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: '#0f6466' }}>
-                <Text variant="h2" color="white" style={{ fontSize: 22, fontWeight: '400' }}>CR</Text>
-              </Box>
-              <Text variant="webMetadataPrimary" color="textSecondary">Chelita...</Text>
-            </Box>
+        {/* Browser Header Mock */}
+        <Box
+          paddingHorizontal="md"
+          paddingBottom="sm"
+          backgroundColor="background"
+          borderBottomWidth={1}
+          borderColor="border"
+        >
+          <Box flexDirection="row" alignItems="center" justifyContent="center" backgroundColor="grey02" paddingHorizontal="12" paddingVertical="12" borderRadius="8" gap="8">
+            <Lock size={12} color={theme.colors.grey05} />
+            <Text variant="caption" color="foreground" style={{ fontSize: 14, fontWeight: '500' }}>tasktag.com</Text>
           </Box>
         </Box>
 
-        {/* Request Sent Section */}
-        <Box backgroundColor="card" borderRadius="16" padding="16" marginBottom="12" alignItems="center">
-          {/* Clock icon */}
+        {/* Header */}
+        <Box
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="space-between"
+          paddingHorizontal="md"
+          paddingVertical="sm"
+          backgroundColor="background"
+        >
+          <Image
+            source={require('@/assets/images/tasktag-logo.png')}
+            style={{ height: 28, width: 100 }}
+            resizeMode="contain"
+          />
           <Box
-            width={56}
-            height={56}
+            width={32}
+            height={32}
             borderRadius="full"
+            backgroundColor="grey02"
             alignItems="center"
             justifyContent="center"
-            marginBottom="12"
-            style={{ backgroundColor: '#EFF6FF' }}
           >
-            <Clock size={28} color="#93C5FD" strokeWidth={1.5} />
+            <User size={18} color={theme.colors.grey06} />
+          </Box>
+        </Box>
+
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 220, flexGrow: 1 }}
+        >
+
+          {/* Top Card */}
+          <Box
+            style={{ backgroundColor: theme.colors.purple }}
+            borderRadius="8"
+            padding="16"
+            marginBottom="12"
+          >
+            <Box flexDirection="row" alignItems="center" gap="8" marginBottom="4">
+              <Box width={24} height={24} borderRadius="4" alignItems="center" justifyContent="center">
+                <HardHat size={20} color={theme.colors.white} />
+              </Box>
+              <Text variant="h3" color="white">{PROJECT.name}</Text>
+            </Box>
+            <Box paddingLeft="32" marginBottom="16">
+              <Text variant="webMetadataPrimary" color="white" style={{ opacity: 0.9 }}>{PROJECT.address}</Text>
+            </Box>
+            <Box flexDirection="row" gap="16">
+              <Box flexDirection="row" alignItems="center" gap="8">
+                <Box width={24} height={24} backgroundColor="black" borderRadius="4" alignItems="center" justifyContent="center" overflow="hidden">
+                  <Hammer size={14} color={theme.colors.white} />
+                </Box>
+                <Text variant="webMetadataPrimary" color="white">Aquaworks Construct...</Text>
+              </Box>
+              <Box flexDirection="row" alignItems="center" gap="8">
+                <Box width={24} height={24} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.pastelOrange }}>
+                  <Text variant="webMetadataSecondary" color="white" textAlign="center" style={{ width: 24, lineHeight: 24 }}>AS</Text>
+                </Box>
+                <Text variant="webMetadataPrimary" color="white">Alex Smith</Text>
+              </Box>
+            </Box>
           </Box>
 
-          <Text variant="webLabelEmphasized" color="textPrimary" style={{ marginBottom: 8, textAlign: 'center' }}>
-            Request Sent
-          </Text>
+          {/* Description Card */}
+          <Box backgroundColor="card" borderRadius="8" padding="16" marginBottom="12">
+            <Box flexDirection="row" justifyContent="space-between" alignItems="center" width="100%" marginBottom="12">
+              <Text variant="webLabelEmphasized" color="foreground">Description</Text>
+            </Box>
+            <Text variant="webMetadataPrimary" color="textSecondary" style={{ lineHeight: 18 }}>{PROJECT.description}</Text>
+          </Box>
 
-          <Text variant="webSecondaryBody" color="textSecondary" style={{ textAlign: 'center', marginBottom: 16, lineHeight: 22 }}>
-            {"You'll be notified when it's approved."}
-          </Text>
+          {/* Members Card */}
+          <Box backgroundColor="card" borderRadius="8" padding="16" marginBottom="12">
+            <Box flexDirection="row" justifyContent="space-between" alignItems="center" marginBottom="16">
+              <Text variant="webLabelEmphasized" color="foreground">Members (3)</Text>
+            </Box>
+            <Box flexDirection="row" gap="16">
+              <Box alignItems="center" gap="8">
+                <Box width={56} height={56} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: '#cd714f' }}>
+                  <Text variant="h2" color="white" style={{ fontSize: 22, fontWeight: '400' }}>AS</Text>
+                </Box>
+                <Text variant="webMetadataPrimary" color="textSecondary">Alex S...</Text>
+              </Box>
+              <Box alignItems="center" gap="8">
+                <Image source={{ uri: 'https://i.pravatar.cc/150?img=49' }} style={{ width: 56, height: 56, borderRadius: 28 }} />
+                <Text variant="webMetadataPrimary" color="textSecondary">Chelse...</Text>
+              </Box>
+              <Box alignItems="center" gap="8">
+                <Box width={56} height={56} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: '#0f6466' }}>
+                  <Text variant="h2" color="white" style={{ fontSize: 22, fontWeight: '400' }}>CR</Text>
+                </Box>
+                <Text variant="webMetadataPrimary" color="textSecondary">Chelita...</Text>
+              </Box>
+            </Box>
+          </Box>
 
-        </Box>
+          {/* Checklist Card */}
+          <Box flexDirection="row" alignItems="center" justifyContent="space-between" backgroundColor="card" borderRadius="8" padding="16" marginBottom="12">
+            <Box flexDirection="row" alignItems="center" gap="16">
+              <Box width={40} height={40} borderRadius="8" backgroundColor="black" alignItems="center" justifyContent="center">
+                <FileText size={20} color={theme.colors.white} />
+              </Box>
+              <Box gap="4">
+                <Text variant="webLabelEmphasized" color="foreground">Checklist</Text>
+                <Text variant="webMetadataPrimary" color="textSecondary">Start faster with a project template.</Text>
+              </Box>
+            </Box>
+            <ChevronRight size={20} color={theme.colors.textSecondary} />
+          </Box>
 
-        {/* Divider */}
-        <Box flexDirection="row" alignItems="center" gap="8" marginBottom="12">
-          <Box flex={1} height={1} backgroundColor="border" />
-          <Text variant="webMetadataPrimary" color="textSecondary">Get Notified Faster</Text>
-          <Box flex={1} height={1} backgroundColor="border" />
-        </Box>
+          {/* Tasks Card */}
+          <Box flexDirection="row" alignItems="center" justifyContent="space-between" backgroundColor="card" borderRadius="8" padding="16" marginBottom="12">
+            <Box flexDirection="row" alignItems="center" gap="16">
+              <Box width={40} height={40} borderRadius="8" backgroundColor="black" alignItems="center" justifyContent="center">
+                <Hash size={20} color={theme.colors.white} />
+              </Box>
+              <Text variant="webLabelEmphasized" color="foreground">Tasks</Text>
+            </Box>
+            <ChevronRight size={20} color={theme.colors.textSecondary} />
+          </Box>
 
-        {/* Download CTA */}
-        <Box backgroundColor="card" borderRadius="16" padding="16">
-          <Text variant="webSecondaryBody" color="textPrimary" style={{ fontWeight: '600', marginBottom: 8 }}>
-            You're on the web version
-          </Text>
-          <Text variant="webMetadataPrimary" color="textSecondary" style={{ marginBottom: 12 }}>
+          {/* Bottom Grid */}
+          <Box flexDirection="row" gap="12" marginBottom="12">
+            <Box flex={1} backgroundColor="card" borderRadius="8" padding="16">
+              <Box width={36} height={36} borderRadius="8" backgroundColor="black" alignItems="center" justifyContent="center" marginBottom="16">
+                <Zap size={18} color={theme.colors.white} fill={theme.colors.white} />
+              </Box>
+              <Text variant="webLabelEmphasized" color="foreground" style={{ fontWeight: '600' }}>Activity Log</Text>
+            </Box>
+            <Box flex={1} backgroundColor="card" borderRadius="8" padding="16">
+              <Box width={36} height={36} borderRadius="8" backgroundColor="black" alignItems="center" justifyContent="center" marginBottom="16">
+                <ImageIcon size={18} color={theme.colors.white} />
+              </Box>
+              <Text variant="webLabelEmphasized" color="foreground" style={{ fontWeight: '600' }}>Files & Media</Text>
+            </Box>
+          </Box>
+
+        </ScrollView>
+
+        {/* Fixed Bottom Banner */}
+        <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, backgroundColor: '#000000', borderRadius: 12, padding: 16, zIndex: 10 }}>
+          <View style={{ marginBottom: 4 }}>
+            <Text variant="webLabelEmphasized" color="white">You're on the web version</Text>
+          </View>
+          <Text variant="webSecondaryBody" style={{ color: 'rgba(255,255,255,0.8)', marginBottom: 16, lineHeight: 20 }}>
             Download the app to create tasks, get notification and more.
           </Text>
-          <Box style={{ backgroundColor: theme.colors.foreground, borderRadius: 8, paddingHorizontal: 16, paddingVertical: 10, alignItems: 'center' }}>
-            <Text variant="webMetadataPrimary" color="white" style={{ fontWeight: '600' }}>Download App</Text>
-          </Box>
-        </Box>
-      </ScrollView>
-    </View>
+          <Button
+            variant="fill"
+            size="lg"
+            style={{ width: '100%', backgroundColor: theme.colors.secondaryGreen, borderRadius: 8 }}
+          >
+            <Text variant="webLabelEmphasized" color="white">Download App</Text>
+          </Button>
+        </View>
+
+        {/* Bottom Sheet */}
+        {sheetVisible && (
+          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 50 }}>
+            {/* Overlay */}
+            <Pressable
+              style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)' }}
+              onPress={() => setSheetVisible(false)}
+            />
+            {/* Sheet */}
+            <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: theme.colors.white, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 16, paddingTop: 12, paddingBottom: 32 }}>
+              {/* Handle */}
+              <View style={{ alignItems: 'center', marginBottom: 20 }}>
+                <View style={{ width: 40, height: 4, backgroundColor: theme.colors.border, borderRadius: 2 }} />
+              </View>
+
+              {/* Request Sent content */}
+              <View style={{ alignItems: 'center', paddingVertical: 8, marginBottom: 24 }}>
+                <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: theme.colors.grey02, alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+                  <Clock size={28} color={theme.colors.grey05} strokeWidth={1.5} />
+                </View>
+                <Text variant="mobileHeading22" color="textPrimary" style={{ marginBottom: 8, textAlign: 'center' }}>
+                  Request Sent
+                </Text>
+                <Text variant="mobileBody" color="textSecondary" style={{ textAlign: 'center', lineHeight: 22 }}>
+                  {"You'll be notified when it's approved."}
+                </Text>
+              </View>
+
+              {/* Got It button */}
+              <Button
+                variant="fill"
+                size="lg"
+                style={{ width: '100%', backgroundColor: theme.colors.foreground, borderRadius: 12 }}
+                onPress={() => setSheetVisible(false)}
+              >
+                <Text variant="mobileLargeLabel" color="white">Got It</Text>
+              </Button>
+            </View>
+          </View>
+        )}
+
+      </Box>
+    </Box>
   );
 }

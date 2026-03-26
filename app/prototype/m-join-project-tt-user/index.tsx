@@ -26,14 +26,12 @@ export default function SignUpNonTTUser() {
         {/* Invitation text */}
         <Box marginBottom="sm">
           <Text variant="body">
-            <Text variant="body" fontWeight="700">James Hammer</Text>
-            {' invited you to join the '}
+            {'James Hammer invited you to join\nthe '}
             <Text variant="body" fontWeight="700">'Raintree Hollow Court Renovation'</Text>
-            {' project on '}
-            <Text variant="body" color="primary" fontWeight="700">TaskTag</Text>
+            {' project on TaskTag'}
           </Text>
         </Box>
-
+        
         {/* Join Button */}
         <Box marginBottom="lg">
           <Button
@@ -43,7 +41,7 @@ export default function SignUpNonTTUser() {
             style={{ alignSelf: 'flex-start' }}
             onPress={() => router.push('/prototype/m-join-project-tt-user/join-tasktag')}
           >
-            Join Tasktag
+            Accept & Join Project
           </Button>
         </Box>
 
