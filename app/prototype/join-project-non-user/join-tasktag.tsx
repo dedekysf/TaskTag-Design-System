@@ -15,8 +15,6 @@ import {
   Link,
   ListFilter,
   MessageSquare,
-  MessageSquarePlus,
-  MoreVertical,
   Plus,
   Search,
   User,
@@ -27,12 +25,6 @@ import React, { useState } from 'react';
 import { Image, Modal, Pressable, ScrollView } from 'react-native';
 import JoinTasktagSignup from './join-tasktag-signup';
 
-const NAV_ITEMS = [
-  { key: 'projects', label: 'Projects',       Icon: Folder,   active: true },
-  { key: 'tasks',    label: 'My Tasks',        Icon: Hash,     active: false },
-  { key: 'activity', label: 'Global Activity', Icon: Activity, active: false },
-  { key: 'contacts', label: 'Contacts',        Icon: Users,    active: false },
-];
 
 const PROJECT = {
   name: 'Raintree Hollow Court Renovation',
@@ -139,51 +131,66 @@ export default function JoinTasktag() {
           <Box flex={1} justifyContent="space-between">
 
             <Box gap="8">
-              {NAV_ITEMS.map(({ key, label, Icon, active }) => (
-                sidebarCollapsed ? (
-                  <Pressable key={key} style={{ alignItems: 'center', justifyContent: 'center', height: 54, cursor: 'not-allowed' } as any}>
-                    <Box alignItems="center" justifyContent="center" style={{ width: 44, height: 44, borderRadius: 10, backgroundColor: active ? theme.colors.lightMint : theme.colors.card }}>
-                      <Icon size={22} color={active ? theme.colors.secondaryGreen : theme.colors.textSecondary} />
+              {/* Projects — real */}
+              {sidebarCollapsed ? (
+                <Box alignItems="center" justifyContent="center" style={{ width: 44, height: 44, borderRadius: 10, backgroundColor: theme.colors.lightMint, alignSelf: 'center' }}>
+                  <Folder size={22} color={theme.colors.secondaryGreen} />
+                </Box>
+              ) : (
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 54, borderRadius: 8, paddingHorizontal: 16, paddingVertical: 15, backgroundColor: theme.colors.lightMint }}>
+                  <Folder size={24} color={theme.colors.secondaryGreen} />
+                  <Text variant="labelMedium" style={{ color: theme.colors.secondaryGreen }}>Projects</Text>
+                </Box>
+              )}
+
+              {/* Placeholder wireframes */}
+              {sidebarCollapsed ? (
+                <Box gap="8">
+                  {[Hash, Activity, Users].map((Icon, i) => (
+                    <Box key={i} alignItems="center" justifyContent="center" style={{ width: 44, height: 44, borderRadius: 10, alignSelf: 'center' }}>
+                      <Icon size={22} color={theme.colors.grey03} />
                     </Box>
-                  </Pressable>
-                ) : (
-                  <Pressable key={key} style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 54, borderRadius: 8, paddingHorizontal: 16, paddingVertical: 15, backgroundColor: active ? theme.colors.lightMint : 'transparent', cursor: 'not-allowed' } as any}>
-                    <Icon size={24} color={active ? theme.colors.secondaryGreen : theme.colors.textSecondary} />
-                    <Text variant="labelMedium" style={{ color: active ? theme.colors.secondaryGreen : theme.colors.textSecondary }}>{label}</Text>
-                  </Pressable>
-                )
-              ))}
+                  ))}
+                </Box>
+              ) : (
+                <Box gap="8">
+                  {[
+                    { Icon: Hash, w: 120 },
+                    { Icon: Activity, w: 100 },
+                    { Icon: Users, w: 140 },
+                  ].map(({ Icon, w }, i) => (
+                    <Box key={i} style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 54, borderRadius: 8, paddingHorizontal: 16, paddingVertical: 15 }}>
+                      <Icon size={24} color={theme.colors.grey03} />
+                      <Box style={{ width: w, height: 14, borderRadius: 6, backgroundColor: theme.colors.grey03 }} />
+                    </Box>
+                  ))}
+                </Box>
+              )}
             </Box>
 
             <Box gap="8">
               <Box height={1} backgroundColor="border" />
-
+              {/* Bottom placeholder wireframes */}
               {sidebarCollapsed ? (
-                <Pressable style={{ alignItems: 'center', justifyContent: 'center', height: 54, cursor: 'not-allowed' } as any}>
-                  <Box alignItems="center" justifyContent="center" style={{ width: 44, height: 44, borderRadius: 10, backgroundColor: theme.colors.card }}>
-                    <HelpCircle size={22} color={theme.colors.textSecondary} />
-                  </Box>
-                </Pressable>
+                <Box gap="8">
+                  {[HelpCircle, User].map((Icon, i) => (
+                    <Box key={i} alignItems="center" justifyContent="center" style={{ width: 44, height: 44, borderRadius: 10, alignSelf: 'center' }}>
+                      <Icon size={22} color={theme.colors.grey03} />
+                    </Box>
+                  ))}
+                </Box>
               ) : (
-                <Pressable style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 54, borderRadius: 8, paddingHorizontal: 16, paddingVertical: 15, cursor: 'not-allowed' } as any}>
-                  <HelpCircle size={24} color={theme.colors.textSecondary} />
-                  <Text variant="labelMedium" style={{ color: theme.colors.textSecondary }}>Help</Text>
-                </Pressable>
-              )}
-
-              {sidebarCollapsed ? (
-                <Pressable style={{ alignItems: 'center', justifyContent: 'center', height: 54, cursor: 'not-allowed' } as any}>
-                  <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.lightMint }}>
-                    <User size={22} color={theme.colors.secondaryGreen} />
-                  </Box>
-                </Pressable>
-              ) : (
-                <Pressable style={{ flexDirection: 'row', alignItems: 'center', gap: 8, height: 54, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 15, cursor: 'not-allowed' } as any}>
-                  <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.lightMint }}>
-                    <User size={22} color={theme.colors.secondaryGreen} />
-                  </Box>
-                  <Text variant="labelMedium" style={{ color: theme.colors.textSecondary }}>My Profile</Text>
-                </Pressable>
+                <Box gap="8">
+                  {[
+                    { Icon: HelpCircle, w: 80 },
+                    { Icon: User, w: 100 },
+                  ].map(({ Icon, w }, i) => (
+                    <Box key={i} style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 54, borderRadius: 8, paddingHorizontal: 16, paddingVertical: 15 }}>
+                      <Icon size={24} color={theme.colors.grey03} />
+                      <Box style={{ width: w, height: 14, borderRadius: 6, backgroundColor: theme.colors.grey03 }} />
+                    </Box>
+                  ))}
+                </Box>
               )}
             </Box>
 
@@ -522,10 +529,6 @@ export default function JoinTasktag() {
           style={{ height: 74, paddingHorizontal: 24, paddingVertical: 12 }}
         >
           <Text variant="webHeading22" color="foreground" style={{ fontWeight: '600' }}>Chat</Text>
-          <Box flexDirection="row" alignItems="center">
-            <Pressable style={{ padding: 4, cursor: 'not-allowed' } as any}><Search size={22} color={theme.colors.grey05} /></Pressable>
-            <Pressable style={{ padding: 4, cursor: 'not-allowed' } as any}><MoreVertical size={22} color={theme.colors.grey05} /></Pressable>
-          </Box>
         </Box>
 
         {/* Chat list */}
@@ -544,18 +547,14 @@ export default function JoinTasktag() {
               justifyContent="center"
               style={{ backgroundColor: theme.colors.orange, flexShrink: 0 }}
             >
-              <Text style={{ fontWeight: '700', color: theme.colors.white, fontSize: 15 }}>TH</Text>
+              <User size={24} color={theme.colors.white} />
             </Box>
 
             {/* Name + message */}
             <Box flex={1} flexDirection="row" alignItems="center" alignSelf="stretch" style={{ minWidth: 0 }}>
-              <Box flex={1} style={{ gap: 2 }}>
-                <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.foreground }} numberOfLines={1}>
-                  Tasktag Helpdesk
-                </Text>
-                <Text style={{ fontSize: 14, color: theme.colors.grey05, lineHeight: 16 }} numberOfLines={1}>
-                  {"Hi there! Welcome to TaskTag! We're here to assist you with any questions or support requests you might have."}
-                </Text>
+              <Box flex={1} style={{ gap: 8 }}>
+                <Box style={{ width: 120, height: 14, borderRadius: 6, backgroundColor: theme.colors.grey03 }} />
+                <Box style={{ width: '85%', height: 12, borderRadius: 6, backgroundColor: theme.colors.grey03 }} />
               </Box>
             </Box>
 
@@ -568,32 +567,11 @@ export default function JoinTasktag() {
               style={{ gap: 8, flexShrink: 0 }}
             >
               <Box width={16} height={16} />
-              <Text style={{ fontSize: 10, fontWeight: '500', color: theme.colors.grey04, lineHeight: 16 }}>
-                Monday
-              </Text>
+              <Box style={{ width: 40, height: 10, borderRadius: 4, backgroundColor: theme.colors.grey03 }} />
             </Box>
           </Box>
         </Box>
 
-        {/* New Message FAB */}
-        <Pressable
-          style={{
-            position: 'absolute' as any,
-            bottom: 16,
-            right: 16,
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 8,
-            backgroundColor: theme.colors.foreground,
-            borderRadius: 156,
-            paddingHorizontal: 16,
-            paddingVertical: 12,
-            cursor: 'not-allowed',
-          } as any}
-        >
-          <MessageSquarePlus size={20} color={theme.colors.white} />
-          <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.white }}>New Message</Text>
-        </Pressable>
       </Box>
 
       {/* ── Signup Modal Overlay ── */}

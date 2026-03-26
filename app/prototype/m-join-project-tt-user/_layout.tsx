@@ -39,7 +39,12 @@ export default function MobileLayout() {
           elevation: 20,
         }}
       >
-        <Stack screenOptions={{ headerShown: false }} />
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" />
+          <Stack.Screen name="join-tasktag" />
+          <Stack.Screen name="download-app" />
+          <Stack.Screen name="project-overview" />
+        </Stack>
       </Box>
     </View>
   );
