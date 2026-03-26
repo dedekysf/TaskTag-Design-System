@@ -163,6 +163,13 @@ export default function PrototypeIndex() {
       jiraLabel: 'TD-306',
       route: '/prototype/global-activity-log-paywalled',
       platform: 'Web'
+    },
+    {
+      title: 'Global Activity Paywalled Free Tier',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-306?atlOrigin=eyJpIjoiZDFlODYwZTM2YTRmNGM2NGJiZWE1NzRiNThkMmQzNmYiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-306',
+      route: '/prototype/m-global-activity-log-paywalled',
+      platform: 'Mobile'
     }
   ] as const;
 
