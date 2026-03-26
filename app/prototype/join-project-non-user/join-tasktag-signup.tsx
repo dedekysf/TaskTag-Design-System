@@ -35,7 +35,6 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [hasTouchedPassword, setHasTouchedPassword] = useState(false);
   const [hasTypedPassword, setHasTypedPassword] = useState(false);
-  const [isProjectNameHovered, setIsProjectNameHovered] = useState(false);
   const [isGoogleHovered, setIsGoogleHovered] = useState(false);
   const [isAppleHovered, setIsAppleHovered] = useState(false);
 
@@ -138,30 +137,9 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
           position="relative"
           zIndex="10"
         >
-          <Pressable
-            onPress={() => router.push('/prototype/join-project-non-user/join-tasktag')}
-            onHoverIn={() => setIsProjectNameHovered(true)}
-            onHoverOut={() => setIsProjectNameHovered(false)}
-            style={({ pressed }) => [
-              {
-                alignSelf: 'flex-start',
-                marginBottom: 4,
-                opacity: pressed ? 0.7 : 1,
-              },
-              Platform.OS === 'web' && { cursor: 'pointer' } as any,
-            ]}
-          >
-            {({ pressed }) => (
-              <Text
-                variant="webLabelEmphasized"
-                style={{
-                  color: (pressed || isProjectNameHovered) ? theme.colors.secondaryGreen : theme.colors.foreground
-                }}
-              >
-                {INVITE.projectName}
-              </Text>
-            )}
-          </Pressable>
+          <Text variant="webLabelEmphasized" style={{ marginBottom: 4 }}>
+            {INVITE.projectName}
+          </Text>
           <Box flexDirection="row" alignItems="center" gap="4" marginBottom="16">
             <MapPin size={14} color={theme.colors.textSecondary} />
             <Text variant="webSecondaryBody" color="mutedForeground">

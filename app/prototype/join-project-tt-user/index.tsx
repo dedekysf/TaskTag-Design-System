@@ -1,14 +1,12 @@
 import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
-import { Theme } from '@/constants/theme';
-import { useTheme } from '@shopify/restyle';
+
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import React from 'react';
 import { Pressable } from 'react-native';
 
 export default function SignUpNonTTUser() {
-  const theme = useTheme<Theme>();
 
   return (
     <Box flex={1} justifyContent="center" alignItems="center" backgroundColor="background" padding="lg">
@@ -26,11 +24,9 @@ export default function SignUpNonTTUser() {
         {/* Invitation text */}
         <Box marginBottom="sm">
           <Text variant="body">
-            <Text variant="body" fontWeight="700">James Hammer</Text>
-            {' invited you to join the '}
+            {'James Hammer invited you to join\nthe '}
             <Text variant="body" fontWeight="700">'Raintree Hollow Court Renovation'</Text>
-            {' project on '}
-            <Text variant="body" color="primary" fontWeight="700">TaskTag</Text>
+            {' project on TaskTag'}
           </Text>
         </Box>
 
@@ -43,7 +39,7 @@ export default function SignUpNonTTUser() {
             style={{ alignSelf: 'flex-start' }}
             onPress={() => router.push('/prototype/join-project-tt-user/join-tasktag')}
           >
-            Join Tasktag
+            Accept & Join Project
           </Button>
         </Box>
 
