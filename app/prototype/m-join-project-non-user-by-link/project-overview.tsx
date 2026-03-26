@@ -1,8 +1,7 @@
-import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import { Activity, Hammer, HardHat, Hash, Image as ImageIcon, MessageSquare, X } from 'lucide-react-native';
+import { Clock, Hammer, HardHat, X } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
 
@@ -13,16 +12,10 @@ const PROJECT = {
     'This project involves a full residential home renovation aimed at improving functionality, comfort, safety, and visual appeal of the property.',
 };
 
-const FEATURES = [
-  { Icon: Hash, title: 'Create, assign and track tasks', subtitle: 'Manage project tasks efficiently' },
-  { Icon: ImageIcon, title: 'Share media and docs', subtitle: 'Upload files, photos and documents' },
-  { Icon: MessageSquare, title: 'Chat with your team', subtitle: 'Stay connected with team members' },
-  { Icon: Activity, title: 'Follow updates', subtitle: 'Get notified on project changes' },
-];
+const APPROVER = 'Kang Shen';
 
 export default function ProjectOverview() {
   const theme = useTheme<Theme>();
-  const [sheetVisible, setSheetVisible] = useState(true);
   const [bannerVisible, setBannerVisible] = useState(true);
 
   return (
@@ -105,6 +98,38 @@ export default function ProjectOverview() {
           </Box>
         </Box>
 
+        {/* Request Sent Section */}
+        <Box backgroundColor="card" borderRadius="16" padding="16" marginBottom="12" alignItems="center">
+          {/* Clock icon */}
+          <Box
+            width={56}
+            height={56}
+            borderRadius="full"
+            alignItems="center"
+            justifyContent="center"
+            marginBottom="12"
+            style={{ backgroundColor: '#EFF6FF' }}
+          >
+            <Clock size={28} color="#93C5FD" strokeWidth={1.5} />
+          </Box>
+
+          <Text variant="webLabelEmphasized" color="textPrimary" style={{ marginBottom: 8, textAlign: 'center' }}>
+            Request Sent
+          </Text>
+
+          <Text variant="webSecondaryBody" color="textSecondary" style={{ textAlign: 'center', marginBottom: 16, lineHeight: 22 }}>
+            {"You'll be notified when it's approved."}
+          </Text>
+
+        </Box>
+
+        {/* Divider */}
+        <Box flexDirection="row" alignItems="center" gap="8" marginBottom="12">
+          <Box flex={1} height={1} backgroundColor="border" />
+          <Text variant="webMetadataPrimary" color="textSecondary">Get Notified Faster</Text>
+          <Box flex={1} height={1} backgroundColor="border" />
+        </Box>
+
         {/* Download CTA */}
         <Box backgroundColor="card" borderRadius="16" padding="16">
           <Text variant="webSecondaryBody" color="textPrimary" style={{ fontWeight: '600', marginBottom: 8 }}>
@@ -118,62 +143,6 @@ export default function ProjectOverview() {
           </Box>
         </Box>
       </ScrollView>
-
-      {/* Bottom Sheet — inside frame via absolute positioning */}
-      {sheetVisible && (
-        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
-          {/* Overlay */}
-          <Pressable
-            style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)' }}
-            onPress={() => setSheetVisible(false)}
-          />
-          {/* Sheet */}
-          <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: theme.colors.white, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 16, paddingTop: 12, paddingBottom: 32 }}>
-            {/* Handle */}
-            <View style={{ alignItems: 'center', marginBottom: 20 }}>
-              <View style={{ width: 40, height: 4, backgroundColor: theme.colors.border, borderRadius: 2 }} />
-            </View>
-
-            {/* Project info */}
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-              <View style={{ width: 40, height: 40, backgroundColor: theme.colors.purple, borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
-                <HardHat size={22} color={theme.colors.white} />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text variant="webLabelSmall" color="textPrimary" style={{ marginBottom: 2 }}>{PROJECT.name}</Text>
-                <Text variant="webMetadataPrimary" style={{ color: (theme.colors as any).grey05 }}>You've been added to this project</Text>
-              </View>
-            </View>
-
-            {/* What you can do */}
-            <Text variant="webSecondaryBody" color="textPrimary" style={{ marginBottom: 16 }}>What you can do</Text>
-
-            <View style={{ gap: 16, marginBottom: 24 }}>
-              {FEATURES.map(({ Icon, title, subtitle }, i) => (
-                <View key={i} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                  <View style={{ width: 40, height: 40, backgroundColor: theme.colors.grey02, borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
-                    <Icon size={20} color={theme.colors.textPrimary} strokeWidth={1.5} />
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Text variant="webSecondaryBody" color="textPrimary" style={{ marginBottom: 2 }}>{title}</Text>
-                    <Text variant="webMetadataPrimary" style={{ color: (theme.colors as any).grey05 }}>{subtitle}</Text>
-                  </View>
-                </View>
-              ))}
-            </View>
-
-            {/* CTA */}
-            <Button
-              variant="fill"
-              size="lg"
-              style={{ width: '100%', backgroundColor: theme.colors.foreground, borderRadius: 12 }}
-              onPress={() => setSheetVisible(false)}
-            >
-              <Text variant="webLabelEmphasized" color="white">Go to Project</Text>
-            </Button>
-          </View>
-        </View>
-      )}
     </View>
   );
 }
