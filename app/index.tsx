@@ -26,7 +26,13 @@ function PrototypeCard({ item, theme }: PrototypeCardProps) {
     <Pressable
       onHoverIn={() => setIsHovered(true)}
       onHoverOut={() => setIsHovered(false)}
-      onPress={() => router.push(item.route as any)}
+      onPress={() => {
+        if (Platform.OS === 'web') {
+          window.open(item.route, '_blank');
+        } else {
+          router.push(item.route as any);
+        }
+      }}
       style={{
         width: Platform.OS === 'web' ? 320 : '100%',
       }}
@@ -90,7 +96,13 @@ function PrototypeCard({ item, theme }: PrototypeCardProps) {
           color="secondary"
           size="xs"
           style={{ width: '100%' }}
-          onPress={() => router.push(item.route as any)}
+          onPress={() => {
+            if (Platform.OS === 'web') {
+              window.open(item.route, '_blank');
+            } else {
+              router.push(item.route as any);
+            }
+          }}
           onHoverIn={() => setIsHovered(true)}
           onHoverOut={() => setIsHovered(false)}
         >

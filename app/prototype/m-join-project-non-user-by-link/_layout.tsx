@@ -2,14 +2,18 @@ import { Box } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import { Stack } from 'expo-router';
-import { Platform, View } from 'react-native';
+import { Platform, useWindowDimensions, View } from 'react-native';
 
 export default function MobileLayout() {
   const theme = useTheme<Theme>();
+  const { height: windowHeight } = useWindowDimensions();
 
   if (Platform.OS !== 'web') {
     return <Stack screenOptions={{ headerShown: false }} />;
   }
+
+  const frameHeight = windowHeight < 800 ? Math.floor(windowHeight * 0.94) : 812;
+  const paddingV = windowHeight < 800 ? Math.floor(windowHeight * 0.03) : 20;
 
   return (
     <View style={{
@@ -17,11 +21,11 @@ export default function MobileLayout() {
       backgroundColor: theme.colors.grey02,
       alignItems: 'center',
       justifyContent: 'center',
-      paddingVertical: 20,
+      paddingVertical: paddingV,
     }}>
       <Box
         width={375}
-        height={812}
+        height={frameHeight}
         backgroundColor="background"
         style={{
           borderRadius: 40,

@@ -111,7 +111,7 @@ export default function JoinTasktagSignup() {
     if (!valid || emailError) return;
 
     // Simulate join API wait, then redirect to dashboard showing the modal
-    router.push('/prototype/m-join-project-non-user-by-link/download-app');
+    router.push('/prototype/m-join-project-non-user-by-link/project-overview' as any);
   };
 
   return (
