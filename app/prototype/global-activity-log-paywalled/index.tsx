@@ -4,7 +4,7 @@ import { TextInput } from '@/components/TextInput';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import {
-  AlertTriangle,
+  Info,
   Check,
   ChevronDown,
   ChevronUp,
@@ -441,7 +441,7 @@ function InfoBanner({ onUpgrade }: { onUpgrade: () => void }) {
       <Box flexDirection="row" alignItems="center" gap="12">
         <Box flex={1}>
           <Box flexDirection="row" alignItems="center" gap="8" marginBottom="4">
-            <AlertTriangle size={24} color={theme.colors.secondaryGreen} />
+            <Info size={24} color={theme.colors.secondaryGreen} />
             <Text variant="webLargeLabel" color="textPrimary">
               You're seeing the last 3 events across all projects
             </Text>

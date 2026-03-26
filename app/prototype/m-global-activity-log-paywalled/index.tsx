@@ -5,7 +5,6 @@ import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import {
   Activity,
-  AlertTriangle,
   Check,
   ChevronDown,
   ChevronUp,
