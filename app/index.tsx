@@ -6,6 +6,8 @@ import { router } from 'expo-router';
 import React from 'react';
 import { Linking, Platform, Pressable, ScrollView } from 'react-native';
 
+type PlatformFilter = 'All Device' | 'Web' | 'Mobile';
+
 interface PrototypeCardProps {
   item: {
     title: string;
@@ -89,7 +91,6 @@ function PrototypeCard({ item, theme }: PrototypeCardProps) {
           size="xs"
           style={{ width: '100%' }}
           onPress={() => router.push(item.route as any)}
-          // Explicitly pass hover to the button to trigger card's hover state if bubbling fails
           onHoverIn={() => setIsHovered(true)}
           onHoverOut={() => setIsHovered(false)}
         >
@@ -102,6 +103,8 @@ function PrototypeCard({ item, theme }: PrototypeCardProps) {
 
 export default function PrototypeIndex() {
   const theme = useTheme<Theme>();
+  const [activeTab, setActiveTab] = React.useState<PlatformFilter>('All Device');
+
   const prototypes = [
     {
       title: 'Design System',
@@ -120,70 +123,109 @@ export default function PrototypeIndex() {
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-302?atlOrigin=eyJpIjoiNTk4MTIzZDUxOGVmNDYxN2IyOGNmZTkzYTQzOGQ2MjAiLCJwIjoiaiJ9',
       jiraLabel: 'TD-302',
       route: '/prototype/join-project-non-user',
-      platform: 'Web'
+      platform: 'Web' as const
     },
     {
       title: 'Join Project TT User',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-302?atlOrigin=eyJpIjoiNTk4MTIzZDUxOGVmNDYxN2IyOGNmZTkzYTQzOGQ2MjAiLCJwIjoiaiJ9',
       jiraLabel: 'TD-302',
       route: '/prototype/join-project-tt-user',
-      platform: 'Web'
+      platform: 'Web' as const
     },
     {
       title: 'Join Project Non User by Link',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-303?atlOrigin=eyJpIjoiZDE1Yzk1MzExNDhjNGEwZWEwZTk0YjE3NTk2NGRmZGQiLCJwIjoiaiJ9',
       jiraLabel: 'TD-303',
       route: '/prototype/join-project-non-user-by-link',
-      platform: 'Web'
+      platform: 'Web' as const
     },
     {
       title: 'Join Project Non User',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-304?atlOrigin=eyJpIjoiOTI4NjRmN2ZlMzk0NDAwNDgwMWFiMWZmNjkzYWNjMzYiLCJwIjoiaiJ9',
       jiraLabel: 'TD-304',
       route: '/prototype/m-join-project-non-user',
-      platform: 'Mobile'
+      platform: 'Mobile' as const
     },
     {
       title: 'Join Project TT User',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-304?atlOrigin=eyJpIjoiOTI4NjRmN2ZlMzk0NDAwNDgwMWFiMWZmNjkzYWNjMzYiLCJwIjoiaiJ9',
       jiraLabel: 'TD-304',
       route: '/prototype/m-join-project-tt-user',
-      platform: 'Mobile'
+      platform: 'Mobile' as const
     },
     {
       title: 'Join Project Non User by Link',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-304?atlOrigin=eyJpIjoiOTI4NjRmN2ZlMzk0NDAwNDgwMWFiMWZmNjkzYWNjMzYiLCJwIjoiaiJ9',
       jiraLabel: 'TD-304',
       route: '/prototype/m-join-project-non-user-by-link',
-      platform: 'Mobile'
+      platform: 'Mobile' as const
     },
     {
       title: 'Global Activity Paywalled Free Tier',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-306?atlOrigin=eyJpIjoiZDFlODYwZTM2YTRmNGM2NGJiZWE1NzRiNThkMmQzNmYiLCJwIjoiaiJ9',
       jiraLabel: 'TD-306',
       route: '/prototype/global-activity-log-paywalled',
-      platform: 'Web'
+      platform: 'Web' as const
     },
     {
       title: 'Global Activity Paywalled Free Tier',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-306?atlOrigin=eyJpIjoiZDFlODYwZTM2YTRmNGM2NGJiZWE1NzRiNThkMmQzNmYiLCJwIjoiaiJ9',
       jiraLabel: 'TD-306',
       route: '/prototype/m-global-activity-log-paywalled',
-      platform: 'Mobile'
+      platform: 'Mobile' as const
+    },
+    {
+      title: 'Invite from Contact',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-308?atlOrigin=eyJpIjoiMzY2YTM4MTE5YzFhNGE4MDhhYjRmNjU0NTVkMzU1ZGIiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-308',
+      route: '/prototype/m-invite-from-contact',
+      platform: 'Mobile' as const
     }
-  ] as const;
+  ];
+
+  const filtered = prototypes.filter(item => {
+    if (activeTab === 'All Device') return true;
+    if (item.title === 'Design System') return true;
+    return (item.platform ?? 'Web') === activeTab;
+  });
+
+  const tabs: PlatformFilter[] = ['All Device', 'Web', 'Mobile'];
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <Box padding="xl" paddingBottom="80">
         <Text variant="webHeading22" marginBottom="xl">Prototypes Design</Text>
 
-        <Box
-          flexDirection="row"
-          flexWrap="wrap"
-          gap="lg"
-        >
-          {prototypes.map((item, index) => (
+        {/* Tabs */}
+        <Box flexDirection="row" style={{ gap: 8, marginBottom: 24 } as any}>
+          {tabs.map(tab => {
+            const isActive = activeTab === tab;
+            return (
+              <Pressable key={tab} onPress={() => setActiveTab(tab)}>
+                <Box
+                  paddingHorizontal="16"
+                  paddingVertical="8"
+                  borderRadius="xl"
+                  style={{
+                    backgroundColor: isActive ? theme.colors.secondaryGreen : theme.colors.grey01,
+                    borderWidth: 1,
+                    borderColor: isActive ? theme.colors.secondaryGreen : theme.colors.border,
+                  } as any}
+                >
+                  <Text
+                    variant="webLabelSmall"
+                    style={{ color: isActive ? '#fff' : theme.colors.textPrimary }}
+                  >
+                    {tab}
+                  </Text>
+                </Box>
+              </Pressable>
+            );
+          })}
+        </Box>
+
+        <Box flexDirection="row" flexWrap="wrap" gap="lg">
+          {filtered.map((item, index) => (
             <PrototypeCard key={index} item={item} theme={theme} />
           ))}
         </Box>
