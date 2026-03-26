@@ -1,23 +1,38 @@
+import { router } from 'expo-router';
 import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import { router } from 'expo-router';
 import {
   Activity,
+  ChevronsLeft,
+  ChevronsRight,
   FileText,
+  Folder,
   Hash,
+  HelpCircle,
   Image as ImageIcon,
   Link,
   ListFilter,
   MessageSquare,
+  MessageSquarePlus,
+  MoreVertical,
   Plus,
   Search,
+  User,
   UserPlus,
-  Users
+  Users,
 } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { Pressable, ScrollView } from 'react-native';
+import { Image, Modal, Pressable, ScrollView } from 'react-native';
+import JoinTasktagSignup from './join-tasktag-signup';
+
+const NAV_ITEMS = [
+  { key: 'projects', label: 'Projects',       Icon: Folder,   active: true },
+  { key: 'tasks',    label: 'My Tasks',        Icon: Hash,     active: false },
+  { key: 'activity', label: 'Global Activity', Icon: Activity, active: false },
+  { key: 'contacts', label: 'Contacts',        Icon: Users,    active: false },
+];
 
 const PROJECT = {
   name: 'Raintree Hollow Court Renovation',
@@ -80,15 +95,104 @@ function SkillsTooltip({ skills }: { skills: string[] }) {
 export default function JoinTasktag() {
   const theme = useTheme<Theme>();
   const [activeTab, setActiveTab] = useState('tasks');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [showSignupModal, setShowSignupModal] = useState(false);
 
   return (
     <Box
       flex={1}
+      flexDirection="row"
       backgroundColor="background"
-      alignItems="center"
+      style={{ height: '100%' as any, position: 'relative' as any }}
     >
-      {/* Content constrained to 1114px */}
-      <Box flex={1} width="100%" maxWidth={1114}>
+      {/* ── Sidebar ── */}
+      <Box
+        backgroundColor="grey01"
+        borderRightWidth={1}
+        borderColor="border"
+        style={{
+          width: sidebarCollapsed ? 72 : 256,
+          maxWidth: 256,
+          height: '100%' as any,
+          paddingHorizontal: 16,
+          paddingVertical: 24,
+          gap: 30,
+        }}
+      >
+        {sidebarCollapsed ? (
+          <Box alignItems="center" gap="8">
+            <Image source={require('@/assets/images/tt-favicon.png')} style={{ width: 28, height: 28 }} resizeMode="contain" />
+            <Pressable onPress={() => setSidebarCollapsed(false)} hitSlop={8}>
+              <ChevronsRight size={20} color={theme.colors.grey04} />
+            </Pressable>
+          </Box>
+        ) : (
+          <Box flexDirection="row" alignItems="center" justifyContent="space-between">
+            <Image source={require('@/assets/images/tasktag-logo.png')} style={{ width: 96, height: 24 }} resizeMode="contain" />
+            <Pressable onPress={() => setSidebarCollapsed(true)} hitSlop={8}>
+              <ChevronsLeft size={24} color={theme.colors.grey04} />
+            </Pressable>
+          </Box>
+        )}
+
+        <Box flex={1} style={{ paddingTop: 16 }}>
+          <Box flex={1} justifyContent="space-between">
+
+            <Box gap="8">
+              {NAV_ITEMS.map(({ key, label, Icon, active }) => (
+                sidebarCollapsed ? (
+                  <Pressable key={key} style={{ alignItems: 'center', justifyContent: 'center', height: 54, cursor: 'not-allowed' } as any}>
+                    <Box alignItems="center" justifyContent="center" style={{ width: 44, height: 44, borderRadius: 10, backgroundColor: active ? theme.colors.lightMint : theme.colors.card }}>
+                      <Icon size={22} color={active ? theme.colors.secondaryGreen : theme.colors.textSecondary} />
+                    </Box>
+                  </Pressable>
+                ) : (
+                  <Pressable key={key} style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 54, borderRadius: 8, paddingHorizontal: 16, paddingVertical: 15, backgroundColor: active ? theme.colors.lightMint : 'transparent', cursor: 'not-allowed' } as any}>
+                    <Icon size={24} color={active ? theme.colors.secondaryGreen : theme.colors.textSecondary} />
+                    <Text variant="labelMedium" style={{ color: active ? theme.colors.secondaryGreen : theme.colors.textSecondary }}>{label}</Text>
+                  </Pressable>
+                )
+              ))}
+            </Box>
+
+            <Box gap="8">
+              <Box height={1} backgroundColor="border" />
+
+              {sidebarCollapsed ? (
+                <Pressable style={{ alignItems: 'center', justifyContent: 'center', height: 54, cursor: 'not-allowed' } as any}>
+                  <Box alignItems="center" justifyContent="center" style={{ width: 44, height: 44, borderRadius: 10, backgroundColor: theme.colors.card }}>
+                    <HelpCircle size={22} color={theme.colors.textSecondary} />
+                  </Box>
+                </Pressable>
+              ) : (
+                <Pressable style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 54, borderRadius: 8, paddingHorizontal: 16, paddingVertical: 15, cursor: 'not-allowed' } as any}>
+                  <HelpCircle size={24} color={theme.colors.textSecondary} />
+                  <Text variant="labelMedium" style={{ color: theme.colors.textSecondary }}>Help</Text>
+                </Pressable>
+              )}
+
+              {sidebarCollapsed ? (
+                <Pressable style={{ alignItems: 'center', justifyContent: 'center', height: 54, cursor: 'not-allowed' } as any}>
+                  <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.lightMint }}>
+                    <User size={22} color={theme.colors.secondaryGreen} />
+                  </Box>
+                </Pressable>
+              ) : (
+                <Pressable style={{ flexDirection: 'row', alignItems: 'center', gap: 8, height: 54, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 15, cursor: 'not-allowed' } as any}>
+                  <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.lightMint }}>
+                    <User size={22} color={theme.colors.secondaryGreen} />
+                  </Box>
+                  <Text variant="labelMedium" style={{ color: theme.colors.textSecondary }}>My Profile</Text>
+                </Pressable>
+              )}
+            </Box>
+
+          </Box>
+        </Box>
+      </Box>
+
+      {/* ── Main Content ── */}
+      <Box flex={1} backgroundColor="background" style={{ height: '100%' as any }}>
 
         {/* ── Header bar ── */}
         <Box
@@ -267,7 +371,7 @@ export default function JoinTasktag() {
                       variant="fill"
                       size="lg"
                       style={{ borderRadius: 40, minWidth: 220, backgroundColor: theme.colors.foreground, marginTop: 16 }}
-                      onPress={() => router.push('/prototype/join-project-non-user/join-tasktag-signup')}
+                      onPress={() => setShowSignupModal(true)}
                     >
                       <Text color="white" variant="labelMedium">Join This Project</Text>
                     </Button>
@@ -394,7 +498,7 @@ export default function JoinTasktag() {
                 variant="fill"
                 size="lg"
                 style={{ borderRadius: 40, minWidth: 220, backgroundColor: theme.colors.foreground, marginTop: 16 }}
-                onPress={() => router.push('/prototype/join-project-non-user/join-tasktag-signup')}
+                onPress={() => setShowSignupModal(true)}
               >
                 <Text color="white" variant="labelMedium">Join This Project</Text>
               </Button>
@@ -402,6 +506,121 @@ export default function JoinTasktag() {
           )}
         </ScrollView>
       </Box>
+
+      {/* ── Chat Panel ── */}
+      <Box
+        backgroundColor="card"
+        borderLeftWidth={1}
+        borderColor="border"
+        style={{ width: 550, maxWidth: 550, height: '100%' as any, position: 'relative' as any }}
+      >
+        {/* Header */}
+        <Box
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="space-between"
+          style={{ height: 74, paddingHorizontal: 24, paddingVertical: 12 }}
+        >
+          <Text variant="webHeading22" color="foreground" style={{ fontWeight: '600' }}>Chat</Text>
+          <Box flexDirection="row" alignItems="center">
+            <Pressable style={{ padding: 4, cursor: 'not-allowed' } as any}><Search size={22} color={theme.colors.grey05} /></Pressable>
+            <Pressable style={{ padding: 4, cursor: 'not-allowed' } as any}><MoreVertical size={22} color={theme.colors.grey05} /></Pressable>
+          </Box>
+        </Box>
+
+        {/* Chat list */}
+        <Box style={{ paddingHorizontal: 6 }}>
+          <Box
+            flexDirection="row"
+            alignItems="flex-start"
+            style={{ paddingHorizontal: 16, paddingVertical: 10, gap: 16 }}
+          >
+            {/* Avatar */}
+            <Box
+              width={48}
+              height={48}
+              borderRadius="full"
+              alignItems="center"
+              justifyContent="center"
+              style={{ backgroundColor: theme.colors.orange, flexShrink: 0 }}
+            >
+              <Text style={{ fontWeight: '700', color: theme.colors.white, fontSize: 15 }}>TH</Text>
+            </Box>
+
+            {/* Name + message */}
+            <Box flex={1} flexDirection="row" alignItems="center" alignSelf="stretch" style={{ minWidth: 0 }}>
+              <Box flex={1} style={{ gap: 2 }}>
+                <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.foreground }} numberOfLines={1}>
+                  Tasktag Helpdesk
+                </Text>
+                <Text style={{ fontSize: 14, color: theme.colors.grey05, lineHeight: 16 }} numberOfLines={1}>
+                  {"Hi there! Welcome to TaskTag! We're here to assist you with any questions or support requests you might have."}
+                </Text>
+              </Box>
+            </Box>
+
+            {/* Timestamp column — stretches full height, centers content */}
+            <Box
+              flexDirection="column"
+              alignSelf="stretch"
+              justifyContent="center"
+              alignItems="flex-end"
+              style={{ gap: 8, flexShrink: 0 }}
+            >
+              <Box width={16} height={16} />
+              <Text style={{ fontSize: 10, fontWeight: '500', color: theme.colors.grey04, lineHeight: 16 }}>
+                Monday
+              </Text>
+            </Box>
+          </Box>
+        </Box>
+
+        {/* New Message FAB */}
+        <Pressable
+          style={{
+            position: 'absolute' as any,
+            bottom: 16,
+            right: 16,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 8,
+            backgroundColor: theme.colors.foreground,
+            borderRadius: 156,
+            paddingHorizontal: 16,
+            paddingVertical: 12,
+            cursor: 'not-allowed',
+          } as any}
+        >
+          <MessageSquarePlus size={20} color={theme.colors.white} />
+          <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.white }}>New Message</Text>
+        </Pressable>
+      </Box>
+
+      {/* ── Signup Modal Overlay ── */}
+      <Modal
+        visible={showSignupModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowSignupModal(false)}
+      >
+        <Box style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.75)', justifyContent: 'center', alignItems: 'center' }}>
+          {/* Backdrop tap to close */}
+          <Pressable
+            onPress={() => setShowSignupModal(false)}
+            style={{ position: 'absolute' as any, top: 0, left: 0, right: 0, bottom: 0 }}
+          />
+          {/* Signup content constrained */}
+          <Box style={{ width: '100%', maxWidth: 640, maxHeight: '90%', borderRadius: 16, overflow: 'hidden' as any }}>
+            <JoinTasktagSignup
+              onClose={() => setShowSignupModal(false)}
+              onSuccess={() => {
+                setShowSignupModal(false);
+                router.push('/prototype/join-project-non-user/project-dashboard');
+              }}
+            />
+          </Box>
+        </Box>
+      </Modal>
     </Box>
   );
 }

@@ -365,7 +365,7 @@ export default function ProjectDashboardBase({
       </Box>
 
       {/* ── Main Content ── */}
-      <Box flex={1} backgroundColor="background" style={{ height: '100%' as any, maxWidth: 1114 }}>
+      <Box flex={1} backgroundColor="background" style={{ height: '100%' as any }}>
 
         <Box paddingHorizontal="md" backgroundColor="card" borderBottomWidth={1} borderColor="border" style={{ paddingTop: 16, paddingBottom: 12 }}>
           <Box flexDirection="row" alignItems="center" justifyContent="space-between">
