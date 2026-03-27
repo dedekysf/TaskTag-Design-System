@@ -386,7 +386,7 @@ export default function ProjectOverview() {
                 style={{ width: '100%', backgroundColor: theme.colors.foreground, borderRadius: 12 }}
                 onPress={() => router.push('/prototype/m-join-project-non-user/project-overview-app' as any)}
               >
-                <Text variant="webLabelEmphasized" color="white">Go to Project</Text>
+                <Text variant="webLabelEmphasized" color="white">Go to App</Text>
               </Button>
             </View>
           </View>
