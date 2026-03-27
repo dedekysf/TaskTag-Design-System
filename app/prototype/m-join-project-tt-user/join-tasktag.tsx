@@ -154,7 +154,7 @@ export default function JoinTasktag() {
           color="primary"
           size="lg"
           style={{ width: '100%' }}
-          onPress={() => router.push('/prototype/m-join-project-tt-user/project-overview')}
+          onPress={() => router.push('/prototype/m-join-project-tt-user/project-overview-app')}
         >
           Accept & Join
         </Button>

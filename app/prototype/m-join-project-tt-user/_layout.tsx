@@ -43,7 +43,7 @@ export default function MobileLayout() {
           <Stack.Screen name="index" />
           <Stack.Screen name="join-tasktag" />
           <Stack.Screen name="download-app" />
-          <Stack.Screen name="project-overview" />
+          <Stack.Screen name="project-overview-app" />
         </Stack>
       </Box>
     </View>
