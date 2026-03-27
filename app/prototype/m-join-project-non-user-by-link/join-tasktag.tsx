@@ -4,18 +4,19 @@ import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import { router } from 'expo-router';
 import { BatteryFull, ChevronRight, FileText, Hammer, HardHat, Hash, Image as ImageIcon, Lock, Share, SignalHigh, User, WifiHigh, Zap } from 'lucide-react-native';
-import React from 'react';
-import { Image, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { Image, Pressable, ScrollView } from 'react-native';
 
 const PROJECT = {
   name: 'Raintree Hollow',
   address: '11 N Raintree Hollow Ln, Houston, Texas 77027, USA',
   description:
-    'This project involves a full residential home renovation aimed at improving functionality, comfort, safety, and visual appeal of the property.',
+    'This project involves a full residential home renovation aimed at improving functionality, comfort, safety, and visual appeal of the property. The scope includes demolition, structural adjustments, electrical and plumbing upgrades, flooring, cabinetry installation, painting, and final quality inspection.',
 };
 
 export default function JoinTasktag() {
   const theme = useTheme<Theme>();
+  const [descExpanded, setDescExpanded] = useState(false);
 
   return (
     <Box flex={1} backgroundColor="background" alignItems="center">
@@ -82,7 +83,7 @@ export default function JoinTasktag() {
 
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 280, flexGrow: 1 }}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 32, flexGrow: 1 }}
         >
 
           {/* Top Card */}
@@ -164,10 +165,49 @@ export default function JoinTasktag() {
               <Text variant="webLabelEmphasized" color="foreground">
                 Description
               </Text>
+              <Pressable onPress={() => setDescExpanded(prev => !prev)}>
+                <Text variant="webMetadataPrimary" color="grey05">{descExpanded ? 'See Less' : 'See More'}</Text>
+              </Pressable>
             </Box>
-            <Text variant="webMetadataPrimary" color="textSecondary" style={{ lineHeight: 18 }}>
+            <Text variant="webMetadataPrimary" color="textSecondary" style={{ lineHeight: 18 }} numberOfLines={descExpanded ? undefined : 3}>
               {PROJECT.description}
             </Text>
+          </Box>
+
+          {/* Invitation Block */}
+          <Box
+            backgroundColor="black"
+            borderRadius="8"
+            padding="12"
+            marginBottom="12"
+            gap="16"
+          >
+            <Box alignItems="center" gap="8">
+              <Box
+                width={40}
+                height={40}
+                borderRadius="full"
+                alignItems="center"
+                justifyContent="center"
+                style={{ backgroundColor: 'rgba(0,217,165,0.15)' }}
+              >
+                <Share size={20} color="#00D9A5" strokeWidth={1.5} />
+              </Box>
+              <Text variant="webLabelEmphasized" color="white" textAlign="center">
+                {"Someone shared this project with you"}
+              </Text>
+              <Text variant="webMetadataPrimary" color="white" textAlign="center" style={{ opacity: 0.7 }}>
+                {"The project owner is waiting for your request."}
+              </Text>
+            </Box>
+            <Button
+              variant="fill"
+              size="lg"
+              style={{ backgroundColor: '#18A87D', alignSelf: 'stretch' }}
+              onPress={() => router.push('/prototype/m-join-project-non-user-by-link/join-tasktag-signup')}
+            >
+              <Text variant="labelMedium" color="white">Request to Join</Text>
+            </Button>
           </Box>
 
           {/* Members Card */}
@@ -306,36 +346,7 @@ export default function JoinTasktag() {
 
         </ScrollView>
 
-        {/* Fixed Bottom Block */}
-        <Box
-          position="absolute"
-          bottom={0}
-          left={0}
-          right={0}
-          backgroundColor="background"
-          padding="xl"
-          style={{ borderTopLeftRadius: 32, borderTopRightRadius: 32, paddingBottom: 48, elevation: 12, shadowColor: '#000', shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.05, shadowRadius: 10 } as any}
-        >
-          <Box alignItems="center" style={{ gap: 16 }}>
-            <Share size={40} color={theme.colors.textSecondary} strokeWidth={1.5} />
-            <Text variant="webLabelEmphasized" color="foreground" textAlign="center" style={{ fontWeight: '400' }}>
-              {"You've been shared a project on TaskTag"}
-            </Text>
-          </Box>
-          <Button
-            variant="fill"
-            size="lg"
-            style={{
-              backgroundColor: theme.colors.foreground,
-              borderRadius: 40,
-              alignSelf: 'stretch',
-              marginTop: 24,
-            }}
-            onPress={() => router.push('/prototype/m-join-project-non-user-by-link/join-tasktag-signup')}
-          >
-            <Text variant="labelMedium" color="white">Request to Join</Text>
-          </Button>
-        </Box>
+
       </Box>
     </Box>
   );
