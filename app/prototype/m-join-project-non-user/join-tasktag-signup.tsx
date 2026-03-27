@@ -22,14 +22,21 @@ export default function JoinTasktagSignup() {
 
   const [isGoogleHovered, setIsGoogleHovered] = useState(false);
   const [isAppleHovered, setIsAppleHovered] = useState(false);
+  const [tooltipOpen, setTooltipOpen] = useState(false);
 
   return (
-    <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.75)', justifyContent: 'center', alignItems: 'center' }}>
       <Pressable
         style={[{ position: 'absolute', width: '100%', height: '100%' }, Platform.OS === 'web' && { cursor: 'default' } as any]}
         onPress={() => router.back()}
       />
       <View style={{ alignSelf: 'stretch', marginHorizontal: 16, backgroundColor: theme.colors.background, borderRadius: 16, overflow: 'hidden', elevation: 24, shadowColor: '#000', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.1, shadowRadius: 20 }}>
+        {tooltipOpen && (
+          <Pressable
+            style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 10, backgroundColor: 'transparent' }}
+            onPress={() => setTooltipOpen(false)}
+          />
+        )}
         <View style={{ paddingHorizontal: 20, paddingVertical: 32 }}>
           <Box width="100%">
             {/* Heading */}
@@ -71,6 +78,8 @@ export default function JoinTasktagSignup() {
                 <Tooltip
                   variant="bottom-left"
                   trigger="press"
+                  open={tooltipOpen}
+                  onOpenChange={setTooltipOpen}
                   content={
                     <View style={{ gap: 4 }}>
                       {['View and manage tasks', 'Upload files & media', 'Collaborate with team', 'Track project progress'].map((item, i) => (

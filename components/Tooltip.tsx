@@ -31,6 +31,10 @@ interface TooltipProps {
     children: React.ReactNode;
     /** Force tooltip to show (controlled mode) */
     forceShow?: boolean;
+    /** Controlled open state */
+    open?: boolean;
+    /** Callback when open state changes */
+    onOpenChange?: (open: boolean) => void;
     /** Make wrapper take full width */
     fullWidth?: boolean;
     /** Disabled tooltip */
@@ -67,13 +71,22 @@ export function Tooltip({
     content,
     children,
     forceShow = false,
+    open,
+    onOpenChange,
     fullWidth = false,
     disabled = false,
     style,
     trigger = 'hover',
 }: TooltipProps) {
     const theme = useTheme<Theme>();
-    const [isVisible, setIsVisible] = useState(false);
+    const isControlled = open !== undefined;
+    const [internalVisible, setInternalVisible] = useState(false);
+    const isVisible = isControlled ? open! : internalVisible;
+
+    const setIsVisible = (val: boolean) => {
+        if (!isControlled) setInternalVisible(val);
+        onOpenChange?.(val);
+    };
     const [layout, setLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
     const currentSize = sizeConfig[size];
 
