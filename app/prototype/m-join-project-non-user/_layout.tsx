@@ -42,7 +42,8 @@ export default function MobileLayout() {
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
           <Stack.Screen name="join-tasktag" />
-          <Stack.Screen name="project-overview" />
+          <Stack.Screen name="project-overview-browser" />
+          <Stack.Screen name="project-overview-app" />
           <Stack.Screen 
             name="join-tasktag-signup" 
             options={{ presentation: 'transparentModal', contentStyle: { backgroundColor: 'transparent' } }} 

@@ -189,7 +189,7 @@ export default function ProjectOverview() {
           </Pressable>
           <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Important Note</Text>
           <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18, opacity: 0.7, paddingRight: 20 }}>
-            After tapping "Accept & Join", navigate to the App (Project Detail) or Download App.
+            After tapping "Go to Project", navigate to the App (Project Detail) or Download App.
           </Text>
         </View>
       )}

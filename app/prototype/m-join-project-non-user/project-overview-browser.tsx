@@ -2,7 +2,8 @@ import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import { Activity, Hammer, HardHat, Hash, Image as ImageIcon, MessageSquare, ChevronRight, FileText, Zap, Lock, BatteryFull, WifiHigh, SignalHigh, User, Download } from 'lucide-react-native';
+import { router } from 'expo-router';
+import { Activity, Hammer, HardHat, Hash, Image as ImageIcon, MessageSquare, ChevronRight, FileText, Zap, Lock, BatteryFull, WifiHigh, SignalHigh, User } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
 
@@ -22,7 +23,7 @@ const FEATURES = [
 
 export default function ProjectOverview() {
   const theme = useTheme<Theme>();
-  const [sheetVisible, setSheetVisible] = useState(true);
+  const sheetVisible = true;
 
   return (
     <Box flex={1} backgroundColor="background" alignItems="center">
@@ -346,16 +347,9 @@ export default function ProjectOverview() {
         {sheetVisible && (
           <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 50 }}>
             {/* Overlay */}
-            <Pressable
-              style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)' }}
-              onPress={() => setSheetVisible(false)}
-            />
+            <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)' }} />
             {/* Sheet */}
-            <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: theme.colors.white, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 16, paddingTop: 12, paddingBottom: 32 }}>
-              {/* Handle */}
-              <View style={{ alignItems: 'center', marginBottom: 20 }}>
-                <View style={{ width: 40, height: 4, backgroundColor: theme.colors.border, borderRadius: 2 }} />
-              </View>
+            <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: theme.colors.white, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 16, paddingTop: 16, paddingBottom: 32 }}>
 
               {/* Project info */}
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 20 }}>
@@ -390,7 +384,7 @@ export default function ProjectOverview() {
                 variant="fill"
                 size="lg"
                 style={{ width: '100%', backgroundColor: theme.colors.foreground, borderRadius: 12 }}
-                onPress={() => setSheetVisible(false)}
+                onPress={() => router.push('/prototype/m-join-project-non-user/project-overview-app' as any)}
               >
                 <Text variant="webLabelEmphasized" color="white">Go to Project</Text>
               </Button>

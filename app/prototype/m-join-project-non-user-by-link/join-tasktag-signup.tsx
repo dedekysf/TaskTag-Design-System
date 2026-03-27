@@ -106,7 +106,7 @@ export default function JoinTasktagSignup() {
 
     if (!valid || emailError) return;
 
-    router.push('/prototype/m-join-project-non-user-by-link/project-overview' as any);
+    router.push('/prototype/m-join-project-non-user-by-link/project-overview-browser' as any);
   };
 
   return (
