@@ -588,7 +588,7 @@ export default function JoinTasktag() {
             style={{ position: 'absolute' as any, top: 0, left: 0, right: 0, bottom: 0 }}
           />
           {/* Signup content constrained */}
-          <Box style={{ width: '100%', maxWidth: 640, maxHeight: '90%', borderRadius: 16, overflow: 'hidden' as any }}>
+          <Box style={{ width: '100%', maxWidth: 640, maxHeight: '99%', borderRadius: 16, overflow: 'hidden' as any }}>
             <JoinTasktagSignup
               onClose={() => setShowSignupModal(false)}
               onSuccess={() => {
