@@ -1018,10 +1018,11 @@ const s = StyleSheet.create({
   thumbPillBar: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: 6,
     paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 4,
+    paddingVertical: 8,
+    backgroundColor: '#303742',
     flexWrap: 'wrap',
   },
 
