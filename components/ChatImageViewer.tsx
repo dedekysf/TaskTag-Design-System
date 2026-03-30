@@ -26,7 +26,7 @@ import { Tooltip } from './Tooltip';
 import {
   ChevronLeft, CircleArrowLeft, CircleArrowRight, Download, RotateCw, ZoomOut, ZoomIn,
   MoreVertical, Forward, Link, Check, CheckSquare, X,
-  PencilLine, Info, Trash2,
+  PencilLine, Info, Trash2, Folder, Hash,
 } from 'lucide-react-native';
 
 // ── Color tokens ──────────────────────────────────────────────────────────────
@@ -431,11 +431,13 @@ export function ChatImageViewer({
             <View style={s.imgPillBar}>
               {projectName && (
                 <View style={[s.imgPill, s.imgPillProject]}>
+                  <Folder size={12} color="#fff" />
                   <Text style={s.imgPillTxt} numberOfLines={1}>{projectName}</Text>
                 </View>
               )}
               {taskName && (
                 <View style={[s.imgPill, s.imgPillTask]}>
+                  <Hash size={12} color="#fff" />
                   <Text style={s.imgPillTxt} numberOfLines={1}>{taskName}</Text>
                 </View>
               )}
@@ -832,8 +834,11 @@ const s = StyleSheet.create({
   },
   imgPill: {
     borderRadius: 8,
-    paddingHorizontal: 12,
+    paddingHorizontal: 10,
     paddingVertical: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
   },
   imgPillProject: {
     backgroundColor: 'rgba(0,0,0,0.70)',
@@ -844,7 +849,7 @@ const s = StyleSheet.create({
   imgPillTxt: {
     color: '#ffffff',
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '400',
   },
 
   // Navigation arrows
