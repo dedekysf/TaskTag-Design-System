@@ -433,13 +433,13 @@ function InfoBanner({ onUpgrade }: { onUpgrade: () => void }) {
       borderRadius="12"
       padding="16"
       style={{
-        backgroundColor: theme.colors.lightMint,
+        backgroundColor: theme.colors.lightCream,
         borderWidth: 1,
-        borderColor: theme.colors.secondaryGreen,
+        borderColor: theme.colors.pastelYellow,
       } as any}
     >
       <Box flexDirection="row" alignItems="center" gap="12">
-        <Info size={24} color={theme.colors.secondaryGreen} />
+        <Info size={24} color={theme.colors.pastelYellow} />
         <Box flex={1}>
           <Text variant="webLargeLabel" color="textPrimary" marginBottom="4">
             There's more activity waiting for you

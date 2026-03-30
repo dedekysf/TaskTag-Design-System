@@ -435,9 +435,9 @@ function InfoBanner({ onUpgrade }: { onUpgrade: () => void }) {
       borderRadius="12"
       padding="16"
       style={{
-        backgroundColor: theme.colors.lightMint,
+        backgroundColor: theme.colors.lightCream,
         borderWidth: 1,
-        borderColor: theme.colors.secondaryGreen,
+        borderColor: theme.colors.pastelYellow,
       } as any}
     >
       <Text variant="webLabelEmphasized" color="textPrimary" marginBottom="8">
