@@ -26,7 +26,7 @@ import { Tooltip } from './Tooltip';
 import {
   ChevronLeft, CircleArrowLeft, CircleArrowRight, Download, RotateCw, ZoomOut, ZoomIn,
   MoreVertical, Forward, Link, Check, CheckSquare,
-  PencilLine, Pencil, Share2, Info, Trash2,
+  PencilLine, Info, Trash2,
 } from 'lucide-react-native';
 
 // ── Color tokens ──────────────────────────────────────────────────────────────
@@ -50,7 +50,7 @@ const C = {
 
 const ZOOM_STEP = 25;
 const ZOOM_MIN  = 25;
-const ZOOM_MAX  = 400;
+const ZOOM_MAX  = 200;
 const BOTTOM_H  = 112;
 const THUMB_W   = 120;
 const THUMB_H   = 80;
@@ -269,13 +269,15 @@ export function ChatImageViewer({
             ) : (
               <View style={s.filenameRow}>
                 <Text style={s.filename} numberOfLines={1}>{filename}</Text>
-                <Pressable
-                  onPress={() => setRenaming(true)}
-                  style={({ pressed, hovered }: any) => [s.renamePencilBtn, (pressed || hovered) && s.iconBtnHover]}
-                  hitSlop={8}
-                >
-                  <PencilLine size={14} color={C.textSecondary} />
-                </Pressable>
+                <Tooltip variant="bottom-right" size="sm" content="Rename">
+                  <Pressable
+                    onPress={() => setRenaming(true)}
+                    style={({ pressed, hovered }: any) => [s.renamePencilBtn, (pressed || hovered) && s.iconBtnHover]}
+                    hitSlop={8}
+                  >
+                    <PencilLine size={14} color={C.iconActive} />
+                  </Pressable>
+                </Tooltip>
               </View>
             )}
           </View>
@@ -347,27 +349,10 @@ export function ChatImageViewer({
             {/* Backdrop to close */}
             <Pressable style={StyleSheet.absoluteFill} onPress={() => setMoreVisible(false)} />
             <View style={s.moreMenu}>
-              {/* Rename */}
-              <Pressable style={s.moreItem} onPress={() => { setMoreVisible(false); setRenaming(true); }}>
-                <Pencil size={16} color={C.textPrimary} />
-                <Text style={s.moreItemTxt}>Rename</Text>
-              </Pressable>
-              {/* Share */}
-              <Pressable style={s.moreItem} onPress={() => setMoreVisible(false)}>
-                <Share2 size={16} color={C.textPrimary} />
-                <Text style={s.moreItemTxt}>Share</Text>
-              </Pressable>
-              {/* Forward — Coming Soon */}
-              <Pressable style={s.moreItem} onPress={() => setMoreVisible(false)}>
-                <Forward size={16} color={C.textPrimary} />
-                <Text style={s.moreItemTxt}>Forward</Text>
-                <View style={s.comingSoonPill}><Text style={s.comingSoonTxt}>Coming Soon</Text></View>
-              </Pressable>
-              {/* Information — Coming Soon */}
+              {/* Information */}
               <Pressable style={s.moreItem} onPress={() => setMoreVisible(false)}>
                 <Info size={16} color={C.textPrimary} />
                 <Text style={s.moreItemTxt}>Information</Text>
-                <View style={s.comingSoonPill}><Text style={s.comingSoonTxt}>Coming Soon</Text></View>
               </Pressable>
               <View style={s.moreDivider} />
               {/* Delete */}
@@ -416,12 +401,12 @@ export function ChatImageViewer({
           {hasPills && (
             <View style={s.imgPillBar}>
               {projectName && (
-                <View style={s.imgPill}>
+                <View style={[s.imgPill, s.imgPillProject]}>
                   <Text style={s.imgPillTxt} numberOfLines={1}>{projectName}</Text>
                 </View>
               )}
               {taskName && (
-                <View style={s.imgPill}>
+                <View style={[s.imgPill, s.imgPillTask]}>
                   <Text style={s.imgPillTxt} numberOfLines={1}>{taskName}</Text>
                 </View>
               )}
@@ -710,6 +695,7 @@ const s = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
+    zIndex: 1,
   },
   image: {
     width: '100%',
@@ -817,10 +803,15 @@ const s = StyleSheet.create({
     paddingHorizontal: 16,
   },
   imgPill: {
-    backgroundColor: 'rgba(0,0,0,0.55)',
     borderRadius: 20,
     paddingHorizontal: 12,
     paddingVertical: 5,
+  },
+  imgPillProject: {
+    backgroundColor: '#000000',
+  },
+  imgPillTask: {
+    backgroundColor: '#00d9a5',
   },
   imgPillTxt: {
     color: '#ffffff',
