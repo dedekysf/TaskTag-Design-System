@@ -195,7 +195,7 @@ export default function JoinTasktagSignup() {
         {/* ── STEP 2: Email sign-up form ── */}
         {step === 'email-form' && (
           <ScrollView
-            contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 32 }}
+            contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 56, paddingBottom: 32 }}
           >
             <Box width="100%">
               {/* Back · title — spacer on right keeps title centred */}
