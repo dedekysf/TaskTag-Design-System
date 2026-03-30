@@ -554,17 +554,17 @@ export function ChatImageViewer({
           {hasPills && (
             <View style={s.thumbPillBar}>
               {linkedProject && (
-                <Pressable style={[s.imgPill, s.imgPillProject]} onPress={() => setLinkedProject(null)}>
-                  <Folder size={11} color="#fff" />
+                <Pressable style={[s.imgPill, s.imgPillProject, { height: 28 }]} onPress={() => setLinkedProject(null)}>
+                  <Folder size={12} color="#fff" />
                   <Text style={s.imgPillTxt} numberOfLines={1}>{linkedProject}</Text>
-                  <X size={10} color="rgba(255,255,255,0.7)" />
+                  <X size={12} color="rgba(255,255,255,0.7)" />
                 </Pressable>
               )}
               {linkedTask && (
-                <Pressable style={[s.imgPill, s.imgPillTask]} onPress={() => setLinkedTask(null)}>
-                  <Hash size={11} color="#fff" />
+                <Pressable style={[s.imgPill, s.imgPillTask, { height: 28 }]} onPress={() => setLinkedTask(null)}>
+                  <Hash size={12} color="#fff" />
                   <Text style={s.imgPillTxt} numberOfLines={1}>{linkedTask}</Text>
-                  <X size={10} color="rgba(255,255,255,0.7)" />
+                  <X size={12} color="rgba(255,255,255,0.7)" />
                 </Pressable>
               )}
             </View>
@@ -952,6 +952,8 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
+    overflow: 'hidden',
+    flexShrink: 0,
   },
   imgPillProject: {
     backgroundColor: '#18a87d',
