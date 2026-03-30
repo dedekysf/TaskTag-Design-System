@@ -281,7 +281,7 @@ export function ChatImageViewer({
                     style={({ pressed, hovered }: any) => [s.renameActionBtn, (pressed || hovered) && s.iconBtnHover]}
                     hitSlop={8}
                   >
-                    <X size={16} color={C.iconMuted} />
+                    <X size={16} color={C.deleteRed} />
                   </Pressable>
                 </Tooltip>
                 {/* Save */}
@@ -426,7 +426,7 @@ export function ChatImageViewer({
             </Pressable>
           )}
 
-          {/* Project / task pill overlay — bottom of image area */}
+          {/* Project / task pill overlay — top of image area */}
           {hasPills && (
             <View style={s.imgPillBar}>
               {projectName && (
@@ -474,19 +474,6 @@ export function ChatImageViewer({
           )}
 
           <View style={s.thumbRow}>
-            {/* Select toggle button — only shown when multiple images */}
-            {images.length > 1 && (
-              <Pressable
-                onPress={() => {
-                  if (selMode) { setSelMode(false); setSelected(new Set()); }
-                  else setSelMode(true);
-                }}
-                style={[s.selToggleBtn, selMode && s.selToggleBtnActive]}
-              >
-                <CheckSquare size={18} color={selMode ? C.brandGreen : C.iconMuted} />
-              </Pressable>
-            )}
-
             <ScrollView
               ref={thumbScrollRef}
               horizontal
@@ -817,7 +804,7 @@ const s = StyleSheet.create({
   checkCircle: {
     position: 'absolute',
     top: 5,
-    left: 5,
+    right: 5,
     width: 20,
     height: 20,
     borderRadius: 10,
@@ -835,7 +822,7 @@ const s = StyleSheet.create({
   // Project / task pill overlay on image
   imgPillBar: {
     position: 'absolute',
-    bottom: 20,
+    top: 16,
     left: 0,
     right: 0,
     flexDirection: 'row',
@@ -844,15 +831,15 @@ const s = StyleSheet.create({
     paddingHorizontal: 16,
   },
   imgPill: {
-    borderRadius: 20,
+    borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 5,
   },
   imgPillProject: {
-    backgroundColor: '#000000',
+    backgroundColor: 'rgba(0,0,0,0.70)',
   },
   imgPillTask: {
-    backgroundColor: '#00d9a5',
+    backgroundColor: '#18a87d',
   },
   imgPillTxt: {
     color: '#ffffff',
