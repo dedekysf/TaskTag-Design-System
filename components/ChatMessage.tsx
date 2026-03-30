@@ -29,22 +29,11 @@ export function ChatMessage({ sender, time, message, images }: ChatMessageProps)
   const [isHovered,       setIsHovered]       = React.useState(false);
   const [viewerVisible,   setViewerVisible]   = React.useState(false);
   const [viewerIndex,     setViewerIndex]     = React.useState(0);
-  const [singleImgW,      setSingleImgW]      = React.useState<number | null>(null);
   const { height: windowHeight, width: windowWidth } = useWindowDimensions();
-
-  // Reset when the image set changes (different message)
-  React.useEffect(() => { setSingleImgW(null); }, [images]);
 
   const isDesktopWeb = Platform.OS === 'web' && windowWidth > 500;
   const screenW = isDesktopWeb ? 470 : windowWidth;
-  const bubbleMaxWidth = (() => {
-    if (!images || images.length === 0)
-      return Math.round(screenW * 0.72) + (isMe ? 0 : 20) + 8;
-    // All image messages: container is driven by first image dims (via onLayoutWidth
-    // callback). Default 288 (portrait/square max + padding) so first render is
-    // already correct for portrait/square. Landscape will expand once callback fires.
-    return (singleImgW ?? 280) + 8;
-  })();
+  const bubbleMaxWidth = Math.round(screenW * 0.72) + (isMe ? 0 : 20) + 8;
 
   const avatarBg = isDedek ? 'orange' : 'blue';
   const initials = isMe ? 'JH' : (sender.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase());
@@ -136,8 +125,7 @@ export function ChatMessage({ sender, time, message, images }: ChatMessageProps)
                     {images && images.length > 0 && (
                       <ChatImageGrid
                         images={images}
-                        maxWidth={bubbleMaxWidth - 8}
-                        onLayoutWidth={setSingleImgW}
+                        sent={isMe}
                         onImagePress={handleImagePress}
                       />
                     )}
