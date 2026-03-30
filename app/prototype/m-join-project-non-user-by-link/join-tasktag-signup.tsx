@@ -25,6 +25,8 @@ export default function JoinTasktagSignup() {
   const [isAppleHovered, setIsAppleHovered] = useState(false);
 
   const [email, setEmail] = useState('');
+  const [emailFormatError, setEmailFormatError] = useState('');
+  const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [password, setPassword] = useState('');
@@ -56,7 +58,8 @@ export default function JoinTasktagSignup() {
     : '';
 
   const isFormValid =
-    email.trim() !== '' && firstName.trim() !== '' && lastName.trim() !== '' && password.trim() !== '' &&
+    email.trim() !== '' && isValidEmail(email) &&
+    firstName.trim() !== '' && lastName.trim() !== '' && password.trim() !== '' &&
     validLength && validNumber && validUppercase && validSpecial && !emailError;
 
   const handleSubmit = () => {
@@ -192,7 +195,21 @@ export default function JoinTasktagSignup() {
 
               <Box marginBottom="md">
                 <Box marginBottom="24">
-                  <TextInput label="Email" placeholder="e.g. you@email.com" value={email} onChangeText={setEmail} errorMessage={emailError} autoFocus />
+                  <TextInput
+                    label="Email"
+                    placeholder="e.g. you@email.com"
+                    value={email}
+                    onChangeText={(v) => {
+                      setEmail(v);
+                      if (emailFormatError && isValidEmail(v)) setEmailFormatError('');
+                    }}
+                    onBlur={() => {
+                      if (email.length > 0 && !isValidEmail(email)) setEmailFormatError('Invalid email address');
+                      else setEmailFormatError('');
+                    }}
+                    errorMessage={emailFormatError || emailError}
+                    autoFocus
+                  />
                   <Text variant="webMetadataSecondary" color="mutedForeground" style={{ marginTop: -8 }}>
                     A verification email will be sent to you to verify your address.
                   </Text>
