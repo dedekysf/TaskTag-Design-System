@@ -228,7 +228,7 @@ export default function JoinTasktagSignup() {
 
                 <Box flexDirection="row" gap="md" marginBottom="8">
                   <Box flex={1}>
-                    <TextInput label="First Name" placeholder="e.g. John" value={firstName} onChangeText={setFirstName} errorMessage={firstNameError} />
+                    <TextInput label="First Name" placeholder="e.g. John" value={firstName} onChangeText={setFirstName} errorMessage={firstNameError} autoFocus />
                   </Box>
                   <Box flex={1}>
                     <TextInput label="Last Name" placeholder="e.g. Doe" value={lastName} onChangeText={setLastName} errorMessage={lastNameError} />
