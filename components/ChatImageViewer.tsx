@@ -922,7 +922,7 @@ const s = StyleSheet.create({
     right: 5,
     width: 18,
     height: 18,
-    borderRadius: 4,
+    borderRadius: 9,
     borderWidth: 2,
     borderColor: '#ffffff',
     backgroundColor: 'rgba(0,0,0,0.25)',
