@@ -25,8 +25,8 @@ import { Text } from './primitives';
 import { Tooltip } from './Tooltip';
 import {
   ChevronLeft, CircleArrowLeft, CircleArrowRight, Download, RotateCw, ZoomOut, ZoomIn,
-  MoreVertical, Forward, Link, Check,
-  Pencil, Share2, Info, Trash2,
+  MoreVertical, Forward, Link, Check, CheckSquare,
+  PencilLine, Pencil, Share2, Info, Trash2,
 } from 'lucide-react-native';
 
 // ── Color tokens ──────────────────────────────────────────────────────────────
@@ -214,6 +214,18 @@ export function ChatImageViewer({
   const zoomOut = () => setZoom(z => Math.max(z - ZOOM_STEP, ZOOM_MIN));
   const rotate  = () => setRotation(r => (r + 90) % 360);
 
+  // Mouse scroll wheel → zoom
+  React.useEffect(() => {
+    if (Platform.OS !== 'web' || !visible) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      if (e.deltaY < 0) setZoom(z => Math.min(z + ZOOM_STEP, ZOOM_MAX));
+      else              setZoom(z => Math.max(z - ZOOM_STEP, ZOOM_MIN));
+    };
+    window.addEventListener('wheel', onWheel, { passive: false });
+    return () => window.removeEventListener('wheel', onWheel);
+  }, [visible]);
+
   const selCount = selected.size;
   const hasPills = !!(projectName || taskName);
   // hasPills is used for image area overlay only
@@ -255,9 +267,16 @@ export function ChatImageViewer({
                 autoFocus
               />
             ) : (
-              <Pressable onPress={() => setRenaming(true)} hitSlop={8}>
+              <View style={s.filenameRow}>
                 <Text style={s.filename} numberOfLines={1}>{filename}</Text>
-              </Pressable>
+                <Pressable
+                  onPress={() => setRenaming(true)}
+                  style={({ pressed, hovered }: any) => [s.renamePencilBtn, (pressed || hovered) && s.iconBtnHover]}
+                  hitSlop={8}
+                >
+                  <PencilLine size={14} color={C.textSecondary} />
+                </Pressable>
+              </View>
             )}
           </View>
 
@@ -440,28 +459,44 @@ export function ChatImageViewer({
             </View>
           )}
 
-          <ScrollView
-            ref={thumbScrollRef}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={s.thumbStrip}
-          >
-            {images.map((img, i) => (
+          <View style={s.thumbRow}>
+            {/* Select toggle button — only shown when multiple images */}
+            {images.length > 1 && (
               <Pressable
-                key={i}
-                onPress={() => handleThumbPress(i)}
-                onLongPress={() => { if (!selMode) { setSelMode(true); toggleSelect(i); } }}
-                style={[s.thumbWrap, !selMode && i === idx && s.thumbActive]}
+                onPress={() => {
+                  if (selMode) { setSelMode(false); setSelected(new Set()); }
+                  else setSelMode(true);
+                }}
+                style={[s.selToggleBtn, selMode && s.selToggleBtnActive]}
               >
-                <Image source={{ uri: img }} style={s.thumb} resizeMode="cover" />
-                {selMode && (
-                  <View style={[s.checkCircle, selected.has(i) && s.checkCircleSelected]}>
-                    {selected.has(i) && <Check size={11} color="#fff" strokeWidth={3} />}
-                  </View>
-                )}
+                <CheckSquare size={18} color={selMode ? C.brandGreen : C.iconMuted} />
               </Pressable>
-            ))}
-          </ScrollView>
+            )}
+
+            <ScrollView
+              ref={thumbScrollRef}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={s.thumbStrip}
+              style={{ flex: 1 }}
+            >
+              {images.map((img, i) => (
+                <Pressable
+                  key={i}
+                  onPress={() => handleThumbPress(i)}
+                  onLongPress={() => { if (!selMode) { setSelMode(true); toggleSelect(i); } }}
+                  style={[s.thumbWrap, !selMode && i === idx && s.thumbActive, selMode && selected.has(i) && s.thumbSelected]}
+                >
+                  <Image source={{ uri: img }} style={s.thumb} resizeMode="cover" />
+                  {selMode && (
+                    <View style={[s.checkCircle, selected.has(i) && s.checkCircleSelected]}>
+                      {selected.has(i) && <Check size={11} color="#fff" strokeWidth={3} />}
+                    </View>
+                  )}
+                </Pressable>
+              ))}
+            </ScrollView>
+          </View>
 
         </View>
 
@@ -486,9 +521,8 @@ const s = StyleSheet.create({
     paddingHorizontal: 4,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: C.border,
-  },
-  headerTall: {
-    height: 72,
+    zIndex: 20,
+    overflow: 'visible' as any,
   },
   hLeft: {
     flex: 1,
@@ -501,13 +535,15 @@ const s = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     paddingHorizontal: 8,
-    overflow: 'hidden',
+    overflow: 'visible' as any,
   },
   hRight: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
+    overflow: 'visible' as any,
+    zIndex: 20,
   },
   iconBtn: {
     width: 36,
@@ -548,6 +584,7 @@ const s = StyleSheet.create({
     color: C.textSecondary,
     fontSize: 11,
     lineHeight: 14,
+    marginTop: 2,
   },
 
   // Pills
@@ -567,6 +604,20 @@ const s = StyleSheet.create({
     color: C.textPrimary,
     fontSize: 10,
     fontWeight: '500',
+  },
+
+  // Filename row
+  filenameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  renamePencilBtn: {
+    width: 24,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 4,
   },
 
   // Filename / rename
@@ -602,10 +653,33 @@ const s = StyleSheet.create({
     textAlign: 'center',
   },
 
+  // Thumbnail row with select toggle
+  thumbRow: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  selToggleBtn: {
+    width: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'stretch',
+    borderRightWidth: StyleSheet.hairlineWidth,
+    borderRightColor: 'rgba(255,255,255,0.08)',
+  },
+  selToggleBtnActive: {
+    backgroundColor: 'rgba(0,217,165,0.08)',
+  },
+  thumbSelected: {
+    borderColor: C.brandGreen,
+    opacity: 0.85,
+  },
+
   // Icon groups
   iconGroup: {
     flexDirection: 'row',
     alignItems: 'center',
+    overflow: 'visible' as any,
   },
   groupDivider: {
     width: 1,
