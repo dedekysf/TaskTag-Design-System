@@ -82,7 +82,7 @@ export default function JoinTasktagSignup() {
       />
 
       <View style={{
-        alignSelf: 'stretch', marginHorizontal: 16, maxHeight: '90%',
+        alignSelf: 'stretch', marginHorizontal: 8, maxHeight: '90%',
         backgroundColor: theme.colors.background, borderRadius: 16, overflow: 'hidden',
         elevation: 24, shadowColor: '#000', shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.1, shadowRadius: 20,
