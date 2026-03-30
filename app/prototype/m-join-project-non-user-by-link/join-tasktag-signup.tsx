@@ -88,7 +88,7 @@ export default function JoinTasktagSignup() {
         {/* ── STEP 1: Select sign-up method ── */}
         {step === 'select' && (
           <ScrollView
-            contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 32 }}
+            contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 56, paddingBottom: 32 }}
           >
             <Box width="100%">
               <Text variant="h2" textAlign="center" marginBottom="4">Create an account</Text>
