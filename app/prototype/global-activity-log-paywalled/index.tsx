@@ -447,7 +447,7 @@ function InfoBanner({ onUpgrade }: { onUpgrade: () => void }) {
           <Text variant="webSecondaryBody" color="textSecondary" style={{ lineHeight: 18 }}>
             {"You're seeing just 3 events. "}
             <Text variant="webSecondaryBody" color="textSecondary" style={{ fontWeight: '600', fontFamily: 'Inter_600SemiBold' }}>
-              Upgrade to Teams
+              Upgrade to Team
             </Text>
             {" for full visibility across all your projects."}
           </Text>
@@ -458,7 +458,7 @@ function InfoBanner({ onUpgrade }: { onUpgrade: () => void }) {
           onPress={onUpgrade}
           style={{ backgroundColor: theme.colors.black, minWidth: 100 }}
         >
-          <Text variant="labelMedium" color="white">Upgrade to Teams</Text>
+          <Text variant="labelMedium" color="white">Upgrade to Team</Text>
         </Button>
       </Box>
     </Box>

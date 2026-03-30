@@ -446,7 +446,7 @@ function InfoBanner({ onUpgrade }: { onUpgrade: () => void }) {
       <Text variant="webMetadataPrimary" color="textSecondary" style={{ lineHeight: 18 }} marginBottom="12">
         {"You're seeing just 3 events. "}
         <Text variant="webMetadataPrimary" color="textSecondary" style={{ fontWeight: '600', fontFamily: 'Inter_600SemiBold' }}>
-          Upgrade to Teams
+          Upgrade to Team
         </Text>
         {" for full visibility across all your projects."}
       </Text>
@@ -456,7 +456,7 @@ function InfoBanner({ onUpgrade }: { onUpgrade: () => void }) {
         onPress={() => Linking.openURL('https://portal.tasktag.com/blog/how-do-i-upgrade-to-a-team-plan')}
         style={{ width: '100%', backgroundColor: theme.colors.black }}
       >
-        <Text variant="labelMedium" color="white">Upgrade to Teams</Text>
+        <Text variant="labelMedium" color="white">Upgrade to Team</Text>
       </Button>
     </Box>
   );
