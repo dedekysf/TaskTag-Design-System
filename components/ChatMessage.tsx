@@ -35,7 +35,8 @@ export function ChatMessage({ sender, time, message, images, projectName, taskNa
 
   const isDesktopWeb = Platform.OS === 'web' && windowWidth > 500;
   const screenW = isDesktopWeb ? 470 : windowWidth;
-  const bubbleMaxWidth = Math.round(screenW * 0.72) + (isMe ? 0 : 20) + 8;
+  const borderPad = isDedek ? 2 : 0; // 1px border each side needs 2px extra bubble width
+  const bubbleMaxWidth = Math.round(screenW * 0.72) + (isMe ? 0 : 20) + 8 + borderPad;
 
   const avatarBg = isDedek ? 'orange' : 'blue';
   const initials = isMe ? 'JH' : (sender.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase());
