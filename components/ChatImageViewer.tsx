@@ -804,6 +804,7 @@ const s = StyleSheet.create({
   iconGroup: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 4,
     overflow: 'visible' as any,
   },
   groupDivider: {
@@ -948,6 +949,7 @@ const s = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 5,
+    minHeight: 28,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
