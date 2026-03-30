@@ -4,7 +4,7 @@ import { TextInput } from '@/components/TextInput';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import {
-  Info,
+  Zap,
   Check,
   ChevronDown,
   ChevronUp,
@@ -433,13 +433,13 @@ function InfoBanner({ onUpgrade }: { onUpgrade: () => void }) {
       borderRadius="12"
       padding="16"
       style={{
-        backgroundColor: theme.colors.lightCream,
+        backgroundColor: theme.colors.lightMint,
         borderWidth: 1,
-        borderColor: theme.colors.pastelYellow,
+        borderColor: theme.colors.secondaryGreen,
       } as any}
     >
       <Box flexDirection="row" alignItems="center" gap="12">
-        <Info size={24} color={theme.colors.pastelYellow} />
+        <Zap size={24} color={theme.colors.secondaryGreen} fill={theme.colors.secondaryGreen} />
         <Box flex={1}>
           <Text variant="webLargeLabel" color="textPrimary" marginBottom="4">
             There's more activity waiting for you
@@ -458,7 +458,7 @@ function InfoBanner({ onUpgrade }: { onUpgrade: () => void }) {
           onPress={onUpgrade}
           style={{ backgroundColor: theme.colors.black, minWidth: 100 }}
         >
-          <Text variant="labelMedium" color="white">Upgrade</Text>
+          <Text variant="labelMedium" color="white">Upgrade to Teams</Text>
         </Button>
       </Box>
     </Box>

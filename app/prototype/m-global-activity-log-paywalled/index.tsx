@@ -435,9 +435,9 @@ function InfoBanner({ onUpgrade }: { onUpgrade: () => void }) {
       borderRadius="12"
       padding="16"
       style={{
-        backgroundColor: theme.colors.lightCream,
+        backgroundColor: theme.colors.lightMint,
         borderWidth: 1,
-        borderColor: theme.colors.pastelYellow,
+        borderColor: theme.colors.secondaryGreen,
       } as any}
     >
       <Text variant="webLabelEmphasized" color="textPrimary" marginBottom="8">
@@ -456,7 +456,7 @@ function InfoBanner({ onUpgrade }: { onUpgrade: () => void }) {
         onPress={() => Linking.openURL('https://portal.tasktag.com/blog/how-do-i-upgrade-to-a-team-plan')}
         style={{ width: '100%', backgroundColor: theme.colors.black }}
       >
-        <Text variant="labelMedium" color="white">Learn More</Text>
+        <Text variant="labelMedium" color="white">Upgrade to Teams</Text>
       </Button>
     </Box>
   );
