@@ -189,7 +189,9 @@ export default function JoinTasktagSignup() {
                 <View style={{ width: 32 }} />
               </Box>
 
-
+              <Text variant="webMetadataPrimary" color="mutedForeground" textAlign="center" marginBottom="16">
+                One step away from joining the project.
+              </Text>
 
               <Box marginBottom="md">
                 <Box marginBottom="24">
