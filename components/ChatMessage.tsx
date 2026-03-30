@@ -18,9 +18,11 @@ interface ChatMessageProps {
   message?: string;
   images?: string[];
   id?: string;
+  projectName?: string;
+  taskName?: string;
 }
 
-export function ChatMessage({ sender, time, message, images }: ChatMessageProps) {
+export function ChatMessage({ sender, time, message, images, projectName, taskName }: ChatMessageProps) {
   const theme = useTheme<Theme>();
   const isMe = sender.toLowerCase() === 'you';
   const isDedek = sender.toLowerCase().includes('dedek');
@@ -147,6 +149,8 @@ export function ChatMessage({ sender, time, message, images }: ChatMessageProps)
             time={time}
             visible={viewerVisible}
             onClose={() => setViewerVisible(false)}
+            projectName={projectName}
+            taskName={taskName}
           />
         )}
 

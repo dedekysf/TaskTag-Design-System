@@ -95,6 +95,8 @@ const MESSAGES = [
     id: '9', sender: 'You', time: '10:08 AM',
     message: '9. Four images → 2×2 square grid, no overlay',
     images: [IMG.ls1, IMG.pt1, IMG.sq1, IMG.ls2],
+    projectName: 'Villa Renovation',
+    taskName: 'Foundation Phase',
   },
 
   // ── Six images ─────────────────────────────────────────────────────────────
@@ -102,6 +104,8 @@ const MESSAGES = [
     id: '10', sender: 'dedek yusuf15', time: '10:09 AM',
     message: '10. Six images → 2×2 grid + +3 overlay on cell 4 (N = 6 − 3)',
     images: [IMG.ls1, IMG.sq1, IMG.pt1, IMG.ls2, IMG.sq2, IMG.pt2],
+    projectName: 'Villa Renovation',
+    taskName: 'Framing Phase',
   },
 ];
 
@@ -155,6 +159,8 @@ export default function StandaloneChatScreen() {
                 time={msg.time}
                 message={msg.message}
                 images={msg.images}
+                projectName={(msg as any).projectName}
+                taskName={(msg as any).taskName}
               />
             ))}
           </ScrollView>
