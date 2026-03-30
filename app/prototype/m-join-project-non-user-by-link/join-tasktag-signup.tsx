@@ -24,6 +24,7 @@ export default function JoinTasktagSignup() {
   const [isGoogleHovered, setIsGoogleHovered] = useState(false);
   const [isAppleHovered, setIsAppleHovered] = useState(false);
 
+  const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [password, setPassword] = useState('');
@@ -50,12 +51,12 @@ export default function JoinTasktagSignup() {
   const validUppercase = /[A-Z]/.test(password);
   const validSpecial   = /[!@#$%^&*]/.test(password);
 
-  const emailError = REGISTERED_EMAILS.includes(INVITE.email)
+  const emailError = REGISTERED_EMAILS.includes(email)
     ? 'This email is already registered. Please log in instead.'
     : '';
 
   const isFormValid =
-    firstName.trim() !== '' && lastName.trim() !== '' && password.trim() !== '' &&
+    email.trim() !== '' && firstName.trim() !== '' && lastName.trim() !== '' && password.trim() !== '' &&
     validLength && validNumber && validUppercase && validSpecial && !emailError;
 
   const handleSubmit = () => {
@@ -191,15 +192,12 @@ export default function JoinTasktagSignup() {
 
               <Box marginBottom="md">
                 <Box marginBottom="24">
-                  <TextInput label="Email" value={INVITE.email} disabled showClearButton={false} errorMessage={emailError} />
-                  <Text variant="webMetadataSecondary" color="mutedForeground" style={{ marginTop: -8 }}>
-                    A verification email will be sent to you to verify your address.
-                  </Text>
+                  <TextInput label="Email" placeholder="e.g. you@email.com" value={email} onChangeText={setEmail} errorMessage={emailError} autoFocus />
                 </Box>
 
                 <Box flexDirection="row" gap="md" marginBottom="8">
                   <Box flex={1}>
-                    <TextInput label="First Name" placeholder="e.g. John" value={firstName} onChangeText={setFirstName} errorMessage={firstNameError} autoFocus />
+                    <TextInput label="First Name" placeholder="e.g. John" value={firstName} onChangeText={setFirstName} errorMessage={firstNameError} />
                   </Box>
                   <Box flex={1}>
                     <TextInput label="Last Name" placeholder="e.g. Doe" value={lastName} onChangeText={setLastName} errorMessage={lastNameError} />
@@ -272,7 +270,7 @@ export default function JoinTasktagSignup() {
                 style={{ width: '100%', backgroundColor: isFormValid ? theme.colors.foreground : theme.colors.grey03 }}
                 onPress={handleSubmit} disabled={!isFormValid}
               >
-                Join This Project
+                Request to Join
               </Button>
             </Box>
           </ScrollView>
