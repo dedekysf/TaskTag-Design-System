@@ -579,7 +579,7 @@ export function ChatImageViewer({
               style={s.thumbScrollView}
             >
               {images.map((img, i) => {
-                const showCheck = selMode || (Platform.OS === 'web' && hoveredThumb === i);
+                const showCheck = true;
                 return (
                   <Pressable
                     key={i}
@@ -948,8 +948,7 @@ const s = StyleSheet.create({
   imgPill: {
     borderRadius: 8,
     paddingHorizontal: 10,
-    paddingVertical: 5,
-    minHeight: 28,
+    height: 28,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
@@ -964,6 +963,7 @@ const s = StyleSheet.create({
     color: '#ffffff',
     fontSize: 12,
     fontWeight: '400',
+    lineHeight: 18,
   },
 
   // Navigation arrows
