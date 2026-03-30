@@ -2,10 +2,10 @@ import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import { router } from 'expo-router';
-import { Activity, Hammer, HardHat, Hash, Image as ImageIcon, MessageSquare, ChevronRight, FileText, Zap, Lock, BatteryFull, WifiHigh, SignalHigh, User } from 'lucide-react-native';
+
+import { Activity, BatteryFull, ChevronRight, Download, FileText, Hammer, HardHat, Hash, Image as ImageIcon, Lock, MessageSquare, SignalHigh, User, WifiHigh, Zap } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { Image, Pressable, ScrollView, View } from 'react-native';
+import { Image, ScrollView, View } from 'react-native';
 
 const PROJECT = {
   name: 'Raintree Hollow',
@@ -23,13 +23,13 @@ const FEATURES = [
 
 export default function ProjectOverview() {
   const theme = useTheme<Theme>();
-  const sheetVisible = true;
+  const [sheetVisible, setSheetVisible] = useState(true);
 
   return (
     <Box flex={1} backgroundColor="background" alignItems="center">
       {/* Mobile Frame Container */}
       <Box flex={1} width="100%" maxWidth={480} backgroundColor="grey02">
-        
+
         {/* Status Bar Mock */}
         <Box
           flexDirection="row"
@@ -63,12 +63,12 @@ export default function ProjectOverview() {
         </Box>
 
         {/* Header */}
-        <Box 
-          flexDirection="row" 
-          alignItems="center" 
-          justifyContent="space-between" 
-          paddingHorizontal="md" 
-          paddingVertical="sm" 
+        <Box
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="space-between"
+          paddingHorizontal="md"
+          paddingVertical="sm"
           backgroundColor="background"
         >
           <Image
@@ -76,23 +76,23 @@ export default function ProjectOverview() {
             style={{ height: 28, width: 100 }}
             resizeMode="contain"
           />
-          <Box 
-            width={32} 
-            height={32} 
-            borderRadius="full" 
-            backgroundColor="grey02" 
-            alignItems="center" 
+          <Box
+            width={32}
+            height={32}
+            borderRadius="full"
+            backgroundColor="grey02"
+            alignItems="center"
             justifyContent="center"
           >
             <User size={18} color={theme.colors.grey06} />
           </Box>
         </Box>
 
-        <ScrollView 
-          showsVerticalScrollIndicator={false} 
+        <ScrollView
+          showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 220, flexGrow: 1 }}
         >
-          
+
           {/* Top Card */}
           <Box
             style={{ backgroundColor: theme.colors.purple }}
@@ -114,13 +114,13 @@ export default function ProjectOverview() {
                 Raintree Hollow
               </Text>
             </Box>
-            
+
             <Box paddingLeft="32" marginBottom="16">
               <Text variant="webMetadataPrimary" color="white" style={{ opacity: 0.9 }}>
                 {PROJECT.address}
               </Text>
             </Box>
-            
+
             <Box flexDirection="row" gap="16">
               {/* Team Tag */}
               <Box flexDirection="row" alignItems="center" gap="8">
@@ -139,7 +139,7 @@ export default function ProjectOverview() {
                   Aquaworks Construct...
                 </Text>
               </Box>
-              
+
               {/* Owner Tag */}
               <Box flexDirection="row" alignItems="center" gap="8">
                 <Box
@@ -209,7 +209,7 @@ export default function ProjectOverview() {
                   Alex S...
                 </Text>
               </Box>
-              
+
               {/* Member 2: Photo */}
               <Box alignItems="center" gap="8">
                 <Image
@@ -300,7 +300,7 @@ export default function ProjectOverview() {
                 Activity Log
               </Text>
             </Box>
-            
+
             {/* Files & Media */}
             <Box flex={1} backgroundColor="card" borderRadius="8" padding="16">
               <Box width={36} height={36} borderRadius="8" backgroundColor="black" alignItems="center" justifyContent="center" marginBottom="16">
@@ -314,34 +314,34 @@ export default function ProjectOverview() {
 
         </ScrollView>
 
-      {/* Fixed Bottom Banner */}
-      <View style={{
-        position: 'absolute',
-        bottom: 16,
-        left: 16,
-        right: 16,
-        backgroundColor: '#000000',
-        borderRadius: 12,
-        padding: 16
-      }}>
-        <View style={{ marginBottom: 4 }}>
-          <Text variant="webLabelEmphasized" color="white">
-            You're on the web version
+        {/* Fixed Bottom Banner */}
+        <View style={{
+          position: 'absolute',
+          bottom: 16,
+          left: 16,
+          right: 16,
+          backgroundColor: '#000000',
+          borderRadius: 12,
+          padding: 16
+        }}>
+          <View style={{ marginBottom: 4 }}>
+            <Text variant="webLabelEmphasized" color="white">
+              You're on the web version
+            </Text>
+          </View>
+          <Text variant="webSecondaryBody" style={{ color: 'rgba(255,255,255,0.8)', marginBottom: 16, lineHeight: 20 }}>
+            Download the app to create tasks, get notification and more.
           </Text>
+          <Button
+            variant="fill"
+            size="lg"
+            style={{ width: '100%', backgroundColor: theme.colors.secondaryGreen || '#22C55E', borderRadius: 8 }}
+          >
+            <Text variant="webLabelEmphasized" color="white">
+              Download App
+            </Text>
+          </Button>
         </View>
-        <Text variant="webSecondaryBody" style={{ color: 'rgba(255,255,255,0.8)', marginBottom: 16, lineHeight: 20 }}>
-          Download the app to create tasks, get notification and more.
-        </Text>
-        <Button
-          variant="fill"
-          size="lg"
-          style={{ width: '100%', backgroundColor: theme.colors.secondaryGreen || '#22C55E', borderRadius: 8 }}
-        >
-          <Text variant="webLabelEmphasized" color="white">
-            Download App
-          </Text>
-        </Button>
-      </View>
 
         {/* Bottom Sheet — inside frame via absolute positioning */}
         {sheetVisible && (
@@ -383,10 +383,19 @@ export default function ProjectOverview() {
               <Button
                 variant="fill"
                 size="lg"
-                style={{ width: '100%', backgroundColor: theme.colors.foreground, borderRadius: 12 }}
-                onPress={() => router.push('/prototype/m-join-project-non-user/project-overview-app' as any)}
+                style={{ width: '100%', backgroundColor: theme.colors.foreground, borderRadius: 12, marginBottom: 12 }}
+                onPress={() => setSheetVisible(false)}
               >
-                <Text variant="webLabelEmphasized" color="white">Go to App</Text>
+                <Text variant="webLabelEmphasized" color="white">Go to Project</Text>
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                style={{ width: '100%', borderRadius: 12, flexDirection: 'row', gap: 8 }}
+                onPress={() => {}}
+              >
+                <Download size={18} color={theme.colors.foreground} />
+                <Text variant="webLabelEmphasized" color="foreground">Get The Full App</Text>
               </Button>
             </View>
           </View>
