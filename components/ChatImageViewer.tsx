@@ -99,6 +99,7 @@ export function ChatImageViewer({
   const [fileNames,    setFileNames]    = React.useState<string[]>([]);
   const [selMode,        setSelMode]        = React.useState(false);
   const [selected,       setSelected]       = React.useState<Set<number>>(new Set());
+  const [hoveredThumb,   setHoveredThumb]   = React.useState<number | null>(null);
   const [moreVisible,    setMoreVisible]    = React.useState(false);
   const [hashVisible,    setHashVisible]    = React.useState(false);
   const [linkCopied,     setLinkCopied]     = React.useState(false);
@@ -231,6 +232,14 @@ export function ChatImageViewer({
   const zoomOut = () => setZoom(z => Math.max(z - ZOOM_STEP, ZOOM_MIN));
   const rotate  = () => setRotation(r => (r + 90) % 360);
 
+  // Dismiss link-copied tooltip on any click outside
+  React.useEffect(() => {
+    if (!linkCopied || Platform.OS !== 'web') return;
+    const close = () => setLinkCopied(false);
+    window.addEventListener('mousedown', close);
+    return () => window.removeEventListener('mousedown', close);
+  }, [linkCopied]);
+
   // Mouse scroll wheel → zoom
   React.useEffect(() => {
     if (Platform.OS !== 'web' || !visible) return;
@@ -355,6 +364,7 @@ export function ChatImageViewer({
                 }
                 open={linkCopied || undefined}
                 tooltipStyle={linkCopied ? 'custom' : 'default'}
+                onOpenChange={(v) => { if (!v && linkCopied) setLinkCopied(false); }}
               >
                 <Pressable onPress={handleCopyLink} style={({ pressed, hovered }: any) => [s.iconBtn, (pressed || hovered) && s.iconBtnHover]} hitSlop={10}>
                   <Link size={18} color={linkCopied ? C.brandGreen : C.iconActive} />
@@ -568,23 +578,36 @@ export function ChatImageViewer({
               contentContainerStyle={s.thumbStrip}
               style={s.thumbScrollView}
             >
-              {images.map((img, i) => (
-                <Pressable
-                  key={i}
-                  onPress={() => handleThumbPress(i)}
-                  onLongPress={() => { if (!selMode) { setSelMode(true); toggleSelect(i); } }}
-                  style={{ position: 'relative' }}
-                >
-                  <View style={[s.thumbWrap, !selMode && i === idx && s.thumbActive, selMode && selected.has(i) && s.thumbSelected]}>
-                    <Image source={{ uri: img }} style={s.thumb} resizeMode="cover" />
-                  </View>
-                  {selMode && (
-                    <View style={[s.checkCircle, selected.has(i) && s.checkCircleSelected]}>
-                      {selected.has(i) && <Check size={11} color="#fff" strokeWidth={3} />}
+              {images.map((img, i) => {
+                const showCheck = selMode || (Platform.OS === 'web' && hoveredThumb === i);
+                return (
+                  <Pressable
+                    key={i}
+                    onPress={() => handleThumbPress(i)}
+                    onLongPress={() => { if (!selMode) { setSelMode(true); toggleSelect(i); } }}
+                    style={{ position: 'relative' }}
+                    {...(Platform.OS === 'web' ? {
+                      onMouseEnter: () => setHoveredThumb(i),
+                      onMouseLeave: () => setHoveredThumb(null),
+                    } as any : {})}
+                  >
+                    <View style={[s.thumbWrap, !selMode && i === idx && s.thumbActive, selMode && selected.has(i) && s.thumbSelected]}>
+                      <Image source={{ uri: img }} style={s.thumb} resizeMode="cover" />
                     </View>
-                  )}
-                </Pressable>
-              ))}
+                    {showCheck && (
+                      <Pressable
+                        onPress={() => {
+                          if (!selMode) setSelMode(true);
+                          toggleSelect(i);
+                        }}
+                        style={[s.checkCircle, selected.has(i) && s.checkCircleSelected]}
+                      >
+                        {selected.has(i) && <Check size={11} color="#fff" strokeWidth={3} />}
+                      </Pressable>
+                    )}
+                  </Pressable>
+                );
+              })}
             </ScrollView>
           </View>}
 
