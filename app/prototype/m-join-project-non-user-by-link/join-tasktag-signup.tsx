@@ -78,9 +78,8 @@ export default function JoinTasktagSignup() {
         onPress={() => router.back()}
       />
 
-      {/* Modal — fixed height so both steps are the same size */}
       <View style={{
-        alignSelf: 'stretch', marginHorizontal: 16, height: 600,
+        alignSelf: 'stretch', marginHorizontal: 16, maxHeight: '90%',
         backgroundColor: theme.colors.background, borderRadius: 16, overflow: 'hidden',
         elevation: 24, shadowColor: '#000', shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.1, shadowRadius: 20,
@@ -89,8 +88,7 @@ export default function JoinTasktagSignup() {
         {/* ── STEP 1: Select sign-up method ── */}
         {step === 'select' && (
           <ScrollView
-            style={{ flex: 1 }}
-            contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 20, paddingVertical: 32, justifyContent: 'center' }}
+            contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 32 }}
           >
             <Box width="100%">
               <Text variant="h2" textAlign="center" marginBottom="4">Create an account</Text>
@@ -170,8 +168,7 @@ export default function JoinTasktagSignup() {
         {/* ── STEP 2: Email sign-up form ── */}
         {step === 'email-form' && (
           <ScrollView
-            style={{ flex: 1 }}
-            contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 20, paddingVertical: 32, justifyContent: 'center' }}
+            contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 32 }}
           >
             <Box width="100%">
               {/* Back arrow + title — 3-column so title stays centred */}
@@ -187,9 +184,7 @@ export default function JoinTasktagSignup() {
                 <View style={{ width: 28 }} />
               </Box>
 
-              <Text variant="webMetadataPrimary" color="mutedForeground" textAlign="center" marginBottom="16">
-                One step away from joining the project.
-              </Text>
+
 
               <Box marginBottom="md">
                 <Box marginBottom="24">
