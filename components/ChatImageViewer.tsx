@@ -216,13 +216,14 @@ export function ChatImageViewer({
 
   const selCount = selected.size;
   const hasPills = !!(projectName || taskName);
+  // hasPills is used for image area overlay only
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={s.root}>
 
         {/* ═══ HEADER ════════════════════════════════════════════════════════ */}
-        <View style={[s.header, hasPills && s.headerTall]}>
+        <View style={s.header}>
 
           {/* LEFT — back · avatar · name · date · pills */}
           <View style={s.hLeft}>
@@ -235,20 +236,6 @@ export function ChatImageViewer({
             <View style={s.senderBlock}>
               <Text style={s.senderName} numberOfLines={1}>{sender}</Text>
               <Text style={s.dateLabel}  numberOfLines={1}>{dateLabel}</Text>
-              {hasPills && (
-                <View style={s.pillRow}>
-                  {projectName && (
-                    <View style={s.pill}>
-                      <Text style={s.pillTxt} numberOfLines={1}>{projectName}</Text>
-                    </View>
-                  )}
-                  {taskName && (
-                    <View style={s.pill}>
-                      <Text style={s.pillTxt} numberOfLines={1}>{taskName}</Text>
-                    </View>
-                  )}
-                </View>
-              )}
             </View>
           </View>
 
@@ -288,17 +275,17 @@ export function ChatImageViewer({
             {/* Group 1 — share actions */}
             <View style={s.iconGroup}>
               <Tooltip variant="bottom-right" size="sm" content="Download">
-                <Pressable onPress={handleDownload} style={s.iconBtn} hitSlop={10}>
+                <Pressable onPress={handleDownload} style={({ pressed, hovered }: any) => [s.iconBtn, (pressed || hovered) && s.iconBtnHover]} hitSlop={10}>
                   <Download size={18} color={C.iconActive} />
                 </Pressable>
               </Tooltip>
               <Tooltip variant="bottom-right" size="sm" content="Forward">
-                <Pressable onPress={handleForward} style={s.iconBtn} hitSlop={10}>
+                <Pressable onPress={handleForward} style={({ pressed, hovered }: any) => [s.iconBtn, (pressed || hovered) && s.iconBtnHover]} hitSlop={10}>
                   <Forward size={18} color={C.iconActive} />
                 </Pressable>
               </Tooltip>
               <Tooltip variant="bottom-right" size="sm" content="Copy link">
-                <Pressable onPress={handleCopyLink} style={s.iconBtn} hitSlop={10}>
+                <Pressable onPress={handleCopyLink} style={({ pressed, hovered }: any) => [s.iconBtn, (pressed || hovered) && s.iconBtnHover]} hitSlop={10}>
                   <Link size={18} color={C.iconActive} />
                 </Pressable>
               </Tooltip>
@@ -306,28 +293,28 @@ export function ChatImageViewer({
 
             <View style={s.groupDivider} />
 
-            {/* Group 2 — zoom & rotate */}
+            {/* Group 2 — rotate · zoom out · 100% · zoom in */}
             <View style={s.iconGroup}>
+              <Tooltip variant="bottom-right" size="sm" content="Rotate">
+                <Pressable onPress={rotate} style={({ pressed, hovered }: any) => [s.iconBtn, (pressed || hovered) && s.iconBtnHover]} hitSlop={10}>
+                  <RotateCw size={18} color={C.iconActive} />
+                </Pressable>
+              </Tooltip>
               <Tooltip variant="bottom-right" size="sm" content="Zoom out">
-                <Pressable onPress={zoomOut} style={s.iconBtn} hitSlop={10}>
+                <Pressable onPress={zoomOut} style={({ pressed, hovered }: any) => [s.iconBtn, (pressed || hovered) && s.iconBtnHover]} hitSlop={10}>
                   <ZoomOut size={18} color={zoom <= ZOOM_MIN ? C.iconMuted : C.iconActive} />
                 </Pressable>
               </Tooltip>
               <Text style={s.zoomPct}>{zoom}%</Text>
               <Tooltip variant="bottom-right" size="sm" content="Zoom in">
-                <Pressable onPress={zoomIn} style={s.iconBtn} hitSlop={10}>
+                <Pressable onPress={zoomIn} style={({ pressed, hovered }: any) => [s.iconBtn, (pressed || hovered) && s.iconBtnHover]} hitSlop={10}>
                   <ZoomIn size={18} color={zoom >= ZOOM_MAX ? C.iconMuted : C.iconActive} />
-                </Pressable>
-              </Tooltip>
-              <Tooltip variant="bottom-right" size="sm" content="Rotate">
-                <Pressable onPress={rotate} style={s.iconBtn} hitSlop={10}>
-                  <RotateCw size={18} color={C.iconActive} />
                 </Pressable>
               </Tooltip>
             </View>
 
             <Tooltip variant="bottom-right" size="sm" content="More options">
-              <Pressable onPress={() => setMoreVisible(v => !v)} style={s.iconBtn} hitSlop={10}>
+              <Pressable onPress={() => setMoreVisible(v => !v)} style={({ pressed, hovered }: any) => [s.iconBtn, (pressed || hovered) && s.iconBtnHover]} hitSlop={10}>
                 <MoreVertical size={18} color={C.iconActive} />
               </Pressable>
             </Tooltip>
@@ -404,6 +391,22 @@ export function ChatImageViewer({
             >
               <CircleArrowRight size={36} color={C.iconActive} />
             </Pressable>
+          )}
+
+          {/* Project / task pill overlay — bottom of image area */}
+          {hasPills && (
+            <View style={s.imgPillBar}>
+              {projectName && (
+                <View style={s.imgPill}>
+                  <Text style={s.imgPillTxt} numberOfLines={1}>{projectName}</Text>
+                </View>
+              )}
+              {taskName && (
+                <View style={s.imgPill}>
+                  <Text style={s.imgPillTxt} numberOfLines={1}>{taskName}</Text>
+                </View>
+              )}
+            </View>
           )}
         </View>
 
@@ -610,6 +613,10 @@ const s = StyleSheet.create({
     backgroundColor: C.border,
     marginHorizontal: 24,
   },
+  iconBtnHover: {
+    backgroundColor: 'rgba(255,255,255,0.10)',
+    borderRadius: 6,
+  },
 
   // Cancel selection
   cancelSelBtn: {
@@ -722,6 +729,29 @@ const s = StyleSheet.create({
   checkCircleSelected: {
     backgroundColor: C.brandGreen,
     borderColor: C.brandGreen,
+  },
+
+  // Project / task pill overlay on image
+  imgPillBar: {
+    position: 'absolute',
+    bottom: 20,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 6,
+    paddingHorizontal: 16,
+  },
+  imgPill: {
+    backgroundColor: 'rgba(0,0,0,0.55)',
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+  },
+  imgPillTxt: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '600',
   },
 
   // Navigation arrows
