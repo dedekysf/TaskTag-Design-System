@@ -101,6 +101,7 @@ export function ChatImageViewer({
   const [selected,       setSelected]       = React.useState<Set<number>>(new Set());
   const [moreVisible,    setMoreVisible]    = React.useState(false);
   const [hashVisible,    setHashVisible]    = React.useState(false);
+  const [linkCopied,     setLinkCopied]     = React.useState(false);
   const [hashSearch,     setHashSearch]     = React.useState('');
   const [linkedProject,  setLinkedProject]  = React.useState(projectName ?? null);
   const [linkedTask,     setLinkedTask]     = React.useState(taskName ?? null);
@@ -191,6 +192,8 @@ export function ChatImageViewer({
     if (Platform.OS === 'web') {
       navigator.clipboard?.writeText(current).catch(() => {});
     }
+    setLinkCopied(true);
+    setTimeout(() => setLinkCopied(false), 2000);
   };
 
   const toggleSelect = (i: number) => {
@@ -342,9 +345,19 @@ export function ChatImageViewer({
                   <Forward size={18} color={C.iconActive} />
                 </Pressable>
               </Tooltip>
-              <Tooltip variant="bottom-right" size="sm" content="Copy link">
+              <Tooltip
+                variant="bottom-right"
+                size="sm"
+                content={
+                  linkCopied
+                    ? <View style={s.linkCopiedContent}><Check size={13} color="#fff" strokeWidth={2.5} /><Text style={s.linkCopiedTxt}>Link copied!</Text></View>
+                    : 'Copy link to share'
+                }
+                open={linkCopied || undefined}
+                tooltipStyle={linkCopied ? 'success' : 'default'}
+              >
                 <Pressable onPress={handleCopyLink} style={({ pressed, hovered }: any) => [s.iconBtn, (pressed || hovered) && s.iconBtnHover]} hitSlop={10}>
-                  <Link size={18} color={C.iconActive} />
+                  <Link size={18} color={linkCopied ? C.brandGreen : C.iconActive} />
                 </Pressable>
               </Tooltip>
             </View>
@@ -980,6 +993,18 @@ const s = StyleSheet.create({
   comingSoonTxt: {
     color: C.brandGreen,
     fontSize: 11,
+    fontWeight: '500',
+  },
+
+  // Link copied toast content
+  linkCopiedContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  linkCopiedTxt: {
+    color: '#ffffff',
+    fontSize: 12,
     fontWeight: '500',
   },
 
