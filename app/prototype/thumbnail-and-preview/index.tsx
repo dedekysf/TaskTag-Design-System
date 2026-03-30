@@ -49,28 +49,38 @@ const MESSAGES = [
     id: '1', sender: 'You', time: '10:00 AM',
     message: '1. Single portrait → 3:4 container, max 280px',
     images: [IMG.pt1],
+    projectName: 'Raintree Hollow Renovation',
+    taskName: 'Install Roof Framing',
   },
   {
     id: '2', sender: 'dedek yusuf15', time: '10:01 AM',
     message: '2. Single square → 1:1 container, max 280px',
     images: [IMG.sq1],
+    projectName: 'Raintree Hollow Renovation',
+    taskName: 'Set Water Meter',
   },
   {
     id: '3', sender: 'You', time: '10:02 AM',
     message: '3. Single landscape → 16:9 container, max 360px',
     images: [IMG.ls1],
+    projectName: '520 N Broadway',
+    taskName: 'Foundation Inspection',
   },
 
   // ── Two images ─────────────────────────────────────────────────────────────
   {
     id: '4', sender: 'dedek yusuf15', time: '10:03 AM',
     message: '4. Two portrait-first → side by side, portrait cells (3:4)',
-    images: [IMG.pt1, IMG.ls1],   // second is cropped to match first ratio
+    images: [IMG.pt1, IMG.ls1],
+    projectName: '520 N Broadway',
+    taskName: 'Plumbing Rough-In',
   },
   {
     id: '5', sender: 'You', time: '10:04 AM',
     message: '5. Two landscape-first → stacked vertically, landscape cells (16:9)',
-    images: [IMG.ls1, IMG.pt1],   // second is cropped to match first ratio
+    images: [IMG.ls1, IMG.pt1],
+    projectName: '1520 Oliver Street',
+    taskName: 'Site Survey',
   },
 
   // ── Three images ───────────────────────────────────────────────────────────
@@ -78,16 +88,22 @@ const MESSAGES = [
     id: '6', sender: 'dedek yusuf15', time: '10:05 AM',
     message: '6. Three portrait-first → hero-left (55%) + 2 stacked right',
     images: [IMG.pt1, IMG.pt2, IMG.sq1],
+    projectName: '1520 Oliver Street',
+    taskName: 'Permit Application',
   },
   {
     id: '7', sender: 'You', time: '10:06 AM',
     message: '7. Three square-first → hero-top (1:1, full width) + 2 side by side below',
     images: [IMG.sq1, IMG.pt1, IMG.ls1],
+    projectName: 'Raintree Hollow Renovation',
+    taskName: 'Verify Electrical Panel',
   },
   {
     id: '8', sender: 'dedek yusuf15', time: '10:07 AM',
     message: '8. Three landscape-first → hero-top (16:9, full width) + 2 side by side below',
     images: [IMG.ls1, IMG.sq1, IMG.pt1],
+    projectName: '1520 Oliver Street',
+    taskName: 'Demolition Phase 1',
   },
 
   // ── Four images ────────────────────────────────────────────────────────────
@@ -95,8 +111,8 @@ const MESSAGES = [
     id: '9', sender: 'You', time: '10:08 AM',
     message: '9. Four images → 2×2 square grid, no overlay',
     images: [IMG.ls1, IMG.pt1, IMG.sq1, IMG.ls2],
-    projectName: 'Villa Renovation',
-    taskName: 'Foundation Phase',
+    projectName: 'Raintree Hollow Renovation',
+    taskName: 'Install Roof Framing',
   },
 
   // ── Six images ─────────────────────────────────────────────────────────────
@@ -104,8 +120,8 @@ const MESSAGES = [
     id: '10', sender: 'dedek yusuf15', time: '10:09 AM',
     message: '10. Six images → 2×2 grid + +3 overlay on cell 4 (N = 6 − 3)',
     images: [IMG.ls1, IMG.sq1, IMG.pt1, IMG.ls2, IMG.sq2, IMG.pt2],
-    projectName: 'Villa Renovation',
-    taskName: 'Framing Phase',
+    projectName: '520 N Broadway',
+    taskName: 'Plumbing Rough-In',
   },
 ];
 
