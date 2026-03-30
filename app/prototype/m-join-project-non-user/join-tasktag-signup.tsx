@@ -98,7 +98,7 @@ export default function JoinTasktagSignup() {
               />
             )}
             <ScrollView
-              contentContainerStyle={{ paddingHorizontal: 12, paddingTop: 56, paddingBottom: 32 }}
+              contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 56, paddingBottom: 32 }}
             >
               <Box width="100%">
                 <Text variant="h2" textAlign="center" marginBottom="4">Create an account</Text>
@@ -195,7 +195,7 @@ export default function JoinTasktagSignup() {
         {/* ── STEP 2: Email sign-up form ── */}
         {step === 'email-form' && (
           <ScrollView
-            contentContainerStyle={{ paddingHorizontal: 12, paddingTop: 56, paddingBottom: 32 }}
+            contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 56, paddingBottom: 32 }}
           >
             <Box width="100%">
               {/* Back · title — spacer on right keeps title centred */}
