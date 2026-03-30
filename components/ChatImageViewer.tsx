@@ -324,6 +324,11 @@ export function ChatImageViewer({
 
             {/* Group 1 — share actions */}
             <View style={s.iconGroup}>
+              <Tooltip variant="bottom-right" size="sm" content="Link to a project or task">
+                <Pressable style={({ pressed, hovered }: any) => [s.iconBtn, (pressed || hovered) && s.iconBtnHover]} hitSlop={10}>
+                  <Hash size={18} color={C.iconActive} />
+                </Pressable>
+              </Tooltip>
               <Tooltip variant="bottom-right" size="sm" content="Download">
                 <Pressable onPress={handleDownload} style={({ pressed, hovered }: any) => [s.iconBtn, (pressed || hovered) && s.iconBtnHover]} hitSlop={10}>
                   <Download size={18} color={C.iconActive} />
@@ -445,8 +450,8 @@ export function ChatImageViewer({
           )}
         </View>
 
-        {/* ═══ BOTTOM — selection bar + thumbnail strip ══════════════════════ */}
-        <View style={s.bottomBar}>
+        {/* ═══ BOTTOM — selection bar + thumbnail strip (hidden for single image) ══ */}
+        {images.length > 1 && <View style={s.bottomBar}>
 
           {/* Selection action bar */}
           {selMode && (
@@ -488,9 +493,11 @@ export function ChatImageViewer({
                   key={i}
                   onPress={() => handleThumbPress(i)}
                   onLongPress={() => { if (!selMode) { setSelMode(true); toggleSelect(i); } }}
-                  style={[s.thumbWrap, !selMode && i === idx && s.thumbActive, selMode && selected.has(i) && s.thumbSelected]}
+                  style={{ position: 'relative' }}
                 >
-                  <Image source={{ uri: img }} style={s.thumb} resizeMode="cover" />
+                  <View style={[s.thumbWrap, !selMode && i === idx && s.thumbActive, selMode && selected.has(i) && s.thumbSelected]}>
+                    <Image source={{ uri: img }} style={s.thumb} resizeMode="cover" />
+                  </View>
                   {selMode && (
                     <View style={[s.checkCircle, selected.has(i) && s.checkCircleSelected]}>
                       {selected.has(i) && <Check size={11} color="#fff" strokeWidth={3} />}
@@ -501,7 +508,7 @@ export function ChatImageViewer({
             </ScrollView>
           </View>
 
-        </View>
+        </View>}
 
       </View>
     </Modal>
@@ -841,10 +848,10 @@ const s = StyleSheet.create({
     gap: 5,
   },
   imgPillProject: {
-    backgroundColor: 'rgba(0,0,0,0.70)',
+    backgroundColor: '#18a87d',
   },
   imgPillTask: {
-    backgroundColor: '#18a87d',
+    backgroundColor: 'rgba(0,0,0,0.70)',
   },
   imgPillTxt: {
     color: '#ffffff',
