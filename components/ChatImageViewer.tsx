@@ -273,7 +273,7 @@ export function ChatImageViewer({
             )}
           </View>
 
-          {/* RIGHT — download · forward · copy link · rotate · zoom · more */}
+          {/* RIGHT — [group1: download · forward · copy] | [group2: zoom-out · 100% · zoom-in · rotate] · more */}
           <View style={s.hRight}>
             {selMode && (
               <Pressable
@@ -283,25 +283,36 @@ export function ChatImageViewer({
                 <Text style={s.cancelSelTxt}>Cancel</Text>
               </Pressable>
             )}
-            <Pressable onPress={handleDownload} style={s.iconBtn} hitSlop={10}>
-              <Download size={18} color={C.iconActive} />
-            </Pressable>
-            <Pressable onPress={handleForward} style={s.iconBtn} hitSlop={10}>
-              <Forward size={18} color={C.iconActive} />
-            </Pressable>
-            <Pressable onPress={handleCopyLink} style={s.iconBtn} hitSlop={10}>
-              <Link size={18} color={C.iconActive} />
-            </Pressable>
-            <Pressable onPress={rotate} style={s.iconBtn} hitSlop={10}>
-              <RotateCw size={18} color={C.iconActive} />
-            </Pressable>
-            <Pressable onPress={zoomOut} style={s.iconBtn} hitSlop={10}>
-              <ZoomOut size={18} color={zoom <= ZOOM_MIN ? C.iconMuted : C.iconActive} />
-            </Pressable>
-            <Pressable onPress={zoomIn} style={s.iconBtn} hitSlop={10}>
-              <ZoomIn size={18} color={zoom >= ZOOM_MAX ? C.iconMuted : C.iconActive} />
-            </Pressable>
-            <Text style={s.zoomPct}>{zoom}%</Text>
+
+            {/* Group 1 — share actions */}
+            <View style={s.iconGroup}>
+              <Pressable onPress={handleDownload} style={s.iconBtn} hitSlop={10}>
+                <Download size={18} color={C.iconActive} />
+              </Pressable>
+              <Pressable onPress={handleForward} style={s.iconBtn} hitSlop={10}>
+                <Forward size={18} color={C.iconActive} />
+              </Pressable>
+              <Pressable onPress={handleCopyLink} style={s.iconBtn} hitSlop={10}>
+                <Link size={18} color={C.iconActive} />
+              </Pressable>
+            </View>
+
+            <View style={s.groupDivider} />
+
+            {/* Group 2 — zoom & rotate */}
+            <View style={s.iconGroup}>
+              <Pressable onPress={zoomOut} style={s.iconBtn} hitSlop={10}>
+                <ZoomOut size={18} color={zoom <= ZOOM_MIN ? C.iconMuted : C.iconActive} />
+              </Pressable>
+              <Text style={s.zoomPct}>{zoom}%</Text>
+              <Pressable onPress={zoomIn} style={s.iconBtn} hitSlop={10}>
+                <ZoomIn size={18} color={zoom >= ZOOM_MAX ? C.iconMuted : C.iconActive} />
+              </Pressable>
+              <Pressable onPress={rotate} style={s.iconBtn} hitSlop={10}>
+                <RotateCw size={18} color={C.iconActive} />
+              </Pressable>
+            </View>
+
             <Pressable onPress={() => setMoreVisible(v => !v)} style={s.iconBtn} hitSlop={10}>
               <MoreVertical size={18} color={C.iconActive} />
             </Pressable>
@@ -571,6 +582,18 @@ const s = StyleSheet.create({
     fontWeight: '500',
     minWidth: 38,
     textAlign: 'center',
+  },
+
+  // Icon groups
+  iconGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  groupDivider: {
+    width: 1,
+    height: 20,
+    backgroundColor: C.border,
+    marginHorizontal: 4,
   },
 
   // Cancel selection
