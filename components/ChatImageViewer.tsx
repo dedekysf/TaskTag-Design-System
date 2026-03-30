@@ -1007,11 +1007,12 @@ const s = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#bdbdbd',
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingVertical: 7,
   },
   linkCopiedTxt: {
     color: '#303742',
     fontSize: 12,
+    lineHeight: 18,
     fontWeight: '500',
   },
 
