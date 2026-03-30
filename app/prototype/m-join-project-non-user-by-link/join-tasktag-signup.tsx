@@ -171,17 +171,32 @@ export default function JoinTasktagSignup() {
             contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 32 }}
           >
             <Box width="100%">
-              {/* Back arrow + title — 3-column so title stays centred */}
-              <Box flexDirection="row" alignItems="center" marginBottom="4">
+              {/* Back · title · X — all in one row, same vertical baseline */}
+              <Box flexDirection="row" alignItems="center" marginBottom="16">
                 <Pressable
                   onPress={() => setStep('select')}
                   hitSlop={8}
-                  style={[{ width: 28, alignItems: 'flex-start' }, Platform.OS === 'web' && { cursor: 'pointer' } as any]}
+                  style={({ pressed }) => [{
+                    width: 32, height: 32, borderRadius: 16,
+                    backgroundColor: theme.colors.grey02,
+                    alignItems: 'center', justifyContent: 'center',
+                    opacity: pressed ? 0.7 : 1,
+                  }, Platform.OS === 'web' && { cursor: 'pointer' } as any]}
                 >
-                  <ChevronLeft size={22} color={theme.colors.foreground} />
+                  <ChevronLeft size={18} color={theme.colors.foreground} />
                 </Pressable>
                 <Text variant="h2" textAlign="center" style={{ flex: 1 }}>Create an account</Text>
-                <View style={{ width: 28 }} />
+                <Pressable
+                  onPress={() => router.back()}
+                  style={({ pressed }) => [{
+                    width: 32, height: 32, borderRadius: 16,
+                    backgroundColor: theme.colors.grey02,
+                    alignItems: 'center', justifyContent: 'center',
+                    opacity: pressed ? 0.7 : 1,
+                  }, Platform.OS === 'web' && { cursor: 'pointer' } as any]}
+                >
+                  <X size={18} color={theme.colors.foreground} />
+                </Pressable>
               </Box>
 
 
@@ -275,19 +290,21 @@ export default function JoinTasktagSignup() {
           </ScrollView>
         )}
 
-        {/* Close button — always visible */}
-        <Pressable
-          onPress={() => router.back()}
-          style={({ pressed }) => [{
-            position: 'absolute', top: 16, right: 16,
-            width: 32, height: 32, borderRadius: 16,
-            backgroundColor: theme.colors.grey02,
-            alignItems: 'center', justifyContent: 'center',
-            zIndex: 50, opacity: pressed ? 0.7 : 1,
-          }, Platform.OS === 'web' && ({ cursor: 'pointer' } as any)]}
-        >
-          <X size={18} color={theme.colors.foreground} />
-        </Pressable>
+        {/* Close button — only on step 1 (step 2 has it inline in the header) */}
+        {step === 'select' && (
+          <Pressable
+            onPress={() => router.back()}
+            style={({ pressed }) => [{
+              position: 'absolute', top: 16, right: 16,
+              width: 32, height: 32, borderRadius: 16,
+              backgroundColor: theme.colors.grey02,
+              alignItems: 'center', justifyContent: 'center',
+              zIndex: 50, opacity: pressed ? 0.7 : 1,
+            }, Platform.OS === 'web' && ({ cursor: 'pointer' } as any)]}
+          >
+            <X size={18} color={theme.colors.foreground} />
+          </Pressable>
+        )}
       </View>
     </View>
   );
