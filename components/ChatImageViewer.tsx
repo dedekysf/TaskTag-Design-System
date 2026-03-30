@@ -97,9 +97,13 @@ export function ChatImageViewer({
   const [renaming,     setRenaming]     = React.useState(false);
   const [renameValue,  setRenameValue]  = React.useState('');
   const [fileNames,    setFileNames]    = React.useState<string[]>([]);
-  const [selMode,      setSelMode]      = React.useState(false);
-  const [selected,     setSelected]     = React.useState<Set<number>>(new Set());
-  const [moreVisible,  setMoreVisible]  = React.useState(false);
+  const [selMode,        setSelMode]        = React.useState(false);
+  const [selected,       setSelected]       = React.useState<Set<number>>(new Set());
+  const [moreVisible,    setMoreVisible]    = React.useState(false);
+  const [hashVisible,    setHashVisible]    = React.useState(false);
+  const [hashSearch,     setHashSearch]     = React.useState('');
+  const [linkedProject,  setLinkedProject]  = React.useState(projectName ?? null);
+  const [linkedTask,     setLinkedTask]     = React.useState(taskName ?? null);
 
   const thumbScrollRef  = React.useRef<ScrollView>(null);
   const renameInputRef  = React.useRef<TextInput>(null);
@@ -236,9 +240,8 @@ export function ChatImageViewer({
     return () => window.removeEventListener('wheel', onWheel);
   }, [visible]);
 
-  const selCount = selected.size;
-  const hasPills = !!(projectName || taskName);
-  // hasPills is used for image area overlay only
+  const selCount  = selected.size;
+  const hasPills  = !!(linkedProject || linkedTask);
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
@@ -325,8 +328,8 @@ export function ChatImageViewer({
             {/* Group 1 — share actions */}
             <View style={s.iconGroup}>
               <Tooltip variant="bottom-right" size="sm" content="Link to a project or task">
-                <Pressable style={({ pressed, hovered }: any) => [s.iconBtn, (pressed || hovered) && s.iconBtnHover]} hitSlop={10}>
-                  <Hash size={18} color={C.iconActive} />
+                <Pressable onPress={() => { setHashVisible(v => !v); setHashSearch(''); }} style={({ pressed, hovered }: any) => [s.iconBtn, (pressed || hovered) && s.iconBtnHover, hashVisible && s.iconBtnHover]} hitSlop={10}>
+                  <Hash size={18} color={hashVisible ? C.brandGreen : C.iconActive} />
                 </Pressable>
               </Tooltip>
               <Tooltip variant="bottom-right" size="sm" content="Download">
@@ -398,6 +401,68 @@ export function ChatImageViewer({
           </>
         )}
 
+        {/* ═══ HASH DROPDOWN — link to project or task ══════════════════════ */}
+        {hashVisible && (
+          <>
+            <Pressable style={StyleSheet.absoluteFill} onPress={() => setHashVisible(false)} />
+            <View style={s.hashMenu}>
+              {/* Search input */}
+              <View style={s.hashSearchRow}>
+                <View style={s.hashSearchIcon}>
+                  <Hash size={16} color="#fff" />
+                </View>
+                <TextInput
+                  style={s.hashSearchInput}
+                  placeholder="Link to a project or task"
+                  placeholderTextColor="rgba(0,0,0,0.35)"
+                  value={hashSearch}
+                  onChangeText={setHashSearch}
+                  autoFocus
+                />
+                <Pressable onPress={() => setHashVisible(false)}>
+                  <Text style={s.hashCancelTxt}>Cancel</Text>
+                </Pressable>
+              </View>
+
+              <View style={s.hashDivider} />
+
+              {/* Recent list */}
+              <Text style={s.hashSectionLabel}>Recent projects &amp; tasks</Text>
+
+              {[
+                { type: 'project', name: '520 N Broadway' },
+                { type: 'task',    name: 'PickupTrim' },
+                { type: 'task',    name: 'Set Water Meter' },
+                { type: 'project', name: '1520 Oliver street' },
+                { type: 'task',    name: 'Verify location of electrical meter' },
+                { type: 'task',    name: 'Set Water Meter' },
+              ]
+                .filter(item => !hashSearch || item.name.toLowerCase().includes(hashSearch.toLowerCase()))
+                .map((item, i) => (
+                  <Pressable
+                    key={i}
+                    style={({ pressed, hovered }: any) => [s.hashItem, (pressed || hovered) && s.hashItemHover]}
+                    onPress={() => {
+                      if (item.type === 'project') setLinkedProject(item.name);
+                      else setLinkedTask(item.name);
+                      setHashVisible(false);
+                    }}
+                  >
+                    {item.type === 'project' ? (
+                      <View style={s.hashProjectIcon}>
+                        <Text style={s.hashProjectIconTxt}>tt</Text>
+                      </View>
+                    ) : (
+                      <Hash size={20} color={C.brandGreen} />
+                    )}
+                    <Text style={[s.hashItemTxt, item.type === 'project' && s.hashItemTxtBold]}>{item.name}</Text>
+                  </Pressable>
+                ))
+              }
+            </View>
+          </>
+        )}
+
         {/* ═══ IMAGE AREA ════════════════════════════════════════════════════ */}
         <View style={s.imageArea}>
           <Image
@@ -431,30 +496,13 @@ export function ChatImageViewer({
             </Pressable>
           )}
 
-          {/* Project / task pill overlay — top of image area */}
-          {hasPills && (
-            <View style={s.imgPillBar}>
-              {projectName && (
-                <View style={[s.imgPill, s.imgPillProject]}>
-                  <Folder size={12} color="#fff" />
-                  <Text style={s.imgPillTxt} numberOfLines={1}>{projectName}</Text>
-                </View>
-              )}
-              {taskName && (
-                <View style={[s.imgPill, s.imgPillTask]}>
-                  <Hash size={12} color="#fff" />
-                  <Text style={s.imgPillTxt} numberOfLines={1}>{taskName}</Text>
-                </View>
-              )}
-            </View>
-          )}
         </View>
 
-        {/* ═══ BOTTOM — selection bar + thumbnail strip (hidden for single image) ══ */}
-        {images.length > 1 && <View style={s.bottomBar}>
+        {/* ═══ BOTTOM — pill bar + selection bar + thumbnail strip ══════════ */}
+        {(images.length > 1 || hasPills) && <View style={[s.bottomBar, images.length === 1 && s.bottomBarThin]}>
 
-          {/* Selection action bar */}
-          {selMode && (
+          {/* Selection action bar — only for multi-image */}
+          {images.length > 1 && selMode && (
             <View style={s.selBar}>
               <Text style={s.selCount}>
                 {selCount > 0 ? `${selCount} selected` : 'Tap thumbnails to select'}
@@ -480,7 +528,27 @@ export function ChatImageViewer({
             </View>
           )}
 
-          <View style={s.thumbRow}>
+          {/* Linked project / task pills above thumbnails */}
+          {hasPills && (
+            <View style={s.thumbPillBar}>
+              {linkedProject && (
+                <Pressable style={[s.imgPill, s.imgPillProject]} onPress={() => setLinkedProject(null)}>
+                  <Folder size={11} color="#fff" />
+                  <Text style={s.imgPillTxt} numberOfLines={1}>{linkedProject}</Text>
+                  <X size={10} color="rgba(255,255,255,0.7)" />
+                </Pressable>
+              )}
+              {linkedTask && (
+                <Pressable style={[s.imgPill, s.imgPillTask]} onPress={() => setLinkedTask(null)}>
+                  <Hash size={11} color="#fff" />
+                  <Text style={s.imgPillTxt} numberOfLines={1}>{linkedTask}</Text>
+                  <X size={10} color="rgba(255,255,255,0.7)" />
+                </Pressable>
+              )}
+            </View>
+          )}
+
+          {images.length > 1 && <View style={s.thumbRow}>
             <ScrollView
               ref={thumbScrollRef}
               horizontal
@@ -506,7 +574,7 @@ export function ChatImageViewer({
                 </Pressable>
               ))}
             </ScrollView>
-          </View>
+          </View>}
 
         </View>}
 
@@ -913,5 +981,107 @@ const s = StyleSheet.create({
     color: C.brandGreen,
     fontSize: 11,
     fontWeight: '500',
+  },
+
+  // Bottom bar thin (pills only, no thumbs)
+  bottomBarThin: {
+    height: 'auto' as any,
+    paddingVertical: 10,
+  },
+
+  // Pill bar above thumbnails
+  thumbPillBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 4,
+    flexWrap: 'wrap',
+  },
+
+  // Hash dropdown menu
+  hashMenu: {
+    position: 'absolute',
+    top: 56,
+    left: 40,
+    right: 40,
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    zIndex: 200,
+    overflow: 'hidden',
+    ...(Platform.OS === 'web' ? { boxShadow: '0 8px 32px rgba(0,0,0,0.35)' } as any : {}),
+  },
+  hashSearchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    gap: 10,
+  },
+  hashSearchIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    backgroundColor: C.brandGreen,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  hashSearchInput: {
+    flex: 1,
+    fontSize: 15,
+    color: '#000000',
+    ...(Platform.OS === 'web' ? { outlineStyle: 'none' } as any : {}),
+  },
+  hashCancelTxt: {
+    color: C.brandGreen,
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  hashDivider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: 'rgba(0,0,0,0.10)',
+    marginHorizontal: 0,
+  },
+  hashSectionLabel: {
+    color: 'rgba(0,0,0,0.40)',
+    fontSize: 13,
+    paddingHorizontal: 20,
+    paddingTop: 14,
+    paddingBottom: 6,
+  },
+  hashItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+  },
+  hashItemHover: {
+    backgroundColor: 'rgba(0,0,0,0.04)',
+  },
+  hashProjectIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    backgroundColor: '#111111',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  hashProjectIconTxt: {
+    color: '#ffffff',
+    fontSize: 13,
+    fontWeight: '700',
+    fontStyle: 'italic',
+  },
+  hashItemTxt: {
+    color: '#111111',
+    fontSize: 15,
+    flex: 1,
+  },
+  hashItemTxtBold: {
+    fontWeight: '700',
   },
 });
