@@ -25,7 +25,7 @@ import { Text } from './primitives';
 import { Tooltip } from './Tooltip';
 import {
   ChevronLeft, CircleArrowLeft, CircleArrowRight, Download, RotateCw, ZoomOut, ZoomIn,
-  MoreVertical, Forward, Link, Check, CheckSquare,
+  MoreVertical, Forward, Link, Check, CheckSquare, X,
   PencilLine, Info, Trash2,
 } from 'lucide-react-native';
 
@@ -94,8 +94,9 @@ export function ChatImageViewer({
   const [idx,       setIdx]       = React.useState(initialIndex);
   const [zoom,      setZoom]      = React.useState(100);
   const [rotation,  setRotation]  = React.useState(0);
-  const [renaming,  setRenaming]  = React.useState(false);
-  const [fileNames, setFileNames] = React.useState<string[]>([]);
+  const [renaming,     setRenaming]     = React.useState(false);
+  const [renameValue,  setRenameValue]  = React.useState('');
+  const [fileNames,    setFileNames]    = React.useState<string[]>([]);
   const [selMode,      setSelMode]      = React.useState(false);
   const [selected,     setSelected]     = React.useState<Set<number>>(new Set());
   const [moreVisible,  setMoreVisible]  = React.useState(false);
@@ -202,11 +203,20 @@ export function ChatImageViewer({
     else setIdx(i);
   };
 
-  const commitRename = (val: string) => {
-    const trimmed = val.trim();
+  const startRename = () => {
+    setRenameValue(fileNames[idx] ?? getFilename(images[idx]));
+    setRenaming(true);
+  };
+
+  const commitRename = () => {
+    const trimmed = renameValue.trim();
     if (trimmed) {
       setFileNames(prev => { const n = [...prev]; n[idx] = trimmed; return n; });
     }
+    setRenaming(false);
+  };
+
+  const cancelRename = () => {
     setRenaming(false);
   };
 
@@ -254,24 +264,43 @@ export function ChatImageViewer({
           {/* CENTER — filename (click to rename) */}
           <View style={s.hCenter}>
             {renaming ? (
-              <TextInput
-                ref={renameInputRef}
-                style={s.renameInput}
-                value={filename}
-                onChangeText={val => {
-                  setFileNames(prev => { const n = [...prev]; n[idx] = val; return n; });
-                }}
-                onBlur={() => commitRename(filename)}
-                onSubmitEditing={() => commitRename(filename)}
-                selectTextOnFocus
-                autoFocus
-              />
+              <View style={s.renameRow}>
+                <TextInput
+                  ref={renameInputRef}
+                  style={s.renameInput}
+                  value={renameValue}
+                  onChangeText={setRenameValue}
+                  onSubmitEditing={commitRename}
+                  selectTextOnFocus
+                  autoFocus
+                />
+                {/* Cancel */}
+                <Tooltip variant="bottom-right" size="sm" content="Cancel">
+                  <Pressable
+                    onPress={cancelRename}
+                    style={({ pressed, hovered }: any) => [s.renameActionBtn, (pressed || hovered) && s.iconBtnHover]}
+                    hitSlop={8}
+                  >
+                    <X size={16} color={C.iconMuted} />
+                  </Pressable>
+                </Tooltip>
+                {/* Save */}
+                <Tooltip variant="bottom-right" size="sm" content="Save">
+                  <Pressable
+                    onPress={commitRename}
+                    style={({ pressed, hovered }: any) => [s.renameActionBtn, (pressed || hovered) && s.iconBtnHover]}
+                    hitSlop={8}
+                  >
+                    <Check size={16} color={C.brandGreen} />
+                  </Pressable>
+                </Tooltip>
+              </View>
             ) : (
               <View style={s.filenameRow}>
                 <Text style={s.filename} numberOfLines={1}>{filename}</Text>
                 <Tooltip variant="bottom-right" size="sm" content="Rename">
                   <Pressable
-                    onPress={() => setRenaming(true)}
+                    onPress={startRename}
                     style={({ pressed, hovered }: any) => [s.renamePencilBtn, (pressed || hovered) && s.iconBtnHover]}
                     hitSlop={8}
                   >
@@ -614,6 +643,11 @@ const s = StyleSheet.create({
     textDecorationColor: 'rgba(255,255,255,0.25)',
     textDecorationStyle: 'dashed',
   },
+  renameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
   renameInput: {
     color: C.textPrimary,
     fontSize: 13,
@@ -623,10 +657,17 @@ const s = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderWidth: 1,
-    borderColor: C.brandGreen,
-    minWidth: 160,
-    maxWidth: 260,
+    borderColor: '#ffffff',
+    minWidth: 120,
+    maxWidth: 200,
     ...(Platform.OS === 'web' ? { outlineStyle: 'none' } as any : {}),
+  },
+  renameActionBtn: {
+    width: 28,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 4,
   },
 
   // Zoom %
