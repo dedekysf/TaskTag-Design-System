@@ -193,6 +193,9 @@ export default function JoinTasktagSignup() {
               <Box marginBottom="md">
                 <Box marginBottom="24">
                   <TextInput label="Email" placeholder="e.g. you@email.com" value={email} onChangeText={setEmail} errorMessage={emailError} autoFocus />
+                  <Text variant="webMetadataSecondary" color="mutedForeground" style={{ marginTop: -8 }}>
+                    A verification email will be sent to you to verify your address.
+                  </Text>
                 </Box>
 
                 <Box flexDirection="row" gap="md" marginBottom="8">
