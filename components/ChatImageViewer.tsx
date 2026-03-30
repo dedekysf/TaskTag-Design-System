@@ -25,7 +25,7 @@ import { Text } from './primitives';
 import { Tooltip } from './Tooltip';
 import {
   ChevronLeft, CircleArrowLeft, CircleArrowRight, Download, RotateCw, ZoomOut, ZoomIn,
-  MoreVertical, Forward, Link, Check, CheckSquare, X,
+  MoreVertical, Forward, Link, Check, CheckSquare, X, CircleCheckBig,
   PencilLine, Info, Trash2, Folder, Hash,
 } from 'lucide-react-native';
 
@@ -350,11 +350,11 @@ export function ChatImageViewer({
                 size="sm"
                 content={
                   linkCopied
-                    ? <View style={s.linkCopiedContent}><Check size={13} color="#fff" strokeWidth={2.5} /><Text style={s.linkCopiedTxt}>Link copied!</Text></View>
+                    ? <View style={s.linkCopiedBubble}><CircleCheckBig size={14} color="#18a87d" /><Text style={s.linkCopiedTxt}>Link copied!</Text></View>
                     : 'Copy link to share'
                 }
                 open={linkCopied || undefined}
-                tooltipStyle={linkCopied ? 'success' : 'default'}
+                tooltipStyle={linkCopied ? 'custom' : 'default'}
               >
                 <Pressable onPress={handleCopyLink} style={({ pressed, hovered }: any) => [s.iconBtn, (pressed || hovered) && s.iconBtnHover]} hitSlop={10}>
                   <Link size={18} color={linkCopied ? C.brandGreen : C.iconActive} />
@@ -997,13 +997,19 @@ const s = StyleSheet.create({
   },
 
   // Link copied toast content
-  linkCopiedContent: {
+  linkCopiedBubble: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    gap: 6,
+    backgroundColor: '#ffffff',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#bdbdbd',
+    paddingHorizontal: 10,
+    paddingVertical: 7,
   },
   linkCopiedTxt: {
-    color: '#ffffff',
+    color: '#303742',
     fontSize: 12,
     fontWeight: '500',
   },
