@@ -205,6 +205,7 @@ export default function ProjectOverview() {
             variant="fill"
             size="lg"
             style={{ width: '100%', backgroundColor: theme.colors.secondaryGreen, borderRadius: 8 }}
+            onPress={() => { if (typeof window !== 'undefined') window.open('https://play.google.com/store/apps/details?id=com.eloveit.TaskTag', '_blank'); }}
           >
             <Text variant="webLabelEmphasized" color="white">Download App</Text>
           </Button>
