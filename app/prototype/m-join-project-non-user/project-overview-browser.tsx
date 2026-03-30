@@ -349,7 +349,12 @@ export default function ProjectOverview() {
             {/* Overlay */}
             <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)' }} />
             {/* Sheet */}
-            <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: theme.colors.white, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 16, paddingTop: 16, paddingBottom: 32 }}>
+            <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: theme.colors.white, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 16, paddingTop: 12, paddingBottom: 32 }}>
+
+              {/* Drag handle */}
+              <View style={{ alignItems: 'center', marginBottom: 16 }}>
+                <View style={{ width: 36, height: 4, borderRadius: 2, backgroundColor: theme.colors.grey03 }} />
+              </View>
 
               {/* Project info */}
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 20 }}>
@@ -390,12 +395,13 @@ export default function ProjectOverview() {
               </Button>
               <Button
                 variant="outline"
+                color="secondary"
                 size="lg"
                 style={{ width: '100%', borderRadius: 12, flexDirection: 'row', gap: 8 }}
                 onPress={() => {}}
               >
-                <Download size={18} color={theme.colors.foreground} />
-                <Text variant="webLabelEmphasized" color="foreground">Get The Full App</Text>
+                <Download size={18} color={theme.colors.black} />
+                <Text variant="webLabelEmphasized" color="foreground">Download App</Text>
               </Button>
             </View>
           </View>
