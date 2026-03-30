@@ -512,7 +512,7 @@ export function ChatImageViewer({
         </View>
 
         {/* ═══ BOTTOM — pill bar + selection bar + thumbnail strip ══════════ */}
-        {(images.length > 1 || hasPills) && <View style={[s.bottomBar, images.length === 1 && s.bottomBarThin]}>
+        {(images.length > 1 || hasPills) && <View style={s.bottomBar}>
 
           {/* Selection action bar — only for multi-image */}
           {images.length > 1 && selMode && (
@@ -567,7 +567,7 @@ export function ChatImageViewer({
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={s.thumbStrip}
-              style={{ flex: 1 }}
+              style={s.thumbScrollView}
             >
               {images.map((img, i) => (
                 <Pressable
@@ -758,7 +758,7 @@ const s = StyleSheet.create({
 
   // Thumbnail row with select toggle
   thumbRow: {
-    flex: 1,
+    height: BOTTOM_H,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -822,11 +822,9 @@ const s = StyleSheet.create({
 
   // Bottom
   bottomBar: {
-    height: BOTTOM_H,
     backgroundColor: C.surface,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: C.border,
-    justifyContent: 'center',
   },
 
   // Selection bar (shown above thumbnails when selMode is on)
@@ -865,6 +863,10 @@ const s = StyleSheet.create({
     color: C.textPrimary,
     fontSize: 12,
     fontWeight: '500',
+  },
+
+  thumbScrollView: {
+    flex: 1,
   },
 
   // Thumbnail strip
@@ -1005,19 +1007,13 @@ const s = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#bdbdbd',
-    paddingHorizontal: 10,
-    paddingVertical: 7,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
   linkCopiedTxt: {
     color: '#303742',
     fontSize: 12,
     fontWeight: '500',
-  },
-
-  // Bottom bar thin (pills only, no thumbs)
-  bottomBarThin: {
-    height: 'auto' as any,
-    paddingVertical: 10,
   },
 
   // Pill bar above thumbnails
