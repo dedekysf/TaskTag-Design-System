@@ -79,7 +79,7 @@ export default function JoinTasktagSignup() {
       />
 
       <View style={{
-        alignSelf: 'stretch', marginHorizontal: 8, maxHeight: '90%',
+        alignSelf: 'stretch', marginHorizontal: 12, maxHeight: '90%',
         backgroundColor: theme.colors.background, borderRadius: 16, overflow: 'hidden',
         elevation: 24, shadowColor: '#000', shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.1, shadowRadius: 20,
@@ -88,7 +88,7 @@ export default function JoinTasktagSignup() {
         {/* ── STEP 1: Select sign-up method ── */}
         {step === 'select' && (
           <ScrollView
-            contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 56, paddingBottom: 32 }}
+            contentContainerStyle={{ paddingHorizontal: 12, paddingTop: 56, paddingBottom: 32 }}
           >
             <Box width="100%">
               <Text variant="h2" textAlign="center" marginBottom="4">Create an account</Text>
@@ -168,7 +168,7 @@ export default function JoinTasktagSignup() {
         {/* ── STEP 2: Email sign-up form ── */}
         {step === 'email-form' && (
           <ScrollView
-            contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 56, paddingBottom: 32 }}
+            contentContainerStyle={{ paddingHorizontal: 12, paddingTop: 56, paddingBottom: 32 }}
           >
             <Box width="100%">
               {/* Back · title — spacer on right keeps title centred */}
