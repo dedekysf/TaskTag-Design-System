@@ -23,7 +23,7 @@ import {
 } from 'react-native';
 import { Text } from './primitives';
 import {
-  ChevronLeft, Download, RotateCw, ZoomOut, ZoomIn,
+  ChevronLeft, ChevronRight, Download, RotateCw, ZoomOut, ZoomIn,
   MoreVertical, Share2, Check,
 } from 'lucide-react-native';
 
@@ -306,6 +306,28 @@ export function ChatImageViewer({
             ]}
             resizeMode="contain"
           />
+
+          {/* Left arrow — hidden on first image */}
+          {idx > 0 && (
+            <Pressable
+              onPress={() => setIdx(i => i - 1)}
+              style={[s.navBtn, s.navLeft]}
+              hitSlop={16}
+            >
+              <ChevronLeft size={28} color={C.iconActive} />
+            </Pressable>
+          )}
+
+          {/* Right arrow — hidden on last image */}
+          {idx < images.length - 1 && (
+            <Pressable
+              onPress={() => setIdx(i => i + 1)}
+              style={[s.navBtn, s.navRight]}
+              hitSlop={16}
+            >
+              <ChevronRight size={28} color={C.iconActive} />
+            </Pressable>
+          )}
         </View>
 
         {/* ═══ BOTTOM — selection bar + thumbnail strip ══════════════════════ */}
@@ -611,5 +633,24 @@ const s = StyleSheet.create({
   checkCircleSelected: {
     backgroundColor: C.brandGreen,
     borderColor: C.brandGreen,
+  },
+
+  // Navigation arrows
+  navBtn: {
+    position: 'absolute',
+    top: '50%' as any,
+    marginTop: -24,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  navLeft: {
+    left: 16,
+  },
+  navRight: {
+    right: 16,
   },
 });
