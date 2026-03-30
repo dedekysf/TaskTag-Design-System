@@ -396,8 +396,7 @@ export function ChatImageViewer({
         {/* ═══ MORE OPTIONS DROPDOWN ══════════════════════════════════════════ */}
         {moreVisible && (
           <>
-            {/* Backdrop to close */}
-            <Pressable style={StyleSheet.absoluteFill} onPress={() => setMoreVisible(false)} />
+            <Pressable style={[StyleSheet.absoluteFill, { zIndex: 99 }]} onPress={() => setMoreVisible(false)} />
             <View style={s.moreMenu}>
               {/* Information */}
               <Pressable style={s.moreItem} onPress={() => setMoreVisible(false)}>
@@ -417,7 +416,7 @@ export function ChatImageViewer({
         {/* ═══ HASH DROPDOWN — link to project or task ══════════════════════ */}
         {hashVisible && (
           <>
-            <Pressable style={StyleSheet.absoluteFill} onPress={() => setHashVisible(false)} />
+            <Pressable style={[StyleSheet.absoluteFill, { zIndex: 199 }]} onPress={() => setHashVisible(false)} />
             <View style={s.hashMenu}>
               {/* Search input */}
               <View style={s.hashSearchRow}>
@@ -892,17 +891,17 @@ const s = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.06)',
   },
 
-  // Selection checkmark
+  // Selection checkbox (square)
   checkCircle: {
     position: 'absolute',
     top: 5,
     right: 5,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 18,
+    height: 18,
+    borderRadius: 4,
     borderWidth: 2,
-    borderColor: '#fff',
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    borderColor: '#ffffff',
+    backgroundColor: 'rgba(0,0,0,0.25)',
     alignItems: 'center',
     justifyContent: 'center',
   },
