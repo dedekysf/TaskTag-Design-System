@@ -16,6 +16,7 @@ const PROJECT = {
 export default function ProjectOverview() {
   const theme = useTheme<Theme>();
   const [sheetVisible, setSheetVisible] = useState(true);
+  const [bannerVisible, setBannerVisible] = useState(true);
 
   return (
     <Box flex={1} backgroundColor="background" alignItems="center">
@@ -192,6 +193,23 @@ export default function ProjectOverview() {
           </Box>
 
         </ScrollView>
+
+        {/* Important Note For Dev */}
+        {bannerVisible && (
+          <View style={{ position: 'absolute', bottom: 220, left: 16, right: 16, backgroundColor: '#fbe676', borderRadius: 12, padding: 16, gap: 4, zIndex: 40 }}>
+            <Pressable
+              onPress={() => setBannerVisible(false)}
+              style={{ position: 'absolute', top: 8, right: 8, width: 32, height: 32, alignItems: 'center', justifyContent: 'center', zIndex: 10 }}
+              hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+            >
+              <Text variant="webLabelEmphasized" style={{ color: '#000', fontSize: 16, lineHeight: 16 }}>×</Text>
+            </Pressable>
+            <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Important Note For Dev</Text>
+            <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18, opacity: 0.7, paddingRight: 20 }}>
+              If user already has the app, then direct them to open the app, if not, direct them to download it from the Play/App Store.
+            </Text>
+          </View>
+        )}
 
         {/* Fixed Bottom Banner */}
         <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, backgroundColor: '#000000', borderRadius: 12, padding: 16, zIndex: 10 }}>
