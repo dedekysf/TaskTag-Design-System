@@ -22,6 +22,7 @@ import {
   TextInput,
 } from 'react-native';
 import { Text } from './primitives';
+import { Tooltip } from './Tooltip';
 import {
   ChevronLeft, CircleArrowLeft, CircleArrowRight, Download, RotateCw, ZoomOut, ZoomIn,
   MoreVertical, Forward, Link, Check,
@@ -286,36 +287,50 @@ export function ChatImageViewer({
 
             {/* Group 1 — share actions */}
             <View style={s.iconGroup}>
-              <Pressable onPress={handleDownload} style={s.iconBtn} hitSlop={10}>
-                <Download size={18} color={C.iconActive} />
-              </Pressable>
-              <Pressable onPress={handleForward} style={s.iconBtn} hitSlop={10}>
-                <Forward size={18} color={C.iconActive} />
-              </Pressable>
-              <Pressable onPress={handleCopyLink} style={s.iconBtn} hitSlop={10}>
-                <Link size={18} color={C.iconActive} />
-              </Pressable>
+              <Tooltip variant="bottom-right" size="sm" content="Download">
+                <Pressable onPress={handleDownload} style={s.iconBtn} hitSlop={10}>
+                  <Download size={18} color={C.iconActive} />
+                </Pressable>
+              </Tooltip>
+              <Tooltip variant="bottom-right" size="sm" content="Forward">
+                <Pressable onPress={handleForward} style={s.iconBtn} hitSlop={10}>
+                  <Forward size={18} color={C.iconActive} />
+                </Pressable>
+              </Tooltip>
+              <Tooltip variant="bottom-right" size="sm" content="Copy link">
+                <Pressable onPress={handleCopyLink} style={s.iconBtn} hitSlop={10}>
+                  <Link size={18} color={C.iconActive} />
+                </Pressable>
+              </Tooltip>
             </View>
 
             <View style={s.groupDivider} />
 
             {/* Group 2 — zoom & rotate */}
             <View style={s.iconGroup}>
-              <Pressable onPress={zoomOut} style={s.iconBtn} hitSlop={10}>
-                <ZoomOut size={18} color={zoom <= ZOOM_MIN ? C.iconMuted : C.iconActive} />
-              </Pressable>
+              <Tooltip variant="bottom-right" size="sm" content="Zoom out">
+                <Pressable onPress={zoomOut} style={s.iconBtn} hitSlop={10}>
+                  <ZoomOut size={18} color={zoom <= ZOOM_MIN ? C.iconMuted : C.iconActive} />
+                </Pressable>
+              </Tooltip>
               <Text style={s.zoomPct}>{zoom}%</Text>
-              <Pressable onPress={zoomIn} style={s.iconBtn} hitSlop={10}>
-                <ZoomIn size={18} color={zoom >= ZOOM_MAX ? C.iconMuted : C.iconActive} />
-              </Pressable>
-              <Pressable onPress={rotate} style={s.iconBtn} hitSlop={10}>
-                <RotateCw size={18} color={C.iconActive} />
-              </Pressable>
+              <Tooltip variant="bottom-right" size="sm" content="Zoom in">
+                <Pressable onPress={zoomIn} style={s.iconBtn} hitSlop={10}>
+                  <ZoomIn size={18} color={zoom >= ZOOM_MAX ? C.iconMuted : C.iconActive} />
+                </Pressable>
+              </Tooltip>
+              <Tooltip variant="bottom-right" size="sm" content="Rotate">
+                <Pressable onPress={rotate} style={s.iconBtn} hitSlop={10}>
+                  <RotateCw size={18} color={C.iconActive} />
+                </Pressable>
+              </Tooltip>
             </View>
 
-            <Pressable onPress={() => setMoreVisible(v => !v)} style={s.iconBtn} hitSlop={10}>
-              <MoreVertical size={18} color={C.iconActive} />
-            </Pressable>
+            <Tooltip variant="bottom-right" size="sm" content="More options">
+              <Pressable onPress={() => setMoreVisible(v => !v)} style={s.iconBtn} hitSlop={10}>
+                <MoreVertical size={18} color={C.iconActive} />
+              </Pressable>
+            </Tooltip>
           </View>
 
         </View>
@@ -593,7 +608,7 @@ const s = StyleSheet.create({
     width: 1,
     height: 20,
     backgroundColor: C.border,
-    marginHorizontal: 4,
+    marginHorizontal: 24,
   },
 
   // Cancel selection
