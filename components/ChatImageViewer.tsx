@@ -24,7 +24,7 @@ import {
 import { Text } from './primitives';
 import {
   ChevronLeft, ChevronRight, Download, RotateCw, ZoomOut, ZoomIn,
-  MoreVertical, Share2, Check,
+  MoreVertical, Forward, Link, Check,
 } from 'lucide-react-native';
 
 // ── Color tokens ──────────────────────────────────────────────────────────────
@@ -172,9 +172,14 @@ export function ChatImageViewer({
   };
 
   const handleForward = () => {
-    // Forward stub — wire to real forward flow
     const targets = selMode && selected.size > 0 ? Array.from(selected) : [idx];
     console.log('Forward images:', targets.map(i => images[i]));
+  };
+
+  const handleCopyLink = () => {
+    if (Platform.OS === 'web') {
+      navigator.clipboard?.writeText(current).catch(() => {});
+    }
   };
 
   const toggleSelect = (i: number) => {
@@ -263,7 +268,7 @@ export function ChatImageViewer({
             )}
           </View>
 
-          {/* RIGHT — forward · download · rotate · zoom · more */}
+          {/* RIGHT — download · forward · copy link · rotate · zoom · more */}
           <View style={s.hRight}>
             {selMode && (
               <Pressable
@@ -273,11 +278,14 @@ export function ChatImageViewer({
                 <Text style={s.cancelSelTxt}>Cancel</Text>
               </Pressable>
             )}
-            <Pressable onPress={handleForward} style={s.iconBtn} hitSlop={10}>
-              <Share2 size={18} color={C.iconActive} />
-            </Pressable>
             <Pressable onPress={handleDownload} style={s.iconBtn} hitSlop={10}>
               <Download size={18} color={C.iconActive} />
+            </Pressable>
+            <Pressable onPress={handleForward} style={s.iconBtn} hitSlop={10}>
+              <Forward size={18} color={C.iconActive} />
+            </Pressable>
+            <Pressable onPress={handleCopyLink} style={s.iconBtn} hitSlop={10}>
+              <Link size={18} color={C.iconActive} />
             </Pressable>
             <Pressable onPress={rotate} style={s.iconBtn} hitSlop={10}>
               <RotateCw size={18} color={C.iconActive} />
@@ -345,7 +353,7 @@ export function ChatImageViewer({
                   style={[s.selAction, selCount === 0 && s.selActionDisabled]}
                   disabled={selCount === 0}
                 >
-                  <Share2 size={15} color={selCount > 0 ? C.iconActive : C.iconMuted} />
+                  <Forward size={15} color={selCount > 0 ? C.iconActive : C.iconMuted} />
                   <Text style={[s.selActionTxt, selCount === 0 && { color: C.iconMuted }]}>Forward</Text>
                 </Pressable>
                 <Pressable
