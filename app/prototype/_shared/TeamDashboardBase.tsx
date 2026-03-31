@@ -5,6 +5,7 @@ import { useTheme } from '@shopify/restyle';
 import {
   Activity,
   ArrowDownUp,
+  Building2,
   Calendar,
   Check,
   ChevronDown,
@@ -24,6 +25,7 @@ import {
   Image as ImageIcon,
   Link,
   ListFilter,
+  MapPin,
   Maximize2,
   MessageSquare,
   MessageSquarePlus,
@@ -33,6 +35,8 @@ import {
   Send,
   Smile,
   SortDesc,
+  TriangleAlert,
+  UserCheck,
   UserPlus,
   Users,
   X
@@ -90,9 +94,9 @@ type TeamMemberAvatar =
   | { type: 'initials'; initials: string; color: string };
 
 export const TEAM_MEMBERS: { name: string; skills: string[]; email: string; phone: string; role: string; avatar: TeamMemberAvatar }[] = [
-  { name: 'Melissa Monroe', skills: [], email: 'melissamonroe@gmail.com', phone: '232-946-1254', role: 'Owner', avatar: { type: 'photo', src: require('@/assets/images/sample-two.jpg') } },
-  { name: 'Abby Smith', skills: ['Carpenter'], email: 'abbysmith@gmail.com', phone: '230-124-9988', role: 'Admin', avatar: { type: 'photo', src: require('@/assets/images/sample-three.jpg') } },
-  { name: 'Savannah Nguyen', skills: [], email: 'savannahnguyen@gmail.com', phone: '222-548-5896', role: 'Member', avatar: { type: 'initials', initials: 'SN', color: '#035B60' } },
+  { name: 'Linda Smith', skills: [], email: 'lindasmith@gmail.com', phone: '232-946-1254', role: 'Owner', avatar: { type: 'initials', initials: 'LS', color: 'pastelMagenta' } },
+  { name: 'Abby Smith', skills: ['Carpenter'], email: 'abbysmith@gmail.com', phone: '230-124-9988', role: 'Admin', avatar: { type: 'initials', initials: 'AS', color: 'pastelYellow' } },
+  { name: 'Savannah Nguyen', skills: [], email: 'savannahnguyen@gmail.com', phone: '222-548-5896', role: 'Member', avatar: { type: 'initials', initials: 'SN', color: 'pastelBlue' } },
 ];
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -254,7 +258,7 @@ export default function TeamDashboardBase({
   viewVariant = 'default',
 }: {
   modalVariant?: 'non-user' | 'tt-user';
-  viewVariant?: 'default' | 'pending';
+  viewVariant?: 'default' | 'pending' | 'ask-to-join';
 }) {
   const theme = useTheme<Theme>();
   const [activeTab, setActiveTab] = useState('members');
@@ -350,14 +354,14 @@ export default function TeamDashboardBase({
 
               {sidebarCollapsed ? (
                 <Box alignItems="center" justifyContent="center" style={{ height: 54 }}>
-                  <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.grey02 }}>
-                    <Text variant="labelMedium" style={{ color: theme.colors.grey05, fontWeight: '700' }}>SN</Text>
+                  <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelBlue">
+                    <Text variant="labelMedium" style={{ color: '#FFFFFF', fontWeight: '700' }}>SN</Text>
                   </Box>
                 </Box>
               ) : (
                 <Box flexDirection="row" alignItems="center" gap="8" style={{ height: 54, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 15, backgroundColor: theme.colors.lightMint }}>
-                  <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.grey02 }}>
-                    <Text variant="labelMedium" style={{ color: theme.colors.grey05, fontWeight: '700' }}>SN</Text>
+                  <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelBlue">
+                    <Text variant="labelMedium" style={{ color: '#FFFFFF', fontWeight: '700' }}>SN</Text>
                   </Box>
                   <Text variant="labelMedium" style={{ color: theme.colors.secondaryGreen }}>My Account</Text>
                 </Box>
@@ -448,123 +452,144 @@ export default function TeamDashboardBase({
           </Box>
         </Box>
 
-        <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
-
-          {/* Filter bar */}
-          <Box flexDirection="row" alignItems="center" gap="8" paddingHorizontal="md" backgroundColor="card" style={{ height: 56 }}>
-            <Button variant="ghost" color="secondary" size="sm" style={{ borderRadius: 8 }}>
+        {viewVariant === 'ask-to-join' ? (
+          <Box flex={1} alignItems="center" justifyContent="center">
+            <Box alignItems="center" style={{ gap: 16 }}>
+              <TriangleAlert size={40} color={theme.colors.textSecondary} strokeWidth={1.5} />
+              <Text variant="webHeading22" color="foreground" textAlign="center" style={{ fontWeight: '400' }}>
+                You’re not a member of this team
+              </Text>
+            </Box>
+            <Button
+              variant="outline"
+              size="lg"
+              disabled
+              style={{ borderRadius: 40, minWidth: 220, backgroundColor: theme.colors.grey01, borderColor: theme.colors.border, marginTop: 16, height: 54 }}
+            >
               <Box flexDirection="row" alignItems="center" gap="8">
-                <ListFilter size={15} color={theme.colors.black} />
-                <Text variant="webBody" color="black">Filter</Text>
-              </Box>
-            </Button>
-            <Button variant="ghost" color="secondary" size="sm" style={{ borderRadius: 8 }}>
-              <Box flexDirection="row" alignItems="center" gap="8">
-                <MessageSquare size={15} color={theme.colors.black} />
-                <Text variant="webBody" color="black">Start Chat</Text>
+                <UserPlus size={16} color={theme.colors.grey04} />
+                <Text color="grey04" variant="labelMedium">Pending Request</Text>
               </Box>
             </Button>
           </Box>
-
-          {/* Active Members Table */}
-          <Box style={{ padding: 16 }}>
-            <Box backgroundColor="card" borderWidth={1} borderColor="border" style={{ borderRadius: 8, overflow: 'hidden' as any }}>
-
-              {/* Table toolbar */}
-              <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ height: 64, paddingHorizontal: 16 }}>
+        ) : (
+          <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
+            {/* Filter bar */}
+            <Box flexDirection="row" alignItems="center" gap="8" paddingHorizontal="md" backgroundColor="card" style={{ height: 56 }}>
+              <Button variant="ghost" color="secondary" size="sm" style={{ borderRadius: 8 }}>
                 <Box flexDirection="row" alignItems="center" gap="8">
-                  <Text variant="webLabelEmphasized" color="foreground">Active</Text>
-                  <Box style={{ borderWidth: 1, borderColor: theme.colors.border, borderRadius: 20, paddingHorizontal: 8, paddingVertical: 2 }}>
-                    <Text variant="webMetadataPrimary" color="mutedForeground">3</Text>
-                  </Box>
+                  <ListFilter size={15} color={theme.colors.black} />
+                  <Text variant="webBody" color="black">Filter</Text>
                 </Box>
-                <ChevronUp size={20} color={theme.colors.grey04} />
-              </Box>
+              </Button>
+              <Button variant="ghost" color="secondary" size="sm" style={{ borderRadius: 8 }}>
+                <Box flexDirection="row" alignItems="center" gap="8">
+                  <MessageSquare size={15} color={theme.colors.black} />
+                  <Text variant="webBody" color="black">Start Chat</Text>
+                </Box>
+              </Button>
+            </Box>
 
-              {/* Table */}
-              <Box>
-                {/* Header row */}
-                <Box flexDirection="row" backgroundColor="grey01">
-                  <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }}>
-                    <Box flexDirection="row" alignItems="center" gap="4">
-                      <Text variant="webMetadataPrimary" color="grey04">Name</Text>
-                      <ArrowDownUp size={12} color={theme.colors.grey04} />
+            <Box style={{ padding: 16 }}>
+              <Box backgroundColor="card" borderWidth={1} borderColor="border" style={{ borderRadius: 8, overflow: 'hidden' as any }}>
+                <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ height: 64, paddingHorizontal: 16 }}>
+                  <Box flexDirection="row" alignItems="center" gap="8">
+                    <Text variant="webLabelEmphasized" color="foreground">Active</Text>
+                    <Box width={20} height={20} alignItems="center" justifyContent="center" style={{ borderWidth: 1, borderColor: theme.colors.border, borderRadius: 10 }}>
+                      <Text style={{ fontSize: 11, color: theme.colors.grey05, fontWeight: '500' }}>3</Text>
                     </Box>
                   </Box>
-                  <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }}>
-                    <Text variant="webMetadataPrimary" color="grey04">Skills</Text>
-                  </Box>
-                  <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }}>
-                    <Text variant="webMetadataPrimary" color="grey04">Email</Text>
-                  </Box>
-                  <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }}>
-                    <Text variant="webMetadataPrimary" color="grey04">Phone</Text>
-                  </Box>
-                  <Box style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 10 }}>
-                    <Text variant="webMetadataPrimary" color="grey04">Role</Text>
-                  </Box>
-                  <Box style={{ width: 48, paddingHorizontal: 16, paddingVertical: 10 }} />
+                  <ChevronUp size={20} color={theme.colors.grey04} />
                 </Box>
 
-                {/* Data rows */}
-                {TEAM_MEMBERS.map((member, index) => (
-                  <Box key={index} flexDirection="row" alignItems="center" borderTopWidth={1} borderColor="border" style={{ height: 48 }}>
-                    <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 8 }}>
-                      <Box flexDirection="row" alignItems="center" gap="8">
-                        {member.avatar.type === 'photo' ? (
-                          <Image source={member.avatar.src} style={{ width: 32, height: 32, borderRadius: 16 }} />
-                        ) : (
-                          <Box width={32} height={32} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: member.avatar.color }}>
-                            <Text style={{ fontSize: 11, fontWeight: '700', color: '#fff' }}>{member.avatar.initials}</Text>
-                          </Box>
-                        )}
-                        <Text variant="webSecondaryBody" color="foreground" numberOfLines={1} style={{ flex: 1 }}>{member.name}</Text>
+                <Box>
+                  {/* Header row */}
+                  <Box flexDirection="row" backgroundColor="grey01">
+                    <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }}>
+                      <Box flexDirection="row" alignItems="center" gap="4">
+                        <Text variant="webMetadataPrimary" color="grey04">Name</Text>
+                        <ArrowDownUp size={12} color={theme.colors.grey04} />
                       </Box>
                     </Box>
-                    <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 8 }}>
-                      {member.skills.length > 0 ? (
-                        <Box flexDirection="row" alignItems="center" gap="4">
-                          {member.skills.slice(0, 2).map((skill, i) => (
-                            <Box key={i} style={{ backgroundColor: theme.colors.grey02, borderRadius: 4, paddingHorizontal: 4, paddingVertical: 2 }}>
-                              <Text variant="labelMedium" color="foreground">{skill}</Text>
-                            </Box>
-                          ))}
-                          {member.skills.length > 2 && (
-                            <Text variant="webSecondaryBody" color="grey04">...</Text>
-                          )}
-                        </Box>
-                      ) : null}
+                    <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }}>
+                      <Text variant="webMetadataPrimary" color="grey04">Skills</Text>
                     </Box>
-                    <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 8 }}>
-                      <Text variant="webSecondaryBody" color="foreground" numberOfLines={1}>{member.email}</Text>
+                    <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }}>
+                      <Text variant="webMetadataPrimary" color="grey04">Email</Text>
                     </Box>
-                    <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 8 }}>
-                      <Text variant="webSecondaryBody" color="foreground">{member.phone}</Text>
+                    <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }}>
+                      <Text variant="webMetadataPrimary" color="grey04">Phone</Text>
                     </Box>
-                    <Box style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>
-                      <Text variant="labelMedium" color="foreground">{member.role}</Text>
+                    <Box style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 10 }}>
+                      <Text variant="webMetadataPrimary" color="grey04">Role</Text>
                     </Box>
-                    <Box style={{ width: 48, paddingHorizontal: 8, paddingVertical: 8 }} alignItems="center" justifyContent="center">
-                      <Pressable hitSlop={8}>
-                        <MessageSquare size={16} color={theme.colors.grey06} />
-                      </Pressable>
-                    </Box>
+                    <Box style={{ width: 48, paddingHorizontal: 16, paddingVertical: 10 }} />
                   </Box>
-                ))}
+
+                  {/* Data rows */}
+                  {TEAM_MEMBERS.map((member, index) => (
+                    <Box key={index} flexDirection="row" alignItems="center" borderTopWidth={1} borderColor="border" style={{ height: 48 }}>
+                      <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 8 }}>
+                        <Box flexDirection="row" alignItems="center" gap="8">
+                          {member.avatar.type === 'photo' ? (
+                            <Image source={member.avatar.src} style={{ width: 32, height: 32, borderRadius: 16 }} />
+                          ) : (
+                            <Box width={32} height={32} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor={member.avatar.color as any}>
+                              <Text style={{ fontSize: 11, fontWeight: '700', color: '#FFFFFF' }}>{member.avatar.initials}</Text>
+                            </Box>
+                          )}
+                          <Text variant="webSecondaryBody" color="foreground" numberOfLines={1} style={{ flex: 1 }}>{member.name}</Text>
+                        </Box>
+                      </Box>
+                      <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 8 }}>
+                        {member.skills.length > 0 ? (
+                          <Box flexDirection="row" alignItems="center" gap="4">
+                            {member.skills.slice(0, 2).map((skill, i) => (
+                              <Box key={i} style={{ backgroundColor: theme.colors.grey02, borderRadius: 4, paddingHorizontal: 4, paddingVertical: 2 }}>
+                                <Text variant="labelMedium" color="foreground">{skill}</Text>
+                              </Box>
+                            ))}
+                            {member.skills.length > 2 && (
+                              <Text variant="webSecondaryBody" color="grey04">...</Text>
+                            )}
+                          </Box>
+                        ) : null}
+                      </Box>
+                      <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 8 }}>
+                        <Text variant="webSecondaryBody" color="foreground" numberOfLines={1}>{member.email}</Text>
+                      </Box>
+                      <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 8 }}>
+                        <Text variant="webSecondaryBody" color="foreground">{member.phone}</Text>
+                      </Box>
+                      <Box style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>
+                        <Text variant="labelMedium" color="foreground">{member.role}</Text>
+                      </Box>
+                      <Box style={{ width: 48, paddingHorizontal: 8, paddingVertical: 8 }} alignItems="center" justifyContent="center">
+                        <Pressable hitSlop={8}>
+                          <MessageSquare size={16} color={theme.colors.grey06} />
+                        </Pressable>
+                      </Box>
+                    </Box>
+                  ))}
+                </Box>
               </Box>
-
             </Box>
-          </Box>
-
-        </ScrollView>
+          </ScrollView>
+        )}
       </Box>
 
       {/* ── Chat Panel ── */}
       <Box flex={1} backgroundColor="grey01" borderLeftWidth={1} borderColor="border" style={{ height: '100%' as any, maxWidth: 550 }}>
         <Box flexDirection="row" alignItems="center" justifyContent="space-between" backgroundColor="card" borderBottomWidth={1} borderColor="border" style={{ height: 72, paddingHorizontal: 20 }}>
           <Box flexDirection="row" alignItems="center" gap="12">
-            <Image source={require('@/assets/images/sample-one.jpg')} style={{ width: 44, height: 44, borderRadius: 22 }} />
-            <Text variant="webLabelEmphasized" color="foreground">Linda Smith</Text>
+            <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor={viewVariant === 'ask-to-join' ? 'pastelBlue' : 'pastelMagenta'}>
+              <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 14 }}>
+                {viewVariant === 'ask-to-join' ? 'SN' : 'LS'}
+              </Text>
+            </Box>
+            <Text variant="webLabelEmphasized" color="foreground">
+              {viewVariant === 'ask-to-join' ? 'Savannah Nguyen' : 'Linda Smith'}
+            </Text>
           </Box>
           <Box flexDirection="row" alignItems="center">
             <Pressable style={{ padding: 8 }}><Maximize2 size={18} color={theme.colors.textSecondary} /></Pressable>
@@ -581,17 +606,21 @@ export default function TeamDashboardBase({
           </Box>
           <Box style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
             <Box flexDirection="row" gap="12" alignItems="flex-start">
-              {viewVariant === 'pending' ? (
-                <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.lightMint, marginTop: 2 }}>
-                  <Text style={{ fontWeight: '700', color: theme.colors.secondaryGreen, fontSize: 14 }}>JH</Text>
+              {(viewVariant === 'pending' || viewVariant === 'ask-to-join') ? (
+                <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor={viewVariant === 'ask-to-join' ? 'pastelBlue' : 'pastelPurple'} style={{ marginTop: 2 }}>
+                  <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 14 }}>
+                    {viewVariant === 'ask-to-join' ? 'SN' : 'JH'}
+                  </Text>
                 </Box>
               ) : (
-                <Image source={require('@/assets/images/sample-one.jpg')} style={{ width: 40, height: 40, borderRadius: 20, marginTop: 2 }} />
+                <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelMagenta" style={{ marginTop: 2 }}>
+                  <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 14 }}>LS</Text>
+                </Box>
               )}
               <Box flex={1}>
                 <Box flexDirection="row" alignItems="center" gap="8" style={{ marginBottom: 8 }}>
                   <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>
-                    {viewVariant === 'pending' ? 'James Harrington' : 'Linda Smith'}
+                    {viewVariant === 'pending' ? 'James Harrington' : viewVariant === 'ask-to-join' ? 'Savannah Nguyen' : 'Linda Smith'}
                   </Text>
                   <Text style={{ fontSize: 11, color: theme.colors.grey04 }}>12:25 PM</Text>
                 </Box>
@@ -614,6 +643,30 @@ export default function TeamDashboardBase({
                     </Box>
                     <Check size={14} color={theme.colors.secondaryGreen} style={{ marginBottom: 2 }} />
                   </Box>
+                ) : viewVariant === 'ask-to-join' ? (
+                  <Box flexDirection="row" alignItems="flex-end" gap="8">
+                    <Box flex={1} style={{ backgroundColor: '#E0F2F1', borderRadius: 16, borderTopLeftRadius: 0, padding: 8 }}>
+                      <Box borderWidth={1} borderColor="border" style={{ borderRadius: 12, overflow: 'hidden' as any }}>
+                        <Box flexDirection="row" alignItems="center" gap="8" style={{ paddingHorizontal: 12, paddingVertical: 10, backgroundColor: '#FDF2F9' }}>
+                          <UserPlus size={16} color="#B526A1" strokeWidth={2.5} />
+                          <Text style={{ fontSize: 14, color: '#B526A1', fontWeight: '500' }}>Member Activity</Text>
+                        </Box>
+                        <Box backgroundColor="card" style={{ padding: 16 }}>
+                          <Text style={{ fontSize: 18, color: theme.colors.foreground, lineHeight: 24 }}>
+                            {'Ask to join '}
+                            <Text style={{ fontWeight: '700' }}>Scott 1</Text>
+                            {' team'}
+                          </Text>
+                        </Box>
+                      </Box>
+                    </Box>
+                    <Box style={{ marginBottom: 4 }}>
+                      <Box flexDirection="row" style={{ marginLeft: -4 }}>
+                        <Check size={14} color={theme.colors.grey04} />
+                        <Check size={14} color={theme.colors.grey04} style={{ marginLeft: -8 }} />
+                      </Box>
+                    </Box>
+                  </Box>
                 ) : (
                   <Box flex={1} style={{ backgroundColor: theme.colors.card, borderRadius: 12, borderTopLeftRadius: 0, padding: 8 }}>
                     <Box borderWidth={1} borderColor="border" style={{ borderRadius: 10, overflow: 'hidden' as any }}>
@@ -625,7 +678,7 @@ export default function TeamDashboardBase({
                         <Text style={{ fontSize: 14, color: theme.colors.foreground, marginBottom: 12, lineHeight: 22 }}>
                           {"You've been added to "}
                           <Text style={{ fontSize: 14, fontWeight: '700', color: theme.colors.foreground }}>Scott 1</Text>
-                          {' team'}
+                           {' team'}
                         </Text>
                         <Button variant="outline" color="secondary" size="xs" style={{ alignSelf: 'flex-start' as any, borderColor: theme.colors.foreground }}>
                           <Text variant="labelMedium" color="foreground">View Team</Text>
@@ -662,11 +715,19 @@ export default function TeamDashboardBase({
           <ChevronsLeft size={20} color={theme.colors.grey04} />
         </Pressable>
         <Box alignItems="center" justifyContent="center" style={{ width: '100%', paddingVertical: 10, backgroundColor: theme.colors.lightMint, marginBottom: 8 }}>
-          <Image source={require('@/assets/images/sample-one.jpg')} style={{ width: 44, height: 44, borderRadius: 22 }} />
+          <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor={viewVariant === 'ask-to-join' ? 'pastelBlue' : 'pastelMagenta'}>
+            <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 14 }}>
+              {viewVariant === 'ask-to-join' ? 'SN' : 'LS'}
+            </Text>
+          </Box>
         </Box>
-        <Image source={require('@/assets/images/sample-two.jpg')} style={{ width: 44, height: 44, borderRadius: 22, marginBottom: 8 }} />
-        <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.orange }}>
-          <Text style={{ fontWeight: '700', color: theme.colors.white, fontSize: 14 }}>TH</Text>
+        <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor={viewVariant === 'ask-to-join' ? 'pastelMagenta' : 'pastelBlue'} style={{ marginBottom: 8 }}>
+          <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 14 }}>
+            {viewVariant === 'ask-to-join' ? 'LS' : 'SN'}
+          </Text>
+        </Box>
+        <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelOrange">
+          <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 14 }}>TH</Text>
         </Box>
         <Box flex={1} justifyContent="flex-end">
           <Pressable
