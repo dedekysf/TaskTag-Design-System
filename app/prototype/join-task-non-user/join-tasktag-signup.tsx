@@ -5,7 +5,6 @@ import { Tooltip } from '@/components/Tooltip';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import { AlertTriangle, Check, Eye, EyeOff, X } from 'lucide-react-native';
-import { router } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Image, Platform, Pressable, TextInput as RNTextInput, ScrollView, View } from 'react-native';
 
@@ -361,7 +360,6 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
               variant="webMetadataPrimary"
               color="secondaryGreen"
               fontWeight="600"
-              onPress={() => router.push('/')}
               style={{ cursor: 'pointer' } as any}
             >
               Log in
