@@ -12,9 +12,9 @@ import { Image, Platform, Pressable, TextInput as RNTextInput, ScrollView, View 
 // Simulated invite token data
 const INVITE = {
   inviterName: 'James Hammer',
-  projectName: 'Houston Construction Team',
+  projectName: 'Scott 1',
   address: '11 N Raintree Hollow Court',
-  role: 'Editor',
+  role: 'Member',
   email: 'newuser@example.com',
 };
 
@@ -101,7 +101,7 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
     if (onSuccess) {
       onSuccess();
     } else {
-      router.push('/prototype/join-team-non-user/project-dashboard' as any);
+      router.push('/prototype/join-team-non-user/team-dashboard' as any);
     }
   };
 
@@ -162,7 +162,7 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
               }
             >
               <Box borderBottomWidth={1} borderColor="foreground" style={{ borderStyle: 'dotted' }}>
-                <Text variant="webSecondaryBody" color="foreground" fontWeight="700">Editor</Text>
+                <Text variant="webSecondaryBody" color="foreground" fontWeight="700">Member</Text>
               </Box>
             </Tooltip>
           </Box>

@@ -5,16 +5,15 @@ import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import {
   Activity,
+  ChevronLeft,
   ChevronsLeft,
   ChevronsRight,
-  FileText,
+  CreditCard,
+  File,
   Folder,
   Hash,
   HelpCircle,
-  Image as ImageIcon,
   Link,
-  ListFilter,
-  MessageSquare,
   Plus,
   Search,
   User,
@@ -27,7 +26,7 @@ import JoinTasktagSignup from './join-tasktag-signup';
 
 
 const PROJECT = {
-  name: 'Houston Construction Team',
+  name: 'Scott 1',
   address: '11 N Raintree Hollow Court',
   description:
     'This project focuses on conducting a comprehensive assessment and improvement of the electrical board to ensure long-term safety, system reliability, and compliance with current standards.',
@@ -35,11 +34,9 @@ const PROJECT = {
 };
 
 const TABS = [
-  { key: 'tasks', label: 'Tasks', Icon: Hash },
-  { key: 'checklist', label: 'Checklist', Icon: FileText },
-  { key: 'files', label: 'Files & Media', Icon: ImageIcon },
-  { key: 'activity', label: 'Activity Log', Icon: Activity },
-  { key: 'members', label: 'Members', Icon: Users, badge: PROJECT.memberCount },
+  { key: 'details', label: 'Details', Icon: CreditCard },
+  { key: 'members', label: 'Members', Icon: Users },
+  { key: 'invoice', label: 'Invoice', Icon: File },
 ];
 
 function SkillsTooltip({ skills }: { skills: string[] }) {
@@ -51,7 +48,7 @@ function SkillsTooltip({ skills }: { skills: string[] }) {
       onPress={() => setVisible(v => !v)}
       onHoverIn={() => setVisible(true)}
       onHoverOut={() => setVisible(false)}
-      style={{ position: 'relative', zIndex: 9999, overflow: 'visible' } as any}
+      style={{ position: 'relative', zIndex: 10000 } as any}
     >
       <Text variant="webBody" color="textSecondary">
         +{overflow} more
@@ -66,8 +63,8 @@ function SkillsTooltip({ skills }: { skills: string[] }) {
             borderRadius: 6,
             paddingHorizontal: 12,
             paddingVertical: 8,
-            zIndex: 9999,
-            elevation: 9999,
+            zIndex: 10000,
+            elevation: 10000,
             minWidth: 140,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 2 },
@@ -86,7 +83,7 @@ function SkillsTooltip({ skills }: { skills: string[] }) {
 
 export default function JoinTasktag() {
   const theme = useTheme<Theme>();
-  const [activeTab, setActiveTab] = useState('tasks');
+  const [activeTab, setActiveTab] = useState('details');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showSignupModal, setShowSignupModal] = useState(false);
 
@@ -131,15 +128,15 @@ export default function JoinTasktag() {
           <Box flex={1} justifyContent="space-between">
 
             <Box gap="8">
-              {/* Projects — real */}
+              {/* Projects — wireframe (icon visible) */}
               {sidebarCollapsed ? (
-                <Box alignItems="center" justifyContent="center" style={{ width: 44, height: 44, borderRadius: 10, backgroundColor: theme.colors.lightMint, alignSelf: 'center' }}>
-                  <Folder size={22} color={theme.colors.secondaryGreen} />
+                <Box alignItems="center" justifyContent="center" style={{ width: 44, height: 44, borderRadius: 10, alignSelf: 'center' }}>
+                  <Folder size={22} color={theme.colors.grey03} />
                 </Box>
               ) : (
-                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 54, borderRadius: 8, paddingHorizontal: 16, paddingVertical: 15, backgroundColor: theme.colors.lightMint }}>
-                  <Folder size={24} color={theme.colors.secondaryGreen} />
-                  <Text variant="labelMedium" style={{ color: theme.colors.secondaryGreen }}>Projects</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 54, borderRadius: 8, paddingHorizontal: 16, paddingVertical: 15 }}>
+                  <Folder size={24} color={theme.colors.grey03} />
+                  <Box style={{ width: 64, height: 14, borderRadius: 6, backgroundColor: theme.colors.grey03 }} />
                 </Box>
               )}
 
@@ -155,9 +152,9 @@ export default function JoinTasktag() {
               ) : (
                 <Box gap="8">
                   {[
-                    { Icon: Hash, w: 120 },
-                    { Icon: Activity, w: 100 },
-                    { Icon: Users, w: 140 },
+                    { Icon: Hash, w: 64 },
+                    { Icon: Activity, w: 112 },
+                    { Icon: Users, w: 64 },
                   ].map(({ Icon, w }, i) => (
                     <Box key={i} style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 54, borderRadius: 8, paddingHorizontal: 16, paddingVertical: 15 }}>
                       <Icon size={24} color={theme.colors.grey03} />
@@ -170,26 +167,30 @@ export default function JoinTasktag() {
 
             <Box gap="8">
               <Box height={1} backgroundColor="border" />
-              {/* Bottom placeholder wireframes */}
+              {/* HelpCircle — wireframe, User (My Account) — active */}
               {sidebarCollapsed ? (
                 <Box gap="8">
-                  {[HelpCircle, User].map((Icon, i) => (
-                    <Box key={i} alignItems="center" justifyContent="center" style={{ width: 44, height: 44, borderRadius: 10, alignSelf: 'center' }}>
-                      <Icon size={22} color={theme.colors.grey03} />
+                  <Box alignItems="center" justifyContent="center" style={{ width: 44, height: 44, borderRadius: 10, alignSelf: 'center' }}>
+                    <HelpCircle size={22} color={theme.colors.grey03} />
+                  </Box>
+                  <Box alignItems="center" justifyContent="center" style={{ width: 44, height: 44, borderRadius: 10, backgroundColor: theme.colors.lightMint, alignSelf: 'center' }}>
+                    <Box alignItems="center" justifyContent="center" style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: theme.colors.grey03 }}>
+                      <User size={16} color={theme.colors.grey05} />
                     </Box>
-                  ))}
+                  </Box>
                 </Box>
               ) : (
                 <Box gap="8">
-                  {[
-                    { Icon: HelpCircle, w: 80 },
-                    { Icon: User, w: 100 },
-                  ].map(({ Icon, w }, i) => (
-                    <Box key={i} style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 54, borderRadius: 8, paddingHorizontal: 16, paddingVertical: 15 }}>
-                      <Icon size={24} color={theme.colors.grey03} />
-                      <Box style={{ width: w, height: 14, borderRadius: 6, backgroundColor: theme.colors.grey03 }} />
+                  <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 54, borderRadius: 8, paddingHorizontal: 16, paddingVertical: 15 }}>
+                    <HelpCircle size={24} color={theme.colors.grey03} />
+                    <Box style={{ width: 80, height: 14, borderRadius: 6, backgroundColor: theme.colors.grey03 }} />
+                  </Box>
+                  <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 54, borderRadius: 8, paddingHorizontal: 16, paddingVertical: 15, backgroundColor: theme.colors.lightMint }}>
+                    <Box alignItems="center" justifyContent="center" style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: theme.colors.grey03 }}>
+                      <User size={16} color={theme.colors.grey05} />
                     </Box>
-                  ))}
+                    <Text variant="labelMedium" style={{ color: theme.colors.secondaryGreen }}>My Account</Text>
+                  </Box>
                 </Box>
               )}
             </Box>
@@ -213,16 +214,19 @@ export default function JoinTasktag() {
           backgroundColor="card"
           height={74}
         >
-          {/* Left: title + address */}
-          <Box flex={1} flexShrink={1}>
-            <Box flexDirection="row" alignItems="center" gap="8" marginBottom="4">
+          {/* Left: back + title + address */}
+          <Box flexDirection="row" alignItems="center" gap="12" flex={1} flexShrink={1}>
+            <Pressable hitSlop={8}>
+              <ChevronLeft size={22} color={theme.colors.foreground} />
+            </Pressable>
+            <Box flexShrink={1}>
               <Text variant="webHeading22" numberOfLines={1} style={{ flexShrink: 1 }}>
                 {PROJECT.name}
               </Text>
+              <Text variant="webMetadataPrimary" color="textSecondary">
+                {PROJECT.address}
+              </Text>
             </Box>
-            <Text variant="webMetadataPrimary" color="textSecondary">
-              {PROJECT.address}
-            </Text>
           </Box>
 
           {/* Right: search + New Task (filled, disabled, pill) */}
@@ -246,21 +250,6 @@ export default function JoinTasktag() {
         </Box>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
-          {/* ── Description card ── */}
-          <Box padding="md">
-            <Box
-              backgroundColor="grey01"
-              borderRadius="8"
-              padding="md"
-              gap="8"
-            >
-              <Text variant="webLabelEmphasized" color="foreground">Description</Text>
-              <Text variant="webMetadataPrimary" color="textSecondary" style={{ lineHeight: 18 }}>
-                {PROJECT.description}
-              </Text>
-            </Box>
-          </Box>
-
           {/* ── Tabs bar ── */}
           <Box
             flexDirection="row"
@@ -278,7 +267,7 @@ export default function JoinTasktag() {
               style={{ flexShrink: 1 }}
               contentContainerStyle={{ alignItems: 'stretch' }}
             >
-              {TABS.map(({ key, label, Icon, badge }) => {
+              {TABS.map(({ key, label, Icon }) => {
                 const isActive = activeTab === key;
                 return (
                   <Pressable
@@ -303,19 +292,6 @@ export default function JoinTasktag() {
                         >
                           {label}
                         </Text>
-                        {badge !== undefined && (
-                          <Box
-                            backgroundColor={isActive ? 'black' : 'grey04'}
-                            borderRadius="full"
-                            width={20}
-                            height={20}
-                            alignItems="center"
-                            justifyContent="center"
-                            style={{ transition: 'background-color 0.2s ease' } as any}
-                          >
-                            <Text variant="caption" color="white" style={{ fontSize: 10 }}>{badge}</Text>
-                          </Box>
-                        )}
                       </Box>
                       {/* Active underline */}
                       <Box
@@ -351,166 +327,29 @@ export default function JoinTasktag() {
             </Box>
           </Box>
 
-          {/* ── Tab Content ── */}
-          {activeTab === 'members' ? (
-            <Box flex={1} style={{ position: 'relative', minHeight: 520 }}>
-                  <Box
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    zIndex: 10,
-                    backdropFilter: 'blur(2px)',
-                    backgroundColor: 'rgba(247, 248, 250, 0.5)',
-                  } as any}
-                >
-                  <Box flex={1} justifyContent="center" alignItems="center">
-                    <Box alignItems="center" style={{ gap: 16 }}>
-                      <UserPlus size={40} color={theme.colors.textSecondary} strokeWidth={1.5} />
-                      <Text variant="webHeading22" color="foreground" textAlign="center" style={{ fontWeight: '400' }}>
-                        {"You've been invited to this team by "}
-                        <Text variant="webHeading22" fontWeight="700">James Hammer</Text>
-                      </Text>
-                    </Box>
-                    <Button
-                      variant="fill"
-                      size="lg"
-                      style={{ borderRadius: 40, minWidth: 220, backgroundColor: theme.colors.foreground, marginTop: 16 }}
-                      onPress={() => setShowSignupModal(true)}
-                    >
-                      <Text color="white" variant="labelMedium">Join This Team</Text>
-                    </Button>
-                </Box>
-              </Box>
-
-              {/* ── Toolbar: Filter + Start a Chat (both disabled) ── */}
-              <Box
-                flexDirection="row"
-                alignItems="center"
-                gap="16"
-                paddingHorizontal="md"
-                paddingVertical="12"
-                borderBottomWidth={1}
-                borderColor="border"
-              >
-                <Button variant="ghost" size="sm" disabled style={{ opacity: 0.55, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <ListFilter size={15} color={theme.colors.textSecondary} />
-                  <Text variant="webBody" color="textSecondary">Filter</Text>
-                </Button>
-                <Button variant="ghost" size="sm" disabled style={{ opacity: 0.55, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <MessageSquare size={15} color={theme.colors.textSecondary} />
-                  <Text variant="webBody" color="textSecondary">Start a Chat</Text>
-                </Button>
-              </Box>
-
-              {/* ── Members Table ── */}
-              <Box>
-
-                {/* Table column headers: Name, Skills, Role only */}
-                <Box
-                  flexDirection="row"
-                  alignItems="center"
-                  paddingHorizontal="md"
-                  paddingVertical="12"
-                  borderBottomWidth={1}
-                  borderColor="border"
-                  backgroundColor="grey01"
-                >
-                  <Text variant="webBody" color="textSecondary" style={{ flex: 3 }}>Name</Text>
-                  <Text variant="webBody" color="textSecondary" style={{ flex: 3 }}>Skills</Text>
-                  <Text variant="webBody" color="textSecondary" style={{ flex: 2 }}>Role</Text>
-                </Box>
-
-                {/* Member rows (7 active) */}
-                {[
-                  { name: 'James Hammer', skills: [], role: 'Owner', avatarColor: theme.colors.secondaryGreen, avatarBg: theme.colors.lightMint },
-                  { name: 'John Doe', skills: ['Carpenter'], role: 'Editor', avatarColor: theme.colors.purple, avatarBg: theme.colors.lightLavenderBlue },
-                  { name: 'Jane Smith', skills: [], role: 'Editor', avatarColor: theme.colors.orange, avatarBg: theme.colors.lightPeach },
-                  { name: 'Chelsea Smith', skills: ['Carpenter', 'Electrician', 'Plumber', 'Welder'], role: 'Viewer', avatarColor: theme.colors.pastelBlue, avatarBg: theme.colors.lightSky },
-                  { name: 'Logan Jack', skills: [], role: 'Viewer', avatarColor: theme.colors.pastelPurple, avatarBg: theme.colors.lightPurple },
-                  { name: 'Oscar Edison', skills: [], role: 'Editor', avatarColor: theme.colors.pastelOrange, avatarBg: theme.colors.lightPeach },
-                  { name: 'Abby Monroe', skills: ['Painter', 'Plumber', 'Welder', 'HVAC', 'Roofer'], role: 'Editor', avatarColor: theme.colors.pastelMagenta, avatarBg: theme.colors.lightLavender },
-                ].map((member, idx, arr) => (
-                  <Box
-                    key={member.name}
-                    flexDirection="row"
-                    alignItems="center"
-                    paddingHorizontal="md"
-                    style={{ paddingVertical: 14 }}
-                    borderBottomWidth={idx === arr.length - 1 ? 0 : 1}
-                    borderColor="border"
-                  >
-                    {/* Name + avatar */}
-                    <Box style={{ flex: 3 }} flexDirection="row" alignItems="center" gap="12">
-                      <Box
-                        width={32}
-                        height={32}
-                        borderRadius="full"
-                        alignItems="center"
-                        justifyContent="center"
-                        style={{ backgroundColor: member.avatarBg }}
-                      >
-                        <Text style={{ fontWeight: '700', color: member.avatarColor, fontSize: 11 }}>
-                          {member.name.split(' ').map(n => n[0]).join('')}
-                        </Text>
-                      </Box>
-                      <Text variant="webBody" color="textSecondary">{member.name}</Text>
-                    </Box>
-
-                    {/* Skills */}
-                    <Box style={{ flex: 3 }}>
-                      {member.skills.length === 0 ? (
-                        <Text variant="webBody" color="textSecondary">-</Text>
-                      ) : member.skills.length <= 2 ? (
-                        <Text variant="webBody" color="textSecondary">{member.skills.join(', ')}</Text>
-                      ) : (
-                        <Box flexDirection="row" alignItems="center" gap="4" style={{ position: 'relative' }}>
-                          <Text variant="webBody" color="textSecondary">
-                            {member.skills.slice(0, 2).join(', ')}
-                          </Text>
-                          <SkillsTooltip skills={member.skills} />
-                        </Box>
-                      )}
-                    </Box>
-
-                    {/* Role */}
-                    <Box style={{ flex: 2 }}>
-                      <Text variant="webBody" color="textSecondary">{member.role}</Text>
-                    </Box>
-                  </Box>
-                ))}
-              </Box>
-              </Box>
-            ) : (
-            /* ── Default Tab Content (Empty State) ── */
-            <Box
-              flex={1}
-              alignItems="center"
-              justifyContent="center"
-              minHeight={520}
-              style={{
-                backgroundImage: 'linear-gradient(to bottom, #FFFFFF, #F7F8FA)',
-              } as any}
-            >
-              <Box alignItems="center" style={{ gap: 16 }}>
-                <UserPlus size={40} color={theme.colors.textSecondary} strokeWidth={1.5} />
-                <Text variant="webHeading22" color="foreground" textAlign="center" style={{ fontWeight: '400' }}>
-                  {"You've been invited to this team by "}
-                  <Text variant="webHeading22" fontWeight="700">James Hammer</Text>
-                </Text>
-              </Box>
-              <Button
-                variant="fill"
-                size="lg"
-                style={{ borderRadius: 40, minWidth: 220, backgroundColor: theme.colors.foreground, marginTop: 16 }}
-                onPress={() => setShowSignupModal(true)}
-              >
-                <Text color="white" variant="labelMedium">Join This Team</Text>
-              </Button>
+          {/* ── Tab Content — empty state for all tabs ── */}
+          <Box
+            flex={1}
+            alignItems="center"
+            justifyContent="center"
+            minHeight={520}
+          >
+            <Box alignItems="center" style={{ gap: 16 }}>
+              <UserPlus size={40} color={theme.colors.textSecondary} strokeWidth={1.5} />
+              <Text variant="webHeading22" color="foreground" textAlign="center" style={{ fontWeight: '400' }}>
+                {"You've been invited to this team by "}
+                <Text variant="webHeading22" fontWeight="700">James Hammer</Text>
+              </Text>
             </Box>
-          )}
+            <Button
+              variant="fill"
+              size="lg"
+              style={{ borderRadius: 40, minWidth: 220, backgroundColor: theme.colors.foreground, marginTop: 16 }}
+              onPress={() => setShowSignupModal(true)}
+            >
+              <Text color="white" variant="labelMedium">Join This Team</Text>
+            </Button>
+          </Box>
         </ScrollView>
       </Box>
 
@@ -593,7 +432,7 @@ export default function JoinTasktag() {
               onClose={() => setShowSignupModal(false)}
               onSuccess={() => {
                 setShowSignupModal(false);
-                router.push('/prototype/join-team-non-user/project-dashboard' as any);
+                router.push('/prototype/join-team-non-user/team-dashboard' as any);
               }}
             />
           </Box>

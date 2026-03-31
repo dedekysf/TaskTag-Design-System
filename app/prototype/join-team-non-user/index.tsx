@@ -5,13 +5,13 @@ import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { Check, Clock } from 'lucide-react-native';
+import { Check, Clock, MapPin } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Image as RNImage, Platform, Pressable, ScrollView } from 'react-native';
 
 const TEAM = {
-  name: 'Houston Construction Team',
-  category: 'General Construction Services',
+  name: 'Scott 1',
+  address: '11 N Raintree Hollow Court',
   members: [
     { type: 'initials' as const, initials: 'LS', color: '#2e7d7d', name: 'Laura Smith' },
     { type: 'photo'    as const, src: require('@/assets/images/sample-two.jpg'), name: 'Rachel Monroe' },
@@ -60,7 +60,10 @@ export default function JoinTeamNonUser() {
           {/* Team card */}
           <Box backgroundColor="lightMint" borderRadius="xl" padding="md" marginBottom="20">
             <Text variant="webLabelEmphasized" marginBottom="4">{TEAM.name}</Text>
-            <Text variant="webSecondaryBody" color="mutedForeground" marginBottom="md">{TEAM.category}</Text>
+            <Box flexDirection="row" alignItems="center" gap="4" marginBottom="md">
+              <MapPin size={14} color={theme.colors.mutedForeground} />
+              <Text variant="webSecondaryBody" color="mutedForeground">{TEAM.address}</Text>
+            </Box>
 
             <Text variant="labelMedium" color="mutedForeground" marginBottom="sm">Team Members</Text>
 
@@ -151,14 +154,14 @@ export default function JoinTeamNonUser() {
         </Box>
 
         {/* Download section */}
-        <Box>
+        <Box alignItems="center">
           <Text variant="h3" marginBottom="sm">Download the app</Text>
-          <Text variant="webSecondaryBody" color="mutedForeground" marginBottom="md">
+          <Text variant="webSecondaryBody" color="mutedForeground" marginBottom="md" textAlign="center">
             Get the most of Tasktag by installing our new mobile app.
           </Text>
         </Box>
 
-        <Box flexDirection="row" gap="12" marginBottom="xl">
+        <Box flexDirection="row" justifyContent="center" gap="12" marginBottom="xl">
           <Pressable style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}>
             <Image
               source={require('@/assets/images/app-store.svg')}
@@ -175,7 +178,7 @@ export default function JoinTeamNonUser() {
           </Pressable>
         </Box>
 
-        <Text variant="caption">© 2026 Tasktag, Houston, Texas VIC 3000</Text>
+        <Text variant="caption" textAlign="center">© 2026 Tasktag, Houston, Texas VIC 3000</Text>
 
       </Box>
     </ScrollView>

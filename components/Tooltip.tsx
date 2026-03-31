@@ -10,7 +10,7 @@
 
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, View, ViewStyle } from 'react-native';
 import { Text } from './primitives';
 
@@ -88,6 +88,20 @@ export function Tooltip({
         onOpenChange?.(val);
     };
     const [layout, setLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
+    const triggerRef = useRef<any>(null);
+    const [portalRect, setPortalRect] = useState<{ top: number; left: number; width: number; height: number } | null>(null);
+
+    useEffect(() => {
+        if (Platform.OS === 'web' && (forceShow || isVisible) && triggerRef.current) {
+            const el = triggerRef.current as any;
+            const node = el._nativeTag ? null : el; // RN web exposes DOM node directly
+            const domEl = node ?? (el.getDOMNode ? el.getDOMNode() : null);
+            if (domEl && domEl.getBoundingClientRect) {
+                const rect = domEl.getBoundingClientRect();
+                setPortalRect({ top: rect.top, left: rect.left, width: rect.width, height: rect.height });
+            }
+        }
+    }, [forceShow, isVisible]);
     const currentSize = sizeConfig[size];
 
     const handlePressIn = () => {
@@ -192,9 +206,90 @@ export function Tooltip({
         }
     };
 
+    const tooltipBoxStyle: ViewStyle = {
+        backgroundColor,
+        borderRadius: tooltipStyle === 'custom' ? 0 : theme.borderRadii['8'],
+        paddingVertical: tooltipStyle === 'custom' ? 0 : currentSize.paddingVertical,
+        paddingHorizontal: tooltipStyle === 'custom' ? 0 : currentSize.paddingHorizontal,
+        maxWidth: 200,
+    };
+
+    const tooltipContent = typeof content === 'string' ? (
+        <Text style={{ color: theme.colors.white, fontSize: currentSize.fontSize, fontFamily: 'Inter_400Regular', lineHeight: currentSize.fontSize * 1.5 }}>
+            {content}
+        </Text>
+    ) : content;
+
+    // Portal tooltip for web — renders at document body to escape stacking contexts
+    const renderWebPortal = () => {
+        if (!shouldShow || !portalRect) return null;
+        const offset = 8;
+        let top = 0, left = 0;
+        let transform = '';
+        switch (variant) {
+            case 'bottom-center':
+                top = portalRect.top + portalRect.height + offset;
+                left = portalRect.left + portalRect.width / 2;
+                transform = 'translateX(-50%)';
+                break;
+            case 'bottom-left':
+                top = portalRect.top + portalRect.height + offset;
+                left = portalRect.left;
+                break;
+            case 'bottom-right':
+                top = portalRect.top + portalRect.height + offset;
+                left = portalRect.left + portalRect.width;
+                transform = 'translateX(-100%)';
+                break;
+            case 'top-center':
+                top = portalRect.top - offset;
+                left = portalRect.left + portalRect.width / 2;
+                transform = 'translate(-50%, -100%)';
+                break;
+            case 'top-left':
+                top = portalRect.top - offset;
+                left = portalRect.left;
+                transform = 'translateY(-100%)';
+                break;
+            case 'top-right':
+                top = portalRect.top - offset;
+                left = portalRect.left + portalRect.width;
+                transform = 'translate(-100%, -100%)';
+                break;
+            default:
+                top = portalRect.top + portalRect.height + offset;
+                left = portalRect.left + portalRect.width / 2;
+                transform = 'translateX(-50%)';
+        }
+        const { createPortal } = require('react-dom');
+        return createPortal(
+            <div style={{
+                position: 'fixed', top, left, transform,
+                zIndex: 99999, pointerEvents: 'none',
+                backgroundColor: backgroundColor as string,
+                borderRadius: tooltipStyle === 'custom' ? 0 : 8,
+                paddingTop: tooltipStyle === 'custom' ? 0 : currentSize.paddingVertical,
+                paddingBottom: tooltipStyle === 'custom' ? 0 : currentSize.paddingVertical,
+                paddingLeft: tooltipStyle === 'custom' ? 0 : currentSize.paddingHorizontal,
+                paddingRight: tooltipStyle === 'custom' ? 0 : currentSize.paddingHorizontal,
+                maxWidth: 200, width: 'max-content',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                whiteSpace: 'pre-wrap', wordWrap: 'break-word',
+                fontSize: currentSize.fontSize,
+                color: '#fff',
+                fontFamily: 'Inter_400Regular',
+                lineHeight: currentSize.fontSize * 1.5 + 'px',
+            }}>
+                {typeof content === 'string' ? content : <span>{content}</span>}
+            </div>,
+            document.body
+        );
+    };
+
     return (
         <View style={[{ position: 'relative', zIndex: shouldShow ? 9999 : 1, alignSelf: fullWidth ? 'stretch' : 'flex-start' }, style]}>
             <Pressable
+                ref={triggerRef}
                 onPress={handlePress}
                 onPressIn={handlePressIn}
                 onPressOut={handlePressOut}
@@ -208,53 +303,27 @@ export function Tooltip({
                 {children}
             </Pressable>
 
-            {shouldShow && (
+            {/* Web: portal at document.body to escape stacking contexts */}
+            {Platform.OS === 'web' && renderWebPortal()}
+
+            {/* Native: absolute positioned within wrapper */}
+            {Platform.OS !== 'web' && shouldShow && (
                 <View
                     style={[
                         {
+                            ...tooltipBoxStyle,
                             position: 'absolute',
-                            backgroundColor,
-                            borderRadius: tooltipStyle === 'custom' ? 0 : theme.borderRadii['8'],
-                            paddingVertical: tooltipStyle === 'custom' ? 0 : currentSize.paddingVertical,
-                            paddingHorizontal: tooltipStyle === 'custom' ? 0 : currentSize.paddingHorizontal,
-                            maxWidth: 200,
                             zIndex: 9999,
                             ...Platform.select({
-                                ios: {
-                                    shadowColor: theme.colors.black,
-                                    shadowOffset: { width: 0, height: 2 },
-                                    shadowOpacity: 0.25,
-                                    shadowRadius: 4,
-                                },
-                                android: {
-                                    elevation: 5,
-                                },
-                                web: {
-                                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
-                                    whiteSpace: 'normal',
-                                    wordWrap: 'break-word',
-                                    width: 'max-content',
-                                } as any,
+                                ios: { shadowColor: theme.colors.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 4 },
+                                android: { elevation: 5 },
                             }),
                         },
                         getTooltipPosition(),
                     ]}
                     pointerEvents="none"
                 >
-                    {typeof content === 'string' ? (
-                        <Text
-                            style={{
-                                color: theme.colors.white,
-                                fontSize: currentSize.fontSize,
-                                fontFamily: 'Inter_400Regular',
-                                lineHeight: currentSize.fontSize * 1.5,
-                            }}
-                        >
-                            {content}
-                        </Text>
-                    ) : (
-                        content
-                    )}
+                    {tooltipContent}
                 </View>
             )}
         </View>
