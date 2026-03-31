@@ -136,6 +136,13 @@ export default function PrototypeIndex() {
 
   const prototypes = [
     {
+      title: 'Join Task Non User',
+      jiraTicket: '',
+      jiraLabel: '',
+      route: '/prototype/join-task-non-user',
+      platform: 'Web' as const,
+    },
+    {
       title: 'Invite from Contact',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-308?atlOrigin=eyJpIjoiMzY2YTM4MTE5YzFhNGE4MDhhYjRmNjU0NTVkMzU1ZGIiLCJwIjoiaiJ9',
       jiraLabel: 'TD-308',

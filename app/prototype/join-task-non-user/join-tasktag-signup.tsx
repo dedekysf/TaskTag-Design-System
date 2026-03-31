@@ -4,7 +4,7 @@ import { TextInput } from '@/components/TextInput';
 import { Tooltip } from '@/components/Tooltip';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import { AlertTriangle, Check, Eye, EyeOff, MapPin, X } from 'lucide-react-native';
+import { AlertTriangle, Check, Eye, EyeOff, X } from 'lucide-react-native';
 import { router } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Image, Platform, Pressable, TextInput as RNTextInput, ScrollView, View } from 'react-native';
@@ -12,9 +12,9 @@ import { Image, Platform, Pressable, TextInput as RNTextInput, ScrollView, View 
 // Simulated invite token data
 const INVITE = {
   inviterName: 'James Hammer',
+  taskName: 'Comprehensive Electrical Board Inspection and Reconfiguration',
   projectName: 'Raintree Hollow Court Renovation',
-  address: '11 N Raintree Hollow Court',
-  role: 'Editor',
+  role: 'Assignee',
   email: 'newuser@example.com',
 };
 
@@ -97,11 +97,8 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
 
     if (!valid || emailError) return;
 
-    // Simulate join API wait, then redirect to dashboard showing the modal
     if (onSuccess) {
       onSuccess();
-    } else {
-      router.push('/prototype/join-project-non-user/project-dashboard');
     }
   };
 
@@ -119,7 +116,7 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
         </Text>
         <Box flexDirection="row" justifyContent="center" flexWrap="wrap" marginBottom="16">
           <Text variant="webMetadataPrimary" color="mutedForeground">
-            {"You've been invited to this project by "}
+            {"You're assigned a task by "}
           </Text>
           <Text variant="webMetadataPrimary" color="foreground" fontWeight="700">
             {INVITE.inviterName}
@@ -138,12 +135,11 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
           zIndex="10"
         >
           <Text variant="webLabelEmphasized" style={{ marginBottom: 4 }}>
-            {INVITE.projectName}
+            {INVITE.taskName}
           </Text>
           <Box flexDirection="row" alignItems="center" gap="4" marginBottom="16">
-            <MapPin size={14} color={theme.colors.textSecondary} />
             <Text variant="webSecondaryBody" color="mutedForeground">
-              {INVITE.address}
+              {INVITE.projectName}
             </Text>
           </Box>
 
@@ -153,7 +149,7 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
               variant="bottom-left"
               content={
                 <View style={{ gap: 4 }}>
-                  {['View and manage tasks', 'Upload files & media', 'Collaborate with team', 'Track project progress'].map((item, i) => (
+                  {['View and manage tasks', 'Collaborate with team', 'Upload files & media', 'Track task progress'].map((item, i) => (
                     <Text key={i} style={{ color: theme.colors.white, fontSize: 12, fontFamily: 'Inter_400Regular' }}>
                       {'• '}{item}
                     </Text>
@@ -162,7 +158,7 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
               }
             >
               <Box borderBottomWidth={1} borderColor="foreground" style={{ borderStyle: 'dotted' }}>
-                <Text variant="webSecondaryBody" color="foreground" fontWeight="700">Editor</Text>
+                <Text variant="webSecondaryBody" color="foreground" fontWeight="700">Assignee</Text>
               </Box>
             </Tooltip>
           </Box>
@@ -355,7 +351,7 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
           onPress={handleSubmit}
           disabled={!isFormValid}
         >
-          Join This Project
+          Join This Task
         </Button>
 
         <Box marginTop="16" alignItems="center">
