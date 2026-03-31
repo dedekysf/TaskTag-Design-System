@@ -1,5 +1,7 @@
 import { Box, Text } from '@/components/primitives';
 import { router } from 'expo-router';
+import { theme } from '@/constants/theme';
+import { MessageSquare } from 'lucide-react-native';
 import React from 'react';
 import { Pressable } from 'react-native';
 
@@ -21,9 +23,20 @@ export default function InviteLinkEntry() {
           Please click this link
         </Text>
         <Pressable onPress={() => router.push('/prototype/m-join-project-non-user-by-link/join-tasktag')}>
-          <Text variant="webMetadataPrimary" color="primary" style={{ textDecorationLine: 'underline' }}>
+          <Text variant="webMetadataPrimary" color="primary" style={{ textDecorationLine: 'underline', marginBottom: 16 }}>
             {INVITE_URL}
           </Text>
+        </Pressable>
+
+        <Box height={1} backgroundColor="border" marginBottom="16" />
+
+        <Pressable onPress={() => router.push('/prototype/m-join-project-non-user-by-link/email-approval')}>
+          <Box flexDirection="row" alignItems="center" gap="8">
+            <MessageSquare size={16} color="#18a87d" />
+            <Text variant="webLabelEmphasized" color="primary">
+              View Request Approved Email Mockup
+            </Text>
+          </Box>
         </Pressable>
       </Box>
     </Box>

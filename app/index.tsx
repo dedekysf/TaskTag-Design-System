@@ -185,6 +185,13 @@ export default function PrototypeIndex() {
       platform: 'Mobile' as const
     },
     {
+      title: 'Request Approved Email Mockup',
+      jiraTicket: '',
+      jiraLabel: '',
+      route: '/prototype/m-join-project-non-user-by-link/email-approval',
+      platform: 'Web' as const,
+    },
+    {
       title: 'Join Project Non User by Link',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-303?atlOrigin=eyJpIjoiZDE1Yzk1MzExNDhjNGEwZWEwZTk0YjE3NTk2NGRmZGQiLCJwIjoiaiJ9',
       jiraLabel: 'TD-303',
