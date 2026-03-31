@@ -32,6 +32,8 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
   const [firstNameError, setFirstNameError] = useState('');
   const [lastNameError, setLastNameError] = useState('');
   const [emailStateError, setEmailStateError] = useState('');
+  const [emailFormatError, setEmailFormatError] = useState('');
+  const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
   const [passwordError, setPasswordError] = useState('');
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [hasTouchedPassword, setHasTouchedPassword] = useState(false);
@@ -60,8 +62,8 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
     : '';
 
   const isFormValid =
-    email.trim() !== '' &&
-    !emailError &&
+    email.trim() !== '' && isValidEmail(email) &&
+    !emailError && !emailFormatError &&
     firstName.trim() !== '' &&
     lastName.trim() !== '' &&
     password.trim() !== '' &&
@@ -235,8 +237,15 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
             label="Email"
             placeholder="johndoe@tasktag.com"
             value={email}
-            onChangeText={setEmail}
-            errorMessage={emailError}
+            onChangeText={(v) => {
+              setEmail(v);
+              if (emailFormatError && isValidEmail(v)) setEmailFormatError('');
+            }}
+            onBlur={() => {
+              if (email.length > 0 && !isValidEmail(email)) setEmailFormatError('Invalid email address');
+              else setEmailFormatError('');
+            }}
+            errorMessage={emailFormatError || emailError}
           />
           <Text variant="webMetadataSecondary" color="mutedForeground" style={{ marginTop: -8 }}>
             A verification email will be sent to you to verify your address.
