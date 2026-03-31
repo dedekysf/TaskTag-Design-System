@@ -282,6 +282,7 @@ export default function JoinTasktag() {
             borderRadius="8"
             padding="16"
             marginBottom="12"
+            style={{ cursor: 'not-allowed' } as any}
           >
             <Box flexDirection="row" alignItems="center" gap="16">
               <Box width={40} height={40} borderRadius="8" backgroundColor="grey03" alignItems="center" justifyContent="center">
@@ -306,6 +307,7 @@ export default function JoinTasktag() {
             borderRadius="8"
             padding="16"
             marginBottom="12"
+            style={{ cursor: 'not-allowed' } as any}
           >
             <Box flexDirection="row" alignItems="center" gap="16">
               <Box width={40} height={40} borderRadius="8" backgroundColor="grey03" alignItems="center" justifyContent="center">
@@ -320,7 +322,7 @@ export default function JoinTasktag() {
           {/* Bottom Grid */}
           <Box flexDirection="row" gap="12" marginBottom="12">
             {/* Activity Log */}
-            <Box flex={1} backgroundColor="card" borderRadius="8" padding="16">
+            <Box flex={1} backgroundColor="card" borderRadius="8" padding="16" style={{ cursor: 'not-allowed' } as any}>
               <Box width={36} height={36} borderRadius="8" backgroundColor="grey03" alignItems="center" justifyContent="center" marginBottom="16">
                 <Zap size={18} color={theme.colors.grey05} fill={theme.colors.grey05} />
               </Box>
@@ -330,7 +332,7 @@ export default function JoinTasktag() {
             </Box>
             
             {/* Files & Media */}
-            <Box flex={1} backgroundColor="card" borderRadius="8" padding="16">
+            <Box flex={1} backgroundColor="card" borderRadius="8" padding="16" style={{ cursor: 'not-allowed' } as any}>
               <Box width={36} height={36} borderRadius="8" backgroundColor="grey03" alignItems="center" justifyContent="center" marginBottom="16">
                 <ImageIcon size={18} color={theme.colors.grey05} />
               </Box>

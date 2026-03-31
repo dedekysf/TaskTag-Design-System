@@ -152,7 +152,7 @@ export default function ProjectOverview() {
           </Box>
 
           {/* Checklist Card */}
-          <Box flexDirection="row" alignItems="center" backgroundColor="card" borderRadius="8" padding="16" marginBottom="12">
+          <Box flexDirection="row" alignItems="center" backgroundColor="card" borderRadius="8" padding="16" marginBottom="12" style={{ cursor: 'not-allowed' } as any}>
             <Box flexDirection="row" alignItems="center" gap="16">
               <Box width={40} height={40} borderRadius="8" backgroundColor="grey03" alignItems="center" justifyContent="center">
                 <FileText size={20} color={theme.colors.grey05} />
@@ -165,7 +165,7 @@ export default function ProjectOverview() {
           </Box>
 
           {/* Tasks Card */}
-          <Box flexDirection="row" alignItems="center" backgroundColor="card" borderRadius="8" padding="16" marginBottom="12">
+          <Box flexDirection="row" alignItems="center" backgroundColor="card" borderRadius="8" padding="16" marginBottom="12" style={{ cursor: 'not-allowed' } as any}>
             <Box flexDirection="row" alignItems="center" gap="16">
               <Box width={40} height={40} borderRadius="8" backgroundColor="grey03" alignItems="center" justifyContent="center">
                 <Hash size={20} color={theme.colors.grey05} />
@@ -176,13 +176,13 @@ export default function ProjectOverview() {
 
           {/* Bottom Grid */}
           <Box flexDirection="row" gap="12" marginBottom="12">
-            <Box flex={1} backgroundColor="card" borderRadius="8" padding="16">
+            <Box flex={1} backgroundColor="card" borderRadius="8" padding="16" style={{ cursor: 'not-allowed' } as any}>
               <Box width={36} height={36} borderRadius="8" backgroundColor="grey03" alignItems="center" justifyContent="center" marginBottom="16">
                 <Zap size={18} color={theme.colors.grey05} fill={theme.colors.grey05} />
               </Box>
               <Text variant="webLabelEmphasized" color="grey05" style={{ fontWeight: '600' }}>Activity Log</Text>
             </Box>
-            <Box flex={1} backgroundColor="card" borderRadius="8" padding="16">
+            <Box flex={1} backgroundColor="card" borderRadius="8" padding="16" style={{ cursor: 'not-allowed' } as any}>
               <Box width={36} height={36} borderRadius="8" backgroundColor="grey03" alignItems="center" justifyContent="center" marginBottom="16">
                 <ImageIcon size={18} color={theme.colors.grey05} />
               </Box>
