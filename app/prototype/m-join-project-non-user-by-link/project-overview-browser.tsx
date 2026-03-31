@@ -204,9 +204,9 @@ export default function ProjectOverview() {
             >
               <Text variant="webLabelEmphasized" style={{ color: '#000', fontSize: 16, lineHeight: 16 }}>×</Text>
             </Pressable>
-            <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Important Note For Dev</Text>
+            <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
             <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18, opacity: 0.7, paddingRight: 20 }}>
-              If user already has the app, then direct them to open the app, if not, direct them to download it from the Play/App Store.
+              When user presses download button, if already have open the app. If not direct to Play/App store.
             </Text>
           </View>
         )}

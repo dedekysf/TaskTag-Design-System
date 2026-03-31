@@ -315,23 +315,6 @@ export default function ProjectOverview() {
 
         </ScrollView>
 
-        {/* Important Note For Dev */}
-        {bannerVisible && (
-          <View style={{ position: 'absolute', bottom: 220, left: 16, right: 16, backgroundColor: '#fbe676', borderRadius: 12, padding: 16, gap: 4, zIndex: 40 }}>
-            <Pressable
-              onPress={() => setBannerVisible(false)}
-              style={{ position: 'absolute', top: 8, right: 8, width: 32, height: 32, alignItems: 'center', justifyContent: 'center', zIndex: 10 }}
-              hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
-            >
-              <Text variant="webLabelEmphasized" style={{ color: '#000', fontSize: 16, lineHeight: 16 }}>×</Text>
-            </Pressable>
-            <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Important Note For Dev</Text>
-            <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18, opacity: 0.7, paddingRight: 20 }}>
-              If user already has the app, then direct them to open the app, if not, direct them to download it from the Play/App Store.
-            </Text>
-          </View>
-        )}
-
         {/* Fixed Bottom Banner */}
         <View style={{
           position: 'absolute',
@@ -367,64 +350,90 @@ export default function ProjectOverview() {
           <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 50 }}>
             {/* Overlay */}
             <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)' }} />
-            {/* Sheet */}
-            <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: theme.colors.white, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 16, paddingTop: 12, paddingBottom: 32 }}>
 
-              {/* Drag handle */}
-              <View style={{ alignItems: 'center', marginBottom: 16 }}>
-                <View style={{ width: 36, height: 4, borderRadius: 2, backgroundColor: theme.colors.grey03 }} />
-              </View>
+            {/* Note + Sheet stacked at bottom */}
+            <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}>
 
-              {/* Project info */}
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-                <View style={{ width: 40, height: 40, backgroundColor: theme.colors.purple, borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
-                  <HardHat size={22} color={theme.colors.white} />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text variant="webLabelSmall" color="textPrimary" style={{ marginBottom: 2 }}>Raintree Hollow Court Renovation</Text>
-                  <Text variant="webMetadataPrimary" style={{ color: (theme.colors as any).grey05 }}>You've been added to this project</Text>
-                </View>
-              </View>
-
-              {/* What you can do */}
-              <Text variant="webSecondaryBody" color="textPrimary" style={{ marginBottom: 16 }}>What you can do</Text>
-
-              <View style={{ gap: 16, marginBottom: 24 }}>
-                {FEATURES.map(({ Icon, title, subtitle }, i) => (
-                  <View key={i} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                    <View style={{ width: 40, height: 40, backgroundColor: theme.colors.grey02, borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
-                      <Icon size={20} color={theme.colors.textPrimary} strokeWidth={1.5} />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <Text variant="webSecondaryBody" color="textPrimary" style={{ marginBottom: 2 }}>{title}</Text>
-                      <Text variant="webMetadataPrimary" style={{ color: (theme.colors as any).grey05 }}>{subtitle}</Text>
-                    </View>
+              {/* Important Note For Dev */}
+              {bannerVisible && (
+                <View style={{ marginHorizontal: 16, marginBottom: 8, backgroundColor: '#fbe676', borderRadius: 12, padding: 14, flexDirection: 'row', alignItems: 'flex-start', gap: 8 }}>
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
+                    <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18, opacity: 0.75 }}>
+                      If already have the app after sign up, open the app. If not, go to this page after sign up.
+                    </Text>
                   </View>
-                ))}
-              </View>
+                  <Pressable
+                    onPress={() => setBannerVisible(false)}
+                    style={{ width: 24, height: 24, alignItems: 'center', justifyContent: 'center', marginTop: 2 }}
+                    hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+                  >
+                    <Text variant="webLabelEmphasized" style={{ color: '#000', fontSize: 16, lineHeight: 16 }}>×</Text>
+                  </Pressable>
+                </View>
+              )}
 
-              {/* CTA */}
-              <Button
-                variant="fill"
-                size="lg"
-                style={{ width: '100%', backgroundColor: theme.colors.foreground, borderRadius: 12, marginBottom: 12 }}
-                onPress={() => setSheetVisible(false)}
-              >
-                <Text variant="webLabelEmphasized" color="white">Go to Project</Text>
-              </Button>
-              <Button
-                variant="outline"
-                color="secondary"
-                size="lg"
-                style={{ width: '100%', borderRadius: 12, flexDirection: 'row', gap: 8 }}
-                onPress={() => { if (typeof window !== 'undefined') window.open('https://play.google.com/store/apps/details?id=com.eloveit.TaskTag', '_blank'); }}
-              >
-                <Download size={18} color={theme.colors.black} />
-                <Text variant="webLabelEmphasized" color="foreground">Download App</Text>
-              </Button>
+              {/* Sheet */}
+              <View style={{ backgroundColor: theme.colors.white, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 16, paddingTop: 12, paddingBottom: 32 }}>
+
+                {/* Drag handle */}
+                <View style={{ alignItems: 'center', marginBottom: 16 }}>
+                  <View style={{ width: 36, height: 4, borderRadius: 2, backgroundColor: theme.colors.grey03 }} />
+                </View>
+
+                {/* Project info */}
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+                  <View style={{ width: 40, height: 40, backgroundColor: theme.colors.purple, borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
+                    <HardHat size={22} color={theme.colors.white} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text variant="webLabelSmall" color="textPrimary" style={{ marginBottom: 2 }}>Raintree Hollow Court Renovation</Text>
+                    <Text variant="webMetadataPrimary" style={{ color: (theme.colors as any).grey05 }}>You've been added to this project</Text>
+                  </View>
+                </View>
+
+                {/* What you can do */}
+                <Text variant="webSecondaryBody" color="textPrimary" style={{ marginBottom: 16 }}>What you can do</Text>
+
+                <View style={{ gap: 16, marginBottom: 24 }}>
+                  {FEATURES.map(({ Icon, title, subtitle }, i) => (
+                    <View key={i} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                      <View style={{ width: 40, height: 40, backgroundColor: theme.colors.grey02, borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
+                        <Icon size={20} color={theme.colors.textPrimary} strokeWidth={1.5} />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text variant="webSecondaryBody" color="textPrimary" style={{ marginBottom: 2 }}>{title}</Text>
+                        <Text variant="webMetadataPrimary" style={{ color: (theme.colors as any).grey05 }}>{subtitle}</Text>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+
+                {/* CTA */}
+                <Button
+                  variant="fill"
+                  size="lg"
+                  style={{ width: '100%', backgroundColor: theme.colors.foreground, borderRadius: 12, marginBottom: 12 }}
+                  onPress={() => setSheetVisible(false)}
+                >
+                  <Text variant="webLabelEmphasized" color="white">Go to Project</Text>
+                </Button>
+                <Button
+                  variant="outline"
+                  color="secondary"
+                  size="lg"
+                  style={{ width: '100%', borderRadius: 12, flexDirection: 'row', gap: 8 }}
+                  onPress={() => { if (typeof window !== 'undefined') window.open('https://play.google.com/store/apps/details?id=com.eloveit.TaskTag', '_blank'); }}
+                >
+                  <Download size={18} color={theme.colors.black} />
+                  <Text variant="webLabelEmphasized" color="foreground">Download App</Text>
+                </Button>
+              </View>
             </View>
           </View>
         )}
+
+
       </Box>
     </Box>
   );
