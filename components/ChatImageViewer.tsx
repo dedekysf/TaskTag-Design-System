@@ -977,30 +977,34 @@ export function ChatImageViewer({
                 </Pressable>
               </View>
               <View style={s.infoRow}>
-                <Text variant="webSecondaryBody" color="textSecondary">Type</Text>
-                <Text variant="webSecondaryBody" color="foreground">Image</Text>
+                <Text variant="webMetadataPrimary" color="textSecondary">Name</Text>
+                <Text variant="webSecondaryBody" color="textPrimary" numberOfLines={1}>{filename}</Text>
               </View>
               <View style={s.infoRow}>
-                <Text variant="webSecondaryBody" color="textSecondary">Size</Text>
-                <Text variant="webSecondaryBody" color="foreground">{imgSize}</Text>
+                <Text variant="webMetadataPrimary" color="textSecondary">Type</Text>
+                <Text variant="webSecondaryBody" color="textPrimary">Image</Text>
               </View>
               <View style={s.infoRow}>
-                <Text variant="webSecondaryBody" color="textSecondary">Storage used</Text>
-                <Text variant="webSecondaryBody" color="foreground">{imgSize}</Text>
+                <Text variant="webMetadataPrimary" color="textSecondary">Size</Text>
+                <Text variant="webSecondaryBody" color="textPrimary">{imgSize}</Text>
               </View>
               <View style={s.infoRow}>
-                <Text variant="webSecondaryBody" color="textSecondary">Dimensions</Text>
-                <Text variant="webSecondaryBody" color="foreground">
+                <Text variant="webMetadataPrimary" color="textSecondary">Dimensions</Text>
+                <Text variant="webSecondaryBody" color="textPrimary">
                   {imgDimensions ? `${imgDimensions.width} x ${imgDimensions.height}` : '—'}
                 </Text>
               </View>
               <View style={s.infoRow}>
-                <Text variant="webSecondaryBody" color="textSecondary">Owner</Text>
-                <Text variant="webSecondaryBody" color="foreground">me</Text>
+                <Text variant="webMetadataPrimary" color="textSecondary">Owner</Text>
+                <Text variant="webSecondaryBody" color="textPrimary">me</Text>
               </View>
-              <View style={[s.infoRow, { borderBottomWidth: 0 }]}>
-                <Text variant="webSecondaryBody" color="textSecondary">Created</Text>
-                <Text variant="webSecondaryBody" color="foreground">{dateLabel}</Text>
+              <View style={s.infoRow}>
+                <Text variant="webMetadataPrimary" color="textSecondary">Created</Text>
+                <Text variant="webSecondaryBody" color="textPrimary">{dateLabel}</Text>
+              </View>
+              <View style={[s.infoRow, { marginBottom: 0 }]}>
+                <Text variant="webMetadataPrimary" color="textSecondary">Modified</Text>
+                <Text variant="webSecondaryBody" color="textPrimary">{dateLabel}</Text>
               </View>
             </View>
           </View>
@@ -1759,12 +1763,10 @@ const s = StyleSheet.create({
     gap: 12,
   },
   infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 10,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#e8e8e8',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    gap: 4,
+    marginBottom: 16,
   },
 
   pillTooltip: {
