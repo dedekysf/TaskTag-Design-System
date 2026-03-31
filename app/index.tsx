@@ -171,13 +171,6 @@ export default function PrototypeIndex() {
       platform: 'Mobile' as const
     },
     {
-      title: 'Join Project TT User',
-      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-304?atlOrigin=eyJpIjoiOTI4NjRmN2ZlMzk0NDAwNDgwMWFiMWZmNjkzYWNjMzYiLCJwIjoiaiJ9',
-      jiraLabel: 'TD-304',
-      route: '/prototype/m-join-project-tt-user',
-      platform: 'Mobile' as const
-    },
-    {
       title: 'Join Project Non User by Link',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-304?atlOrigin=eyJpIjoiOTI4NjRmN2ZlMzk0NDAwNDgwMWFiMWZmNjkzYWNjMzYiLCJwIjoiaiJ9',
       jiraLabel: 'TD-304',
@@ -196,13 +189,6 @@ export default function PrototypeIndex() {
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-302?atlOrigin=eyJpIjoiNTk4MTIzZDUxOGVmNDYxN2IyOGNmZTkzYTQzOGQ2MjAiLCJwIjoiaiJ9',
       jiraLabel: 'TD-302',
       route: '/prototype/join-project-non-user',
-      platform: 'Web' as const
-    },
-    {
-      title: 'Join Project TT User',
-      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-302?atlOrigin=eyJpIjoiNTk4MTIzZDUxOGVmNDYxN2IyOGNmZTkzYTQzOGQ2MjAiLCJwIjoiaiJ9',
-      jiraLabel: 'TD-302',
-      route: '/prototype/join-project-tt-user',
       platform: 'Web' as const
     },
     {
