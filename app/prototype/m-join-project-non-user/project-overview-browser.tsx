@@ -117,7 +117,7 @@ export default function ProjectOverview() {
             </Box>
 
             <Box paddingLeft="32" marginBottom="16">
-              <Text variant="webMetadataPrimary" color="white" style={{ opacity: 0.9 }}>
+              <Text variant="webMetadataPrimary" color="white">
                 {PROJECT.address}
               </Text>
             </Box>
@@ -247,67 +247,63 @@ export default function ProjectOverview() {
           <Box
             flexDirection="row"
             alignItems="center"
-            justifyContent="space-between"
             backgroundColor="card"
             borderRadius="8"
             padding="16"
             marginBottom="12"
           >
             <Box flexDirection="row" alignItems="center" gap="16">
-              <Box width={40} height={40} borderRadius="8" backgroundColor="black" alignItems="center" justifyContent="center">
-                <FileText size={20} color={theme.colors.white} />
+              <Box width={40} height={40} borderRadius="8" backgroundColor="grey03" alignItems="center" justifyContent="center">
+                <FileText size={20} color={theme.colors.grey05} />
               </Box>
               <Box gap="4">
-                <Text variant="webLabelEmphasized" color="foreground">
+                <Text variant="webLabelEmphasized" color="grey05">
                   Checklist
                 </Text>
-                <Text variant="webMetadataPrimary" color="textSecondary">
+                <Text variant="webMetadataPrimary" color="grey04">
                   Start faster with a project template.
                 </Text>
               </Box>
             </Box>
-            <ChevronRight size={20} color={theme.colors.textSecondary} />
           </Box>
 
           {/* Tasks Card */}
           <Box
             flexDirection="row"
             alignItems="center"
-            justifyContent="space-between"
             backgroundColor="card"
             borderRadius="8"
             padding="16"
             marginBottom="12"
           >
             <Box flexDirection="row" alignItems="center" gap="16">
-              <Box width={40} height={40} borderRadius="8" backgroundColor="black" alignItems="center" justifyContent="center">
-                <Hash size={20} color={theme.colors.white} />
+              <Box width={40} height={40} borderRadius="8" backgroundColor="grey03" alignItems="center" justifyContent="center">
+                <Hash size={20} color={theme.colors.grey05} />
               </Box>
-              <Text variant="webLabelEmphasized" color="foreground">
+              <Text variant="webLabelEmphasized" color="grey05">
                 Tasks
               </Text>
             </Box>
-            <ChevronRight size={20} color={theme.colors.textSecondary} />
           </Box>
 
           {/* Bottom Grid */}
           <Box flexDirection="row" gap="12" marginBottom="12">
             {/* Activity Log */}
             <Box flex={1} backgroundColor="card" borderRadius="8" padding="16">
-              <Box width={36} height={36} borderRadius="8" backgroundColor="black" alignItems="center" justifyContent="center" marginBottom="16">
-                <Zap size={18} color={theme.colors.white} fill={theme.colors.white} />
+              <Box width={36} height={36} borderRadius="8" backgroundColor="grey03" alignItems="center" justifyContent="center" marginBottom="16">
+                <Zap size={18} color={theme.colors.grey05} fill={theme.colors.grey05} />
               </Box>
-              <Text variant="webLabelEmphasized" color="foreground" style={{ fontWeight: '600' }}>
+              <Text variant="webLabelEmphasized" color="grey05" style={{ fontWeight: '600' }}>
                 Activity Log
               </Text>
             </Box>
 
             {/* Files & Media */}
             <Box flex={1} backgroundColor="card" borderRadius="8" padding="16">
-              <Box width={36} height={36} borderRadius="8" backgroundColor="black" alignItems="center" justifyContent="center" marginBottom="16">
-                <ImageIcon size={18} color={theme.colors.white} />
+              <Box width={36} height={36} borderRadius="8" backgroundColor="grey03" alignItems="center" justifyContent="center" marginBottom="16">
+                <ImageIcon size={18} color={theme.colors.grey05} />
               </Box>
-              <Text variant="webLabelEmphasized" color="foreground" style={{ fontWeight: '600' }}>
+              <Text variant="webLabelEmphasized" color="grey05" style={{ fontWeight: '600' }}>
                 Files & Media
               </Text>
             </Box>
@@ -359,7 +355,7 @@ export default function ProjectOverview() {
                 <View style={{ marginHorizontal: 16, marginBottom: 8, backgroundColor: '#fbe676', borderRadius: 12, padding: 14, flexDirection: 'row', alignItems: 'flex-start', gap: 8 }}>
                   <View style={{ flex: 1, gap: 2 }}>
                     <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
-                    <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18, opacity: 0.75 }}>
+                    <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18 }}>
                       If already have the app after sign up, open the app. If not, go to this page after sign up.
                     </Text>
                   </View>

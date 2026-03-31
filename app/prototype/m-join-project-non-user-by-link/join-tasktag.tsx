@@ -109,7 +109,7 @@ export default function JoinTasktag() {
             </Box>
 
             <Box paddingLeft="32" marginBottom="16">
-              <Text variant="webMetadataPrimary" color="white" style={{ opacity: 0.9 }}>
+              <Text variant="webMetadataPrimary" color="white">
                 {PROJECT.address}
               </Text>
             </Box>
@@ -196,7 +196,7 @@ export default function JoinTasktag() {
               <Text variant="webLabelEmphasized" color="white" textAlign="center">
                 {"Someone shared this project with you"}
               </Text>
-              <Text variant="webMetadataPrimary" color="white" textAlign="center" style={{ opacity: 0.7 }}>
+              <Text variant="webMetadataPrimary" color="white" textAlign="center">
                 {"The project owner is waiting for your request."}
               </Text>
             </Box>
@@ -278,67 +278,63 @@ export default function JoinTasktag() {
           <Box
             flexDirection="row"
             alignItems="center"
-            justifyContent="space-between"
             backgroundColor="card"
             borderRadius="8"
             padding="16"
             marginBottom="12"
           >
             <Box flexDirection="row" alignItems="center" gap="16">
-              <Box width={40} height={40} borderRadius="8" backgroundColor="black" alignItems="center" justifyContent="center">
-                <FileText size={20} color={theme.colors.white} />
+              <Box width={40} height={40} borderRadius="8" backgroundColor="grey03" alignItems="center" justifyContent="center">
+                <FileText size={20} color={theme.colors.grey05} />
               </Box>
               <Box gap="4">
-                <Text variant="webLabelEmphasized" color="foreground">
+                <Text variant="webLabelEmphasized" color="grey05">
                   Checklist
                 </Text>
-                <Text variant="webMetadataPrimary" color="textSecondary">
+                <Text variant="webMetadataPrimary" color="grey04">
                   Start faster with a project template.
                 </Text>
               </Box>
             </Box>
-            <ChevronRight size={20} color={theme.colors.textSecondary} />
           </Box>
 
           {/* Tasks Card */}
           <Box
             flexDirection="row"
             alignItems="center"
-            justifyContent="space-between"
             backgroundColor="card"
             borderRadius="8"
             padding="16"
             marginBottom="12"
           >
             <Box flexDirection="row" alignItems="center" gap="16">
-              <Box width={40} height={40} borderRadius="8" backgroundColor="black" alignItems="center" justifyContent="center">
-                <Hash size={20} color={theme.colors.white} />
+              <Box width={40} height={40} borderRadius="8" backgroundColor="grey03" alignItems="center" justifyContent="center">
+                <Hash size={20} color={theme.colors.grey05} />
               </Box>
-              <Text variant="webLabelEmphasized" color="foreground">
+              <Text variant="webLabelEmphasized" color="grey05">
                 Tasks
               </Text>
             </Box>
-            <ChevronRight size={20} color={theme.colors.textSecondary} />
           </Box>
 
           {/* Bottom Grid */}
           <Box flexDirection="row" gap="12" marginBottom="12">
             {/* Activity Log */}
             <Box flex={1} backgroundColor="card" borderRadius="8" padding="16">
-              <Box width={36} height={36} borderRadius="8" backgroundColor="black" alignItems="center" justifyContent="center" marginBottom="16">
-                <Zap size={18} color={theme.colors.white} fill={theme.colors.white} />
+              <Box width={36} height={36} borderRadius="8" backgroundColor="grey03" alignItems="center" justifyContent="center" marginBottom="16">
+                <Zap size={18} color={theme.colors.grey05} fill={theme.colors.grey05} />
               </Box>
-              <Text variant="webLabelEmphasized" color="foreground" style={{ fontWeight: '600' }}>
+              <Text variant="webLabelEmphasized" color="grey05" style={{ fontWeight: '600' }}>
                 Activity Log
               </Text>
             </Box>
 
             {/* Files & Media */}
             <Box flex={1} backgroundColor="card" borderRadius="8" padding="16">
-              <Box width={36} height={36} borderRadius="8" backgroundColor="black" alignItems="center" justifyContent="center" marginBottom="16">
-                <ImageIcon size={18} color={theme.colors.white} />
+              <Box width={36} height={36} borderRadius="8" backgroundColor="grey03" alignItems="center" justifyContent="center" marginBottom="16">
+                <ImageIcon size={18} color={theme.colors.grey05} />
               </Box>
-              <Text variant="webLabelEmphasized" color="foreground" style={{ fontWeight: '600' }}>
+              <Text variant="webLabelEmphasized" color="grey05" style={{ fontWeight: '600' }}>
                 Files & Media
               </Text>
             </Box>

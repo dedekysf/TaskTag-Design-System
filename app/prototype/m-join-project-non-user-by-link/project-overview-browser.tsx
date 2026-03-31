@@ -100,7 +100,7 @@ export default function ProjectOverview() {
               <Text variant="h3" color="white">{PROJECT.name}</Text>
             </Box>
             <Box paddingLeft="32" marginBottom="16">
-              <Text variant="webMetadataPrimary" color="white" style={{ opacity: 0.9 }}>{PROJECT.address}</Text>
+              <Text variant="webMetadataPrimary" color="white">{PROJECT.address}</Text>
             </Box>
             <Box flexDirection="row" gap="16">
               <Box flexDirection="row" alignItems="center" gap="8">
@@ -152,43 +152,41 @@ export default function ProjectOverview() {
           </Box>
 
           {/* Checklist Card */}
-          <Box flexDirection="row" alignItems="center" justifyContent="space-between" backgroundColor="card" borderRadius="8" padding="16" marginBottom="12">
+          <Box flexDirection="row" alignItems="center" backgroundColor="card" borderRadius="8" padding="16" marginBottom="12">
             <Box flexDirection="row" alignItems="center" gap="16">
-              <Box width={40} height={40} borderRadius="8" backgroundColor="black" alignItems="center" justifyContent="center">
-                <FileText size={20} color={theme.colors.white} />
+              <Box width={40} height={40} borderRadius="8" backgroundColor="grey03" alignItems="center" justifyContent="center">
+                <FileText size={20} color={theme.colors.grey05} />
               </Box>
               <Box gap="4">
-                <Text variant="webLabelEmphasized" color="foreground">Checklist</Text>
-                <Text variant="webMetadataPrimary" color="textSecondary">Start faster with a project template.</Text>
+                <Text variant="webLabelEmphasized" color="grey05">Checklist</Text>
+                <Text variant="webMetadataPrimary" color="grey04">Start faster with a project template.</Text>
               </Box>
             </Box>
-            <ChevronRight size={20} color={theme.colors.textSecondary} />
           </Box>
 
           {/* Tasks Card */}
-          <Box flexDirection="row" alignItems="center" justifyContent="space-between" backgroundColor="card" borderRadius="8" padding="16" marginBottom="12">
+          <Box flexDirection="row" alignItems="center" backgroundColor="card" borderRadius="8" padding="16" marginBottom="12">
             <Box flexDirection="row" alignItems="center" gap="16">
-              <Box width={40} height={40} borderRadius="8" backgroundColor="black" alignItems="center" justifyContent="center">
-                <Hash size={20} color={theme.colors.white} />
+              <Box width={40} height={40} borderRadius="8" backgroundColor="grey03" alignItems="center" justifyContent="center">
+                <Hash size={20} color={theme.colors.grey05} />
               </Box>
-              <Text variant="webLabelEmphasized" color="foreground">Tasks</Text>
+              <Text variant="webLabelEmphasized" color="grey05">Tasks</Text>
             </Box>
-            <ChevronRight size={20} color={theme.colors.textSecondary} />
           </Box>
 
           {/* Bottom Grid */}
           <Box flexDirection="row" gap="12" marginBottom="12">
             <Box flex={1} backgroundColor="card" borderRadius="8" padding="16">
-              <Box width={36} height={36} borderRadius="8" backgroundColor="black" alignItems="center" justifyContent="center" marginBottom="16">
-                <Zap size={18} color={theme.colors.white} fill={theme.colors.white} />
+              <Box width={36} height={36} borderRadius="8" backgroundColor="grey03" alignItems="center" justifyContent="center" marginBottom="16">
+                <Zap size={18} color={theme.colors.grey05} fill={theme.colors.grey05} />
               </Box>
-              <Text variant="webLabelEmphasized" color="foreground" style={{ fontWeight: '600' }}>Activity Log</Text>
+              <Text variant="webLabelEmphasized" color="grey05" style={{ fontWeight: '600' }}>Activity Log</Text>
             </Box>
             <Box flex={1} backgroundColor="card" borderRadius="8" padding="16">
-              <Box width={36} height={36} borderRadius="8" backgroundColor="black" alignItems="center" justifyContent="center" marginBottom="16">
-                <ImageIcon size={18} color={theme.colors.white} />
+              <Box width={36} height={36} borderRadius="8" backgroundColor="grey03" alignItems="center" justifyContent="center" marginBottom="16">
+                <ImageIcon size={18} color={theme.colors.grey05} />
               </Box>
-              <Text variant="webLabelEmphasized" color="foreground" style={{ fontWeight: '600' }}>Files & Media</Text>
+              <Text variant="webLabelEmphasized" color="grey05" style={{ fontWeight: '600' }}>Files & Media</Text>
             </Box>
           </Box>
 
@@ -205,7 +203,7 @@ export default function ProjectOverview() {
               <Text variant="webLabelEmphasized" style={{ color: '#000', fontSize: 16, lineHeight: 16 }}>×</Text>
             </Pressable>
             <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
-            <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18, opacity: 0.7, paddingRight: 20 }}>
+            <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18, paddingRight: 20 }}>
               When user presses download button, if already have open the app. If not direct to Play/App store.
             </Text>
           </View>
@@ -216,7 +214,7 @@ export default function ProjectOverview() {
           <View style={{ marginBottom: 4 }}>
             <Text variant="webLabelEmphasized" color="white">Welcome to the team!</Text>
           </View>
-          <Text variant="webSecondaryBody" style={{ color: 'rgba(255,255,255,0.8)', marginBottom: 16, lineHeight: 20 }}>
+          <Text variant="webSecondaryBody" style={{ color: '#E0E0E0', marginBottom: 16, lineHeight: 20 }}>
             You've been added to the project. Download the app to jump in, create tasks, and stay in the loop.
           </Text>
           <Button
