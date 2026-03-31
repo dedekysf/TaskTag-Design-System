@@ -2,7 +2,6 @@ import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import { router } from 'expo-router';
 import {
   Activity,
   ArrowDownUp,
@@ -411,10 +410,7 @@ export default function MyTaskBase() {
           <Box style={{ width: '100%', maxWidth: 640, maxHeight: '99%', borderRadius: 16, overflow: 'hidden' as any }}>
             <JoinTasktagSignup
               onClose={() => setShowSignupModal(false)}
-              onSuccess={() => {
-                setShowSignupModal(false);
-                router.push('/prototype/join-task-non-user/project-dashboard' as any);
-              }}
+              onSuccess={() => setShowSignupModal(false)}
             />
           </Box>
         </Box>
