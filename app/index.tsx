@@ -1,10 +1,12 @@
 import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
+import { TextInput } from '@/components/TextInput';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import { router } from 'expo-router';
+import { Search } from 'lucide-react-native';
 import React from 'react';
-import { Linking, Platform, Pressable, ScrollView } from 'react-native';
+import { Linking, Platform, Pressable, ScrollView, useWindowDimensions } from 'react-native';
 
 type PlatformFilter = 'All Device' | 'Web' | 'Mobile';
 
@@ -15,6 +17,7 @@ interface PrototypeCardProps {
     jiraLabel: string;
     route: string;
     platform?: 'Web' | 'Mobile';
+    platforms?: ('Web' | 'Mobile')[];
   };
   theme: Theme;
 }
@@ -34,15 +37,17 @@ function PrototypeCard({ item, theme }: PrototypeCardProps) {
         }
       }}
       style={{
-        width: Platform.OS === 'web' ? 320 : '100%',
+        width: '100%',
+        flex: 1,
       }}
     >
       <Box
+        flex={1}
         minHeight={200}
         borderWidth={1}
         borderColor={isHovered ? "primary" : "border"}
         borderRadius="lg"
-        padding="lg"
+        padding="md"
         backgroundColor="card"
         justifyContent="space-between"
         style={{
@@ -58,21 +63,29 @@ function PrototypeCard({ item, theme }: PrototypeCardProps) {
         } as any}
       >
         <Box>
-          {item.title !== 'Design System' && (
-            <Box
-              width={80}
-              alignItems="center"
-              justifyContent="center"
-              backgroundColor="grey01"
-              paddingHorizontal="4"
-              paddingVertical="4"
-              borderRadius="xl"
-              marginBottom="xs"
-              style={{ borderWidth: 1, borderColor: theme.colors.border }}
-            >
-              <Text style={{ fontSize: 10, fontWeight: '700', color: theme.colors.textSecondary, textTransform: 'uppercase' }}>{item.platform || 'Web'}</Text>
-            </Box>
-          )}
+          {(() => {
+            const chips = item.platforms ?? (item.platform ? [item.platform] : ['Web']);
+            return (
+              <Box flexDirection="row" style={{ gap: 6, marginBottom: 16 } as any}>
+                {chips.map(p => (
+                  <Box
+                    key={p}
+                    alignItems="center"
+                    justifyContent="center"
+                    style={{
+                      borderWidth: 0,
+                      borderRadius: 100,
+                      paddingHorizontal: 16,
+                      paddingVertical: 4,
+                      backgroundColor: p === 'Mobile' ? theme.colors.lightCream : theme.colors.lightMint,
+                    }}
+                  >
+                    <Text style={{ fontSize: 10, fontWeight: '700', color: theme.colors.textSecondary, textTransform: 'uppercase' }}>{p}</Text>
+                  </Box>
+                ))}
+              </Box>
+            );
+          })()}
           <Text variant="webLabelEmphasized" marginBottom="sm">{item.title}</Text>
 
           {item.jiraLabel ? (
@@ -115,41 +128,33 @@ function PrototypeCard({ item, theme }: PrototypeCardProps) {
 
 export default function PrototypeIndex() {
   const theme = useTheme<Theme>();
+  const { width } = useWindowDimensions();
   const [activeTab, setActiveTab] = React.useState<PlatformFilter>('All Device');
+  const [search, setSearch] = React.useState('');
+
+  const colWidth = width > 1440 ? '20%' : width > 768 ? '25%' : width > 480 ? '50%' : '100%';
 
   const prototypes = [
     {
-      title: 'Design System',
-      jiraTicket: '',
-      jiraLabel: '',
-      route: '/design-system'
+      title: 'Invite from Contact',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-308?atlOrigin=eyJpIjoiMzY2YTM4MTE5YzFhNGE4MDhhYjRmNjU0NTVkMzU1ZGIiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-308',
+      route: '/prototype/m-invite-from-contact',
+      platform: 'Mobile' as const
     },
     {
-      title: 'Thumbnail and Preview',
-      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-276?atlOrigin=eyJpIjoiNGU5N2UzZjVkNDJhNGZlZmI1NzJhY2MzNGMyYzg4ODMiLCJwIjoiaiJ9',
-      jiraLabel: 'TD-276',
-      route: '/prototype/thumbnail-and-preview'
-    },
-    {
-      title: 'Join Project Non User',
-      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-302?atlOrigin=eyJpIjoiNTk4MTIzZDUxOGVmNDYxN2IyOGNmZTkzYTQzOGQ2MjAiLCJwIjoiaiJ9',
-      jiraLabel: 'TD-302',
-      route: '/prototype/join-project-non-user',
+      title: 'Global Activity Paywalled Free Tier',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-306?atlOrigin=eyJpIjoiZDFlODYwZTM2YTRmNGM2NGJiZWE1NzRiNThkMmQzNmYiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-306',
+      route: '/prototype/global-activity-log-paywalled',
       platform: 'Web' as const
     },
     {
-      title: 'Join Project TT User',
-      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-302?atlOrigin=eyJpIjoiNTk4MTIzZDUxOGVmNDYxN2IyOGNmZTkzYTQzOGQ2MjAiLCJwIjoiaiJ9',
-      jiraLabel: 'TD-302',
-      route: '/prototype/join-project-tt-user',
-      platform: 'Web' as const
-    },
-    {
-      title: 'Join Project Non User by Link',
-      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-303?atlOrigin=eyJpIjoiZDE1Yzk1MzExNDhjNGEwZWEwZTk0YjE3NTk2NGRmZGQiLCJwIjoiaiJ9',
-      jiraLabel: 'TD-303',
-      route: '/prototype/join-project-non-user-by-link',
-      platform: 'Web' as const
+      title: 'Global Activity Paywalled Free Tier',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-306?atlOrigin=eyJpIjoiZDFlODYwZTM2YTRmNGM2NGJiZWE1NzRiNThkMmQzNmYiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-306',
+      route: '/prototype/m-global-activity-log-paywalled',
+      platform: 'Mobile' as const
     },
     {
       title: 'Join Project Non User',
@@ -173,32 +178,48 @@ export default function PrototypeIndex() {
       platform: 'Mobile' as const
     },
     {
-      title: 'Global Activity Paywalled Free Tier',
-      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-306?atlOrigin=eyJpIjoiZDFlODYwZTM2YTRmNGM2NGJiZWE1NzRiNThkMmQzNmYiLCJwIjoiaiJ9',
-      jiraLabel: 'TD-306',
-      route: '/prototype/global-activity-log-paywalled',
+      title: 'Join Project Non User by Link',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-303?atlOrigin=eyJpIjoiZDE1Yzk1MzExNDhjNGEwZWEwZTk0YjE3NTk2NGRmZGQiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-303',
+      route: '/prototype/join-project-non-user-by-link',
       platform: 'Web' as const
     },
     {
-      title: 'Global Activity Paywalled Free Tier',
-      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-306?atlOrigin=eyJpIjoiZDFlODYwZTM2YTRmNGM2NGJiZWE1NzRiNThkMmQzNmYiLCJwIjoiaiJ9',
-      jiraLabel: 'TD-306',
-      route: '/prototype/m-global-activity-log-paywalled',
-      platform: 'Mobile' as const
+      title: 'Join Project Non User',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-302?atlOrigin=eyJpIjoiNTk4MTIzZDUxOGVmNDYxN2IyOGNmZTkzYTQzOGQ2MjAiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-302',
+      route: '/prototype/join-project-non-user',
+      platform: 'Web' as const
     },
     {
-      title: 'Invite from Contact',
-      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-308?atlOrigin=eyJpIjoiMzY2YTM4MTE5YzFhNGE4MDhhYjRmNjU0NTVkMzU1ZGIiLCJwIjoiaiJ9',
-      jiraLabel: 'TD-308',
-      route: '/prototype/m-invite-from-contact',
-      platform: 'Mobile' as const
-    }
+      title: 'Join Project TT User',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-302?atlOrigin=eyJpIjoiNTk4MTIzZDUxOGVmNDYxN2IyOGNmZTkzYTQzOGQ2MjAiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-302',
+      route: '/prototype/join-project-tt-user',
+      platform: 'Web' as const
+    },
+    {
+      title: 'Thumbnail and Preview',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-276?atlOrigin=eyJpIjoiNGU5N2UzZjVkNDJhNGZlZmI1NzJhY2MzNGMyYzg4ODMiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-276',
+      route: '/prototype/thumbnail-and-preview'
+    },
+    {
+      title: 'Design System',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-256?atlOrigin=eyJpIjoiNmFkM2Q4YzY4OThhNGMyOGE2MjRhMWZmMTUzZjhhNTciLCJwIjoiaiJ9',
+      jiraLabel: 'TD-256',
+      route: '/design-system',
+      platforms: ['Web', 'Mobile'] as ('Web' | 'Mobile')[],
+    },
   ];
 
-  const filtered = prototypes.filter(item => {
-    if (activeTab === 'All Device') return true;
-    if (item.title === 'Design System') return true;
-    return (item.platform ?? 'Web') === activeTab;
+  const designSystem = prototypes.find(p => p.title === 'Design System')!;
+  const rest = prototypes.filter(p => p.title !== 'Design System');
+
+  const filtered = [designSystem, ...rest].filter(item => {
+    const matchTab = activeTab === 'All Device' || item.title === 'Design System' || (item.platform ?? 'Web') === activeTab;
+    const matchSearch = search.trim() === '' || item.title.toLowerCase().includes(search.toLowerCase()) || item.jiraLabel.toLowerCase().includes(search.toLowerCase());
+    return matchTab && matchSearch;
   });
 
   const tabs: PlatformFilter[] = ['All Device', 'Web', 'Mobile'];
@@ -206,10 +227,10 @@ export default function PrototypeIndex() {
   return (
     <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <Box padding="xl" paddingBottom="80">
-        <Text variant="webHeading22" marginBottom="xl">Prototypes Design</Text>
+        <Text variant="webLargeLabel" marginBottom="xl">Prototypes Design</Text>
 
         {/* Tabs */}
-        <Box flexDirection="row" style={{ gap: 8, marginBottom: 24 } as any}>
+        <Box flexDirection="row" alignItems="center" style={{ gap: 8, marginBottom: 12 } as any}>
           {tabs.map(tab => {
             const isActive = activeTab === tab;
             return (
@@ -236,9 +257,23 @@ export default function PrototypeIndex() {
           })}
         </Box>
 
-        <Box flexDirection="row" flexWrap="wrap" gap="lg">
+        {/* Search */}
+        <Box style={{ marginBottom: 12 }}>
+          <TextInput
+            value={search}
+            onChangeText={setSearch}
+            placeholder="Search..."
+            icon={Search}
+            size="sm"
+            showClearButton={false}
+          />
+        </Box>
+
+        <Box flexDirection="row" flexWrap="wrap" style={{ margin: -4 } as any}>
           {filtered.map((item, index) => (
-            <PrototypeCard key={index} item={item} theme={theme} />
+            <Box key={index} style={{ width: Platform.OS === 'web' ? colWidth : '100%', padding: 4, display: 'flex', flexDirection: 'column' } as any}>
+              <PrototypeCard item={item} theme={theme} />
+            </Box>
           ))}
         </Box>
       </Box>
