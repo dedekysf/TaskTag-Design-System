@@ -234,11 +234,20 @@ export default function PrototypeIndex() {
     },
   ];
 
-  const designSystem = prototypes.find(p => p.title === 'Design System')!;
-  const rest = prototypes.filter(p => p.title !== 'Design System');
+  const PINNED_TITLES = ['GitHub', 'Design System'];
 
-  const filtered = [designSystem, ...rest].filter(item => {
-    const matchTab = activeTab === 'All Device' || item.title === 'Design System' || (item.platform ?? 'Web') === activeTab;
+  const github = {
+    title: 'GitHub',
+    jiraTicket: '',
+    jiraLabel: '',
+    route: 'https://github.com/dedekysf/TaskTag-Design-System/tree/main/app/prototype',
+    platforms: ['Web', 'Mobile'] as ('Web' | 'Mobile')[],
+  };
+  const designSystem = prototypes.find(p => p.title === 'Design System')!;
+  const rest = prototypes.filter(p => !PINNED_TITLES.includes(p.title));
+
+  const filtered = [github, designSystem, ...rest].filter(item => {
+    const matchTab = activeTab === 'All Device' || PINNED_TITLES.includes(item.title) || ('platform' in item ? item.platform : 'Web') === activeTab;
     const matchSearch = search.trim() === '' || item.title.toLowerCase().includes(search.toLowerCase()) || item.jiraLabel.toLowerCase().includes(search.toLowerCase());
     return matchTab && matchSearch;
   });

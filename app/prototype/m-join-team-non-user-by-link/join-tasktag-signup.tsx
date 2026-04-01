@@ -9,7 +9,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Image, Platform, Pressable, ScrollView, TextInput as RNTextInput, View } from 'react-native';
 
 const INVITE = {
-  projectName: 'Raintree Hollow Court Renovation',
+  projectName: 'Scott 1',
   address: '11 N Raintree Hollow Court',
   email: 'newuser@example.com',
 };
