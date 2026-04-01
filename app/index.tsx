@@ -136,7 +136,7 @@ export default function PrototypeIndex() {
 
   const prototypes = [
     {
-      title: 'Team Request Approved Email',
+      title: 'Email - Team Request Approved',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-315?atlOrigin=eyJpIjoiZDg2YTRkNmY0NWYzNDljNjliY2Y5MWEyNzc5MjZjNWIiLCJwIjoiaiJ9',
       jiraLabel: 'TD-315',
       route: '/prototype/m-join-team-non-user-by-link/email-approval',
@@ -157,7 +157,7 @@ export default function PrototypeIndex() {
       platform: 'Mobile' as const,
     },
     {
-      title: 'Team Request Approved Email',
+      title: 'Email - Team Request Approved',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-315?atlOrigin=eyJpIjoiZDg2YTRkNmY0NWYzNDljNjliY2Y5MWEyNzc5MjZjNWIiLCJwIjoiaiJ9',
       jiraLabel: 'TD-315',
       route: '/prototype/join-team-non-user-by-link/email-approval',
@@ -199,7 +199,7 @@ export default function PrototypeIndex() {
       platform: 'Mobile' as const
     },
     {
-      title: 'Project Request Approved Email',
+      title: 'Email - Project Request Approved',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-314?atlOrigin=eyJpIjoiMzcyY2EyNmNjZmNjNDMyM2FmYmI0ZmQwNzJjMGNhZGEiLCJwIjoiaiJ9',
       jiraLabel: 'TD-314',
       route: '/prototype/m-join-project-non-user-by-link/email-approval',
@@ -220,7 +220,7 @@ export default function PrototypeIndex() {
       platform: 'Mobile' as const
     },
     {
-      title: 'Project Request Approved Email',
+      title: 'Email - Project Request Approved',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-314?atlOrigin=eyJpIjoiMzcyY2EyNmNjZmNjNDMyM2FmYmI0ZmQwNzJjMGNhZGEiLCJwIjoiaiJ9',
       jiraLabel: 'TD-314',
       route: '/prototype/join-project-non-user-by-link/email-approval',
