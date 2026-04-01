@@ -20,11 +20,13 @@ export default function InviteLinkEntry() {
         <Text variant="webLabelEmphasized" color="foreground" marginBottom="12">
           Please click this link
         </Text>
-        <Pressable onPress={() => router.push('/prototype/m-join-project-non-user-by-link/join-tasktag')}>
+        <Pressable onPress={() => router.push('/prototype/m-join-team-non-user-by-link/join-tasktag')}>
           <Text variant="webMetadataPrimary" color="primary" style={{ textDecorationLine: 'underline', marginBottom: 16 }}>
             {INVITE_URL}
           </Text>
         </Pressable>
+
+
       </Box>
     </Box>
   );

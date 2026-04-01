@@ -136,6 +136,13 @@ export default function PrototypeIndex() {
 
   const prototypes = [
     {
+      title: 'Join Team Non User by Link',
+      jiraTicket: '',
+      jiraLabel: '',
+      route: '/prototype/m-join-team-non-user-by-link',
+      platform: 'Mobile' as const,
+    },
+    {
       title: 'Join Team Non User',
       jiraTicket: '',
       jiraLabel: '',
