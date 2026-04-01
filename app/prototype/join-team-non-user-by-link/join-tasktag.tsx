@@ -336,10 +336,9 @@ export default function JoinTasktag() {
             minHeight={520}
           >
             <Box alignItems="center" style={{ gap: 16 }}>
-              <UserPlus size={40} color={theme.colors.textSecondary} strokeWidth={1.5} />
+              <Share size={40} color={theme.colors.textSecondary} strokeWidth={1.5} />
               <Text variant="webHeading22" color="foreground" textAlign="center" style={{ fontWeight: '400' }}>
-                {"You've been invited to this team by "}
-                <Text variant="webHeading22" fontWeight="700">James Hammer</Text>
+                {"You've been shared a project on TaskTag"}
               </Text>
             </Box>
             <Button
@@ -348,7 +347,7 @@ export default function JoinTasktag() {
               style={{ borderRadius: 40, minWidth: 220, backgroundColor: theme.colors.foreground, marginTop: 16 }}
               onPress={() => setShowSignupModal(true)}
             >
-              <Text color="white" variant="labelMedium">Join This Team</Text>
+              <Text color="white" variant="labelMedium">Request to Join</Text>
             </Button>
           </Box>
         </ScrollView>

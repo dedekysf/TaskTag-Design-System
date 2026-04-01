@@ -3,7 +3,7 @@ import { Box, Text } from '@/components/primitives';
 import { theme as TTTheme } from '@/constants/theme';
 import { Image as ExpoImage } from 'expo-image';
 import { router } from 'expo-router';
-import { Check, Clock, MapPin } from 'lucide-react-native';
+import { Check, Clock, Hammer, MapPin } from 'lucide-react-native';
 import React from 'react';
 import { Image as RNImage, Platform, Pressable, ScrollView } from 'react-native';
 
@@ -60,14 +60,24 @@ export default function MJoinTeamNonUser() {
 
           {/* Header */}
           <Box marginBottom="20" marginTop="12">
-            <Text variant="webMetadataPrimary" color="mutedForeground" textAlign="center">
-              {"You've been invited to this team by "}
-              <Text variant="webMetadataPrimary" fontWeight="700" color="foreground">James Hammer</Text>
+            <Text variant="webLabelSmall" color="mutedForeground" textAlign="center">
+              <Text variant="webLabelSmall" fontWeight="700" color="foreground">James Hammer</Text>
+              {" invited you to join this team"}
             </Text>
           </Box>
 
           {/* Team card */}
           <Box backgroundColor="lightMint" borderRadius="lg" padding="md" marginBottom="8">
+            <Box
+              width={40}
+              height={40}
+              borderRadius="8"
+              alignItems="center"
+              justifyContent="center"
+              style={{ backgroundColor: TTTheme.colors.purple, marginBottom: 8 }}
+            >
+              <Hammer size={20} color="#fff" strokeWidth={1.5} />
+            </Box>
             <Text variant="webLabelEmphasized" marginBottom="4">{TEAM.name}</Text>
             <Box flexDirection="row" alignItems="center" gap="4" marginBottom="md">
               <MapPin size={14} color={TTTheme.colors.mutedForeground} />
@@ -108,7 +118,7 @@ export default function MJoinTeamNonUser() {
                   alignItems="center" justifyContent="center"
                   borderWidth={2} borderColor="lightMint"
                 >
-                  <Text variant="webMetadataSecondary" fontWeight="600" color="primary">+{TEAM.extraMembers}</Text>
+                  <Text variant="webMetadataSecondary" fontWeight="600" color="textSecondary">+{TEAM.extraMembers}</Text>
                 </Box>
               </Box>
             </Box>

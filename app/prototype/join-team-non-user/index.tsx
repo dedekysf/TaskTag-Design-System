@@ -5,7 +5,7 @@ import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { Check, Clock, MapPin } from 'lucide-react-native';
+import { Check, Clock, Hammer, MapPin } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Image as RNImage, Platform, Pressable, ScrollView } from 'react-native';
 
@@ -52,13 +52,23 @@ export default function JoinTeamNonUser() {
         <Box backgroundColor="card" borderRadius="xl" padding="24" marginBottom="lg">
 
           {/* Header */}
-          <Text variant="webMetadataPrimary" color="mutedForeground" textAlign="center" marginBottom="20">
-            {"You've been invited to this team by "}
-            <Text variant="webMetadataPrimary" fontWeight="700" color="foreground">James Hammer</Text>
+          <Text variant="webBody" color="mutedForeground" textAlign="center" marginBottom="20">
+            <Text variant="webBody" fontWeight="700" color="foreground">James Hammer</Text>
+            {" invited you to join this team"}
           </Text>
 
           {/* Team card */}
           <Box backgroundColor="lightMint" borderRadius="xl" padding="md" marginBottom="20">
+            <Box
+              width={40}
+              height={40}
+              borderRadius="8"
+              alignItems="center"
+              justifyContent="center"
+              style={{ backgroundColor: '#7c3aed', marginBottom: 8 }}
+            >
+              <Hammer size={20} color="#fff" strokeWidth={2} />
+            </Box>
             <Text variant="webLabelEmphasized" marginBottom="4">{TEAM.name}</Text>
             <Box flexDirection="row" alignItems="center" gap="4" marginBottom="md">
               <MapPin size={14} color={theme.colors.mutedForeground} />
@@ -110,7 +120,7 @@ export default function JoinTeamNonUser() {
                     alignItems="center" justifyContent="center"
                     borderWidth={2} borderColor="lightMint"
                   >
-                    <Text variant="webMetadataSecondary" fontWeight="600" color="primary">+{TEAM.extraMembers}</Text>
+                    <Text variant="webMetadataSecondary" fontWeight="600" color="textSecondary">+{TEAM.extraMembers}</Text>
                   </Box>
                 </Tooltip>
               </Box>
@@ -140,7 +150,7 @@ export default function JoinTeamNonUser() {
             color="primary"
             size="lg"
             style={{ width: '100%' }}
-            onPress={() => router.push('/prototype/join-team-non-user/join-tasktag' as any)}
+            onPress={() => router.push('/prototype/join-team-non-user/join-tasktag-signup' as any)}
           >
             Accept & Join Team
           </Button>

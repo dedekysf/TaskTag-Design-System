@@ -467,7 +467,7 @@ export default function TeamDashboardBase({
               style={{ borderRadius: 40, minWidth: 220, backgroundColor: theme.colors.grey01, borderColor: theme.colors.border, marginTop: 16, height: 54 }}
             >
               <Box flexDirection="row" alignItems="center" gap="8">
-                <UserPlus size={16} color={theme.colors.grey04} />
+                <UserCheck size={16} color={theme.colors.grey04} />
                 <Text color="grey04" variant="labelMedium">Pending Request</Text>
               </Box>
             </Button>
@@ -662,8 +662,8 @@ export default function TeamDashboardBase({
                     </Box>
                     <Box style={{ marginBottom: 4 }}>
                       <Box flexDirection="row" style={{ marginLeft: -4 }}>
-                        <Check size={14} color={theme.colors.grey04} />
-                        <Check size={14} color={theme.colors.grey04} style={{ marginLeft: -8 }} />
+                        <Check size={14} color={theme.colors.secondaryGreen} />
+                        <Check size={14} color={theme.colors.secondaryGreen} style={{ marginLeft: -8 }} />
                       </Box>
                     </Box>
                   </Box>
