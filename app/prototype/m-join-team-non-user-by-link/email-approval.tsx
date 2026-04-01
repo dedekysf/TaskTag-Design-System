@@ -10,7 +10,7 @@ import { Image, Pressable, ScrollView, Platform, Image as RNImage } from 'react-
 import { Image as ExpoImage } from 'expo-image';
 
 const TEAM = {
-  name: 'Raintree Hollow Court Renovation',
+  name: 'Scott 1',
   address: '11 N Raintree Hollow Court',
   members: [
     { type: 'initials' as const, initials: 'LS', color: '#2e7d7d', name: 'Laura Smith' },
@@ -63,7 +63,7 @@ export default function EmailApprovalMockup() {
           <Box marginBottom="20" marginTop="12">
             <Text variant="webLabelSmall" color="mutedForeground" textAlign="center">
               <Text variant="webLabelSmall" fontWeight="700" color="mutedForeground">Linda Smith</Text>
-              {" has been added to this project"}
+              {" has been added to this team"}
             </Text>
           </Box>
 
@@ -93,9 +93,9 @@ export default function EmailApprovalMockup() {
             color="primary"
             size="xl"
             style={{ width: '100%' }}
-            onPress={() => router.push('/prototype/m-join-team-non-user-by-link/team-overview-browser')}
+            onPress={() => router.push('/prototype/m-join-team-non-user-by-link/team-overview-app')}
           >
-            View Project
+            View Team
           </Button>
 
         </Box>
