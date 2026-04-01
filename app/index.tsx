@@ -150,7 +150,7 @@ export default function PrototypeIndex() {
       platform: 'Mobile' as const,
     },
     {
-      title: 'Join Team Non User',
+      title: 'Join Team Non User by Email',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-311?atlOrigin=eyJpIjoiNTg5NWM2OTNlYTU2NDkxYWEzNGZjYzk3MGMzOWZkMTUiLCJwIjoiaiJ9',
       jiraLabel: 'TD-311',
       route: '/prototype/m-join-team-non-user',
@@ -171,7 +171,7 @@ export default function PrototypeIndex() {
       platform: 'Web' as const,
     },
     {
-      title: 'Join Team Non User',
+      title: 'Join Team Non User by Email',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-311?atlOrigin=eyJpIjoiNTg5NWM2OTNlYTU2NDkxYWEzNGZjYzk3MGMzOWZkMTUiLCJwIjoiaiJ9',
       jiraLabel: 'TD-311',
       route: '/prototype/join-team-non-user',
@@ -213,7 +213,7 @@ export default function PrototypeIndex() {
       platform: 'Mobile' as const
     },
     {
-      title: 'Join Project Non User',
+      title: 'Join Project Non User by Email',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-304?atlOrigin=eyJpIjoiOTI4NjRmN2ZlMzk0NDAwNDgwMWFiMWZmNjkzYWNjMzYiLCJwIjoiaiJ9',
       jiraLabel: 'TD-304',
       route: '/prototype/m-join-project-non-user',
@@ -234,7 +234,7 @@ export default function PrototypeIndex() {
       platform: 'Web' as const
     },
     {
-      title: 'Join Project Non User',
+      title: 'Join Project Non User by Email',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-302?atlOrigin=eyJpIjoiNTk4MTIzZDUxOGVmNDYxN2IyOGNmZTkzYTQzOGQ2MjAiLCJwIjoiaiJ9',
       jiraLabel: 'TD-302',
       route: '/prototype/join-project-non-user',
