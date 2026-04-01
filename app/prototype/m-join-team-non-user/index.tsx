@@ -36,7 +36,7 @@ export default function MJoinTeamNonUser() {
       <Box width="100%" maxWidth={480}>
 
         {/* Logo */}
-        <Box marginBottom="lg" alignItems="center">
+        <Box marginBottom="lg" marginTop="xl" alignItems="center">
           <RNImage
             source={require('@/assets/images/tasktag-logo.png')}
             style={{ height: 36, width: 120 }}
@@ -141,7 +141,7 @@ export default function MJoinTeamNonUser() {
             color="primary"
             size="xl"
             style={{ width: '100%' }}
-            onPress={() => router.push('/prototype/m-join-team-non-user/join-tasktag' as any)}
+            onPress={() => router.push('/prototype/m-join-team-non-user/join-tasktag-signup' as any)}
           >
             Accept & Join Team
           </Button>
@@ -158,7 +158,7 @@ export default function MJoinTeamNonUser() {
         <Box alignItems="center" marginTop="sm">
           <Text variant="h3" marginBottom="sm">Download the app</Text>
           <Text variant="webMetadataPrimary" color="mutedForeground" marginBottom="md" textAlign="center">
-            Get the most of Tasktag by installing our new mobile app.
+            Get the most of Tasktag by installing{'\n'}our new mobile app.
           </Text>
         </Box>
 

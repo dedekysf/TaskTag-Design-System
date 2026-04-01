@@ -4,7 +4,7 @@ import { TextInput } from '@/components/TextInput';
 import { Tooltip } from '@/components/Tooltip';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import { AlertTriangle, Check, ChevronLeft, Eye, EyeOff, MapPin, X } from 'lucide-react-native';
+import { AlertTriangle, Check, ChevronLeft, Eye, EyeOff, MapPin } from 'lucide-react-native';
 import { router } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Image, Platform, Pressable, ScrollView, TextInput as RNTextInput, View } from 'react-native';
@@ -75,7 +75,7 @@ export default function JoinTasktagSignup() {
   };
 
   const emailFormContent = (
-    <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 56, paddingBottom: 16 }}>
+    <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 24, flexGrow: 1, justifyContent: 'center' }}>
       <Box width="100%">
         <Box flexDirection="row" alignItems="center" marginBottom="16">
           <Pressable
@@ -184,36 +184,17 @@ export default function JoinTasktagSignup() {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.75)', justifyContent: 'center', alignItems: 'center' }}>
-      <Pressable
-        style={[{ position: 'absolute', width: '100%', height: '100%' }, Platform.OS === 'web' && { cursor: 'default' } as any]}
-        onPress={() => router.back()}
-      />
-
-      <View style={{
-        alignSelf: 'stretch', marginHorizontal: 12, maxHeight: '90%',
-        backgroundColor: theme.colors.background, borderRadius: 16, overflow: 'hidden',
-        elevation: 24, shadowColor: '#000', shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.1, shadowRadius: 20,
-      }}>
-
-        {/* Ghost of step 2 — always in layout flow to anchor container height */}
-        <View style={{ opacity: 0 }} pointerEvents="none">
-          {emailFormContent}
-        </View>
-
-        {/* Active step overlaid on top */}
-        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
-          {step === 'select' && (
-            <>
-              {tooltipOpen && (
-                <Pressable
-                  style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 10, backgroundColor: 'transparent' }}
-                  onPress={() => setTooltipOpen(false)}
-                />
-              )}
-              <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 24, flexGrow: 1, justifyContent: 'center' }}>
-                <Box width="100%">
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      {step === 'select' && (
+        <>
+          {tooltipOpen && (
+            <Pressable
+              style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 10, backgroundColor: 'transparent' }}
+              onPress={() => setTooltipOpen(false)}
+            />
+          )}
+          <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 24, flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Box width="100%" maxWidth={480}>
                   <Text variant="h2" textAlign="center" marginBottom="4">Create an account</Text>
                   <Box flexDirection="row" justifyContent="center" flexWrap="wrap" marginBottom="16">
                     <Text variant="webMetadataPrimary" color="foreground" fontWeight="700">{INVITE.inviterName}</Text>
@@ -298,28 +279,12 @@ export default function JoinTasktagSignup() {
                       </Text>
                     </Text>
                   </Box>
-                </Box>
-              </ScrollView>
-            </>
-          )}
+              </Box>
+            </ScrollView>
+          </>
+        )}
 
-          {step === 'email-form' && emailFormContent}
-
-          {/* Close button */}
-          <Pressable
-            onPress={() => router.back()}
-            style={({ pressed }) => [{
-              position: 'absolute', top: 16, right: 16,
-              width: 32, height: 32, borderRadius: 16,
-              backgroundColor: theme.colors.grey02,
-              alignItems: 'center', justifyContent: 'center',
-              zIndex: 50, opacity: pressed ? 0.7 : 1,
-            }, Platform.OS === 'web' && ({ cursor: 'pointer' } as any)]}
-          >
-            <X size={18} color={theme.colors.foreground} />
-          </Pressable>
-        </View>
-      </View>
+        {step === 'email-form' && emailFormContent}
     </View>
   );
 }
