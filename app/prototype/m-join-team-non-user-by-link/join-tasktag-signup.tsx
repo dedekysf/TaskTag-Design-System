@@ -72,7 +72,7 @@ export default function JoinTasktagSignup() {
       setPasswordError('Invalid password'); valid = false;
     } else setPasswordError('');
     if (!valid || emailError) return;
-    router.push('/prototype/m-join-team-non-user-by-link/project-overview-browser' as any);
+    router.push('/prototype/m-join-team-non-user-by-link/team-overview-browser' as any);
   };
 
   const emailFormContent = (

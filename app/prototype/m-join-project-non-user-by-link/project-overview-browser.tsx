@@ -212,10 +212,10 @@ export default function ProjectOverview() {
         {/* Fixed Bottom Banner */}
         <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, backgroundColor: '#000000', borderRadius: 12, padding: 16, zIndex: 10 }}>
           <View style={{ marginBottom: 4 }}>
-            <Text variant="webLabelEmphasized" color="white">Welcome to the team!</Text>
+            <Text variant="webLabelEmphasized" color="white">You're almost in!</Text>
           </View>
           <Text variant="webSecondaryBody" style={{ color: '#E0E0E0', marginBottom: 16, lineHeight: 20 }}>
-            You've been added to the project. Download the app to jump in, create tasks, and stay in the loop.
+            Your request to join this project is pending approval. Download the app to jump in, create tasks, and stay in the loop.
           </Text>
           <Button
             variant="fill"
