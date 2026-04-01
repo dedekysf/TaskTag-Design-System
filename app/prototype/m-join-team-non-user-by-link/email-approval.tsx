@@ -93,7 +93,7 @@ export default function EmailApprovalMockup() {
             color="primary"
             size="xl"
             style={{ width: '100%' }}
-            onPress={() => router.push('/prototype/m-join-project-non-user-by-link/project-overview-app')}
+            onPress={() => router.push('/prototype/m-join-team-non-user-by-link/team-overview-browser')}
           >
             View Project
           </Button>

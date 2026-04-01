@@ -61,8 +61,8 @@ export default function EmailApprovalMockup() {
 
           {/* Header Message (Styled like reference index) */}
           <Box marginBottom="20" marginTop="12">
-            <Text variant="webLabelSmall" color="mutedForeground" textAlign="center">
-              <Text variant="webLabelSmall" fontWeight="700" color="mutedForeground">Linda Smith</Text>
+            <Text variant="webBody" color="mutedForeground" textAlign="center">
+              <Text variant="webBody" fontWeight="700" color="mutedForeground">Linda Smith</Text>
               {" has been added to this project"}
             </Text>
           </Box>
@@ -78,11 +78,20 @@ export default function EmailApprovalMockup() {
 
           {/* Grey Box: Permissions Checklist */}
           <Box marginBottom="16" backgroundColor="grey02" padding="md" borderRadius="lg">
-            <Text variant="labelMedium" marginBottom="8">{"As a member, you'll be able to:"}</Text>
-            {PERMISSIONS.map((text, i) => (
-              <Box key={i} flexDirection="row" alignItems="center" gap="8" marginBottom="8">
-                <Check size={14} color={TTTheme.colors.primary} strokeWidth={2.5} />
-                <Text variant="webMetadataPrimary" color="mutedForeground">{text}</Text>
+            <Text variant="labelMedium" marginBottom="sm">{"As a member, you'll be able to:"}</Text>
+            {[
+              ['View and manage tasks', 'Collaborate with team'],
+              ['Upload files & media', 'Track team progress'],
+            ].map(([left, right], i) => (
+              <Box key={i} flexDirection="row" marginBottom="8">
+                <Box flex={1} flexDirection="row" alignItems="center" gap="8">
+                  <Check size={14} color={TTTheme.colors.primary} strokeWidth={2.5} />
+                  <Text variant="webMetadataPrimary" color="mutedForeground">{left}</Text>
+                </Box>
+                <Box flex={1} flexDirection="row" alignItems="center" gap="8">
+                  <Check size={14} color={TTTheme.colors.primary} strokeWidth={2.5} />
+                  <Text variant="webMetadataPrimary" color="mutedForeground">{right}</Text>
+                </Box>
               </Box>
             ))}
           </Box>
@@ -93,7 +102,7 @@ export default function EmailApprovalMockup() {
             color="primary"
             size="xl"
             style={{ width: '100%' }}
-            onPress={() => router.push('/prototype/m-join-project-non-user-by-link/project-overview-app')}
+            onPress={() => router.push('/prototype/join-project-non-user/project-dashboard')}
           >
             View Project
           </Button>

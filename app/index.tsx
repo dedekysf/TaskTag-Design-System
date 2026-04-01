@@ -136,6 +136,13 @@ export default function PrototypeIndex() {
 
   const prototypes = [
     {
+      title: 'Team Request Approved Email',
+      jiraTicket: '',
+      jiraLabel: '',
+      route: '/prototype/m-join-team-non-user-by-link/email-approval',
+      platform: 'Mobile' as const,
+    },
+    {
       title: 'Join Team Non User by Link',
       jiraTicket: '',
       jiraLabel: '',
@@ -144,10 +151,17 @@ export default function PrototypeIndex() {
     },
     {
       title: 'Join Team Non User',
-      jiraTicket: '',
-      jiraLabel: '',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-311?atlOrigin=eyJpIjoiNTg5NWM2OTNlYTU2NDkxYWEzNGZjYzk3MGMzOWZkMTUiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-311',
       route: '/prototype/m-join-team-non-user',
       platform: 'Mobile' as const,
+    },
+    {
+      title: 'Team Request Approved Email',
+      jiraTicket: '',
+      jiraLabel: '',
+      route: '/prototype/join-team-non-user-by-link/email-approval',
+      platform: 'Web' as const,
     },
     {
       title: 'Join Team Non User by Link',
@@ -158,8 +172,8 @@ export default function PrototypeIndex() {
     },
     {
       title: 'Join Team Non User',
-      jiraTicket: '',
-      jiraLabel: '',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-311?atlOrigin=eyJpIjoiNTg5NWM2OTNlYTU2NDkxYWEzNGZjYzk3MGMzOWZkMTUiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-311',
       route: '/prototype/join-team-non-user',
       platform: 'Web' as const,
     },
@@ -185,14 +199,7 @@ export default function PrototypeIndex() {
       platform: 'Mobile' as const
     },
     {
-      title: 'Join Project Non User',
-      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-304?atlOrigin=eyJpIjoiOTI4NjRmN2ZlMzk0NDAwNDgwMWFiMWZmNjkzYWNjMzYiLCJwIjoiaiJ9',
-      jiraLabel: 'TD-304',
-      route: '/prototype/m-join-project-non-user',
-      platform: 'Mobile' as const
-    },
-    {
-      title: 'Request Approved Email Mockup',
+      title: 'Project Request Approved Email',
       jiraTicket: '',
       jiraLabel: '',
       route: '/prototype/m-join-project-non-user-by-link/email-approval',
@@ -204,6 +211,20 @@ export default function PrototypeIndex() {
       jiraLabel: 'TD-304',
       route: '/prototype/m-join-project-non-user-by-link',
       platform: 'Mobile' as const
+    },
+    {
+      title: 'Join Project Non User',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-304?atlOrigin=eyJpIjoiOTI4NjRmN2ZlMzk0NDAwNDgwMWFiMWZmNjkzYWNjMzYiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-304',
+      route: '/prototype/m-join-project-non-user',
+      platform: 'Mobile' as const
+    },
+    {
+      title: 'Project Request Approved Email',
+      jiraTicket: '',
+      jiraLabel: '',
+      route: '/prototype/join-project-non-user-by-link/email-approval',
+      platform: 'Web' as const,
     },
     {
       title: 'Join Project Non User by Link',

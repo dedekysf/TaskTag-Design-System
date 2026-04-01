@@ -61,9 +61,10 @@ export default function EmailApprovalMockup() {
 
           {/* Header Message (Styled like reference index) */}
           <Box marginBottom="20" marginTop="12">
-            <Text variant="webLabelSmall" color="mutedForeground" textAlign="center">
-              <Text variant="webLabelSmall" fontWeight="700" color="mutedForeground">Linda Smith</Text>
-              {" has been added to this project"}
+            <Text variant="webMetadataPrimary" color="mutedForeground" textAlign="center">
+              {"Linda Smith has been "}
+              <Text variant="webMetadataPrimary" fontWeight="700" color="secondaryGreen">approved</Text>
+              {" your request."}
             </Text>
           </Box>
 
@@ -93,7 +94,7 @@ export default function EmailApprovalMockup() {
             color="primary"
             size="xl"
             style={{ width: '100%' }}
-            onPress={() => router.push('/prototype/m-join-project-non-user-by-link/project-overview-app')}
+            onPress={() => router.push('/prototype/join-team-non-user-by-link/team-dashboard')}
           >
             View Project
           </Button>
