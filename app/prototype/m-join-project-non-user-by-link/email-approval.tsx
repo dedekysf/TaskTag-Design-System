@@ -20,8 +20,8 @@ const PERMISSIONS: string[] = [
 ];
 
 const STEPS = [
-  'Set up your profile',
   'Check your project details',
+  'Check the task list',
   'Say hello to your teammates!',
 ];
 
@@ -69,8 +69,8 @@ export default function EmailApprovalMockup() {
               {PROJECT.name}
             </Text>
             <Box flexDirection="row" alignItems="center" gap="4">
-              <MapPin size={13} color={TTTheme.colors.textSecondary} />
-              <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.textSecondary }}>{PROJECT.address}</Text>
+              <MapPin size={13} color={TTTheme.colors.grey05} />
+              <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.grey05 }}>{PROJECT.address}</Text>
             </Box>
           </Box>
 
