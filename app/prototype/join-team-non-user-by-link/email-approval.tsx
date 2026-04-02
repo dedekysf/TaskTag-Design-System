@@ -1,140 +1,169 @@
 import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
-import { Tooltip } from '@/components/Tooltip';
 import { theme as TTTheme } from '@/constants/theme';
-import { useTheme } from '@shopify/restyle';
 import { router } from 'expo-router';
-import { Check, CircleCheckBig, MapPin, UserCheck } from 'lucide-react-native';
-import React, { useState } from 'react';
-import { Image, Pressable, ScrollView, Platform, Image as RNImage } from 'react-native';
+import { Check } from 'lucide-react-native';
+import React from 'react';
+import { Image, Pressable, ScrollView, View } from 'react-native';
 import { Image as ExpoImage } from 'expo-image';
 
 const TEAM = {
-  name: 'Scott 1',
-  address: '11 N Raintree Hollow Court',
-  members: [
-    { type: 'initials' as const, initials: 'LS', color: '#2e7d7d', name: 'Laura Smith' },
-    { type: 'initials' as const, initials: 'SS', color: '#e65100', name: 'Sara Singh' },
-    { type: 'initials' as const, initials: 'AS', color: '#6a1b9a', name: 'Amy Scott' },
-  ],
+  name: 'Painting Team',
 };
 
-const PERMISSIONS: string[] = [
-  'View and manage tasks',
-  'Collaborate with team',
-  'Upload files & media',
-  'Track team progress',
+const PERMISSIONS = [
+  'Manage project and tasks',
+  'Invite and remove members',
+  'Manage roles & permissions',
+  'Configure team settings',
+];
+
+const STEPS = [
+  'Set up your profile',
+  'Check your team details',
+  'Say hello to your teammates!',
 ];
 
 export default function EmailApprovalMockup() {
-  const theme = useTheme<any>();
-
   return (
-    <ScrollView 
-      style={{ flex: 1, backgroundColor: TTTheme.colors.grey02 }} 
-      contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: 12 }}
+    <ScrollView
+      style={{ flex: 1, backgroundColor: TTTheme.colors.grey02 }}
+      contentContainerStyle={{ flexGrow: 1, alignItems: 'center', padding: 40, paddingTop: 48, paddingBottom: 48 }}
+      showsVerticalScrollIndicator={false}
     >
-      <Box width="100%" maxWidth={480}>
-        
+      <Box width="100%" maxWidth={560}>
+
         {/* Logo */}
-        <Box marginBottom="lg" alignItems="center">
+        <Box marginBottom="xl" alignItems="center">
           <Image
             source={require('@/assets/images/tasktag-logo.png')}
-            style={{ height: 36, width: 120 }}
+            style={{ height: 40, width: 134 }}
             resizeMode="contain"
           />
         </Box>
 
         {/* Main Card */}
-        <Box 
-          backgroundColor="card" 
-          borderRadius="xl" 
-          padding="16" 
-          marginBottom="lg"
-          style={{
-            ...Platform.select({
-              web: { boxShadow: '0 4px 20px rgba(0,0,0,0.05)' } as any,
-              default: { elevation: 4 }
-            })
-          }}
+        <Box
+          backgroundColor="card"
+          borderRadius="xl"
+          padding="24"
+          marginBottom="xl"
         >
 
-          {/* Header Message (Styled like reference index) */}
-          <Box marginBottom="20" marginTop="12">
-            <Text variant="webBody" color="mutedForeground" textAlign="center">
-              <Text variant="webBody" fontWeight="700" color="mutedForeground">Linda Smith</Text>
-              {" has been added to this team"}
+          {/* Welcome Header */}
+          <Box marginBottom="16">
+            <Text variant="webLargeLabel" style={{ color: TTTheme.colors.textSecondary, marginBottom: 8 }}>
+              Welcome to the Team, Oscar! 🎉
+            </Text>
+            <Text variant="webLargeLabel" style={{ color: TTTheme.colors.textSecondary }}>
+              {"Added by "}
+              <Text variant="webLargeLabel" style={{ fontWeight: '600', color: TTTheme.colors.textSecondary }}>James Hammer</Text>
+              {" (Team Owner)"}
             </Text>
           </Box>
 
-          {/* Green Box: Team/Project card */}
-          <Box backgroundColor="lightMint" borderRadius="lg" padding="md" marginBottom="8">
-            <Text variant="webLabelEmphasized" marginBottom="4">{TEAM.name}</Text>
-            <Box flexDirection="row" alignItems="center" gap="4">
-              <MapPin size={14} color={TTTheme.colors.mutedForeground} />
-              <Text variant="webSecondaryBody" color="mutedForeground">{TEAM.address}</Text>
+          {/* Team Identity */}
+          <Box flexDirection="row" alignItems="center" gap="16" marginBottom="16">
+            <Box
+              borderRadius="8"
+              style={{ backgroundColor: TTTheme.colors.white }}
+            >
+              <ExpoImage
+                source={require('@/assets/images/sosa-logo.svg')}
+                style={{ width: 120, height: 72 }}
+                contentFit="contain"
+              />
             </Box>
+            <Text variant="h1" color="textPrimary" style={{ flex: 1 }}>
+              {TEAM.name}
+            </Text>
           </Box>
 
-          {/* Grey Box: Permissions Checklist */}
-          <Box marginBottom="16" backgroundColor="grey02" padding="md" borderRadius="lg">
-            <Text variant="labelMedium" marginBottom="sm">{"As a member, you'll be able to:"}</Text>
-            {[
-              ['View and manage tasks', 'Collaborate with team'],
-              ['Upload files & media', 'Track team progress'],
-            ].map(([left, right], i) => (
-              <Box key={i} flexDirection="row" marginBottom="8">
-                <Box flex={1} flexDirection="row" alignItems="center" gap="8">
-                  <Check size={14} color={TTTheme.colors.primary} strokeWidth={2.5} />
-                  <Text variant="webMetadataPrimary" color="mutedForeground">{left}</Text>
-                </Box>
-                <Box flex={1} flexDirection="row" alignItems="center" gap="8">
-                  <Check size={14} color={TTTheme.colors.primary} strokeWidth={2.5} />
-                  <Text variant="webMetadataPrimary" color="mutedForeground">{right}</Text>
-                </Box>
+          {/* Permissions Box */}
+          <Box backgroundColor="grey02" borderRadius="xl" padding="md" marginBottom="24">
+            <Text variant="webBody" style={{ color: TTTheme.colors.textSecondary, marginBottom: 12 }}>
+              <Text variant="webBody" style={{ fontWeight: '600', color: TTTheme.colors.secondaryGreen }}>As an admin</Text>
+              {", you'll be able to:"}
+            </Text>
+            {PERMISSIONS.map((perm, i) => (
+              <Box key={i} flexDirection="row" alignItems="center" gap="8" style={{ marginBottom: i < PERMISSIONS.length - 1 ? 12 : 0 }}>
+                <Check size={16} color={TTTheme.colors.secondaryGreen} strokeWidth={2.5} />
+                <Text variant="webBody" style={{ color: TTTheme.colors.textSecondary }}>{perm}</Text>
+              </Box>
+            ))}
+          </Box>
+
+          {/* Get Started Steps */}
+          <Box paddingHorizontal="sm" marginBottom="24">
+            <Text variant="webBody" style={{ color: TTTheme.colors.textSecondary, marginBottom: 16, fontWeight: '600' }}>
+              🚀 Get started in 3 easy steps:
+            </Text>
+            {STEPS.map((step, i) => (
+              <Box key={i} flexDirection="row" alignItems="center" gap="8" style={{ marginBottom: i < STEPS.length - 1 ? 16 : 0 }}>
+                <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: TTTheme.colors.grey06, alignItems: 'center', justifyContent: 'center' }}>
+                  <Text style={{ color: '#fff', fontSize: 16, lineHeight: 18, textAlign: 'center' }}>{i + 1}</Text>
+                </View>
+                <Text variant="webBody" style={{ color: TTTheme.colors.textSecondary }}>{step}</Text>
               </Box>
             ))}
           </Box>
 
           {/* CTA Button */}
-          <Button
-            variant="fill"
-            color="primary"
-            size="xl"
-            style={{ width: '100%' }}
-            onPress={() => router.push('/prototype/join-team-non-user/team-dashboard')}
-          >
-            View Team
-          </Button>
+          <Box paddingTop="12">
+            <Button
+              variant="fill"
+              size="lg"
+              style={{ width: '100%', backgroundColor: TTTheme.colors.secondaryGreen, borderRadius: 8 }}
+              onPress={() => router.push('/prototype/join-team-non-user-by-link/team-dashboard')}
+            >
+              <Text style={{ fontSize: 18, fontWeight: '500', color: '#fff' }}>View Your Team</Text>
+            </Button>
+          </Box>
 
         </Box>
 
         {/* Download Section */}
-        <Box alignItems="center" marginTop="md">
-          <Text variant="h3" marginBottom="sm">Download the app</Text>
-          <Text variant="webMetadataPrimary" color="mutedForeground" marginBottom="md" textAlign="center">
+        <Box alignItems="center" marginBottom="xl">
+          <Text variant="h2" style={{ color: TTTheme.colors.textSecondary, marginBottom: 8, textAlign: 'center' }}>
+            Download The App
+          </Text>
+          <Text variant="webBody" style={{ color: TTTheme.colors.textSecondary, marginBottom: 20, textAlign: 'center' }}>
             Get the most of Tasktag by installing our new mobile app.
           </Text>
+          <Box flexDirection="row" gap="24" justifyContent="center">
+            <Pressable style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}>
+              <ExpoImage
+                source={require('@/assets/images/app-store.svg')}
+                style={{ width: 140, height: 44 }}
+                contentFit="contain"
+              />
+            </Pressable>
+            <Pressable style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}>
+              <ExpoImage
+                source={require('@/assets/images/play-store.svg')}
+                style={{ width: 148, height: 44 }}
+                contentFit="contain"
+              />
+            </Pressable>
+          </Box>
         </Box>
 
-        <Box flexDirection="row" justifyContent="center" gap="12" marginBottom="xl">
-          <Pressable style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}>
-            <ExpoImage
-              source={require('@/assets/images/app-store.svg')}
-              style={{ width: 140, height: 44 }}
-              contentFit="contain"
-            />
-          </Pressable>
-          <Pressable style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}>
-            <ExpoImage
-              source={require('@/assets/images/play-store.svg')}
-              style={{ width: 148, height: 44 }}
-              contentFit="contain"
-            />
-          </Pressable>
+        {/* Footer */}
+        <Box alignItems="center" gap="24" paddingBottom="xl">
+          <Text variant="webBody" style={{ color: TTTheme.colors.grey05, textAlign: 'center' }}>
+            Have questions? Contact our support team
+          </Text>
+          <Box flexDirection="row" alignItems="center" gap="sm">
+            <Text variant="webBody" style={{ color: TTTheme.colors.grey05, textDecorationLine: 'underline' }}>Terms & conditions</Text>
+            <View style={{ width: 1, height: 16, backgroundColor: TTTheme.colors.grey03 }} />
+            <Text variant="webBody" style={{ color: TTTheme.colors.grey05, textDecorationLine: 'underline' }}>Privacy policy</Text>
+            <View style={{ width: 1, height: 16, backgroundColor: TTTheme.colors.grey03 }} />
+            <Text variant="webBody" style={{ color: TTTheme.colors.grey05, textDecorationLine: 'underline' }}>Contact us</Text>
+          </Box>
+          <Text variant="webBody" style={{ color: TTTheme.colors.grey05, textAlign: 'center' }}>
+            © 2026 Tasktag, Houston, Texas 77001
+          </Text>
         </Box>
-
-        <Text variant="caption" textAlign="center" color="mutedForeground">© 2026 Tasktag, Houston, Texas VIC 3000</Text>
 
       </Box>
     </ScrollView>

@@ -4,7 +4,7 @@ import { theme as TTTheme } from '@/constants/theme';
 import { router } from 'expo-router';
 import { Check } from 'lucide-react-native';
 import React from 'react';
-import { Image, Platform, Pressable, ScrollView, View } from 'react-native';
+import { Image, Pressable, ScrollView, View } from 'react-native';
 import { Image as ExpoImage } from 'expo-image';
 
 const TEAM = {
@@ -48,12 +48,6 @@ export default function EmailApprovalMockup() {
           borderRadius="xl"
           padding="16"
           marginBottom="lg"
-          style={{
-            ...Platform.select({
-              web: { boxShadow: '0 4px 20px rgba(0,0,0,0.05)' } as any,
-              default: { elevation: 4 },
-            }),
-          }}
         >
 
           {/* Welcome Header */}
@@ -80,13 +74,13 @@ export default function EmailApprovalMockup() {
                 contentFit="contain"
               />
             </Box>
-            <Text variant="webLargeLabel" color="textPrimary" style={{ flex: 1 }}>
+            <Text variant="h1" color="textPrimary" style={{ flex: 1 }}>
               {TEAM.name}
             </Text>
           </Box>
 
           {/* Permissions Box */}
-          <Box backgroundColor="grey02" borderRadius="lg" padding="md" marginBottom="24">
+          <Box backgroundColor="grey02" borderRadius="xl" padding="md" marginBottom="24">
             <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.textSecondary, marginBottom: 12 }}>
               <Text variant="webSecondaryBody" style={{ fontWeight: '600', color: TTTheme.colors.secondaryGreen }}>As an admin</Text>
               {", you'll be able to:"}
@@ -130,10 +124,10 @@ export default function EmailApprovalMockup() {
 
         {/* Download Section */}
         <Box alignItems="center" marginBottom="lg">
-          <Text variant="webLabelEmphasized" style={{ color: TTTheme.colors.textSecondary, marginBottom: 8, textAlign: 'center' }}>
+          <Text variant="webLargeLabel" style={{ color: TTTheme.colors.textSecondary, marginBottom: 8, textAlign: 'center' }}>
             Download The App
           </Text>
-          <Text variant="webMetadataPrimary" style={{ color: TTTheme.colors.textSecondary, marginBottom: 16, textAlign: 'center' }}>
+          <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.textSecondary, marginBottom: 16, textAlign: 'center' }}>
             Get the most of Tasktag by installing our new mobile app.
           </Text>
           <Box flexDirection="row" gap="24" justifyContent="center">
