@@ -74,7 +74,7 @@ export default function EmailApprovalMockup() {
                 contentFit="contain"
               />
             </Box>
-            <Text variant="h1" color="textPrimary" style={{ flex: 1 }}>
+            <Text variant="webLargeLabel" color="textPrimary" style={{ flex: 1 }}>
               {TEAM.name}
             </Text>
           </Box>
@@ -127,7 +127,7 @@ export default function EmailApprovalMockup() {
           <Text variant="webLargeLabel" style={{ color: TTTheme.colors.textSecondary, marginBottom: 8, textAlign: 'center' }}>
             Download The App
           </Text>
-          <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.textSecondary, marginBottom: 16, textAlign: 'center' }}>
+          <Text variant="webMetadataPrimary" style={{ color: TTTheme.colors.textSecondary, marginBottom: 16, textAlign: 'center' }}>
             Get the most of Tasktag by installing our new mobile app.
           </Text>
           <Box flexDirection="row" gap="24" justifyContent="center">
