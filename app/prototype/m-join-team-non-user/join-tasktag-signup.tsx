@@ -4,15 +4,14 @@ import { TextInput } from '@/components/TextInput';
 import { Tooltip } from '@/components/Tooltip';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import { AlertTriangle, Check, ChevronLeft, Eye, EyeOff, MapPin } from 'lucide-react-native';
+import { AlertTriangle, Check, ChevronLeft, Eye, EyeOff } from 'lucide-react-native';
 import { router } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Image, Platform, Pressable, ScrollView, TextInput as RNTextInput, View } from 'react-native';
 
 const INVITE = {
   inviterName: 'James Hammer',
-  projectName: 'Scott 1',
-  address: '11 N Raintree Hollow Court',
+  projectName: 'Painting Team',
   email: 'newuser@example.com',
 };
 
@@ -205,28 +204,25 @@ export default function JoinTasktagSignup() {
                     backgroundColor="lightMint" alignItems="flex-start" padding="md"
                     borderRadius="xl" marginBottom="lg" width="100%" position="relative" zIndex="10"
                   >
-                    <Text variant="webLabelSmall" color="foreground" style={{ marginBottom: 8 }}>{INVITE.projectName}</Text>
-                    <Box flexDirection="row" alignItems="center" gap="4" marginBottom="16">
-                      <MapPin size={14} color={theme.colors.textSecondary} />
-                      <Text variant="webMetadataPrimary" color="mutedForeground">{INVITE.address}</Text>
-                    </Box>
-                    <Box flexDirection="row" alignItems="center" gap="4">
-                      <Text variant="webLabelSmall" color="mutedForeground">Your Role : </Text>
+                    <Text variant="webLabelEmphasized" color="foreground" style={{ marginBottom: 8 }}>{INVITE.projectName}</Text>
+                    <Box flexDirection="row" alignItems="center" flexWrap="wrap" gap="4">
+                      <Text variant="webMetadataPrimary" color="mutedForeground">{"You'll join as an "}</Text>
                       <Tooltip
                         variant="bottom-left" trigger="press"
                         open={tooltipOpen} onOpenChange={setTooltipOpen}
                         content={
                           <View style={{ gap: 4 }}>
-                            {['View and manage tasks', 'Upload files & media', 'Collaborate with team', 'Track team progress'].map((item, i) => (
+                            {['Manage project and tasks', 'Invite and remove members', 'Manage roles & permissions', 'Configure team settings'].map((item, i) => (
                               <Text key={i} style={{ color: theme.colors.white, fontSize: 12, fontFamily: 'Inter_400Regular' }}>{'• '}{item}</Text>
                             ))}
                           </View>
                         }
                       >
                         <Box borderBottomWidth={1} borderColor="foreground" style={{ borderStyle: 'dotted' }}>
-                          <Text variant="webLabelSmall" color="foreground" fontWeight="700">Member</Text>
+                          <Text variant="webMetadataPrimary" color="foreground" fontWeight="700">Admin</Text>
                         </Box>
                       </Tooltip>
+                      <Text variant="webMetadataPrimary" color="mutedForeground">{" with 11 other members."}</Text>
                     </Box>
                   </Box>
 

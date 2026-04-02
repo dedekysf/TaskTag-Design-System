@@ -72,6 +72,15 @@ export default function MJoinTeamNonUser() {
             </Text>
           </Box>
 
+          {/* Role info */}
+          <Box marginBottom="16">
+            <Text variant="webMetadataPrimary" style={{ color: TTTheme.colors.textSecondary }}>
+              {"You'll join as an "}
+              <Text variant="webMetadataPrimary" style={{ fontWeight: '600', color: TTTheme.colors.textSecondary }}>Admin</Text>
+              {" with 11 other members."}
+            </Text>
+          </Box>
+
           {/* Permissions Box */}
           <Box backgroundColor="grey02" borderRadius="xl" padding="md" marginBottom="24">
             <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.textSecondary, marginBottom: 12 }}>
