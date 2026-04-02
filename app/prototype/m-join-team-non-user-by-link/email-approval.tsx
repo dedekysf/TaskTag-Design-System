@@ -116,7 +116,7 @@ export default function EmailApprovalMockup() {
               style={{ width: '100%', backgroundColor: TTTheme.colors.secondaryGreen, borderRadius: 8 }}
               onPress={() => router.push('/prototype/m-join-team-non-user-by-link/team-overview-app')}
             >
-              <Text style={{ fontSize: 16, fontWeight: '500', color: '#fff' }}>View Your Team</Text>
+              <Text style={{ fontSize: 16, fontWeight: '500', color: '#fff' }}>View Team</Text>
             </Button>
           </Box>
 
