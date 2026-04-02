@@ -69,7 +69,7 @@ export default function TeamOverviewBrowser() {
           </Box>
         </Box>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 200 }}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 300 }}>
 
           {/* Team Header */}
           <Box paddingHorizontal="md" paddingVertical="md" backgroundColor="background">
@@ -88,22 +88,17 @@ export default function TeamOverviewBrowser() {
             </Box>
           </Box>
 
-          <Box padding="md" gap="32">
+          <Box padding="md" gap="lg">
 
             {/* Overview Section */}
             <Box>
-              <Text
-                variant="webLabelSmall" color="textSecondary" marginBottom="8"
-                style={{ letterSpacing: 0.8, textTransform: 'uppercase' }}
-              >
-                Overview
-              </Text>
-
               {/* Stat Cards */}
               <Box flexDirection="row" gap="12" marginBottom="12">
                 {STATS.map((stat, i) => (
                   <Box
-                    key={i} flex={1} backgroundColor="card" borderRadius="xl" padding="md"
+                    key={i} flex={1}
+                    backgroundColor={stat.label === 'Total Projects' ? 'lightMint' : 'lightSky'}
+                    borderRadius="xl" padding="md"
                   >
                     <Text variant="h1" color="textPrimary" marginBottom="xs">{stat.value}</Text>
                     <Text variant="webBody" color="textSecondary">{stat.label}</Text>
@@ -117,13 +112,13 @@ export default function TeamOverviewBrowser() {
                   <Text variant="webBody" color="textPrimary">Task completion</Text>
                   <Text variant="webMetadataPrimary">
                     <Text color="secondaryGreen" fontWeight="600">{COMPLETION.done}</Text>
-                    <Text color="textSecondary"> / {COMPLETION.total}</Text>
+                    <Text color="grey05"> / {COMPLETION.total}</Text>
                   </Text>
                 </Box>
-                <Box height={6} backgroundColor="grey03" borderRadius="4">
+                <Box height={8} backgroundColor="grey03" borderRadius="4" overflow="hidden">
                   <Box
-                    height={6} backgroundColor="secondaryGreen" borderRadius="4"
-                    style={{ width: `${progress * 100}%` as any }}
+                    height="100%" backgroundColor="secondaryGreen" borderRadius="4"
+                    style={{ width: '80%' }}
                   />
                 </Box>
               </Box>
@@ -169,7 +164,7 @@ export default function TeamOverviewBrowser() {
                       </Text>
                     </Box>
                     {i < MEMBERS.length - 1 && (
-                      <Box height={1} backgroundColor="border" marginHorizontal="md" />
+                      <Box height={1} backgroundColor="grey02" marginHorizontal="md" />
                     )}
                   </Box>
                 ))}
@@ -181,7 +176,7 @@ export default function TeamOverviewBrowser() {
 
         {/* Dev Note Banner */}
         {bannerVisible && (
-          <View style={{ position: 'absolute', bottom: 220, left: 16, right: 16, backgroundColor: '#fbe676', borderRadius: 12, padding: 16, gap: 4, zIndex: 40 }}>
+          <View style={{ position: 'absolute', bottom: 250, left: 16, right: 16, backgroundColor: '#fbe676', borderRadius: 12, padding: 16, gap: 4, zIndex: 40 }}>
             <Pressable
               onPress={() => setBannerVisible(false)}
               style={{ position: 'absolute', top: 8, right: 8, width: 32, height: 32, alignItems: 'center', justifyContent: 'center', zIndex: 10 }}
@@ -197,7 +192,7 @@ export default function TeamOverviewBrowser() {
         )}
 
         {/* Fixed Bottom Download Banner */}
-        <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, backgroundColor: '#000000', borderRadius: 12, padding: 16, zIndex: 10 }}>
+        <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, backgroundColor: '#000000', borderRadius: 12, padding: 20, zIndex: 10 }}>
           <View style={{ marginBottom: 4 }}>
             <Text variant="webLabelEmphasized" color="white">Welcome to the team!</Text>
           </View>

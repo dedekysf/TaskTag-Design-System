@@ -1,16 +1,17 @@
 import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
 import { TextInput } from '@/components/TextInput';
+import { Tooltip } from '@/components/Tooltip';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import { AlertTriangle, Check, ChevronLeft, Eye, EyeOff, MapPin, X } from 'lucide-react-native';
+import { AlertTriangle, Check, ChevronLeft, Eye, EyeOff, X } from 'lucide-react-native';
 import { router } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Image, Platform, Pressable, ScrollView, TextInput as RNTextInput, View } from 'react-native';
 
 const INVITE = {
-  projectName: 'Scott 1',
-  address: '11 N Raintree Hollow Court',
+  inviterName: 'James Hammer',
+  projectName: 'Painting Team',
   email: 'newuser@example.com',
 };
 
@@ -23,6 +24,7 @@ export default function JoinTasktagSignup() {
 
   const [isGoogleHovered, setIsGoogleHovered] = useState(false);
   const [isAppleHovered, setIsAppleHovered] = useState(false);
+  const [tooltipOpen, setTooltipOpen] = useState(false);
 
   const [email, setEmail] = useState('');
   const [emailFormatError, setEmailFormatError] = useState('');
@@ -229,16 +231,18 @@ export default function JoinTasktagSignup() {
                 </Box>
 
                 {/* Context banner */}
-                <Box backgroundColor="lightSky" alignItems="flex-start" padding="md" borderRadius="xl" marginBottom="lg" width="100%">
-                  <Text variant="webLabelSmall" color="foreground" style={{ marginBottom: 8 }}>{INVITE.projectName}</Text>
-                  <Box flexDirection="row" alignItems="center" gap="4" marginBottom="16">
-                    <MapPin size={14} color={theme.colors.textSecondary} />
-                    <Text variant="webMetadataPrimary" color="mutedForeground">{INVITE.address}</Text>
-                  </Box>
-                  <Box flexDirection="row" alignItems="center" gap="4">
-                    <Text variant="webLabelSmall" color="mutedForeground">Your Role : </Text>
-                    <Text variant="webLabelSmall" color="foreground" fontWeight="700">
-                      Viewer <Text variant="webMetadataPrimary" fontWeight="400">(Pending Approval)</Text>
+                <Box
+                  backgroundColor="lightSky" alignItems="flex-start" padding="md"
+                  borderRadius="xl" marginBottom="lg" width="100%"
+                >
+                  <Text variant="webLabelEmphasized" color="foreground" style={{ marginBottom: 8 }}>{INVITE.projectName}</Text>
+                  <Box gap="4">
+                    <Text variant="webMetadataPrimary" color="mutedForeground">
+                      {"You'll join as a "}
+                      <Text variant="webMetadataPrimary" color="foreground" fontWeight="700">Viewer (Pending Approval)</Text>
+                    </Text>
+                    <Text variant="webMetadataPrimary" color="mutedForeground">
+                      with 11 other members.
                     </Text>
                   </Box>
                 </Box>
