@@ -1,194 +1,173 @@
 import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
-import { Tooltip } from '@/components/Tooltip';
-import { Theme } from '@/constants/theme';
-import { useTheme } from '@shopify/restyle';
-import { Image } from 'expo-image';
+import { theme as TTTheme } from '@/constants/theme';
+import { Image as ExpoImage } from 'expo-image';
 import { router } from 'expo-router';
-import { Check, Clock, Hammer, MapPin } from 'lucide-react-native';
-import React, { useState } from 'react';
-import { Image as RNImage, Platform, Pressable, ScrollView } from 'react-native';
+import { Check, Clock } from 'lucide-react-native';
+import React from 'react';
+import { Image, Linking, Pressable, ScrollView, View } from 'react-native';
 
 const TEAM = {
-  name: 'Scott 1',
-  address: '11 N Raintree Hollow Court',
-  members: [
-    { type: 'initials' as const, initials: 'LS', color: '#2e7d7d', name: 'Laura Smith' },
-    { type: 'photo'    as const, src: require('@/assets/images/sample-two.jpg'), name: 'Rachel Monroe' },
-    { type: 'initials' as const, initials: 'SS', color: '#e65100', name: 'Sara Singh' },
-    { type: 'photo'    as const, src: require('@/assets/images/sample-four.jpg'), name: 'Amy Lee' },
-    { type: 'initials' as const, initials: 'AS', color: '#6a1b9a', name: 'Amy Scott' },
-  ],
-  extraMemberNames: ['Tom Lee', 'Nina Patel', 'Carlos Reyes', 'Fiona Webb', 'James Osei'],
-  extraMembers: 5,
+  name: 'Painting Team',
 };
 
-const PERMISSIONS: [string, string][] = [
-  ['View and manage tasks', 'Collaborate with team'],
-  ['Upload files & media', 'Track team progress'],
+const PERMISSIONS: string[] = [
+  'Manage project and tasks',
+  'Invite and remove members',
+  'Manage roles & permissions',
+  'Configure team settings',
 ];
 
 export default function JoinTeamNonUser() {
-  const theme = useTheme<Theme>();
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: theme.colors.grey02 }}
-      contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}
+      style={{ flex: 1, backgroundColor: TTTheme.colors.grey02 }}
+      contentContainerStyle={{ flexGrow: 1, alignItems: 'center', padding: 40, paddingTop: 48, paddingBottom: 48 }}
+      showsVerticalScrollIndicator={false}
     >
-      <Box width="100%" maxWidth={480}>
+      <Box width="100%" maxWidth={560}>
 
         {/* Logo */}
-        <Box marginBottom="lg" alignItems="center">
+        <Box marginBottom="xl" alignItems="center">
           <Image
             source={require('@/assets/images/tasktag-logo.png')}
-            style={{ height: 36, width: 120 }}
-            contentFit="contain"
+            style={{ height: 40, width: 134 }}
+            resizeMode="contain"
           />
         </Box>
 
-        {/* Card */}
-        <Box backgroundColor="card" borderRadius="xl" padding="24" marginBottom="lg">
+        {/* Main Card */}
+        <Box
+          backgroundColor="card"
+          borderRadius="xl"
+          padding="24"
+          marginBottom="xl"
+        >
 
-          {/* Header */}
-          <Text variant="webBody" color="mutedForeground" textAlign="center" marginBottom="20">
-            <Text variant="webBody" fontWeight="700" color="foreground">James Hammer</Text>
-            {" invited you to join this team"}
-          </Text>
-
-          {/* Team card */}
-          <Box backgroundColor="lightMint" borderRadius="xl" padding="md" marginBottom="20">
-            <Box
-              width={40}
-              height={40}
-              borderRadius="8"
-              alignItems="center"
-              justifyContent="center"
-              style={{ backgroundColor: '#7c3aed', marginBottom: 8 }}
-            >
-              <Hammer size={20} color="#fff" strokeWidth={2} />
-            </Box>
-            <Text variant="webLabelEmphasized" marginBottom="4">{TEAM.name}</Text>
-            <Box flexDirection="row" alignItems="center" gap="4" marginBottom="md">
-              <MapPin size={14} color={theme.colors.mutedForeground} />
-              <Text variant="webSecondaryBody" color="mutedForeground">{TEAM.address}</Text>
-            </Box>
-
-            <Text variant="labelMedium" color="mutedForeground" marginBottom="sm">Team Members</Text>
-
-            {/* Avatar stack */}
-            <Box flexDirection="row" alignItems="center">
-              {TEAM.members.map((member, index) => (
-                <Box
-                  key={index}
-                  position="relative"
-                  zIndex={hoveredIndex === index ? "50" : "10"}
-                  style={{ marginLeft: index === 0 ? 0 : -8 }}
-                  {...(Platform.OS === 'web' ? { onMouseEnter: () => setHoveredIndex(index), onMouseLeave: () => setHoveredIndex(null) } as any : {})}
-                >
-                  <Tooltip content={member.name} variant="bottom-center" size="sm" tooltipStyle="default">
-                    {member.type === 'photo' ? (
-                      <RNImage
-                        source={member.src}
-                        style={{ width: 34, height: 34, borderRadius: 17, borderWidth: 2, borderColor: theme.colors.lightMint }}
-                      />
-                    ) : (
-                      <Box
-                        width={34} height={34} borderRadius="full"
-                        alignItems="center" justifyContent="center"
-                        borderWidth={2} borderColor="lightMint"
-                        style={{ backgroundColor: member.color }}
-                      >
-                        <Text variant="webMetadataSecondary" fontWeight="700" color="white">{member.initials}</Text>
-                      </Box>
-                    )}
-                  </Tooltip>
-                </Box>
-              ))}
-
-              {/* +N badge */}
-              <Box
-                position="relative"
-                zIndex={hoveredIndex === TEAM.members.length ? "50" : "10"}
-                style={{ marginLeft: -8 }}
-                {...(Platform.OS === 'web' ? { onMouseEnter: () => setHoveredIndex(TEAM.members.length), onMouseLeave: () => setHoveredIndex(null) } as any : {})}
-              >
-                <Tooltip content={TEAM.extraMemberNames.join('\n')} variant="bottom-center" size="sm" tooltipStyle="default">
-                  <Box
-                    width={34} height={34} borderRadius="full" backgroundColor="white"
-                    alignItems="center" justifyContent="center"
-                    borderWidth={2} borderColor="lightMint"
-                  >
-                    <Text variant="webMetadataSecondary" fontWeight="600" color="textSecondary">+{TEAM.extraMembers}</Text>
-                  </Box>
-                </Tooltip>
-              </Box>
-            </Box>
+          {/* Greeting */}
+          <Box marginBottom="16">
+            <Text variant="webLargeLabel" style={{ color: TTTheme.colors.textSecondary, marginBottom: 8 }}>
+              Hi Oscar 👋,
+            </Text>
+            <Text variant="webLargeLabel" style={{ color: TTTheme.colors.textSecondary }}>
+              <Text variant="webLargeLabel" style={{ fontWeight: '600', color: TTTheme.colors.textSecondary }}>James Hammer</Text>
+              {" invited you to join a team"}
+            </Text>
           </Box>
 
-          {/* Permissions */}
-          <Box marginBottom="lg" backgroundColor="grey02" padding="md" borderRadius="xl">
-            <Text variant="labelMedium" marginBottom="sm">{"As a member, you'll be able to:"}</Text>
-            {PERMISSIONS.map(([left, right], i) => (
-              <Box key={i} flexDirection="row" marginBottom="8">
-                <Box flex={1} flexDirection="row" alignItems="center" gap="8">
-                  <Check size={14} color={theme.colors.primary} strokeWidth={2.5} />
-                  <Text variant="webMetadataPrimary" color="mutedForeground">{left}</Text>
-                </Box>
-                <Box flex={1} flexDirection="row" alignItems="center" gap="8">
-                  <Check size={14} color={theme.colors.primary} strokeWidth={2.5} />
-                  <Text variant="webMetadataPrimary" color="mutedForeground">{right}</Text>
-                </Box>
+          {/* Team Identity */}
+          <Box flexDirection="row" alignItems="center" gap="16" marginBottom="16">
+            <Box
+              borderRadius="8"
+              style={{ backgroundColor: TTTheme.colors.white }}
+            >
+              <ExpoImage
+                source={require('@/assets/images/sosa-logo.svg')}
+                style={{ width: 120, height: 72 }}
+                contentFit="contain"
+              />
+            </Box>
+            <Text variant="h1" color="textPrimary" style={{ flex: 1 }}>
+              {TEAM.name}
+            </Text>
+          </Box>
+
+          {/* Permissions Box */}
+          <Box backgroundColor="grey02" borderRadius="xl" padding="md" marginBottom="24">
+            <Text variant="webBody" style={{ color: TTTheme.colors.textSecondary, marginBottom: 12 }}>
+              <Text variant="webBody" style={{ fontWeight: '600', color: TTTheme.colors.secondaryGreen }}>As an admin</Text>
+              {", you'll be able to:"}
+            </Text>
+            {PERMISSIONS.map((perm, i) => (
+              <Box key={i} flexDirection="row" alignItems="center" gap="8" style={{ marginBottom: i < PERMISSIONS.length - 1 ? 12 : 0 }}>
+                <Check size={16} color={TTTheme.colors.secondaryGreen} strokeWidth={2.5} />
+                <Text variant="webBody" style={{ color: TTTheme.colors.textSecondary }}>{perm}</Text>
               </Box>
             ))}
           </Box>
 
-          {/* CTA */}
-          <Button
-            variant="fill"
-            color="primary"
-            size="lg"
-            style={{ width: '100%' }}
-            onPress={() => router.push('/prototype/join-team-non-user/join-tasktag-signup' as any)}
-          >
-            Accept & Join Team
-          </Button>
+          {/* CTA Button */}
+          <Box marginBottom="12">
+            <Button
+              variant="fill"
+              size="lg"
+              style={{ width: '100%', backgroundColor: TTTheme.colors.secondaryGreen, borderRadius: 8 }}
+              onPress={() => router.push('/prototype/join-team-non-user/join-tasktag-signup' as any)}
+            >
+              <Text style={{ fontSize: 18, fontWeight: '500', color: '#fff' }}>Accept & Join Team</Text>
+            </Button>
+          </Box>
 
           {/* Expiry */}
-          <Box flexDirection="row" alignItems="center" justifyContent="center" gap="4" marginTop="12">
-            <Clock size={13} color={theme.colors.grey05} />
-            <Text variant="caption" color="mutedForeground">Invitations expire after 7 days</Text>
+          <Box flexDirection="row" alignItems="center" justifyContent="center" gap="4">
+            <Clock size={14} color={TTTheme.colors.grey05} />
+            <Text variant="webBody" style={{ color: TTTheme.colors.grey05 }}>Expires in 7 days</Text>
           </Box>
 
         </Box>
 
-        {/* Download section */}
-        <Box alignItems="center">
-          <Text variant="h3" marginBottom="sm">Download the app</Text>
-          <Text variant="webSecondaryBody" color="mutedForeground" marginBottom="md" textAlign="center">
-            Get the most of Tasktag by installing our new mobile app.
+        {/* Contact */}
+        <Box alignItems="center" marginBottom="xl">
+          <Text variant="webBody" style={{ color: TTTheme.colors.textSecondary, textAlign: 'center', marginBottom: 4, lineHeight: 22 }}>
+            Have questions about this invite?
+          </Text>
+          <Text variant="webBody" style={{ color: TTTheme.colors.textSecondary, textAlign: 'center', lineHeight: 22 }}>
+            {"Contact James Hammer at "}
+            <Text
+              variant="webBody"
+              style={{ color: TTTheme.colors.blue, textDecorationLine: 'underline', lineHeight: 22 }}
+              onPress={() => Linking.openURL('mailto:jammeshammer@gmail.com')}
+            >
+              jammeshammer@gmail.com
+            </Text>
           </Text>
         </Box>
 
-        <Box flexDirection="row" justifyContent="center" gap="12" marginBottom="xl">
-          <Pressable style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}>
-            <Image
-              source={require('@/assets/images/app-store.svg')}
-              style={{ width: 140, height: 44 }}
-              contentFit="contain"
-            />
-          </Pressable>
-          <Pressable style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}>
-            <Image
-              source={require('@/assets/images/play-store.svg')}
-              style={{ width: 148, height: 44 }}
-              contentFit="contain"
-            />
-          </Pressable>
+        {/* Divider */}
+        <View style={{ height: 1, backgroundColor: TTTheme.colors.grey03, marginBottom: 32 }} />
+
+        {/* Download Section */}
+        <Box alignItems="center" marginBottom="xl">
+          <Text variant="h2" style={{ color: TTTheme.colors.textSecondary, marginBottom: 8, textAlign: 'center' }}>
+            Download The App
+          </Text>
+          <Text variant="webBody" style={{ color: TTTheme.colors.textSecondary, marginBottom: 20, textAlign: 'center' }}>
+            Get the most of Tasktag by installing our new mobile app.
+          </Text>
+          <Box flexDirection="row" gap="24" justifyContent="center">
+            <Pressable style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}>
+              <ExpoImage
+                source={require('@/assets/images/app-store.svg')}
+                style={{ width: 140, height: 44 }}
+                contentFit="contain"
+              />
+            </Pressable>
+            <Pressable style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}>
+              <ExpoImage
+                source={require('@/assets/images/play-store.svg')}
+                style={{ width: 148, height: 44 }}
+                contentFit="contain"
+              />
+            </Pressable>
+          </Box>
         </Box>
 
-        <Text variant="caption" textAlign="center">© 2026 Tasktag, Houston, Texas VIC 3000</Text>
+        {/* Footer */}
+        <Box alignItems="center" gap="24" paddingBottom="xl">
+          <Text variant="webBody" style={{ color: TTTheme.colors.grey05, textAlign: 'center' }}>
+            Have questions? Contact our support team
+          </Text>
+          <Box flexDirection="row" alignItems="center" gap="sm">
+            <Text variant="webBody" style={{ color: TTTheme.colors.grey05, textDecorationLine: 'underline' }}>Terms & conditions</Text>
+            <View style={{ width: 1, height: 16, backgroundColor: TTTheme.colors.grey03 }} />
+            <Text variant="webBody" style={{ color: TTTheme.colors.grey05, textDecorationLine: 'underline' }}>Privacy policy</Text>
+            <View style={{ width: 1, height: 16, backgroundColor: TTTheme.colors.grey03 }} />
+            <Text variant="webBody" style={{ color: TTTheme.colors.grey05, textDecorationLine: 'underline' }}>Contact us</Text>
+          </Box>
+          <Text variant="webBody" style={{ color: TTTheme.colors.grey05, textAlign: 'center' }}>
+            © 2026 Tasktag, Houston, Texas 77001
+          </Text>
+        </Box>
 
       </Box>
     </ScrollView>
