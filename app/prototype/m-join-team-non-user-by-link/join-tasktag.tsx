@@ -1,35 +1,18 @@
-import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
-import { BatteryFull, Link2, Lock, MoreHorizontal, Share, SignalHigh, WifiHigh } from 'lucide-react-native';
+import { BatteryFull, Link2, Lock, MoreHorizontal, SignalHigh, Users, WifiHigh } from 'lucide-react-native';
 import { router } from 'expo-router';
-import { Image as ExpoImage } from 'expo-image';
 import { useTheme } from '@shopify/restyle';
 import React from 'react';
-import { Pressable, ScrollView, View } from 'react-native';
+import { Image, Pressable, ScrollView, View } from 'react-native';
 
 const TEAM = {
   name: 'Painting Team',
-  id: '6771',
+  description: '12 members are already on this team.',
 };
-
-const STATS = [
-  { value: '12', label: 'Total Projects' },
-  { value: '60', label: 'Total Tasks' },
-];
-
-const COMPLETION = { done: 48, total: 60 };
-
-const MEMBERS = [
-  { initials: 'OH', name: 'Oscar H.',   email: 'oscaar@email.com',   role: 'Admin',  color: '#18a87d', isInvited: true },
-  { initials: 'JR', name: 'Jamie R.',  email: 'jamie.r@email.com',  role: 'Owner',  color: '#e65100' },
-  { initials: 'AL', name: 'Alex L.',   email: 'alex.l@email.com',   role: 'Member', color: '#388e3c' },
-  { initials: 'MK', name: 'Morgan K.', email: 'morgan.k@email.com', role: 'Member', color: '#7b1fa2' },
-];
 
 export default function JoinTasktag() {
   const theme = useTheme<Theme>();
-  const progress = COMPLETION.done / COMPLETION.total;
 
   return (
     <Box flex={1} backgroundColor="background" alignItems="center">
@@ -69,136 +52,71 @@ export default function JoinTasktag() {
           </Box>
         </Box>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 300 }}>
+        {/* TaskTag Logo + Sign Up */}
+        <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#fff' }}>
+          <Image
+            source={require('@/assets/images/tasktag-logo.png')}
+            style={{ width: 100, height: 30 }}
+            resizeMode="contain"
+          />
+          <Pressable>
+            <Text variant="webSecondaryBody" style={{ fontSize: 14, color: theme.colors.secondaryGreen, fontWeight: '600' }}>Sign Up</Text>
+          </Pressable>
+        </Box>
 
-          {/* Team Header */}
-          <Box paddingHorizontal="md" paddingVertical="md" backgroundColor="background">
-            <Box flexDirection="row" alignItems="center" justifyContent="space-between">
-              <Box>
-                <Text variant="webLargeLabel" color="textPrimary">{TEAM.name}</Text>
-                <Text variant="webMetadataPrimary" color="grey05" style={{ marginTop: 2 }}>
-                  Team ID · {TEAM.id}
-                </Text>
-              </Box>
-              <ExpoImage
-                source={require('@/assets/images/sosa-logo.svg')}
-                style={{ width: 96, height: 48 }}
-                contentFit="contain"
-              />
-            </Box>
-          </Box>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40, paddingHorizontal: 16, paddingTop: 24 }}>
 
-          <Box padding="md" gap="lg">
-
-            {/* Overview Section */}
-            <Box>
-
-              {/* Stat Cards */}
-              <Box flexDirection="row" gap="12" marginBottom="12">
-                {STATS.map((stat, i) => (
-                  <Box
-                    key={i} flex={1}
-                    backgroundColor={stat.label === 'Total Projects' ? 'lightMint' : 'lightSky'}
-                    borderRadius="xl" padding="md"
-                  >
-                    <Text variant="h1" color="textPrimary" marginBottom="xs">{stat.value}</Text>
-                    <Text variant="webBody" color="textSecondary">{stat.label}</Text>
-                  </Box>
-                ))}
-              </Box>
-
-              {/* Task Completion */}
-              <Box backgroundColor="card" borderRadius="xl" padding="md">
-                <Box flexDirection="row" justifyContent="space-between" alignItems="center" marginBottom="8">
-                  <Text variant="webBody" color="textPrimary">Task completion</Text>
-                  <Text variant="webMetadataPrimary">
-                    <Text color="secondaryGreen" fontWeight="600">{COMPLETION.done}</Text>
-                    <Text color="grey05"> / {COMPLETION.total}</Text>
-                  </Text>
-                </Box>
-                <Box height={6} backgroundColor="grey03" borderRadius="4">
-                  <Box
-                    height={6} backgroundColor="secondaryGreen" borderRadius="4"
-                    style={{ width: `${progress * 100}%` as any }}
-                  />
-                </Box>
-              </Box>
-            </Box>
-
-            {/* Members Section */}
-            <Box>
-              <Box flexDirection="row" alignItems="center" gap="8" marginBottom="8">
-                <Text variant="webLabelSmall" color="textSecondary" style={{ letterSpacing: 0.8, textTransform: 'uppercase' }}>Members</Text>
-                <Box width={20} height={20} borderRadius="full" backgroundColor="black" alignItems="center" justifyContent="center">
-                  <Text variant="webLabelSmall" color="white">{MEMBERS.length}</Text>
-                </Box>
-              </Box>
-              <Box backgroundColor="card" borderRadius="xl" style={{ overflow: 'hidden' }}>
-                {MEMBERS.map((member, i) => (
-                  <Box key={i}>
-                    <Box
-                      flexDirection="row" alignItems="center" gap="12"
-                      paddingHorizontal="md" paddingVertical="12"
-                    >
-                      {/* Avatar */}
-                      <Box
-                        width={36} height={36} borderRadius="full"
-                        alignItems="center" justifyContent="center"
-                        style={{ backgroundColor: member.color }}
-                      >
-                        <Text variant="webLabelSmall" color="white">{member.initials}</Text>
-                      </Box>
-
-                      {/* Info */}
-                      <Box flex={1}>
-                        <Text variant="webLabelEmphasized" color="textPrimary">{member.name}</Text>
-                        <Text variant="webMetadataPrimary" color="grey05" style={{ marginTop: 2 }}>{member.email}</Text>
-                      </Box>
-
-                      {/* Role */}
-                      <Text
-                        variant="webMetadataPrimary"
-                        color={member.isInvited ? 'secondaryGreen' : 'textSecondary'}
-                        style={{ fontWeight: member.isInvited ? '600' : 'normal' }}
-                      >
-                        {member.role}
-                      </Text>
-                    </Box>
-                    {i < MEMBERS.length - 1 && (
-                      <Box height={1} backgroundColor="border" marginHorizontal="md" />
-                    )}
-                  </Box>
-                ))}
-              </Box>
-            </Box>
-
-          </Box>
-        </ScrollView>
-
-        {/* Fixed Bottom Banner */}
-        <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, zIndex: 10, backgroundColor: '#000000', borderRadius: 12, padding: 20, alignItems: 'center' }}>
+          {/* Shared team link chip */}
           <Box
-            width={40} height={40} borderRadius="full"
-            alignItems="center" justifyContent="center"
-            style={{ backgroundColor: 'rgba(0,217,165,0.15)', marginBottom: 12 }}
+            flexDirection="row" alignItems="center"
+            style={{ alignSelf: 'flex-start', backgroundColor: theme.colors.lightMint, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6, marginBottom: 8, gap: 6 }}
           >
-            <Share size={20} color="#00D9A5" strokeWidth={1.5} />
+            <Link2 size={14} color={theme.colors.textSecondary} strokeWidth={2} />
+            <Text variant="webMetadataPrimary" color="textSecondary">Shared team link</Text>
           </Box>
-          <View style={{ marginBottom: 4 }}>
-            <Text variant="webLabelEmphasized" color="white" textAlign="center">Someone shared this team with you</Text>
-          </View>
-          <Text variant="webSecondaryBody" style={{ color: '#E0E0E0', marginBottom: 16, lineHeight: 20, textAlign: 'center' }}>
-            The team owner is waiting for your request. Join in to collaborate on projects.
+
+          {/* Heading */}
+          <Text variant="h1" color="foreground" style={{ marginBottom: 8, fontSize: 28 }}>
+            You're invited to join
           </Text>
-          <Button
-            variant="fill"
-            size="lg"
-            style={{ width: '100%', backgroundColor: theme.colors.secondaryGreen, borderRadius: 8 }}
+
+          {/* Team Card — light gray surface, generous logo breathing room */}
+          <View style={{ backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 24, paddingVertical: 44, marginBottom: 16, alignItems: 'center', justifyContent: 'center', gap: 8, borderWidth: 1, borderColor: 'rgba(0,0,0,0.06)' }}>
+            <Image
+              source={require('@/assets/images/sosa-logo.svg')}
+              style={{ width: 160, height: 80, borderRadius: 8 }}
+              resizeMode="contain"
+            />
+            <Box alignItems="center" style={{ gap: 8 }}>
+              <Text variant="h1" color="foreground" style={{ textAlign: 'center', fontSize: 32 }}>{TEAM.name}</Text>
+              <Box flexDirection="row" alignItems="center" style={{ gap: 6 }}>
+                <Users size={14} color={theme.colors.textSecondary} strokeWidth={2} />
+                <Text variant="webSecondaryBody" color="textSecondary">{TEAM.description}</Text>
+              </Box>
+            </Box>
+          </View>
+
+          {/* Request to Join Button */}
+          <Pressable
+            style={{ width: '100%', backgroundColor: theme.colors.secondaryGreen, borderRadius: 12, height: 52, alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}
             onPress={() => router.push('/prototype/m-join-team-non-user-by-link/join-tasktag-signup')}
           >
             <Text variant="webLabelEmphasized" color="white">Request to Join</Text>
-          </Button>
-        </View>
+          </Pressable>
+
+          <Text variant="webMetadataPrimary" color="textSecondary" style={{ textAlign: 'center', marginBottom: 20 }}>
+            A team admin will review your request.
+          </Text>
+
+          {/* Already on TaskTag */}
+          <Box flexDirection="row" justifyContent="center" style={{ gap: 4, marginTop: 24 }}>
+            <Text variant="webSecondaryBody" color="textSecondary">Already on TaskTag?</Text>
+            <Pressable>
+              <Text variant="webSecondaryBody" style={{ color: theme.colors.secondaryGreen, fontWeight: '600' }}>Log in</Text>
+            </Pressable>
+          </Box>
+
+        </ScrollView>
 
       </Box>
     </Box>
