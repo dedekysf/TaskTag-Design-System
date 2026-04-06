@@ -269,7 +269,7 @@ export default function JoinTasktag() {
 
                 <Box flex={1} backgroundColor="grey02" borderRadius="xl" padding="md" justifyContent="center">
                   <Box flexDirection="row" justifyContent="space-between" alignItems="center" marginBottom="8">
-                    <Text variant="webBody" color="textPrimary">Task completion</Text>
+                    <Text variant="webLabelEmphasized" color="textPrimary">Task Completion</Text>
                     <Text variant="webMetadataPrimary">
                       <Text color="secondaryGreen" fontWeight="600">{COMPLETION.done}</Text>
                       <Text color="grey05"> / {COMPLETION.total}</Text>
