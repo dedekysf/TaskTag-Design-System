@@ -355,14 +355,14 @@ export default function TeamDashboardBase({
 
               {sidebarCollapsed ? (
                 <Box alignItems="center" justifyContent="center" style={{ height: 54 }}>
-                  <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor={viewVariant === 'ask-to-join' ? 'pastelBlue' : 'pastelOrange'}>
-                    <Text variant="labelMedium" style={{ color: '#FFFFFF', fontWeight: '700' }}>{viewVariant === 'ask-to-join' ? 'SN' : 'OH'}</Text>
+                  <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelOrange">
+                    <Text variant="labelMedium" style={{ color: '#FFFFFF', fontWeight: '700' }}>OH</Text>
                   </Box>
                 </Box>
               ) : (
                 <Box flexDirection="row" alignItems="center" gap="8" style={{ height: 54, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 15, backgroundColor: theme.colors.lightMint }}>
-                  <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor={viewVariant === 'ask-to-join' ? 'pastelBlue' : 'pastelOrange'}>
-                    <Text variant="labelMedium" style={{ color: '#FFFFFF', fontWeight: '700' }}>{viewVariant === 'ask-to-join' ? 'SN' : 'OH'}</Text>
+                  <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelOrange">
+                    <Text variant="labelMedium" style={{ color: '#FFFFFF', fontWeight: '700' }}>OH</Text>
                   </Box>
                   <Text variant="labelMedium" style={{ color: theme.colors.secondaryGreen }}>My Account</Text>
                 </Box>
@@ -410,7 +410,7 @@ export default function TeamDashboardBase({
           <Box flexDirection="row" alignItems="stretch">
             {[
               { key: 'details', label: 'Details', Icon: CreditCard, count: undefined as number | undefined },
-              { key: 'members', label: 'Members', Icon: Users, count: TEAM_MEMBERS.length as number | undefined },
+              { key: 'members', label: 'Members', Icon: Users, count: (viewVariant === 'ask-to-join' ? TEAM_MEMBERS.filter(m => m.name !== 'Oscar H.').length : TEAM_MEMBERS.length) as number | undefined },
               { key: 'invoice', label: 'Invoice', Icon: FileText, count: 1 as number | undefined },
             ].map(({ key, label, Icon, count }) => {
               const isActive = activeTab === key;
@@ -477,7 +477,7 @@ export default function TeamDashboardBase({
                   <Box flexDirection="row" alignItems="center" gap="8">
                     <Text variant="webLabelEmphasized" color="foreground">Active</Text>
                     <Box width={20} height={20} alignItems="center" justifyContent="center" style={{ borderWidth: 1, borderColor: theme.colors.border, borderRadius: 10 }}>
-                      <Text style={{ fontSize: 11, color: theme.colors.grey05, fontWeight: '500' }}>{TEAM_MEMBERS.length}</Text>
+                      <Text style={{ fontSize: 11, color: theme.colors.grey05, fontWeight: '500' }}>{TEAM_MEMBERS.filter(m => m.name !== 'Oscar H.').length}</Text>
                     </Box>
                   </Box>
                   <ChevronUp size={20} color={theme.colors.grey04} />
@@ -503,10 +503,9 @@ export default function TeamDashboardBase({
                     <Box style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 10 }}>
                       <Text variant="webMetadataPrimary" color="grey04">Role</Text>
                     </Box>
-                    <Box style={{ width: 48, paddingHorizontal: 16, paddingVertical: 10 }} />
                   </Box>
                   {/* Data rows */}
-                  {TEAM_MEMBERS.map((member, index) => (
+                  {TEAM_MEMBERS.filter(m => m.name !== 'Oscar H.').map((member, index) => (
                     <Box key={index} flexDirection="row" alignItems="center" borderTopWidth={1} borderColor="border" style={{ height: 48 }}>
                       <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 8 }}>
                         <Box flexDirection="row" alignItems="center" gap="8">
@@ -542,11 +541,6 @@ export default function TeamDashboardBase({
                       </Box>
                       <Box style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>
                         <Text variant="labelMedium" color="foreground">{member.role}</Text>
-                      </Box>
-                      <Box style={{ width: 48, paddingHorizontal: 8, paddingVertical: 8 }} alignItems="center" justifyContent="center">
-                        <Pressable hitSlop={8}>
-                          <MessageSquare size={16} color={theme.colors.grey06} />
-                        </Pressable>
                       </Box>
                     </Box>
                   ))}
@@ -598,7 +592,7 @@ export default function TeamDashboardBase({
                   <Box flexDirection="row" alignItems="center" gap="8">
                     <Text variant="webLabelEmphasized" color="foreground">Active</Text>
                     <Box width={20} height={20} alignItems="center" justifyContent="center" style={{ borderWidth: 1, borderColor: theme.colors.border, borderRadius: 10 }}>
-                      <Text style={{ fontSize: 11, color: theme.colors.grey05, fontWeight: '500' }}>3</Text>
+                      <Text style={{ fontSize: 11, color: theme.colors.grey05, fontWeight: '500' }}>{TEAM_MEMBERS.length}</Text>
                     </Box>
                   </Box>
                   <ChevronUp size={20} color={theme.colors.grey04} />
@@ -684,13 +678,13 @@ export default function TeamDashboardBase({
       <Box flex={1} backgroundColor="grey01" borderLeftWidth={1} borderColor="border" style={{ height: '100%' as any, maxWidth: 550 }}>
         <Box flexDirection="row" alignItems="center" justifyContent="space-between" backgroundColor="card" borderBottomWidth={1} borderColor="border" style={{ height: 72, paddingHorizontal: 20 }}>
           <Box flexDirection="row" alignItems="center" gap="12">
-            <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor={viewVariant === 'ask-to-join' ? 'pastelBlue' : 'pastelMagenta'}>
+            <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor={viewVariant === 'ask-to-join' ? 'pastelOrange' : 'pastelMagenta'}>
               <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 14 }}>
-                {viewVariant === 'ask-to-join' ? 'SN' : 'LS'}
+                {viewVariant === 'ask-to-join' ? 'OH' : 'LS'}
               </Text>
             </Box>
             <Text variant="webLabelEmphasized" color="foreground">
-              {viewVariant === 'ask-to-join' ? 'Savannah Nguyen' : 'Linda Smith'}
+              {viewVariant === 'ask-to-join' ? 'Oscar H.' : 'Linda Smith'}
             </Text>
           </Box>
           <Box flexDirection="row" alignItems="center">
@@ -709,9 +703,9 @@ export default function TeamDashboardBase({
           <Box style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
             <Box flexDirection="row" gap="12" alignItems="flex-start">
               {(viewVariant === 'pending' || viewVariant === 'ask-to-join') ? (
-                <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor={viewVariant === 'ask-to-join' ? 'pastelBlue' : 'pastelPurple'} style={{ marginTop: 2 }}>
+                <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor={viewVariant === 'ask-to-join' ? 'pastelOrange' : 'pastelPurple'} style={{ marginTop: 2 }}>
                   <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 14 }}>
-                    {viewVariant === 'ask-to-join' ? 'SN' : 'JH'}
+                    {viewVariant === 'ask-to-join' ? 'OH' : 'JH'}
                   </Text>
                 </Box>
               ) : (
@@ -722,7 +716,7 @@ export default function TeamDashboardBase({
               <Box flex={1}>
                 <Box flexDirection="row" alignItems="center" gap="8" style={{ marginBottom: 8 }}>
                   <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>
-                    {viewVariant === 'pending' ? 'James Harrington' : viewVariant === 'ask-to-join' ? 'Savannah Nguyen' : 'Linda Smith'}
+                    {viewVariant === 'pending' ? 'James Harrington' : viewVariant === 'ask-to-join' ? 'Oscar H.' : 'Linda Smith'}
                   </Text>
                   <Text style={{ fontSize: 11, color: theme.colors.grey04 }}>12:25 PM</Text>
                 </Box>
@@ -817,9 +811,9 @@ export default function TeamDashboardBase({
           <ChevronsLeft size={20} color={theme.colors.grey04} />
         </Pressable>
         <Box alignItems="center" justifyContent="center" style={{ width: '100%', paddingVertical: 10, backgroundColor: theme.colors.lightMint, marginBottom: 8 }}>
-          <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor={viewVariant === 'ask-to-join' ? 'pastelBlue' : 'pastelMagenta'}>
+          <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor={viewVariant === 'ask-to-join' ? 'pastelOrange' : 'pastelMagenta'}>
             <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 14 }}>
-              {viewVariant === 'ask-to-join' ? 'SN' : 'LS'}
+              {viewVariant === 'ask-to-join' ? 'OH' : 'LS'}
             </Text>
           </Box>
         </Box>

@@ -77,7 +77,7 @@ export default function JoinTeamNonUser() {
             <Text variant="webBody" style={{ color: TTTheme.colors.textSecondary }}>
               {"You'll join as an "}
               <Text variant="webBody" style={{ fontWeight: '600', color: TTTheme.colors.textSecondary }}>Admin</Text>
-              {" with 11 other members."}
+              {" with 3 other members."}
             </Text>
           </Box>
 

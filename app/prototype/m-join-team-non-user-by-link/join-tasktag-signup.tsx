@@ -225,7 +225,7 @@ export default function JoinTasktagSignup() {
           {step === 'select' && (
             <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 24, flexGrow: 1, justifyContent: 'center' }}>
               <Box width="100%">
-                <Text variant="h2" textAlign="center" marginBottom="4">Create an account</Text>
+                <Text variant="h2" textAlign="center" marginBottom="4">Create an Account</Text>
                 <Box flexDirection="row" justifyContent="center" flexWrap="wrap" marginBottom="16">
                   <Text variant="webMetadataPrimary" color="mutedForeground">Someone shared this project with you</Text>
                 </Box>
@@ -242,7 +242,7 @@ export default function JoinTasktagSignup() {
                       <Text variant="webMetadataPrimary" color="foreground" fontWeight="700">Viewer (Pending Approval)</Text>
                     </Text>
                     <Text variant="webMetadataPrimary" color="mutedForeground">
-                      with 11 other members.
+                      with 3 other members.
                     </Text>
                   </Box>
                 </Box>

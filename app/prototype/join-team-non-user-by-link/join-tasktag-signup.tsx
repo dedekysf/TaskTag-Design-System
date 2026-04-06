@@ -4,15 +4,14 @@ import { TextInput } from '@/components/TextInput';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import { router } from 'expo-router';
-import { AlertTriangle, Check, Eye, EyeOff, MapPin, X } from 'lucide-react-native';
+import { AlertTriangle, Check, Eye, EyeOff, X } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { Image, Platform, Pressable, TextInput as RNTextInput, ScrollView } from 'react-native';
 
 // Simulated invite token data
 const INVITE = {
   inviterName: 'James Hammer',
-  teamName: 'Scott 1',
-  address: '11 N Raintree Hollow Court',
+  teamName: 'Painting Team',
   role: 'Editor',
   email: 'newuser@example.com',
 };
@@ -128,11 +127,11 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
     <>
       {/* Heading */}
       <Text variant="h2" textAlign="center" marginBottom="4">
-        Create an account
+        Create an Account
       </Text>
       <Box flexDirection="row" justifyContent="center" flexWrap="wrap" marginBottom="16">
         <Text variant="webMetadataPrimary" color="mutedForeground">
-          {"You've been shared a team on TaskTag"}
+          {"Someone shared this project with you"}
         </Text>
       </Box>
 
@@ -144,25 +143,15 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
         borderRadius="xl"
         marginBottom="lg"
         width="100%"
-        position="relative"
-        zIndex="10"
       >
-        <Text variant="webLabelEmphasized" style={{ marginBottom: 4 }}>
+        <Text variant="webLabelEmphasized" color="foreground" style={{ marginBottom: 8 }}>
           {INVITE.teamName}
         </Text>
-        <Box flexDirection="row" alignItems="center" gap="4" marginBottom="16">
-          <MapPin size={14} color={theme.colors.textSecondary} />
-          <Text variant="webSecondaryBody" color="mutedForeground">
-            {INVITE.address}
-          </Text>
-        </Box>
-
-        <Box flexDirection="row" alignItems="center" gap="4">
-          <Text variant="webSecondaryBody" color="mutedForeground">Your Role : </Text>
-          <Text variant="webSecondaryBody" color="foreground" fontWeight="700">
-            Viewer <Text variant="webMetadataPrimary" fontWeight="400">(Pending Approval)</Text>
-          </Text>
-        </Box>
+        <Text variant="webMetadataPrimary" color="mutedForeground">
+          {"You'll join as a "}
+          <Text variant="webMetadataPrimary" color="foreground" fontWeight="700">Viewer (Pending Approval)</Text>
+          {" with 3 other members."}
+        </Text>
       </Box>
 
       {/* Social sign-in */}
