@@ -370,8 +370,8 @@ export default function JoinTasktag() {
                     <Box alignItems="center" style={{ gap: 16 }}>
                       <UserPlus size={40} color={theme.colors.textSecondary} strokeWidth={1.5} />
                       <Text variant="webHeading22" color="foreground" textAlign="center" style={{ fontWeight: '400' }}>
-                        {"You've been invited to this project by "}
                         <Text variant="webHeading22" fontWeight="700">James Hammer</Text>
+                        {" invited you"}
                       </Text>
                     </Box>
                     <Button

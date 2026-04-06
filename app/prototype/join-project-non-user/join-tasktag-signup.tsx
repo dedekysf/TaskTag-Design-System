@@ -118,11 +118,11 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
           Create an account
         </Text>
         <Box flexDirection="row" justifyContent="center" flexWrap="wrap" marginBottom="16">
-          <Text variant="webMetadataPrimary" color="mutedForeground">
-            {"You've been invited to this project by "}
-          </Text>
           <Text variant="webMetadataPrimary" color="foreground" fontWeight="700">
             {INVITE.inviterName}
+          </Text>
+          <Text variant="webMetadataPrimary" color="mutedForeground">
+            {" invited you"}
           </Text>
         </Box>
 

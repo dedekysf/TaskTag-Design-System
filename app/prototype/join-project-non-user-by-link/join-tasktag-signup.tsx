@@ -132,7 +132,7 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
       </Text>
       <Box flexDirection="row" justifyContent="center" flexWrap="wrap" marginBottom="16">
         <Text variant="webMetadataPrimary" color="mutedForeground">
-          {"You've been shared a project on TaskTag"}
+          {"Someone shared this project with you"}
         </Text>
       </Box>
 

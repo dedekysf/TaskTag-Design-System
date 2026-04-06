@@ -19,12 +19,6 @@ const PERMISSIONS: string[] = [
   'Track team progress',
 ];
 
-const STEPS = [
-  'Check your project details',
-  'Check the task list',
-  'Say hello to your teammates!',
-];
-
 export default function EmailApprovalMockup() {
   return (
     <ScrollView
@@ -48,36 +42,41 @@ export default function EmailApprovalMockup() {
           backgroundColor="card"
           borderRadius="xl"
           padding="16"
+          paddingTop="24"
           marginBottom="lg"
         >
 
           {/* Welcome Header */}
-          <Box marginBottom="24">
-            <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.textSecondary, marginBottom: 8 }}>
-              Welcome to the Project, Oscar! 🎉
+          <Box marginBottom="24" alignItems="center">
+            <View style={{ width: 72, height: 72, borderRadius: 36, backgroundColor: TTTheme.colors.lightMint, alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
+              <Check size={40} color={TTTheme.colors.secondaryGreen} strokeWidth={2.5} />
+            </View>
+            <Text style={{ fontSize: 11, fontWeight: '700', color: TTTheme.colors.secondaryGreen, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 8 }}>
+              Request Approved
             </Text>
-            <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.textSecondary }}>
-              {"Added by "}
-              <Text variant="webSecondaryBody" style={{ fontWeight: '600', color: TTTheme.colors.textSecondary }}>James Hammer</Text>
-              {" (Project Admin)"}
+            <Text variant="h2" style={{ marginBottom: 2, textAlign: 'center' }}>
+              You're in, Oscar.
             </Text>
-          </Box>
-
-          {/* Project Identity */}
-          <Box marginBottom="24">
-            <Text variant="webLabelEmphasized" color="textPrimary" style={{ marginBottom: 4 }}>
-              {PROJECT.name}
+            <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.textSecondary, textAlign: 'center' }}>
+              Your project request has been approved.
             </Text>
-            <Box flexDirection="row" alignItems="center" gap="4">
-              <MapPin size={13} color={TTTheme.colors.grey05} />
-              <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.grey05 }}>{PROJECT.address}</Text>
-            </Box>
           </Box>
 
           {/* Permissions Box */}
           <Box backgroundColor="grey02" borderRadius="xl" padding="md" marginBottom="24">
+            {/* Project Identity */}
+            <Box marginBottom="16">
+              <Text variant="webLabelEmphasized" color="textPrimary" style={{ marginBottom: 4 }}>
+                {PROJECT.name}
+              </Text>
+              <Box flexDirection="row" alignItems="center" gap="4">
+                <MapPin size={13} color={TTTheme.colors.grey05} />
+                <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.grey05 }}>{PROJECT.address}</Text>
+              </Box>
+            </Box>
+            <Box height={1} backgroundColor="border" marginBottom="16" />
             <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.textSecondary, marginBottom: 12 }}>
-              <Text variant="webSecondaryBody" style={{ fontWeight: '600', color: TTTheme.colors.secondaryGreen }}>As a member</Text>
+              <Text variant="webSecondaryBody" style={{ fontWeight: '600', color: TTTheme.colors.foreground }}>As a member</Text>
               {", you'll be able to:"}
             </Text>
             {PERMISSIONS.map((perm, i) => (
@@ -88,37 +87,22 @@ export default function EmailApprovalMockup() {
             ))}
           </Box>
 
-          {/* Get Started Steps */}
-          <Box paddingHorizontal="sm" marginBottom="24">
-            <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.textSecondary, marginBottom: 16, fontWeight: '600' }}>
-              🚀 Get started in 3 easy steps:
-            </Text>
-            {STEPS.map((step, i) => (
-              <Box key={i} flexDirection="row" alignItems="center" gap="8" style={{ marginBottom: i < STEPS.length - 1 ? 16 : 0 }}>
-                <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: TTTheme.colors.grey06, alignItems: 'center', justifyContent: 'center' }}>
-                  <Text style={{ color: '#fff', fontSize: 14, lineHeight: 16, textAlign: 'center' }}>{i + 1}</Text>
-                </View>
-                <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.textSecondary }}>{step}</Text>
-              </Box>
-            ))}
-          </Box>
-
-          {/* CTA Button */}
-          <Box paddingTop="12">
+{/* CTA Button */}
+          <Box paddingTop="0">
             <Button
               variant="fill"
               size="lg"
               style={{ width: '100%', backgroundColor: TTTheme.colors.secondaryGreen, borderRadius: 8 }}
               onPress={() => router.push('/prototype/m-join-project-non-user-by-link/project-overview-app')}
             >
-              <Text style={{ fontSize: 16, fontWeight: '500', color: '#fff' }}>View Project</Text>
+              <Text variant="webButton" color="white">View Project</Text>
             </Button>
           </Box>
 
         </Box>
 
         {/* Download Section */}
-        <Box alignItems="center" marginBottom="lg">
+        <Box alignItems="center" marginBottom="lg" marginTop="lg">
           <Text variant="webLargeLabel" style={{ color: TTTheme.colors.textSecondary, marginBottom: 8, textAlign: 'center' }}>
             Download The App
           </Text>
@@ -149,11 +133,11 @@ export default function EmailApprovalMockup() {
             Have questions? Contact our support team
           </Text>
           <Box flexDirection="row" alignItems="center" gap="sm">
-            <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.grey05, textDecorationLine: 'underline' }}>Terms & conditions</Text>
-            <View style={{ width: 1, height: 16, backgroundColor: TTTheme.colors.grey03 }} />
-            <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.grey05, textDecorationLine: 'underline' }}>Privacy policy</Text>
-            <View style={{ width: 1, height: 16, backgroundColor: TTTheme.colors.grey03 }} />
-            <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.grey05, textDecorationLine: 'underline' }}>Contact us</Text>
+            <Text variant="webMetadataPrimary" style={{ color: TTTheme.colors.grey05, textDecorationLine: 'underline' }}>Terms & conditions</Text>
+            <View style={{ width: 1, height: 12, backgroundColor: TTTheme.colors.grey03 }} />
+            <Text variant="webMetadataPrimary" style={{ color: TTTheme.colors.grey05, textDecorationLine: 'underline' }}>Privacy policy</Text>
+            <View style={{ width: 1, height: 12, backgroundColor: TTTheme.colors.grey03 }} />
+            <Text variant="webMetadataPrimary" style={{ color: TTTheme.colors.grey05, textDecorationLine: 'underline' }}>Contact us</Text>
           </Box>
           <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.grey05, textAlign: 'center' }}>
             © 2026 Tasktag, Houston, Texas 77001
