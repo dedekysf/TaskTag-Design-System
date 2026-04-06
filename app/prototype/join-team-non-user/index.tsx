@@ -51,16 +51,11 @@ export default function JoinTeamNonUser() {
 
           {/* Team Identity */}
           <Box backgroundColor="grey02" borderRadius="xl" padding="md" paddingVertical="24" style={{ marginBottom: 24, borderWidth: 1, borderColor: TTTheme.colors.grey03 }} alignItems="center">
-            <Box
-              borderRadius="8"
-              style={{ backgroundColor: TTTheme.colors.white, paddingHorizontal: 8, paddingVertical: 4, marginBottom: 12 }}
-            >
               <ExpoImage
                 source={require('@/assets/images/sosa-logo.svg')}
-                style={{ width: 164, height: 72, maxWidth: 120 }}
+                style={{ width: 164, height: 48, maxWidth: 120, marginBottom: 8 }}
                 contentFit="contain"
               />
-            </Box>
             <Text variant="h1" color="textPrimary" style={{ marginBottom: 4, textAlign: 'center' }}>
               {TEAM.name}
             </Text>
@@ -85,8 +80,8 @@ export default function JoinTeamNonUser() {
 
           {/* Expiry */}
           <Box flexDirection="row" alignItems="center" justifyContent="center" gap="4">
-            <Clock size={14} color={TTTheme.colors.textSecondary} />
-            <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.textSecondary }}>This invite expires in 7 days</Text>
+            <Clock size={14} color={TTTheme.colors.foreground} />
+            <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.foreground }}>This invite expires in 7 days</Text>
           </Box>
 
         </Box>
