@@ -15,7 +15,7 @@ export default function JoinTeamNonUser() {
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: TTTheme.colors.grey02 }}
-      contentContainerStyle={{ flexGrow: 1, alignItems: 'center', padding: 40, paddingTop: 48, paddingBottom: 48 }}
+      contentContainerStyle={{ flexGrow: 1, alignItems: 'center', padding: 40, paddingTop: 64, paddingBottom: 48 }}
       showsVerticalScrollIndicator={false}
     >
       <Box width="100%" maxWidth={560}>
@@ -50,14 +50,14 @@ export default function JoinTeamNonUser() {
           </Box>
 
           {/* Team Identity */}
-          <Box backgroundColor="grey02" borderRadius="xl" padding="md" paddingVertical="24" style={{ marginBottom: 24 }} alignItems="center">
+          <Box backgroundColor="grey02" borderRadius="xl" padding="md" paddingVertical="24" style={{ marginBottom: 24, borderWidth: 1, borderColor: TTTheme.colors.grey03 }} alignItems="center">
             <Box
               borderRadius="8"
               style={{ backgroundColor: TTTheme.colors.white, paddingHorizontal: 8, paddingVertical: 4, marginBottom: 12 }}
             >
               <ExpoImage
                 source={require('@/assets/images/sosa-logo.svg')}
-                style={{ width: 164, height: 72 }}
+                style={{ width: 164, height: 72, maxWidth: 120 }}
                 contentFit="contain"
               />
             </Box>
@@ -85,8 +85,8 @@ export default function JoinTeamNonUser() {
 
           {/* Expiry */}
           <Box flexDirection="row" alignItems="center" justifyContent="center" gap="4">
-            <Clock size={14} color={TTTheme.colors.grey05} />
-            <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.grey05 }}>This invite expires in 7 days</Text>
+            <Clock size={14} color={TTTheme.colors.textSecondary} />
+            <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.textSecondary }}>This invite expires in 7 days</Text>
           </Box>
 
         </Box>
