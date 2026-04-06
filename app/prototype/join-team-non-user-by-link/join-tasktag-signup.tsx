@@ -144,12 +144,12 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
         marginBottom="lg"
         width="100%"
       >
-        <Text variant="webLabelEmphasized" color="foreground" style={{ marginBottom: 8 }}>
+        <Text variant="webLabelEmphasized" color="foreground" style={{ marginBottom: 8, fontSize: 18 }}>
           {INVITE.teamName}
         </Text>
-        <Text variant="webMetadataPrimary" color="mutedForeground">
+        <Text variant="webSecondaryBody" color="mutedForeground">
           {"You'll join as a "}
-          <Text variant="webMetadataPrimary" color="foreground" fontWeight="700">Viewer (Pending Approval)</Text>
+          <Text variant="webSecondaryBody" color="foreground" fontWeight="700">Viewer (Pending Approval)</Text>
           {" with 3 other members."}
         </Text>
       </Box>

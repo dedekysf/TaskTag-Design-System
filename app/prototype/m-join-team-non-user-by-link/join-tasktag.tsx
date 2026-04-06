@@ -8,7 +8,7 @@ import { Image, Pressable, ScrollView, View } from 'react-native';
 
 const TEAM = {
   name: 'Painting Team',
-  description: '12 members are already on this team.',
+  description: '3 members are already on this team.',
 };
 
 export default function JoinTasktag() {
