@@ -136,11 +136,11 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
           position="relative"
           zIndex="10"
         >
-          <Text variant="webLabelEmphasized" color="foreground" style={{ marginBottom: 8 }}>
+          <Text variant="webLabelEmphasized" color="foreground" style={{ marginBottom: 8, fontSize: 18 }}>
             {INVITE.projectName}
           </Text>
           <Box flexDirection="row" alignItems="center" flexWrap="wrap" gap="4">
-            <Text variant="webMetadataPrimary" color="mutedForeground">{"You'll join as an "}</Text>
+            <Text variant="webSecondaryBody" color="mutedForeground">{"You'll join as an "}</Text>
             <Tooltip
               variant="bottom-left"
               content={
@@ -154,10 +154,10 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
               }
             >
               <Box borderBottomWidth={1} borderColor="foreground" style={{ borderStyle: 'dotted' }}>
-                <Text variant="webMetadataPrimary" color="foreground" fontWeight="700">Admin</Text>
+                <Text variant="webSecondaryBody" color="foreground" fontWeight="700">Admin</Text>
               </Box>
             </Tooltip>
-            <Text variant="webMetadataPrimary" color="mutedForeground">{" with 3 other members."}</Text>
+            <Text variant="webSecondaryBody" color="mutedForeground">{" with 3 other members."}</Text>
           </Box>
         </Box>
 

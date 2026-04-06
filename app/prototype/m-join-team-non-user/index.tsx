@@ -61,7 +61,7 @@ export default function MJoinTeamNonUser() {
                 contentFit="contain"
               />
             </Box>
-            <Text variant="h2" color="textPrimary" style={{ marginBottom: 8, textAlign: 'center' }}>
+            <Text variant="h2" color="textPrimary" style={{ marginBottom: 4, textAlign: 'center' }}>
               {TEAM.name}
             </Text>
             <Text variant="webBody" style={{ color: TTTheme.colors.textSecondary, textAlign: 'center' }}>
