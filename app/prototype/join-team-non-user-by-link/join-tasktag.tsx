@@ -5,24 +5,18 @@ import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import {
   Activity,
-  ChevronLeft,
   ChevronsLeft,
   ChevronsRight,
-  CreditCard,
-  File,
   Folder,
   Hash,
   HelpCircle,
-  Link,
-  Plus,
-  Search,
   Share,
   User,
-  UserPlus,
   Users,
 } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { Image, Modal, Pressable, ScrollView } from 'react-native';
+import { Image, Modal, Pressable, ScrollView, View } from 'react-native';
+import { Image as ExpoImage } from 'expo-image';
 import JoinTasktagSignup from './join-tasktag-signup';
 
 
@@ -34,10 +28,23 @@ const PROJECT = {
   memberCount: 7,
 };
 
-const TABS = [
-  { key: 'details', label: 'Details', Icon: CreditCard },
-  { key: 'members', label: 'Members', Icon: Users },
-  { key: 'invoice', label: 'Invoice', Icon: File },
+const TEAM = {
+  name: 'Painting Team',
+  id: '6771',
+};
+
+const STATS = [
+  { value: '12', label: 'Total Projects' },
+  { value: '60', label: 'Total Tasks' },
+];
+
+const COMPLETION = { done: 48, total: 60 };
+
+const MEMBERS = [
+  { initials: 'OH', name: 'Oscar H.',   email: 'oscaar@email.com',   role: 'Admin',  color: '#18a87d', isInvited: true },
+  { initials: 'JR', name: 'Jamie R.',  email: 'jamie.r@email.com',  role: 'Owner',  color: '#e65100' },
+  { initials: 'AL', name: 'Alex L.',   email: 'alex.l@email.com',   role: 'Member', color: '#388e3c' },
+  { initials: 'MK', name: 'Morgan K.', email: 'morgan.k@email.com', role: 'Member', color: '#7b1fa2' },
 ];
 
 function SkillsTooltip({ skills }: { skills: string[] }) {
@@ -51,7 +58,7 @@ function SkillsTooltip({ skills }: { skills: string[] }) {
       onHoverOut={() => setVisible(false)}
       style={{ position: 'relative', zIndex: 10000 } as any}
     >
-      <Text variant="webBody" color="textSecondary">
+      <Text variant="webLabelEmphasized" color="textSecondary">
         +{overflow} more
       </Text>
       {visible && (
@@ -84,9 +91,9 @@ function SkillsTooltip({ skills }: { skills: string[] }) {
 
 export default function JoinTasktag() {
   const theme = useTheme<Theme>();
-  const [activeTab, setActiveTab] = useState('details');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showSignupModal, setShowSignupModal] = useState(false);
+  const progress = COMPLETION.done / COMPLETION.total;
 
   return (
     <Box
@@ -215,140 +222,159 @@ export default function JoinTasktag() {
           backgroundColor="card"
           height={74}
         >
-          {/* Left: back + title + address */}
+          {/* Left: logo + title + team id */}
           <Box flexDirection="row" alignItems="center" gap="12" flex={1} flexShrink={1}>
-            <Pressable hitSlop={8}>
-              <ChevronLeft size={22} color={theme.colors.foreground} />
-            </Pressable>
+            <ExpoImage
+              source={require('@/assets/images/sosa-logo.svg')}
+              style={{ width: 96, height: 48 }}
+              contentFit="contain"
+            />
             <Box flexShrink={1}>
               <Text variant="webHeading22" numberOfLines={1} style={{ flexShrink: 1 }}>
-                {PROJECT.name}
+                {TEAM.name}
               </Text>
               <Text variant="webMetadataPrimary" color="textSecondary">
-                {PROJECT.address}
+                Team ID · {TEAM.id}
               </Text>
             </Box>
-          </Box>
-
-          {/* Right: search + New Task (filled, disabled, pill) */}
-          <Box flexDirection="row" alignItems="center" gap="16">
-            <Pressable hitSlop={8}>
-              <Search size={20} color={theme.colors.grey04} />
-            </Pressable>
-            <Button
-              variant="fill"
-              color="secondary"
-              size="sm"
-              disabled
-              style={{ borderRadius: 40, minWidth: 122 }}
-            >
-              <Box flexDirection="row" alignItems="center" gap="8">
-                <Plus size={16} color={theme.colors.grey05} />
-                <Text variant="labelMedium" color="grey05">New Task</Text>
-              </Box>
-            </Button>
           </Box>
         </Box>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
-          {/* ── Tabs bar ── */}
-          <Box
-            flexDirection="row"
-            alignItems="center"
-            justifyContent="space-between"
-            borderBottomWidth={1}
-            borderColor="border"
-            height={56}
-            paddingHorizontal="md"
-          >
-            {/* Tabs list */}
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={{ flexShrink: 1 }}
-              contentContainerStyle={{ alignItems: 'stretch' }}
-            >
-              {TABS.map(({ key, label, Icon }) => {
-                const isActive = activeTab === key;
-                return (
-                  <Pressable
-                    key={key}
-                    onPress={() => setActiveTab(key)}
-                    style={{ height: '100%' }}
-                  >
-                    <Box
-                      flexDirection="column"
-                      alignItems="center"
-                      justifyContent="flex-end"
-                      height={56}
-                      minWidth={96}
-                      style={{ paddingTop: 8, marginBottom: -1 }}
-                    >
-                      <Box flexDirection="row" alignItems="center" gap="8" height={32} justifyContent="center" paddingHorizontal="8">
-                        <Icon size={16} color={isActive ? theme.colors.secondaryGreen : theme.colors.grey04} style={{ transition: 'color 0.2s ease' } as any} />
-                        <Text
-                          variant="labelMedium"
-                          color={isActive ? 'secondaryGreen' : 'grey04'}
-                          style={{ transition: 'color 0.2s ease' } as any}
-                        >
-                          {label}
-                        </Text>
-                      </Box>
-                      {/* Active underline */}
-                      <Box
-                        height={2}
-                        width="100%"
-                        backgroundColor={isActive ? 'secondaryGreen' : 'transparent'}
-                        style={{ marginTop: 'auto', transition: 'background-color 0.2s ease' } as any}
-                      />
-                    </Box>
-                  </Pressable>
-                );
-              })}
-            </ScrollView>
+          {/* ── Content ── */}
+          <Box flex={1} style={{ position: 'relative' as any }}>
 
-            {/* Right actions */}
-            <Box flexDirection="row" alignItems="center" gap="md" style={{ paddingLeft: 16 }}>
-              <Pressable hitSlop={8}>
-                <Link size={20} color={theme.colors.grey04} />
-              </Pressable>
-              {/* Invite — outline, disabled, pill */}
-              <Button
-                variant="outline"
-                color="secondary"
-                size="sm"
-                disabled
-                style={{ borderRadius: 40, minWidth: 122 }}
-              >
-                <Box flexDirection="row" alignItems="center" gap="8">
-                  <UserPlus size={16} color={theme.colors.grey05} />
-                  <Text variant="labelMedium" color="grey05">Invite</Text>
+            <Box padding="md" gap="lg">
+
+              {/* Stats + Task Completion — 3 columns */}
+              <Box flexDirection="row" gap="12">
+
+                <Box
+                  flex={1} backgroundColor="lightMint"
+                  borderRadius="xl" padding="md"
+                  flexDirection="row" alignItems="center" justifyContent="space-between"
+                >
+                  <Text variant="webLabelEmphasized" color="textSecondary">Total Projects</Text>
+                  <Text variant="h1" color="textPrimary">12</Text>
                 </Box>
-              </Button>
-            </Box>
-          </Box>
 
-          {/* ── Tab Content — empty state for all tabs ── */}
-          <Box
-            flex={1}
-            alignItems="center"
-            justifyContent="center"
-            minHeight={520}
-          >
-            <Box alignItems="center" style={{ gap: 16 }}>
-              <Share size={40} color={theme.colors.textSecondary} strokeWidth={1.5} />
-              <Text variant="webHeading22" color="foreground" textAlign="center" style={{ fontWeight: '400' }}>
-                {"You've been shared a project on TaskTag"}
-              </Text>
+                <Box
+                  flex={1} backgroundColor="lightSky"
+                  borderRadius="xl" padding="md"
+                  flexDirection="row" alignItems="center" justifyContent="space-between"
+                >
+                  <Text variant="webLabelEmphasized" color="textSecondary">Total Tasks</Text>
+                  <Text variant="h1" color="textPrimary">60</Text>
+                </Box>
+
+                <Box flex={1} backgroundColor="grey02" borderRadius="xl" padding="md" justifyContent="center">
+                  <Box flexDirection="row" justifyContent="space-between" alignItems="center" marginBottom="8">
+                    <Text variant="webBody" color="textPrimary">Task completion</Text>
+                    <Text variant="webMetadataPrimary">
+                      <Text color="secondaryGreen" fontWeight="600">{COMPLETION.done}</Text>
+                      <Text color="grey05"> / {COMPLETION.total}</Text>
+                    </Text>
+                  </Box>
+                  <Box height={6} backgroundColor="grey03" borderRadius="4">
+                    <Box
+                      height={6} backgroundColor="secondaryGreen" borderRadius="4"
+                      style={{ width: `${progress * 100}%` as any }}
+                    />
+                  </Box>
+                </Box>
+
+              </Box>
+
+              {/* Members Section */}
+              <Box>
+                <Box flexDirection="row" alignItems="center" gap="8" style={{ marginBottom: 12 }}>
+                  <Text variant="webLabelSmall" color="textSecondary" style={{ letterSpacing: 0.8, textTransform: 'uppercase' }}>Members</Text>
+                  <Box width={20} height={20} borderRadius="full" backgroundColor="black" alignItems="center" justifyContent="center">
+                    <Text variant="webLabelSmall" color="white">{MEMBERS.length}</Text>
+                  </Box>
+                </Box>
+                <Box backgroundColor="card" style={{ overflow: 'hidden' }}>
+                  {/* Table Header */}
+                  <Box
+                    flexDirection="row" alignItems="center"
+                    paddingHorizontal="md" paddingVertical="12"
+                    backgroundColor="grey02"
+                  >
+                    <Box flex={1}>
+                      <Text variant="webLabelEmphasized" color="textSecondary">Name</Text>
+                    </Box>
+                    <Box flex={1}>
+                      <Text variant="webLabelEmphasized" color="textSecondary">Email</Text>
+                    </Box>
+                    <Box flex={1}>
+                      <Text variant="webLabelEmphasized" color="textSecondary">Role</Text>
+                    </Box>
+                  </Box>
+                  <Box height={1} backgroundColor="border" />
+                  {/* Table Rows */}
+                  {MEMBERS.map((member, i) => (
+                    <Box key={i}>
+                      <Box
+                        flexDirection="row" alignItems="center"
+                        paddingHorizontal="md" paddingVertical="12"
+                      >
+                        <Box flex={1} flexDirection="row" alignItems="center" gap="12">
+                          <Box
+                            width={36} height={36} borderRadius="full"
+                            alignItems="center" justifyContent="center"
+                            style={{ backgroundColor: member.color }}
+                          >
+                            <Text variant="webLabelSmall" color="white">{member.initials}</Text>
+                          </Box>
+                          <Text variant="webSecondaryBody" color="textSecondary">{member.name}</Text>
+                        </Box>
+                        <Box flex={1}>
+                          <Text variant="webSecondaryBody" color="textSecondary">{member.email}</Text>
+                        </Box>
+                        <Box flex={1}>
+                          <Text variant="webSecondaryBody" color="textSecondary">
+                            {member.role}
+                          </Text>
+                        </Box>
+                      </Box>
+                      {i < MEMBERS.length - 1 && (
+                        <Box height={1} backgroundColor="border" />
+                      )}
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
+
             </Box>
-            <Button
-              variant="fill"
-              size="lg"
-              style={{ borderRadius: 40, minWidth: 220, backgroundColor: theme.colors.foreground, marginTop: 16 }}
-              onPress={() => setShowSignupModal(true)}
-            >
-              <Text color="white" variant="labelMedium">Request to Join</Text>
-            </Button>
+
+            {/* Fixed Bottom Banner */}
+            <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, backgroundColor: '#000000', borderRadius: 12, paddingHorizontal: 20, paddingVertical: 16, zIndex: 10, flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+              {/* Icon */}
+              <Box
+                width={44} height={44} borderRadius="full"
+                alignItems="center" justifyContent="center"
+                style={{ backgroundColor: 'rgba(0,217,165,0.15)', flexShrink: 0 }}
+              >
+                <Share size={22} color="#00D9A5" strokeWidth={1.5} />
+              </Box>
+              {/* Title + Desc */}
+              <Box flex={1}>
+                <Text variant="webLabelEmphasized" color="white">Someone shared this team with you</Text>
+                <Text variant="webSecondaryBody" style={{ color: '#E0E0E0', marginTop: 2, lineHeight: 18 }}>
+                  The team owner is waiting for your request. Join in to collaborate on projects.
+                </Text>
+              </Box>
+              {/* Button */}
+              <Button
+                variant="fill"
+                size="md"
+                style={{ backgroundColor: theme.colors.secondaryGreen, borderRadius: 8, flexShrink: 0 }}
+                onPress={() => setShowSignupModal(true)}
+              >
+                <Text variant="webLabelEmphasized" color="white">Request to Join</Text>
+              </Button>
+            </View>
+
           </Box>
         </ScrollView>
       </Box>

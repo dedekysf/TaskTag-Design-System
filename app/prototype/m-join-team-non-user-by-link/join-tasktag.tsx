@@ -82,7 +82,7 @@ export default function JoinTasktag() {
               </Box>
               <ExpoImage
                 source={require('@/assets/images/sosa-logo.svg')}
-                style={{ width: 120, height: 48 }}
+                style={{ width: 96, height: 48 }}
                 contentFit="contain"
               />
             </Box>
@@ -127,12 +127,12 @@ export default function JoinTasktag() {
 
             {/* Members Section */}
             <Box>
-              <Text
-                variant="webLabelSmall" color="textSecondary" marginBottom="8"
-                style={{ letterSpacing: 0.8, textTransform: 'uppercase' }}
-              >
-                Members
-              </Text>
+              <Box flexDirection="row" alignItems="center" gap="8" marginBottom="8">
+                <Text variant="webLabelSmall" color="textSecondary" style={{ letterSpacing: 0.8, textTransform: 'uppercase' }}>Members</Text>
+                <Box width={20} height={20} borderRadius="full" backgroundColor="black" alignItems="center" justifyContent="center">
+                  <Text variant="webLabelSmall" color="white">{MEMBERS.length}</Text>
+                </Box>
+              </Box>
               <Box backgroundColor="card" borderRadius="xl" style={{ overflow: 'hidden' }}>
                 {MEMBERS.map((member, i) => (
                   <Box key={i}>
