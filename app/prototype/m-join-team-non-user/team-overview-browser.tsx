@@ -191,9 +191,6 @@ export default function TeamOverviewBrowser() {
               <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18, paddingRight: 20 }}>
                 After user presses Join This Team on previous page, if already have the app open it. If not, direct to this page.
               </Text>
-              <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18, paddingRight: 20, marginTop: 4 }}>
-                This page link expires 24 hours after it's first opened.
-              </Text>
             </View>
           )}
 

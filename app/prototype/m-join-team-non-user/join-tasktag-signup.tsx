@@ -222,7 +222,7 @@ export default function JoinTasktagSignup() {
                           <Text variant="webMetadataPrimary" color="foreground" fontWeight="700">Admin</Text>
                         </Box>
                       </Tooltip>
-                      <Text variant="webMetadataPrimary" color="mutedForeground">{" with 11 other members."}</Text>
+                      <Text variant="webMetadataPrimary" color="mutedForeground">{" with 3 other members."}</Text>
                     </Box>
                   </Box>
 
