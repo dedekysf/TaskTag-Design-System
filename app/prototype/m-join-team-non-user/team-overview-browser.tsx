@@ -174,39 +174,47 @@ export default function TeamOverviewBrowser() {
           </Box>
         </ScrollView>
 
-        {/* Dev Note Banner */}
-        {bannerVisible && (
-          <View style={{ position: 'absolute', bottom: 250, left: 16, right: 16, backgroundColor: '#fbe676', borderRadius: 12, padding: 16, gap: 4, zIndex: 40 }}>
-            <Pressable
-              onPress={() => setBannerVisible(false)}
-              style={{ position: 'absolute', top: 8, right: 8, width: 32, height: 32, alignItems: 'center', justifyContent: 'center', zIndex: 10 }}
-              hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
-            >
-              <Text variant="webLabelEmphasized" style={{ color: '#000', fontSize: 16, lineHeight: 16 }}>×</Text>
-            </Pressable>
-            <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
-            <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18, paddingRight: 20 }}>
-              After user presses Join This Team on previous page, if already have the app open it. If not, direct to this page.
-            </Text>
-          </View>
-        )}
+        {/* Bottom Stack */}
+        <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, zIndex: 40, gap: 16 }}>
 
-        {/* Fixed Bottom Download Banner */}
-        <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, backgroundColor: '#000000', borderRadius: 12, padding: 20, zIndex: 10 }}>
-          <View style={{ marginBottom: 4 }}>
-            <Text variant="webLabelEmphasized" color="white">Welcome to the team!</Text>
+          {/* Dev Note Banner */}
+          {bannerVisible && (
+            <View style={{ backgroundColor: '#fbe676', borderRadius: 12, padding: 16, gap: 4 }}>
+              <Pressable
+                onPress={() => setBannerVisible(false)}
+                style={{ position: 'absolute', top: 8, right: 8, width: 32, height: 32, alignItems: 'center', justifyContent: 'center', zIndex: 10 }}
+                hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+              >
+                <Text variant="webLabelEmphasized" style={{ color: '#000', fontSize: 16, lineHeight: 16 }}>×</Text>
+              </Pressable>
+              <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
+              <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18, paddingRight: 20 }}>
+                After user presses Join This Team on previous page, if already have the app open it. If not, direct to this page.
+              </Text>
+              <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18, paddingRight: 20, marginTop: 4 }}>
+                This page link expires 24 hours after it's first opened.
+              </Text>
+            </View>
+          )}
+
+          {/* Fixed Bottom Download Banner */}
+          <View style={{ backgroundColor: '#000000', borderRadius: 12, padding: 20 }}>
+            <View style={{ marginBottom: 4 }}>
+              <Text variant="webLabelEmphasized" color="white">Welcome to the team!</Text>
+            </View>
+            <Text variant="webSecondaryBody" style={{ color: '#E0E0E0', marginBottom: 16, lineHeight: 20 }}>
+              You've been added to the team. Download the app to jump in, create tasks, and stay in the loop.
+            </Text>
+            <Button
+              variant="fill"
+              size="lg"
+              style={{ width: '100%', backgroundColor: theme.colors.secondaryGreen, borderRadius: 8 }}
+              onPress={() => { if (typeof window !== 'undefined') window.open('https://play.google.com/store/apps/details?id=com.eloveit.TaskTag', '_blank'); }}
+            >
+              <Text variant="webLabelEmphasized" color="white">Download App</Text>
+            </Button>
           </View>
-          <Text variant="webSecondaryBody" style={{ color: '#E0E0E0', marginBottom: 16, lineHeight: 20 }}>
-            You've been added to the team. Download the app to jump in, create tasks, and stay in the loop.
-          </Text>
-          <Button
-            variant="fill"
-            size="lg"
-            style={{ width: '100%', backgroundColor: theme.colors.secondaryGreen, borderRadius: 8 }}
-            onPress={() => { if (typeof window !== 'undefined') window.open('https://play.google.com/store/apps/details?id=com.eloveit.TaskTag', '_blank'); }}
-          >
-            <Text variant="webLabelEmphasized" color="white">Download App</Text>
-          </Button>
+
         </View>
 
       </Box>

@@ -176,7 +176,7 @@ export default function JoinTasktag() {
         </ScrollView>
 
         {/* Fixed Bottom Banner */}
-        <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, backgroundColor: '#000000', borderRadius: 12, padding: 20, zIndex: 10, alignItems: 'center' }}>
+        <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, zIndex: 10, backgroundColor: '#000000', borderRadius: 12, padding: 20, alignItems: 'center' }}>
           <Box
             width={40} height={40} borderRadius="full"
             alignItems="center" justifyContent="center"

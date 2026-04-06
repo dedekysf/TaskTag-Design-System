@@ -2,7 +2,7 @@ import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import { BatteryFull, Clock, Lock, MoreHorizontal, Share, SignalHigh, WifiHigh } from 'lucide-react-native';
+import { BatteryFull, Clock, Lock, MoreHorizontal, SignalHigh, WifiHigh } from 'lucide-react-native';
 import { Image as ExpoImage } from 'expo-image';
 import React, { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
@@ -30,7 +30,6 @@ export default function TeamOverviewBrowser() {
   const theme = useTheme<Theme>();
   const [bannerVisible, setBannerVisible] = useState(true);
   const [sheetVisible, setSheetVisible] = useState(true);
-  const progress = COMPLETION.done / COMPLETION.total;
 
   return (
     <Box flex={1} backgroundColor="background" alignItems="center">
@@ -176,39 +175,44 @@ export default function TeamOverviewBrowser() {
           </Box>
         </ScrollView>
 
-        {/* Dev Note Banner */}
-        {bannerVisible && (
-          <View style={{ position: 'absolute', bottom: 250, left: 16, right: 16, backgroundColor: '#fbe676', borderRadius: 12, padding: 16, gap: 4, zIndex: 40 }}>
-            <Pressable
-              onPress={() => setBannerVisible(false)}
-              style={{ position: 'absolute', top: 8, right: 8, width: 32, height: 32, alignItems: 'center', justifyContent: 'center', zIndex: 10 }}
-              hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
-            >
-              <Text variant="webLabelEmphasized" style={{ color: '#000', fontSize: 16, lineHeight: 16 }}>×</Text>
-            </Pressable>
-            <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
-            <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18, paddingRight: 20 }}>
-              After user presses Request to Join on previous page, if already have the app open it. If not, direct to this page.
-            </Text>
-          </View>
-        )}
+        {/* Bottom Stack */}
+        <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, zIndex: 40, gap: 16 }}>
 
-        {/* Fixed Bottom Banner */}
-        <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, backgroundColor: '#000000', borderRadius: 12, padding: 20, zIndex: 10 }}>
-          <View style={{ marginBottom: 4 }}>
-            <Text variant="webLabelEmphasized" color="white">You're almost in!</Text>
+          {/* Dev Note Banner */}
+          {bannerVisible && (
+            <View style={{ backgroundColor: '#fbe676', borderRadius: 12, padding: 16, gap: 4 }}>
+              <Pressable
+                onPress={() => setBannerVisible(false)}
+                style={{ position: 'absolute', top: 8, right: 8, width: 32, height: 32, alignItems: 'center', justifyContent: 'center', zIndex: 10 }}
+                hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+              >
+                <Text variant="webLabelEmphasized" style={{ color: '#000', fontSize: 16, lineHeight: 16 }}>×</Text>
+              </Pressable>
+              <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
+              <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18, paddingRight: 20 }}>
+                After user presses Request to Join on previous page, if already have the app open it. If not, direct to this page.
+              </Text>
+              </View>
+          )}
+
+          {/* Fixed Bottom Banner */}
+          <View style={{ backgroundColor: '#000000', borderRadius: 12, padding: 20 }}>
+            <View style={{ marginBottom: 4 }}>
+              <Text variant="webLabelEmphasized" color="white">You're almost in!</Text>
+            </View>
+            <Text variant="webSecondaryBody" style={{ color: '#E0E0E0', marginBottom: 16, lineHeight: 20 }}>
+              Your request to join this team is pending approval. Download the app to jump in, create tasks, and stay in the loop.
+            </Text>
+            <Button
+              variant="fill"
+              size="lg"
+              style={{ width: '100%', backgroundColor: theme.colors.secondaryGreen, borderRadius: 8 }}
+              onPress={() => { if (typeof window !== 'undefined') window.open('https://play.google.com/store/apps/details?id=com.eloveit.TaskTag', '_blank'); }}
+            >
+              <Text variant="webLabelEmphasized" color="white">Download App</Text>
+            </Button>
           </View>
-          <Text variant="webSecondaryBody" style={{ color: '#E0E0E0', marginBottom: 16, lineHeight: 20 }}>
-            Your request to join this team is pending approval. Download the app to jump in, create tasks, and stay in the loop.
-          </Text>
-          <Button
-            variant="fill"
-            size="lg"
-            style={{ width: '100%', backgroundColor: theme.colors.secondaryGreen, borderRadius: 8 }}
-            onPress={() => { if (typeof window !== 'undefined') window.open('https://play.google.com/store/apps/details?id=com.eloveit.TaskTag', '_blank'); }}
-          >
-            <Text variant="webLabelEmphasized" color="white">Download App</Text>
-          </Button>
+
         </View>
 
         {/* Bottom Sheet */}

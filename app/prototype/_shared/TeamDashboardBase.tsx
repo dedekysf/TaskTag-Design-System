@@ -96,6 +96,7 @@ type TeamMemberAvatar =
 export const TEAM_MEMBERS: { name: string; skills: string[]; email: string; phone: string; role: string; avatar: TeamMemberAvatar }[] = [
   { name: 'Linda Smith', skills: [], email: 'lindasmith@gmail.com', phone: '232-946-1254', role: 'Owner', avatar: { type: 'initials', initials: 'LS', color: 'pastelMagenta' } },
   { name: 'Abby Smith', skills: ['Carpenter'], email: 'abbysmith@gmail.com', phone: '230-124-9988', role: 'Admin', avatar: { type: 'initials', initials: 'AS', color: 'pastelYellow' } },
+  { name: 'Oscar H.', skills: [], email: 'oscaar@email.com', phone: '', role: 'Admin', avatar: { type: 'initials', initials: 'OH', color: 'pastelOrange' } },
   { name: 'Savannah Nguyen', skills: [], email: 'savannahnguyen@gmail.com', phone: '222-548-5896', role: 'Member', avatar: { type: 'initials', initials: 'SN', color: 'pastelBlue' } },
 ];
 
@@ -354,14 +355,14 @@ export default function TeamDashboardBase({
 
               {sidebarCollapsed ? (
                 <Box alignItems="center" justifyContent="center" style={{ height: 54 }}>
-                  <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelBlue">
-                    <Text variant="labelMedium" style={{ color: '#FFFFFF', fontWeight: '700' }}>SN</Text>
+                  <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor={viewVariant === 'ask-to-join' ? 'pastelBlue' : 'pastelOrange'}>
+                    <Text variant="labelMedium" style={{ color: '#FFFFFF', fontWeight: '700' }}>{viewVariant === 'ask-to-join' ? 'SN' : 'OH'}</Text>
                   </Box>
                 </Box>
               ) : (
                 <Box flexDirection="row" alignItems="center" gap="8" style={{ height: 54, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 15, backgroundColor: theme.colors.lightMint }}>
-                  <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelBlue">
-                    <Text variant="labelMedium" style={{ color: '#FFFFFF', fontWeight: '700' }}>SN</Text>
+                  <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor={viewVariant === 'ask-to-join' ? 'pastelBlue' : 'pastelOrange'}>
+                    <Text variant="labelMedium" style={{ color: '#FFFFFF', fontWeight: '700' }}>{viewVariant === 'ask-to-join' ? 'SN' : 'OH'}</Text>
                   </Box>
                   <Text variant="labelMedium" style={{ color: theme.colors.secondaryGreen }}>My Account</Text>
                 </Box>
@@ -382,7 +383,7 @@ export default function TeamDashboardBase({
               <Pressable hitSlop={8} style={{ paddingTop: 6 }}><ChevronLeft size={20} color={theme.colors.grey04} /></Pressable>
               <Box flex={1} flexShrink={1}>
                 <Box flexDirection="row" alignItems="center" gap="8">
-                  <Text variant="webHeading22" numberOfLines={1} style={{ flexShrink: 1, fontWeight: '700' }}>Scott 1</Text>
+                  <Text variant="webHeading22" numberOfLines={1} style={{ flexShrink: 1, fontWeight: '700' }}>Painting Team</Text>
                   <Pressable hitSlop={8}><MoreVertical size={20} color={theme.colors.black} /></Pressable>
                 </Box>
                 <Text style={{ fontSize: 11, color: theme.colors.textSecondary, marginTop: 2 }}>11 N Raintree Hollow Court</Text>
@@ -654,7 +655,7 @@ export default function TeamDashboardBase({
                         <Box backgroundColor="card" style={{ padding: 16 }}>
                           <Text style={{ fontSize: 18, color: theme.colors.foreground, lineHeight: 24 }}>
                             {'Ask to join '}
-                            <Text style={{ fontWeight: '700' }}>Scott 1</Text>
+                            <Text style={{ fontWeight: '700' }}>Painting Team</Text>
                             {' team'}
                           </Text>
                         </Box>
@@ -677,7 +678,7 @@ export default function TeamDashboardBase({
                       <Box backgroundColor="card" style={{ padding: 12 }}>
                         <Text style={{ fontSize: 14, color: theme.colors.foreground, marginBottom: 12, lineHeight: 22 }}>
                           {"You've been added to "}
-                          <Text style={{ fontSize: 14, fontWeight: '700', color: theme.colors.foreground }}>Scott 1</Text>
+                          <Text style={{ fontSize: 14, fontWeight: '700', color: theme.colors.foreground }}>Painting Team</Text>
                            {' team'}
                         </Text>
                         <Button variant="outline" color="secondary" size="xs" style={{ alignSelf: 'flex-start' as any, borderColor: theme.colors.foreground }}>

@@ -41,8 +41,8 @@ const STATS = [
 const COMPLETION = { done: 48, total: 60 };
 
 const MEMBERS = [
-  { initials: 'OH', name: 'Oscar H.',   email: 'oscaar@email.com',   role: 'Admin',  color: '#18a87d', isInvited: true },
   { initials: 'JR', name: 'Jamie R.',  email: 'jamie.r@email.com',  role: 'Owner',  color: '#e65100' },
+  { initials: 'OH', name: 'Oscar H.',   email: 'oscaar@email.com',   role: 'Admin',  color: '#18a87d', isInvited: true },
   { initials: 'AL', name: 'Alex L.',   email: 'alex.l@email.com',   role: 'Member', color: '#388e3c' },
   { initials: 'MK', name: 'Morgan K.', email: 'morgan.k@email.com', role: 'Member', color: '#7b1fa2' },
 ];
