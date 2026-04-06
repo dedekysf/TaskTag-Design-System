@@ -1,35 +1,24 @@
-import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
-import { Image as ExpoImage } from 'expo-image';
 import { useTheme } from '@shopify/restyle';
-import { BatteryFull, Lock, MoreHorizontal, SignalHigh, WifiHigh } from 'lucide-react-native';
-import React, { useState } from 'react';
-import { Pressable, ScrollView, View } from 'react-native';
+import { Check, Lock, MoreHorizontal, BatteryFull, SignalHigh, WifiHigh } from 'lucide-react-native';
+import React from 'react';
+import { Pressable, ScrollView, View, Image } from 'react-native';
 
 const TEAM = {
   name: 'Painting Team',
   id: '6771',
 };
 
-const STATS = [
-  { value: '12', label: 'Total Projects' },
-  { value: '60', label: 'Total Tasks' },
-];
-
-const COMPLETION = { done: 48, total: 60 };
-
 const MEMBERS = [
-  { initials: 'OH', name: 'Oscar H.',   email: 'oscaar@email.com',   role: 'Admin', color: '#18a87d', isInvited: true },
-  { initials: 'JR', name: 'Jamie R.',  email: 'jamie.r@email.com',  role: 'Owner', color: '#e65100' },
-  { initials: 'AL', name: 'Alex L.',   email: 'alex.l@email.com',   role: 'Member', color: '#388e3c' },
-  { initials: 'MK', name: 'Morgan K.', email: 'morgan.k@email.com', role: 'Member', color: '#7b1fa2' },
+  { initials: 'JR', name: 'Jamie R.',  role: 'Owner',  color: '#e65100' },
+  { initials: 'OH', name: 'Oscar H.',  role: 'Admin',  color: '#18a87d', isYou: true },
+  { initials: 'AL', name: 'Alex L.',   role: 'Member', color: '#388e3c' },
+  { initials: 'MK', name: 'Morgan K.', role: 'Member', color: '#7b1fa2' },
 ];
 
 export default function TeamOverviewBrowser() {
   const theme = useTheme<Theme>();
-  const [bannerVisible, setBannerVisible] = useState(true);
-  const progress = COMPLETION.done / COMPLETION.total;
 
   return (
     <Box flex={1} backgroundColor="background" alignItems="center">
@@ -39,7 +28,7 @@ export default function TeamOverviewBrowser() {
         <Box
           flexDirection="row" alignItems="center" justifyContent="space-between"
           paddingHorizontal="xl" paddingTop="md" paddingBottom="sm"
-          backgroundColor="background"
+          backgroundColor="card"
         >
           <Text color="foreground" paddingLeft="8" style={{ fontWeight: '600', fontSize: 15 }}>9:41</Text>
           <Box flexDirection="row" alignItems="center" gap="8" paddingRight="8">
@@ -52,7 +41,7 @@ export default function TeamOverviewBrowser() {
         {/* Browser Header */}
         <Box
           paddingHorizontal="md" paddingBottom="sm"
-          backgroundColor="background" borderBottomWidth={1} borderColor="border"
+          backgroundColor="card" borderBottomWidth={1} borderColor="border"
         >
           <Box flexDirection="row" alignItems="center" gap="8">
             <Box
@@ -69,132 +58,68 @@ export default function TeamOverviewBrowser() {
           </Box>
         </Box>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 300 }}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 200 }}>
 
-          {/* Team Header */}
-          <Box paddingHorizontal="md" paddingVertical="md" backgroundColor="background">
-            <Box flexDirection="row" alignItems="center" justifyContent="space-between">
+          {/* Header */}
+          <Box
+            backgroundColor="card"
+            alignItems="center"
+            style={{ paddingTop: 32, paddingBottom: 32, borderBottomLeftRadius: 24, borderBottomRightRadius: 24 }}
+          >
+            <View style={{ width: 72, height: 72, borderRadius: 36, backgroundColor: theme.colors.lightMint, alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
+              <Check size={40} color={theme.colors.secondaryGreen} strokeWidth={2.5} />
+            </View>
+            <Text variant="h2" style={{ color: theme.colors.foreground, textAlign: 'center', marginBottom: 2 }}>
+              You're in, Oscar.
+            </Text>
+            <Text variant="webSecondaryBody" style={{ color: theme.colors.textSecondary, textAlign: 'center' }}>
+              You've joined {TEAM.name}
+            </Text>
+          </Box>
+
+          {/* White Card */}
+          <Box backgroundColor="card" borderRadius="xl" margin="md" style={{ overflow: 'hidden' }}>
+
+            {/* Team Identity */}
+            <Box flexDirection="row" alignItems="center" justifyContent="space-between" gap="12" padding="md">
               <Box>
-                <Text variant="webLargeLabel" color="textPrimary">{TEAM.name}</Text>
-                <Text variant="webMetadataPrimary" color="grey05" style={{ marginTop: 2 }}>
-                  Team ID · {TEAM.id}
-                </Text>
+                <Text variant="webLargeLabel" color="foreground">{TEAM.name}</Text>
+                <Text variant="webMetadataPrimary" color="grey05" style={{ fontSize: 14 }}>ID: {TEAM.id}</Text>
               </Box>
-              <ExpoImage
+              <Image
                 source={require('@/assets/images/sosa-logo.svg')}
-                style={{ width: 120, height: 48 }}
-                contentFit="contain"
+                style={{ width: 80, height: 44, borderRadius: 8 }}
+                resizeMode="contain"
               />
             </Box>
-          </Box>
 
-          <Box padding="md" gap="lg">
+            <Box height={1} backgroundColor="grey03" />
 
-            {/* Overview Section */}
-            <Box>
-              {/* Stat Cards */}
-              <Box flexDirection="row" gap="12" marginBottom="12">
-                {STATS.map((stat, i) => (
+            {/* Members */}
+            {MEMBERS.map((member, i) => (
+              <Box key={i}>
+                <Box flexDirection="row" alignItems="center" gap="12" paddingHorizontal="md" paddingVertical="12">
                   <Box
-                    key={i} flex={1}
-                    backgroundColor={stat.label === 'Total Projects' ? 'lightMint' : 'lightSky'}
-                    borderRadius="xl" padding="md"
+                    width={36} height={36} borderRadius="full"
+                    alignItems="center" justifyContent="center"
+                    style={{ backgroundColor: member.color }}
                   >
-                    <Text variant="h1" color="textPrimary" marginBottom="xs">{stat.value}</Text>
-                    <Text variant="webBody" color="textSecondary">{stat.label}</Text>
+                    <Text variant="webLabelSmall" color="white">{member.initials}</Text>
                   </Box>
-                ))}
-              </Box>
-
-              {/* Task Completion */}
-              <Box backgroundColor="card" borderRadius="xl" padding="md">
-                <Box flexDirection="row" justifyContent="space-between" alignItems="center" marginBottom="8">
-                  <Text variant="webBody" color="textPrimary">Task completion</Text>
-                  <Text variant="webMetadataPrimary">
-                    <Text color="secondaryGreen" fontWeight="600">{COMPLETION.done}</Text>
-                    <Text color="grey05"> / {COMPLETION.total}</Text>
-                  </Text>
-                </Box>
-                <Box height={8} backgroundColor="grey03" borderRadius="4" overflow="hidden">
-                  <Box
-                    height="100%" backgroundColor="secondaryGreen" borderRadius="4"
-                    style={{ width: '80%' }}
-                  />
-                </Box>
-              </Box>
-            </Box>
-
-            {/* Members Section */}
-            <Box>
-              <Box flexDirection="row" alignItems="center" gap="8" marginBottom="8">
-                <Text variant="webLabelSmall" color="textSecondary" style={{ letterSpacing: 0.8, textTransform: 'uppercase' }}>Members</Text>
-                <Box width={20} height={20} borderRadius="full" backgroundColor="black" alignItems="center" justifyContent="center">
-                  <Text variant="webLabelSmall" color="white">{MEMBERS.length}</Text>
-                </Box>
-              </Box>
-              <Box backgroundColor="card" borderRadius="xl" style={{ overflow: 'hidden' }}>
-                {MEMBERS.map((member, i) => (
-                  <Box key={i}>
-                    <Box
-                      flexDirection="row" alignItems="center" gap="12"
-                      paddingHorizontal="md" paddingVertical="12"
-                    >
-                      {/* Avatar */}
-                      <Box
-                        width={36} height={36} borderRadius="full"
-                        alignItems="center" justifyContent="center"
-                        style={{ backgroundColor: member.color }}
-                      >
-                        <Text variant="webLabelSmall" color="white">{member.initials}</Text>
-                      </Box>
-
-                      {/* Info */}
-                      <Box flex={1}>
-                        <Text variant="webLabelEmphasized" color="textPrimary">{member.name}</Text>
-                        <Text variant="webMetadataPrimary" color="grey05" style={{ marginTop: 2 }}>{member.email}</Text>
-                      </Box>
-
-                      {/* Role */}
-                      <Text 
-                        variant="webMetadataPrimary" 
-                        color={member.isInvited ? 'secondaryGreen' : 'textSecondary'}
-                        style={{ fontWeight: member.isInvited ? '600' : 'normal' }}
-                      >
-                        {member.role}
-                      </Text>
-                    </Box>
-                    {i < MEMBERS.length - 1 && (
-                      <Box height={1} backgroundColor="grey02" marginHorizontal="md" />
-                    )}
+                  <Box flex={1} style={{ gap: 4 }}>
+                    <Text variant="webSecondaryBody" color="foreground" style={{ fontSize: 16 }}>{member.name}</Text>
+                    <Text variant="webMetadataPrimary" color="grey05" style={{ fontSize: 12 }}>{member.role}</Text>
                   </Box>
-                ))}
+                </Box>
+                {i < MEMBERS.length - 1 && <Box height={1} backgroundColor="grey02" marginHorizontal="md" />}
               </Box>
-            </Box>
-
+            ))}
           </Box>
+
         </ScrollView>
 
-        {/* Bottom Stack */}
-        <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, zIndex: 40, gap: 16 }}>
-
-          {/* Dev Note Banner */}
-          {bannerVisible && (
-            <View style={{ backgroundColor: '#fbe676', borderRadius: 12, padding: 16, gap: 4 }}>
-              <Pressable
-                onPress={() => setBannerVisible(false)}
-                style={{ position: 'absolute', top: 8, right: 8, width: 32, height: 32, alignItems: 'center', justifyContent: 'center', zIndex: 10 }}
-                hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
-              >
-                <Text variant="webLabelEmphasized" style={{ color: '#000', fontSize: 16, lineHeight: 16 }}>×</Text>
-              </Pressable>
-              <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
-              <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18, paddingRight: 20 }}>
-                After user presses Join This Team on previous page, if already have the app open it. If not, direct to this page.
-              </Text>
-            </View>
-          )}
-
-          {/* Fixed Bottom Download Banner */}
+        {/* Fixed Bottom Black Banner */}
+        <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, zIndex: 40 }}>
           <View style={{ backgroundColor: '#000000', borderRadius: 12, padding: 20 }}>
             <View style={{ marginBottom: 4 }}>
               <Text variant="webLabelEmphasized" color="white">Welcome to the team!</Text>
@@ -202,16 +127,13 @@ export default function TeamOverviewBrowser() {
             <Text variant="webSecondaryBody" style={{ color: '#E0E0E0', marginBottom: 16, lineHeight: 20 }}>
               You've been added to the team. Download the app to jump in, create tasks, and stay in the loop.
             </Text>
-            <Button
-              variant="fill"
-              size="lg"
-              style={{ width: '100%', backgroundColor: theme.colors.secondaryGreen, borderRadius: 8 }}
-              onPress={() => { if (typeof window !== 'undefined') window.open('https://play.google.com/store/apps/details?id=com.eloveit.TaskTag', '_blank'); }}
+            <Pressable
+              style={{ width: '100%', backgroundColor: theme.colors.secondaryGreen, borderRadius: 8, height: 48, alignItems: 'center', justifyContent: 'center' }}
+              onPress={() => { if (typeof window !== 'undefined') (window as any).open('https://play.google.com/store/apps/details?id=com.eloveit.TaskTag', '_blank'); }}
             >
               <Text variant="webLabelEmphasized" color="white">Download App</Text>
-            </Button>
+            </Pressable>
           </View>
-
         </View>
 
       </Box>
