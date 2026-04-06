@@ -4,7 +4,7 @@ import { TextInput } from '@/components/TextInput';
 import { Tooltip } from '@/components/Tooltip';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import { AlertTriangle, Check, Eye, EyeOff, MapPin, X } from 'lucide-react-native';
+import { AlertTriangle, Check, Eye, EyeOff, X } from 'lucide-react-native';
 import { router } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Image, Platform, Pressable, TextInput as RNTextInput, ScrollView, View } from 'react-native';
@@ -12,9 +12,8 @@ import { Image, Platform, Pressable, TextInput as RNTextInput, ScrollView, View 
 // Simulated invite token data
 const INVITE = {
   inviterName: 'James Hammer',
-  projectName: 'Scott 1',
-  address: '11 N Raintree Hollow Court',
-  role: 'Member',
+  projectName: 'Painting Team',
+  role: 'Admin',
   email: 'newuser@example.com',
 };
 
@@ -118,11 +117,11 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
           Create an account
         </Text>
         <Box flexDirection="row" justifyContent="center" flexWrap="wrap" marginBottom="16">
-          <Text variant="webMetadataPrimary" color="mutedForeground">
-            {"You've been invited to this team by "}
-          </Text>
           <Text variant="webMetadataPrimary" color="foreground" fontWeight="700">
             {INVITE.inviterName}
+          </Text>
+          <Text variant="webMetadataPrimary" color="mutedForeground">
+            {' invited you'}
           </Text>
         </Box>
 
@@ -137,23 +136,16 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
           position="relative"
           zIndex="10"
         >
-          <Text variant="webLabelEmphasized" style={{ marginBottom: 4 }}>
+          <Text variant="webLabelEmphasized" color="foreground" style={{ marginBottom: 8 }}>
             {INVITE.projectName}
           </Text>
-          <Box flexDirection="row" alignItems="center" gap="4" marginBottom="16">
-            <MapPin size={14} color={theme.colors.textSecondary} />
-            <Text variant="webSecondaryBody" color="mutedForeground">
-              {INVITE.address}
-            </Text>
-          </Box>
-
-          <Box flexDirection="row" alignItems="center" gap="4">
-            <Text variant="webSecondaryBody" color="mutedForeground">Your Role : </Text>
+          <Box flexDirection="row" alignItems="center" flexWrap="wrap" gap="4">
+            <Text variant="webMetadataPrimary" color="mutedForeground">{"You'll join as an "}</Text>
             <Tooltip
               variant="bottom-left"
               content={
                 <View style={{ gap: 4 }}>
-                  {['View and manage tasks', 'Upload files & media', 'Collaborate with team', 'Track project progress'].map((item, i) => (
+                  {['Manage project and tasks', 'Invite and remove members', 'Manage roles & permissions', 'Configure team settings'].map((item, i) => (
                     <Text key={i} style={{ color: theme.colors.white, fontSize: 12, fontFamily: 'Inter_400Regular' }}>
                       {'• '}{item}
                     </Text>
@@ -162,9 +154,10 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
               }
             >
               <Box borderBottomWidth={1} borderColor="foreground" style={{ borderStyle: 'dotted' }}>
-                <Text variant="webSecondaryBody" color="foreground" fontWeight="700">Member</Text>
+                <Text variant="webMetadataPrimary" color="foreground" fontWeight="700">Admin</Text>
               </Box>
             </Tooltip>
+            <Text variant="webMetadataPrimary" color="mutedForeground">{" with 11 other members."}</Text>
           </Box>
         </Box>
 
