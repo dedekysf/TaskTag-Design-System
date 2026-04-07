@@ -253,9 +253,16 @@ export default function PrototypeIndex() {
       route: '/design-system',
       platforms: ['Web', 'Mobile'] as ('Web' | 'Mobile')[],
     },
+    {
+      title: 'Join Team Expired Non User',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-318?atlOrigin=eyJpIjoiYWI2MjBmYTY2ODRlNDI5NDkzYTE5ZmIyNDVjOTk2ZGIiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-318',
+      route: '/prototype/m-join-team-expired-non-user',
+      platform: 'Mobile' as const,
+    },
   ];
 
-  const PINNED_TITLES = ['GitHub', 'Design System'];
+  const PINNED_TITLES = ['GitHub', 'Design System', 'Join Team Expired Non User'];
 
   const github = {
     title: 'GitHub',
@@ -265,9 +272,10 @@ export default function PrototypeIndex() {
     platforms: ['Web', 'Mobile'] as ('Web' | 'Mobile')[],
   };
   const designSystem = prototypes.find(p => p.title === 'Design System')!;
+  const expiredNonUser = prototypes.find(p => p.title === 'Join Team Expired Non User')!;
   const rest = prototypes.filter(p => !PINNED_TITLES.includes(p.title));
 
-  const filtered = [github, designSystem, ...rest].filter(item => {
+  const filtered = [github, designSystem, expiredNonUser, ...rest].filter(item => {
     const matchTab = activeTab === 'All Device' || PINNED_TITLES.includes(item.title) || ('platform' in item ? item.platform : 'Web') === activeTab;
     const matchSearch = search.trim() === '' || item.title.toLowerCase().includes(search.toLowerCase()) || item.jiraLabel.toLowerCase().includes(search.toLowerCase());
     return matchTab && matchSearch;
