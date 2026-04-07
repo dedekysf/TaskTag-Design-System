@@ -72,10 +72,10 @@ export default function InvitationExpired() {
               <Clock size={32} color={theme.colors.alertRed} strokeWidth={2} />
             </View>
             <Box alignItems="center" style={{ gap: 4 }}>
-            <Text variant="h2" color="foreground" style={{ textAlign: 'center' }}>
+            <Text variant="mobileHeading28" color="foreground" style={{ textAlign: 'center' }}>
               Invitation has expired
             </Text>
-            <Text variant="webMetadataPrimary" color="textSecondary" style={{ textAlign: 'center' }}>
+            <Text variant="mobileBody" color="textSecondary" style={{ textAlign: 'center' }}>
               Invites are only valid for 7 days.
             </Text>
             </Box>
