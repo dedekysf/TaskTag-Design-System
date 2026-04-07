@@ -72,20 +72,17 @@ export default function InvitationExpired() {
               <Clock size={32} color={theme.colors.alertRed} strokeWidth={2} />
             </View>
             <Box alignItems="center" style={{ gap: 4 }}>
-            <Text variant="h2" color="alertRed" style={{ textAlign: 'center' }}>
+            <Text variant="h2" color="foreground" style={{ textAlign: 'center' }}>
               Invitation has expired
             </Text>
             <Text variant="webMetadataPrimary" color="textSecondary" style={{ textAlign: 'center' }}>
-              {'James Hammer invited you, but this link is no longer active. '}
-              <Text variant="webMetadataPrimary" color="textSecondary">
-                Invitations expire after 7 days for security.
-              </Text>
+              Invites are only valid for 7 days.
             </Text>
             </Box>
           </Box>
 
           {/* Team Card */}
-          <View style={{ backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 24, paddingVertical: 44, marginBottom: 16, alignItems: 'center', justifyContent: 'center', gap: 8, borderWidth: 1, borderColor: 'rgba(0,0,0,0.06)' }}>
+          <View style={{ backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 24, paddingVertical: 24, marginBottom: 16, alignItems: 'center', justifyContent: 'center', gap: 8, borderWidth: 1, borderColor: 'rgba(0,0,0,0.06)' }}>
             <Image
               source={require('@/assets/images/sosa-logo.svg')}
               style={{ width: 160, height: 80, borderRadius: 8 }}
@@ -109,7 +106,7 @@ export default function InvitationExpired() {
           </Pressable>
 
           <Text variant="webMetadataPrimary" color="textSecondary" style={{ textAlign: 'center', marginBottom: 20 }}>
-            A team admin will review your request.
+            James Hammer will receive your request.
           </Text>
 
           {/* Already on TaskTag */}
