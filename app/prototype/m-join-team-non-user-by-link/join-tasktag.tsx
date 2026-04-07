@@ -1,6 +1,6 @@
 import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
-import { BatteryFull, Link2, Lock, MoreHorizontal, SignalHigh, Users, WifiHigh } from 'lucide-react-native';
+import { BatteryFull, Lock, MoreHorizontal, SignalHigh, Users, WifiHigh } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { useTheme } from '@shopify/restyle';
 import React from 'react';
@@ -66,17 +66,8 @@ export default function JoinTasktag() {
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40, paddingHorizontal: 16, paddingTop: 24 }}>
 
-          {/* Shared team link chip */}
-          <Box
-            flexDirection="row" alignItems="center"
-            style={{ alignSelf: 'flex-start', backgroundColor: theme.colors.lightMint, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6, marginBottom: 8, gap: 6 }}
-          >
-            <Link2 size={14} color={theme.colors.textSecondary} strokeWidth={2} />
-            <Text variant="webMetadataPrimary" color="textSecondary">Shared team link</Text>
-          </Box>
-
           {/* Heading */}
-          <Text variant="h1" color="foreground" style={{ marginBottom: 8, fontSize: 28 }}>
+          <Text variant="h1" color="foreground" style={{ marginBottom: 8, fontSize: 28, textAlign: 'center' }}>
             You're invited to join
           </Text>
 
