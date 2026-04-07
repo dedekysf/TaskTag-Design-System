@@ -10,7 +10,7 @@ import JoinTasktagSignup from './join-tasktag-signup';
 
 const TEAM = {
   name: 'Painting Team',
-  description: '3 members are already on this team.',
+  description: '3 members on this team.',
 };
 
 export default function JoinTasktag() {
@@ -49,7 +49,7 @@ export default function JoinTasktag() {
       {/* ── Main Content ── */}
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 16, paddingVertical: 40 }}
+        contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 16, paddingVertical: 20 }}
       >
         <View style={{ width: '100%', maxWidth: 640 }}>
 
@@ -85,7 +85,7 @@ export default function JoinTasktag() {
           </Button>
 
           <Text variant="webSecondaryBody" color="textSecondary" style={{ textAlign: 'center', marginBottom: 20 }}>
-            A team admin will review your request.
+            A Team admin will receive your request after sign up.
           </Text>
 
           {/* Already on TaskTag */}

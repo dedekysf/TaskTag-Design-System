@@ -8,7 +8,7 @@ import { Image, Pressable, ScrollView, View } from 'react-native';
 
 const TEAM = {
   name: 'Painting Team',
-  description: '3 members are already on this team.',
+  description: '3 members on this team.',
 };
 
 export default function InvitationExpired() {
@@ -64,25 +64,25 @@ export default function InvitationExpired() {
           </Pressable>
         </Box>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40, paddingHorizontal: 16, paddingTop: 24 }}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingBottom: 40, paddingHorizontal: 16, paddingTop: 24 }}>
 
           {/* Expired Header */}
           <Box alignItems="center" style={{ marginBottom: 16, gap: 12 }}>
             <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: theme.colors.lightPink, alignItems: 'center', justifyContent: 'center' }}>
               <Clock size={32} color={theme.colors.alertRed} strokeWidth={2} />
             </View>
-            <Box alignItems="center" style={{ gap: 4 }}>
+            <Box alignItems="center" style={{ gap: 8 }}>
             <Text variant="mobileHeading28" color="foreground" style={{ textAlign: 'center' }}>
               Invitation has expired
             </Text>
             <Text variant="mobileBody" color="textSecondary" style={{ textAlign: 'center' }}>
-              Invites are only valid for 7 days.
+              You can still request to join this team.
             </Text>
             </Box>
           </Box>
 
           {/* Team Card */}
-          <View style={{ backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 24, paddingVertical: 24, marginBottom: 16, alignItems: 'center', justifyContent: 'center', gap: 8, borderWidth: 1, borderColor: 'rgba(0,0,0,0.06)' }}>
+          <View style={{ backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 24, paddingVertical: 24, marginBottom: 24, alignItems: 'center', justifyContent: 'center', gap: 8, borderWidth: 1, borderColor: 'rgba(0,0,0,0.06)' }}>
             <Image
               source={require('@/assets/images/sosa-logo.svg')}
               style={{ width: 160, height: 80, borderRadius: 8 }}
@@ -106,7 +106,7 @@ export default function InvitationExpired() {
           </Pressable>
 
           <Text variant="webMetadataPrimary" color="textSecondary" style={{ textAlign: 'center', marginBottom: 20 }}>
-            James Hammer will receive your request.
+            A Team admin will receive your request after sign up.
           </Text>
 
           {/* Already on TaskTag */}

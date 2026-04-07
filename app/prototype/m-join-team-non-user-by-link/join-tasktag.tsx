@@ -8,7 +8,7 @@ import { Image, Pressable, ScrollView, View } from 'react-native';
 
 const TEAM = {
   name: 'Painting Team',
-  description: '3 members are already on this team.',
+  description: '3 members on this team.',
 };
 
 export default function JoinTasktag() {
@@ -64,7 +64,7 @@ export default function JoinTasktag() {
           </Pressable>
         </Box>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40, paddingHorizontal: 16, paddingTop: 24 }}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingBottom: 40, paddingHorizontal: 16, paddingTop: 24 }}>
 
           {/* Heading */}
           <Text variant="h1" color="foreground" style={{ marginBottom: 8, fontSize: 28, textAlign: 'center' }}>
@@ -72,7 +72,7 @@ export default function JoinTasktag() {
           </Text>
 
           {/* Team Card — light gray surface, generous logo breathing room */}
-          <View style={{ backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 24, paddingVertical: 44, marginBottom: 16, alignItems: 'center', justifyContent: 'center', gap: 8, borderWidth: 1, borderColor: 'rgba(0,0,0,0.06)' }}>
+          <View style={{ backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 24, paddingVertical: 24, marginBottom: 24, alignItems: 'center', justifyContent: 'center', gap: 8, borderWidth: 1, borderColor: 'rgba(0,0,0,0.06)' }}>
             <Image
               source={require('@/assets/images/sosa-logo.svg')}
               style={{ width: 160, height: 80, borderRadius: 8 }}
@@ -96,7 +96,7 @@ export default function JoinTasktag() {
           </Pressable>
 
           <Text variant="webMetadataPrimary" color="textSecondary" style={{ textAlign: 'center', marginBottom: 20 }}>
-            A team admin will review your request.
+            A Team admin will receive your request after sign up.
           </Text>
 
           {/* Already on TaskTag */}
