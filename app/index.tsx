@@ -254,14 +254,14 @@ export default function PrototypeIndex() {
       platforms: ['Web', 'Mobile'] as ('Web' | 'Mobile')[],
     },
     {
-      title: 'Join Team Expired Non User',
+      title: 'Team Invitation Expired by Email',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-318?atlOrigin=eyJpIjoiYWI2MjBmYTY2ODRlNDI5NDkzYTE5ZmIyNDVjOTk2ZGIiLCJwIjoiaiJ9',
       jiraLabel: 'TD-318',
       route: '/prototype/m-join-team-expired-non-user',
       platform: 'Mobile' as const,
     },
     {
-      title: 'Join Team Expired Non User',
+      title: 'Team Invitation Expired by Email',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-318?atlOrigin=eyJpIjoiYWI2MjBmYTY2ODRlNDI5NDkzYTE5ZmIyNDVjOTk2ZGIiLCJwIjoiaiJ9',
       jiraLabel: 'TD-318',
       route: '/prototype/join-team-expired-non-user',
@@ -279,8 +279,8 @@ export default function PrototypeIndex() {
     platforms: ['Web', 'Mobile'] as ('Web' | 'Mobile')[],
   };
   const designSystem = prototypes.find(p => p.title === 'Design System')!;
-  const expiredNonUsers = prototypes.filter(p => p.title === 'Join Team Expired Non User');
-  const rest = prototypes.filter(p => !PINNED_TITLES.includes(p.title) && p.title !== 'Join Team Expired Non User');
+  const expiredNonUsers = prototypes.filter(p => p.title === 'Team Invitation Expired by Email');
+  const rest = prototypes.filter(p => !PINNED_TITLES.includes(p.title) && p.title !== 'Team Invitation Expired by Email');
 
   const filtered = [github, designSystem, ...expiredNonUsers, ...rest].filter(item => {
     const matchTab = activeTab === 'All Device' || PINNED_TITLES.includes(item.title) || ('platform' in item ? item.platform : 'Web') === activeTab;
