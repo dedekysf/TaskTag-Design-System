@@ -68,11 +68,11 @@ export default function TeamOverviewBrowser() {
             <View style={{ width: 72, height: 72, borderRadius: 36, backgroundColor: theme.colors.grey02, alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
               <Clock size={40} color={theme.colors.textSecondary} strokeWidth={2} />
             </View>
-            <Text variant="h2" style={{ color: theme.colors.foreground, textAlign: 'center', marginBottom: 2 }}>
-              Request Sent!
+            <Text variant="h3" style={{ color: theme.colors.foreground, textAlign: 'center', marginBottom: 2 }}>
+              Request on its way.
             </Text>
             <Text variant="webSecondaryBody" style={{ color: theme.colors.textSecondary, textAlign: 'center' }}>
-              You'll be notified when it's approved.
+              The team owner will let you in shortly.
             </Text>
           </Box>
 
@@ -121,16 +121,16 @@ export default function TeamOverviewBrowser() {
         <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, zIndex: 40 }}>
           <View style={{ backgroundColor: '#000000', borderRadius: 12, padding: 20 }}>
             <View style={{ marginBottom: 4 }}>
-              <Text variant="webLabelEmphasized" color="white">You're almost in!</Text>
+              <Text variant="webLabelEmphasized" color="white">Hang tight.</Text>
             </View>
             <Text variant="webSecondaryBody" style={{ color: '#E0E0E0', marginBottom: 16, lineHeight: 20 }}>
-              Your request to join this team is pending approval. Download the app to jump in, create tasks, and stay in the loop.
+              Once approved, you'll get access to the team's jobs and chat. Download the app so you're ready to go.
             </Text>
             <Pressable
               style={{ width: '100%', backgroundColor: theme.colors.secondaryGreen, borderRadius: 8, height: 48, alignItems: 'center', justifyContent: 'center' }}
               onPress={() => { if (typeof window !== 'undefined') (window as any).open('https://play.google.com/store/apps/details?id=com.eloveit.TaskTag', '_blank'); }}
             >
-              <Text variant="webLabelEmphasized" color="white">Download App</Text>
+              <Text variant="webLabelEmphasized" color="white">Download the App</Text>
             </Pressable>
           </View>
         </View>
