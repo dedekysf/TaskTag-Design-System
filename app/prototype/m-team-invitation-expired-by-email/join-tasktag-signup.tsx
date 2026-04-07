@@ -74,7 +74,7 @@ export default function JoinTasktagSignup() {
       setPasswordError('Invalid password'); valid = false;
     } else setPasswordError('');
     if (!valid || emailError) return;
-    router.push('/prototype/m-join-team-expired-non-user/team-overview-browser' as any);
+    router.push('/prototype/m-team-invitation-expired-by-email/team-overview-browser' as any);
   };
 
   const emailFormContent = (

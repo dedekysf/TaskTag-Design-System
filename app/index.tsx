@@ -254,17 +254,24 @@ export default function PrototypeIndex() {
       platforms: ['Web', 'Mobile'] as ('Web' | 'Mobile')[],
     },
     {
+      title: 'Team Detail',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-318?atlOrigin=eyJpIjoiYWI2MjBmYTY2ODRlNDI5NDkzYTE5ZmIyNDVjOTk2ZGIiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-318',
+      route: '/prototype/team-detail',
+      platform: 'Web' as const,
+    },
+    {
       title: 'Team Invitation Expired by Email',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-318?atlOrigin=eyJpIjoiYWI2MjBmYTY2ODRlNDI5NDkzYTE5ZmIyNDVjOTk2ZGIiLCJwIjoiaiJ9',
       jiraLabel: 'TD-318',
-      route: '/prototype/m-join-team-expired-non-user',
+      route: '/prototype/m-team-invitation-expired-by-email',
       platform: 'Mobile' as const,
     },
     {
       title: 'Team Invitation Expired by Email',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-318?atlOrigin=eyJpIjoiYWI2MjBmYTY2ODRlNDI5NDkzYTE5ZmIyNDVjOTk2ZGIiLCJwIjoiaiJ9',
       jiraLabel: 'TD-318',
-      route: '/prototype/join-team-expired-non-user',
+      route: '/prototype/team-invitation-expired-by-email',
       platform: 'Web' as const,
     },
   ];
@@ -279,10 +286,11 @@ export default function PrototypeIndex() {
     platforms: ['Web', 'Mobile'] as ('Web' | 'Mobile')[],
   };
   const designSystem = prototypes.find(p => p.title === 'Design System')!;
+  const teamDetail = prototypes.find(p => p.title === 'Team Detail')!;
   const expiredNonUsers = prototypes.filter(p => p.title === 'Team Invitation Expired by Email');
-  const rest = prototypes.filter(p => !PINNED_TITLES.includes(p.title) && p.title !== 'Team Invitation Expired by Email');
+  const rest = prototypes.filter(p => !PINNED_TITLES.includes(p.title) && p.title !== 'Team Invitation Expired by Email' && p.title !== 'Team Detail');
 
-  const filtered = [github, designSystem, ...expiredNonUsers, ...rest].filter(item => {
+  const filtered = [github, designSystem, teamDetail, ...expiredNonUsers, ...rest].filter(item => {
     const matchTab = activeTab === 'All Device' || PINNED_TITLES.includes(item.title) || ('platform' in item ? item.platform : 'Web') === activeTab;
     const matchSearch = search.trim() === '' || item.title.toLowerCase().includes(search.toLowerCase()) || item.jiraLabel.toLowerCase().includes(search.toLowerCase());
     return matchTab && matchSearch;

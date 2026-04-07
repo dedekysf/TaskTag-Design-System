@@ -100,7 +100,7 @@ export default function InvitationExpired() {
           {/* Request to Join Button */}
           <Pressable
             style={{ width: '100%', backgroundColor: theme.colors.secondaryGreen, borderRadius: 12, height: 52, alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}
-            onPress={() => router.push('/prototype/m-join-team-expired-non-user/join-tasktag-signup' as any)}
+            onPress={() => router.push('/prototype/m-team-invitation-expired-by-email/join-tasktag-signup' as any)}
           >
             <Text variant="webLabelEmphasized" color="white">Request to Join</Text>
           </Pressable>

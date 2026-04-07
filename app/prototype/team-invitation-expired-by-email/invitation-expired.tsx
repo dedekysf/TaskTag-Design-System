@@ -123,7 +123,7 @@ export default function InvitationExpired() {
               onClose={() => setShowSignupModal(false)}
               onSuccess={() => {
                 setShowSignupModal(false);
-                router.push('/prototype/join-team-expired-non-user/team-dashboard' as any);
+                router.push('/prototype/team-invitation-expired-by-email/team-dashboard' as any);
               }}
             />
           </Box>
