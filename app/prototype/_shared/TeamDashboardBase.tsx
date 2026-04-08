@@ -585,13 +585,13 @@ export default function TeamDashboardBase({
       <Box flex={1} backgroundColor="grey01" borderLeftWidth={1} borderColor="border" style={{ height: '100%' as any, maxWidth: 550 }}>
         <Box flexDirection="row" alignItems="center" justifyContent="space-between" backgroundColor="card" borderBottomWidth={1} borderColor="border" style={{ height: 72, paddingHorizontal: 20 }}>
           <Box flexDirection="row" alignItems="center" gap="12">
-            <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor={viewVariant === 'ask-to-join' ? 'pastelOrange' : 'pastelMagenta'}>
+            <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelMagenta">
               <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 14 }}>
-                {viewVariant === 'ask-to-join' ? 'OH' : 'LS'}
+                LS
               </Text>
             </Box>
             <Text variant="webLabelEmphasized" color="foreground">
-              {viewVariant === 'ask-to-join' ? 'Oscar H.' : 'Linda Smith'}
+              Linda Smith
             </Text>
           </Box>
           <Box flexDirection="row" alignItems="center">
@@ -718,15 +718,15 @@ export default function TeamDashboardBase({
           <ChevronsLeft size={20} color={theme.colors.grey04} />
         </Pressable>
         <Box alignItems="center" justifyContent="center" style={{ width: '100%', paddingVertical: 10, backgroundColor: theme.colors.lightMint, marginBottom: 8 }}>
-          <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor={viewVariant === 'ask-to-join' ? 'pastelOrange' : 'pastelMagenta'}>
+          <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelMagenta">
             <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 14 }}>
-              {viewVariant === 'ask-to-join' ? 'OH' : 'LS'}
+              LS
             </Text>
           </Box>
         </Box>
-        <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor={viewVariant === 'ask-to-join' ? 'pastelMagenta' : 'pastelBlue'} style={{ marginBottom: 8 }}>
+        <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor={viewVariant === 'ask-to-join' ? 'pastelOrange' : 'pastelBlue'} style={{ marginBottom: 8 }}>
           <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 14 }}>
-            {viewVariant === 'ask-to-join' ? 'LS' : 'SN'}
+            {viewVariant === 'ask-to-join' ? 'OH' : 'SN'}
           </Text>
         </Box>
         <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelOrange">
