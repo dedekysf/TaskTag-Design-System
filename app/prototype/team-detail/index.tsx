@@ -44,6 +44,7 @@ import {
 } from 'lucide-react-native';
 import React, { useRef, useState } from 'react';
 import { Animated, Image, Platform, Pressable, ScrollView, TextInput, View } from 'react-native';
+import ReactDOM from 'react-dom';
 
 const AVATAR_PHOTOS = [
   { src: require('@/assets/images/sample-three.jpg'), name: 'James Log...' },
@@ -167,27 +168,20 @@ function Tooltip({
       >
         {children}
       </View>
-      {visible && pos && (
+      {visible && pos && (Platform.OS === 'web' ? ReactDOM.createPortal(
         <View
-          style={Platform.select({
-            web: {
-              position: 'fixed',
-              top: pos.top,
-              ...(pos.left !== undefined ? { left: pos.left } : { right: pos.right }),
-              zIndex: 999999,
-              pointerEvents: 'none',
-            } as any,
-            default: {
-              position: 'absolute' as any,
-              top: pos.top,
-              ...(pos.left !== undefined ? { left: pos.left } : { right: pos.right }),
-              zIndex: 999999,
-            },
-          })}
+          style={{
+            position: 'fixed' as any,
+            top: pos.top,
+            ...(pos.left !== undefined ? { left: pos.left } : { right: pos.right }),
+            zIndex: 999999,
+            pointerEvents: 'none',
+          }}
         >
           {tooltipBox}
-        </View>
-      )}
+        </View>,
+        document.body
+      ) : null)}
     </>
   );
 }
