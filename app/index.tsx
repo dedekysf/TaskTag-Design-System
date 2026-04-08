@@ -257,7 +257,7 @@ export default function PrototypeIndex() {
       title: 'Invite Members During Team Creation',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-320?atlOrigin=eyJpIjoiZGRiNmNlMmYyMzc1NDE2Mjg3ZDQ2ZjkwYTcyNjNlNjYiLCJwIjoiaiJ9',
       jiraLabel: 'TD-320',
-      route: '/prototype/team-list',
+      route: '/prototype/create-team',
       platform: 'Web' as const,
     },
     {

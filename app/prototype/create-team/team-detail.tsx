@@ -1,9 +1,13 @@
+import { Alert } from '@/components/Alert';
 import { Button } from '@/components/Button';
 import { Checkbox } from '@/components/Checkbox';
 import { TextInput as DSTextInput } from '@/components/TextInput';
+import { EmptyState } from '@/components/EmptyState';
 import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
+import { useLocalSearchParams } from 'expo-router';
+import { AppSidebar, AppChatPanel, useAppSidebar } from './_shared-layout';
 import {
   Activity,
   ArrowDownUp,
@@ -61,7 +65,7 @@ const NAV_ITEMS = [
   { key: 'contacts', label: 'Contacts', Icon: Users, active: false },
 ];
 
-const TEAM_MEMBERS: {
+const INITIAL_TEAM_MEMBERS: {
   name: string;
   skills: string[];
   email: string;
@@ -70,9 +74,6 @@ const TEAM_MEMBERS: {
   avatar: { type: 'initials'; initials: string; color: string };
 }[] = [
   { name: 'Linda Smith', skills: ['Lead Painter'], email: 'lindasmith@gmail.com', phone: '232-946-1254', role: 'Owner', avatar: { type: 'initials', initials: 'LS', color: 'pastelMagenta' } },
-  { name: 'Abby Smith', skills: ['Painting'], email: 'abbysmith@gmail.com', phone: '230-124-9988', role: 'Admin', avatar: { type: 'initials', initials: 'AS', color: 'pastelYellow' } },
-  { name: 'Oscar H.', skills: ['Primer'], email: 'oscaar@email.com', phone: '242-159-8803', role: 'Admin', avatar: { type: 'initials', initials: 'OH', color: 'pastelOrange' } },
-  { name: 'Savannah Nguyen', skills: ['Finishing'], email: 'savannahnguyen@gmail.com', phone: '222-548-5896', role: 'Member', avatar: { type: 'initials', initials: 'SN', color: 'pastelBlue' } },
 ];
 
 const PENDING_INVITES: {
@@ -82,11 +83,7 @@ const PENDING_INVITES: {
   expirationDate: string;
   role: string;
   status: 'pending' | 'expired' | 'near-expiry';
-}[] = [
-  { emailOrName: 'john.doe@gmail.com', invitedBy: 'Linda Smith', dateSent: 'Nov 1, 2025', expirationDate: 'Nov 7, 2025', role: 'Admin', status: 'pending' },
-  { emailOrName: 'roberto@gmail.com', invitedBy: 'Abby Smith', dateSent: 'Nov 2, 2025', expirationDate: 'Nov 3, 2025', role: 'Member', status: 'near-expiry' },
-  { emailOrName: 'sarah.k@gmail.com', invitedBy: 'Oscar H.', dateSent: 'Oct 20, 2025', expirationDate: 'Oct 27, 2025', role: 'Member', status: 'expired' },
-];
+}[] = [];
 
 // ── Tooltip ──
 function Tooltip({
@@ -112,7 +109,6 @@ function Tooltip({
   const measure = React.useCallback(() => {
     const el = triggerRef.current as any;
     if (!el) return;
-    // React Native Web: ref.current IS the DOM node — use getBoundingClientRect
     if (typeof el.getBoundingClientRect === 'function') {
       const rect = el.getBoundingClientRect();
       const ww = window.innerWidth;
@@ -191,16 +187,16 @@ function Tooltip({
 function CopyLinkButton() {
   const theme = useTheme<Theme>();
   const [copied, setCopied] = useState(false);
-  
+
   const handleCopy = () => {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-  
+
   return (
     <Tooltip
-      label={copied ? "Link copied!" : "Copy link to invite"}
-      variant={copied ? "success" : "default"}
+      label={copied ? 'Link copied!' : 'Copy link to invite'}
+      variant={copied ? 'success' : 'default'}
       forceOpen={copied}
     >
       <Pressable
@@ -260,41 +256,6 @@ function HoverIconButton({ icon: IconComp, size = 16, color, tooltip, onPress }:
     return <Tooltip label={tooltip}>{btn}</Tooltip>;
   }
   return btn;
-}
-
-function MiniAvatar({ colorIndex, size = 30 }: { colorIndex: number; size?: number }) {
-  const theme = useTheme<Theme>();
-  const p = AVATAR_PHOTOS[colorIndex % AVATAR_PHOTOS.length];
-  return (
-    <Image
-      source={p.src}
-      style={{ width: size, height: size, borderRadius: size / 2, borderWidth: 2, borderColor: theme.colors.white }}
-    />
-  );
-}
-
-function PriorityBadge({ priority }: { priority: 'high' | 'medium' | 'low' }) {
-  const theme = useTheme<Theme>();
-  const config = {
-    high: { color: theme.colors.orange, Icon: ChevronsUp },
-    medium: { color: '#f59e0b', Icon: Equal },
-    low: { color: theme.colors.secondaryGreen, Icon: ChevronsDown },
-  }[priority];
-  return (
-    <Box width={36} height={36} borderRadius="full" alignItems="center" justifyContent="center" style={{ borderWidth: 1, borderColor: theme.colors.border }}>
-      <config.Icon size={15} color={config.color} />
-    </Box>
-  );
-}
-
-function DateBadge({ date }: { date: string }) {
-  const theme = useTheme<Theme>();
-  return (
-    <Box flexDirection="row" alignItems="center" style={{ gap: 6, borderWidth: 1, borderColor: theme.colors.border, borderRadius: 40, paddingHorizontal: 14, paddingVertical: 8, minWidth: 108 }}>
-      <Calendar size={13} color={theme.colors.grey04} />
-      <Text style={{ fontSize: 13, color: theme.colors.grey05 }}>{date}</Text>
-    </Box>
-  );
 }
 
 // ── Role dropdown content (rendered as a portal at root level) ──
@@ -382,7 +343,7 @@ const INVITE_GROUPS: InviteGroup[] = [
   },
 ];
 
-function HighlightText({ text, query, baseStyle, boldBase = false }: { text: string; query: string; baseStyle: any; boldBase?: boolean }) {
+function HighlightText({ text, query, baseStyle }: { text: string; query: string; baseStyle: any }) {
   if (!query) return <Text style={baseStyle}>{text}</Text>;
   const lower = text.toLowerCase();
   const lowerQ = query.toLowerCase();
@@ -408,7 +369,10 @@ function InviteAvatar({ avatar, size = 40 }: { avatar: InviteeContact['avatar'];
   );
 }
 
-function InviteModal({ onClose }: { onClose: () => void }) {
+function InviteModal({ onClose, onSendInvite }: {
+  onClose: () => void;
+  onSendInvite?: (invitees: InviteeEntry[]) => void;
+}) {
   const theme = useTheme<Theme>();
   const [inputValue, setInputValue] = useState('');
   const [copied, setCopied] = useState(false);
@@ -476,77 +440,77 @@ function InviteModal({ onClose }: { onClose: () => void }) {
       shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.12, shadowRadius: 24, elevation: 8,
     }}>
       <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 320 }}>
-      <Pressable
-        onPress={() => {
-          const emailContact: InviteeContact = {
-            id: `email-${query}`,
-            name: `${query.toLowerCase()}@gmail.com`,
-            email: `${query.toLowerCase()}@gmail.com`,
-            avatar: { type: 'initials', initials: query.slice(0, 2).toUpperCase(), color: theme.colors.grey03 },
-          };
-          addInvitee(emailContact);
-        }}
-        style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, backgroundColor: hovered ? theme.colors.grey01 : 'transparent', cursor: 'pointer' as any })}
-      >
-        <Box width={40} height={40} borderRadius="full" backgroundColor="grey02" alignItems="center" justifyContent="center">
-          <Mail size={18} color={theme.colors.grey05} />
-        </Box>
-        <Text style={{ fontSize: 14, color: theme.colors.textSecondary }}>
-          Invite: {query.toLowerCase()}@gmail.com
-        </Text>
-      </Pressable>
-      {filteredContacts.map((contact) => (
-        <Box key={contact.id}>
-          <Box style={{ height: 1, backgroundColor: theme.colors.border }} />
-          <Pressable
-            onPress={() => addInvitee(contact)}
-            style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, backgroundColor: hovered ? theme.colors.grey01 : 'transparent', cursor: 'pointer' as any })}
-          >
-            <InviteAvatar avatar={contact.avatar} size={40} />
-            <Box style={{ gap: 0 }}>
-              <HighlightText text={contact.name} query={query} baseStyle={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }} />
-              <HighlightText text={contact.email} query={query} baseStyle={{ fontSize: 13, color: theme.colors.grey05 }} />
-            </Box>
-          </Pressable>
-        </Box>
-      ))}
-      {filteredGroups.map((group) => {
-        const isExpanded = expandedGroups.has(group.id);
-        return (
-          <Box key={group.id}>
+        <Pressable
+          onPress={() => {
+            const emailContact: InviteeContact = {
+              id: `email-${query}`,
+              name: `${query.toLowerCase()}@gmail.com`,
+              email: `${query.toLowerCase()}@gmail.com`,
+              avatar: { type: 'initials', initials: query.slice(0, 2).toUpperCase(), color: theme.colors.grey03 },
+            };
+            addInvitee(emailContact);
+          }}
+          style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, backgroundColor: hovered ? theme.colors.grey01 : 'transparent', cursor: 'pointer' as any })}
+        >
+          <Box width={40} height={40} borderRadius="full" backgroundColor="grey02" alignItems="center" justifyContent="center">
+            <Mail size={18} color={theme.colors.grey05} />
+          </Box>
+          <Text style={{ fontSize: 14, color: theme.colors.textSecondary }}>
+            Invite: {query.toLowerCase()}@gmail.com
+          </Text>
+        </Pressable>
+        {filteredContacts.map((contact) => (
+          <Box key={contact.id}>
             <Box style={{ height: 1, backgroundColor: theme.colors.border }} />
             <Pressable
-              onPress={() => toggleGroup(group.id)}
+              onPress={() => addInvitee(contact)}
               style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, backgroundColor: hovered ? theme.colors.grey01 : 'transparent', cursor: 'pointer' as any })}
             >
-              <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.grey02 }}>
-                {isExpanded ? <ChevronUp size={18} color={theme.colors.grey05} /> : <ChevronDown size={18} color={theme.colors.grey05} />}
-              </Box>
+              <InviteAvatar avatar={contact.avatar} size={40} />
               <Box style={{ gap: 0 }}>
-                <HighlightText text={group.name} query={query} baseStyle={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }} />
-                <Text style={{ fontSize: 13, color: theme.colors.grey04 }}>{group.memberCount} members</Text>
+                <HighlightText text={contact.name} query={query} baseStyle={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }} />
+                <HighlightText text={contact.email} query={query} baseStyle={{ fontSize: 13, color: theme.colors.grey05 }} />
               </Box>
             </Pressable>
-            {isExpanded && group.members.map((member) => (
-              <Box key={member.id}>
-                <Box style={{ height: 1, backgroundColor: theme.colors.border }} />
-                <Pressable
-                  onPress={() => addInvitee({ id: member.id, name: member.name, email: member.email, avatar: { type: 'initials', initials: member.initials, color: INVITE_TEAL } })}
-                  style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingLeft: 68, paddingRight: 16, paddingVertical: 12, backgroundColor: hovered ? theme.colors.grey01 : 'transparent', cursor: 'pointer' as any })}
-                >
-                  <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: INVITE_TEAL }}>
-                    <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>{member.initials}</Text>
-                  </Box>
-                  <Box style={{ gap: 0 }}>
-                    <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>{member.name}</Text>
-                    <Text style={{ fontSize: 13, color: theme.colors.grey05 }}>{member.email}</Text>
-                  </Box>
-                </Pressable>
-              </Box>
-            ))}
           </Box>
-        );
-      })}
+        ))}
+        {filteredGroups.map((group) => {
+          const isExpanded = expandedGroups.has(group.id);
+          return (
+            <Box key={group.id}>
+              <Box style={{ height: 1, backgroundColor: theme.colors.border }} />
+              <Pressable
+                onPress={() => toggleGroup(group.id)}
+                style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, backgroundColor: hovered ? theme.colors.grey01 : 'transparent', cursor: 'pointer' as any })}
+              >
+                <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.grey02 }}>
+                  {isExpanded ? <ChevronUp size={18} color={theme.colors.grey05} /> : <ChevronDown size={18} color={theme.colors.grey05} />}
+                </Box>
+                <Box style={{ gap: 0 }}>
+                  <HighlightText text={group.name} query={query} baseStyle={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }} />
+                  <Text style={{ fontSize: 13, color: theme.colors.grey04 }}>{group.memberCount} members</Text>
+                </Box>
+              </Pressable>
+              {isExpanded && group.members.map((member) => (
+                <Box key={member.id}>
+                  <Box style={{ height: 1, backgroundColor: theme.colors.border }} />
+                  <Pressable
+                    onPress={() => addInvitee({ id: member.id, name: member.name, email: member.email, avatar: { type: 'initials', initials: member.initials, color: INVITE_TEAL } })}
+                    style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingLeft: 68, paddingRight: 16, paddingVertical: 12, backgroundColor: hovered ? theme.colors.grey01 : 'transparent', cursor: 'pointer' as any })}
+                  >
+                    <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: INVITE_TEAL }}>
+                      <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>{member.initials}</Text>
+                    </Box>
+                    <Box style={{ gap: 0 }}>
+                      <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>{member.name}</Text>
+                      <Text style={{ fontSize: 13, color: theme.colors.grey05 }}>{member.email}</Text>
+                    </Box>
+                  </Pressable>
+                </Box>
+              ))}
+            </Box>
+          );
+        })}
       </ScrollView>
     </View>
   );
@@ -598,7 +562,6 @@ function InviteModal({ onClose }: { onClose: () => void }) {
               />
             </View>
 
-            {/* Invitees list OR empty state — always visible, dropdown floats above */}
             <Box>
               {invitees.length > 0 ? (
                 <Box>
@@ -646,10 +609,22 @@ function InviteModal({ onClose }: { onClose: () => void }) {
           {/* Footer */}
           <Box style={{ paddingHorizontal: 24, paddingTop: 8, paddingBottom: 16, gap: 10 }}>
             <Box style={{ borderTopWidth: invitees.length > 0 ? 1 : 0, borderColor: theme.colors.border, paddingTop: invitees.length > 0 ? 16 : 0 }}>
-              <Button disabled={invitees.length === 0} color="secondary" size="xl" style={{ width: '100%' as any }}>
+              <Button
+                disabled={invitees.length === 0}
+                color="secondary"
+                size="xl"
+                onPress={() => {
+                  if (invitees.length > 0 && onSendInvite) {
+                    onSendInvite(invitees);
+                  }
+                  onClose();
+                }}
+                style={{ width: '100%' as any }}
+              >
                 Send Invite
               </Button>
             </Box>
+
             <Box flexDirection="row" alignItems="center" justifyContent="center" gap="4">
               <HelpCircle size={14} color={theme.colors.grey05} />
               <Text style={{ fontSize: 12, color: theme.colors.grey05, letterSpacing: 0.24 }}>Invitations expire after 7 days</Text>
@@ -658,10 +633,9 @@ function InviteModal({ onClose }: { onClose: () => void }) {
         </Pressable>
       </Pressable>
 
-      {/* Dropdown portal — di luar modal card, position fixed agar visible saat scroll */}
+      {/* Dropdown portal */}
       {showDropdown && dropdownPos && (
         <>
-          {/* click-away untuk tutup dropdown */}
           <Pressable
             onPress={() => setInputValue('')}
             style={Platform.select({
@@ -794,7 +768,6 @@ function RemoveMemberModal({ memberName, onClose }: { memberName: string; onClos
         onPress={(e) => e.stopPropagation()}
         style={{ backgroundColor: theme.colors.white, borderRadius: 16, borderWidth: 1, borderColor: theme.colors.border, width: 480, maxWidth: '90%' as any, padding: 24, gap: 16 }}
       >
-        {/* Header */}
         <Box flexDirection="row" alignItems="center" justifyContent="space-between">
           <Text style={{ fontSize: 18, fontWeight: '600', color: theme.colors.foreground }}>Remove Member</Text>
           <Pressable
@@ -804,14 +777,10 @@ function RemoveMemberModal({ memberName, onClose }: { memberName: string; onClos
             <X size={18} color={theme.colors.grey06} />
           </Pressable>
         </Box>
-
-        {/* Body */}
         <Text style={{ fontSize: 14, color: theme.colors.foreground, lineHeight: 22 }}>
           <Text style={{ fontWeight: '700' }}>{memberName}</Text>
           <Text> will no longer have access to the project.</Text>
         </Text>
-
-        {/* Footer */}
         <Box flexDirection="row" justifyContent="flex-end">
           <Button color="secondary" size="md" onPress={onClose}>Remove</Button>
         </Box>
@@ -820,40 +789,90 @@ function RemoveMemberModal({ memberName, onClose }: { memberName: string; onClos
   );
 }
 
-export default function TeamDetail() {
+export default function CreateTeamTeamDetail() {
   const theme = useTheme<Theme>();
   const [activeTab, setActiveTab] = useState('members');
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const sidebar = useAppSidebar();
   const [activeExpanded, setActiveExpanded] = useState(true);
   const [pendingExpanded, setPendingExpanded] = useState(true);
 
-  // Invite modal
   const [showInviteModal, setShowInviteModal] = useState(false);
 
-  // Remove member confirmation
+  const handleSendInvite = (invitees: InviteeEntry[]) => {
+    const newMembers = invitees.map(inv => ({
+      name: inv.name,
+      skills: [] as string[],
+      email: inv.email,
+      phone: '-',
+      role: inv.role as string,
+      avatar: inv.avatar?.type === 'initials'
+        ? { type: 'initials' as const, initials: inv.avatar.initials, color: inv.avatar.color }
+        : { type: 'initials' as const, initials: inv.name.slice(0, 2).toUpperCase(), color: 'darkGreen' },
+    }));
+    setTeamMembers(prev => [...prev, ...newMembers]);
+    setShowBanner(false);
+  };
   const [removingMember, setRemovingMember] = useState<string | null>(null);
-
-  // Cancel invite confirmation
   const [cancelingInvite, setCancelingInvite] = useState<string | null>(null);
-
-  // Resend toast
   const [showResendToast, setShowResendToast] = useState(false);
 
-  // Dropdown portal state
   const [openRoleDropdown, setOpenRoleDropdown] = useState<string | null>(null);
   const [openTeamMenu, setOpenTeamMenu] = useState(false);
   const [openFilterDropdown, setOpenFilterDropdown] = useState(false);
   const [filterQuery, setFilterQuery] = useState('');
   const [filterRoles, setFilterRoles] = useState<string[]>([]);
   const [dropdownPos, setDropdownPos] = useState<{ x: number; y: number; width: number; height: number; showAbove: boolean; windowWidth: number } | null>(null);
-  // Estimated max dropdown height for 2 role options
   const DROPDOWN_HEIGHT = 210;
 
-  // Mutable roles
-  const [memberRoles, setMemberRoles] = useState<string[]>(TEAM_MEMBERS.map(m => m.role));
-  const [pendingRoles, setPendingRoles] = useState<string[]>(PENDING_INVITES.map(p => p.role));
+  const params = useLocalSearchParams();
+  const [pendingInvites, setPendingInvites] = useState(() => {
+    if (params.newMembers) {
+      try {
+        const invitees = JSON.parse(params.newMembers as string);
+        const addedPending = invitees
+          .filter((inv: any) => inv.id?.startsWith('email-') || inv.type === 'email')
+          .map((inv: any) => ({
+            emailOrName: inv.email || inv.name,
+            role: inv.role as string,
+            status: 'Invite Sent',
+          }));
+        return [...PENDING_INVITES, ...addedPending];
+      } catch (e) {
+        return PENDING_INVITES;
+      }
+    }
+    return PENDING_INVITES;
+  });
 
-  // Refs for measuring role trigger positions
+  const [teamMembers, setTeamMembers] = useState(() => {
+    if (params.newMembers) {
+      try {
+        const invitees = JSON.parse(params.newMembers as string);
+        const addedActive = invitees
+          .filter((inv: any) => !(inv.id?.startsWith('email-') || inv.type === 'email'))
+          .map((inv: any) => ({
+            name: inv.name,
+            skills: ['Carpenter'] as string[],
+            email: inv.email,
+            phone: '(555) 123-4567',
+            role: inv.role as string,
+            avatar: inv.avatar?.type === 'initials'
+              ? { type: 'initials' as const, initials: inv.avatar.initials, color: inv.avatar.color }
+              : { type: 'initials' as const, initials: inv.name.slice(0, 2).toUpperCase(), color: 'darkGreen' },
+          }));
+        return [...INITIAL_TEAM_MEMBERS, ...addedActive];
+      } catch (e) {
+        return INITIAL_TEAM_MEMBERS;
+      }
+    }
+    return INITIAL_TEAM_MEMBERS;
+  });
+  const [showBanner, setShowBanner] = useState(() => {
+    return params.newMembers ? false : true;
+  });
+  const [memberRoles, setMemberRoles] = useState<string[]>(teamMembers.map(m => m.role));
+  const [pendingRoles, setPendingRoles] = useState<string[]>(pendingInvites.map(p => p.role));
+
   const memberRoleRefs = useRef<(View | null)[]>([]);
   const pendingRoleRefs = useRef<(View | null)[]>([]);
 
@@ -869,10 +888,8 @@ export default function TeamDetail() {
     }
     if (ref) {
       (ref as any).measureInWindow((x: number, y: number, w: number, h: number) => {
-        const windowHeight =
-          typeof window !== 'undefined' ? window.innerHeight : 800;
-        const windowWidth =
-          typeof window !== 'undefined' ? window.innerWidth : 1200;
+        const windowHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+        const windowWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
         const spaceBelow = windowHeight - (y + h);
         const showAbove = spaceBelow < DROPDOWN_HEIGHT + 8;
         setDropdownPos({ x, y, width: w, height: h, showAbove, windowWidth });
@@ -881,7 +898,6 @@ export default function TeamDetail() {
     }
   };
 
-  // Compute portal dropdown position (right-aligned to trigger)
   const dropdownRight = dropdownPos
     ? dropdownPos.windowWidth - (dropdownPos.x + dropdownPos.width)
     : 0;
@@ -891,7 +907,6 @@ export default function TeamDetail() {
       : dropdownPos.y + dropdownPos.height + 4
     : 0;
 
-  // Determine current role from open key
   const handleDropdownSelect = (role: string) => {
     if (!openRoleDropdown) return;
     const [group, idxStr] = openRoleDropdown.split('-');
@@ -912,92 +927,7 @@ export default function TeamDetail() {
     <Box flex={1} flexDirection="row" backgroundColor="background" style={{ height: '100%' as any, position: 'relative' as any }}>
 
       {/* ── Sidebar ── */}
-      <Box
-        backgroundColor="grey01"
-        borderRightWidth={1}
-        borderColor="border"
-        style={{ width: sidebarCollapsed ? 72 : 256, maxWidth: 256, height: '100%' as any, paddingHorizontal: 16, paddingVertical: 24, gap: 30 }}
-      >
-        {sidebarCollapsed ? (
-          <Box alignItems="center" gap="8">
-            <Image source={require('@/assets/images/tt-favicon.png')} style={{ width: 28, height: 28 }} resizeMode="contain" />
-            <Pressable onPress={() => setSidebarCollapsed(false)} hitSlop={8}>
-              <ChevronsRight size={20} color={theme.colors.grey04} />
-            </Pressable>
-          </Box>
-        ) : (
-          <Box flexDirection="row" alignItems="center" justifyContent="space-between">
-            <Image source={require('@/assets/images/tasktag-logo.png')} style={{ width: 96, height: 24 }} resizeMode="contain" />
-            <Pressable onPress={() => setSidebarCollapsed(true)} hitSlop={8}>
-              <ChevronsLeft size={24} color={theme.colors.grey04} />
-            </Pressable>
-          </Box>
-        )}
-
-        <Box flex={1} style={{ paddingTop: 16 }}>
-          <Box flex={1} justifyContent="space-between">
-            <Box gap="8">
-              {NAV_ITEMS.map(({ key, label, Icon, active }) => (
-                sidebarCollapsed ? (
-                  <Box key={key} alignItems="center" justifyContent="center" style={{ height: 54 }}>
-                    <Box alignItems="center" justifyContent="center" style={{ width: 44, height: 44, borderRadius: 10, backgroundColor: active ? theme.colors.lightMint : theme.colors.card }}>
-                      <Icon size={22} color={active ? theme.colors.secondaryGreen : theme.colors.textSecondary} />
-                    </Box>
-                  </Box>
-                ) : (
-                  <Box key={key} flexDirection="row" alignItems="center" gap="16" style={{ height: 54, borderRadius: 8, paddingHorizontal: 16, paddingVertical: 15, backgroundColor: active ? theme.colors.lightMint : 'transparent' }}>
-                    <Icon size={24} color={active ? theme.colors.secondaryGreen : theme.colors.textSecondary} />
-                    <Text variant="labelMedium" style={{ color: active ? theme.colors.secondaryGreen : theme.colors.textSecondary }}>{label}</Text>
-                  </Box>
-                )
-              ))}
-            </Box>
-
-            <Box gap="8">
-              {!sidebarCollapsed && (
-                <Box style={{ paddingBottom: 40 }}>
-                  <Box backgroundColor="card" style={{ borderRadius: 8, padding: 16, overflow: 'hidden' as any, position: 'relative' as any }}>
-                    <Box style={{ position: 'absolute' as any, width: 100, height: 100, borderRadius: 50, backgroundColor: 'rgba(0,217,165,0.25)', top: -36, left: -36, ...Platform.select({ web: { filter: 'blur(18px)' } as any }) }} />
-                    <Box style={{ position: 'absolute' as any, width: 140, height: 140, borderRadius: 70, backgroundColor: 'rgba(0,217,165,0.2)', bottom: -60, right: -30, ...Platform.select({ web: { filter: 'blur(22px)' } as any }) }} />
-                    <Text style={{ fontSize: 18, fontWeight: '500', color: theme.colors.textSecondary, lineHeight: 24, marginBottom: 16 }}>Find All Product Guides Here</Text>
-                    <Box flexDirection="row" alignItems="center" gap="4">
-                      <Text style={{ fontSize: 16, fontWeight: '500', color: theme.colors.secondaryGreen, lineHeight: 24 }}>Explore</Text>
-                      <ChevronRight size={18} color={theme.colors.secondaryGreen} />
-                    </Box>
-                  </Box>
-                </Box>
-              )}
-              <Box height={1} backgroundColor="border" />
-              {sidebarCollapsed ? (
-                <Box alignItems="center" justifyContent="center" style={{ height: 54 }}>
-                  <Box alignItems="center" justifyContent="center" style={{ width: 44, height: 44, borderRadius: 10, backgroundColor: theme.colors.card }}>
-                    <HelpCircle size={22} color={theme.colors.textSecondary} />
-                  </Box>
-                </Box>
-              ) : (
-                <Box flexDirection="row" alignItems="center" gap="16" style={{ height: 54, borderRadius: 8, paddingHorizontal: 16, paddingVertical: 15 }}>
-                  <HelpCircle size={24} color={theme.colors.textSecondary} />
-                  <Text variant="labelMedium" style={{ color: theme.colors.textSecondary }}>Help</Text>
-                </Box>
-              )}
-              {sidebarCollapsed ? (
-                <Box alignItems="center" justifyContent="center" style={{ height: 54 }}>
-                  <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelMagenta">
-                    <Text variant="labelMedium" style={{ color: '#FFFFFF', fontWeight: '700' }}>LS</Text>
-                  </Box>
-                </Box>
-              ) : (
-                <Box flexDirection="row" alignItems="center" gap="8" style={{ height: 54, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 15, backgroundColor: theme.colors.lightMint }}>
-                  <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelMagenta">
-                    <Text variant="labelMedium" style={{ color: '#FFFFFF', fontWeight: '700' }}>LS</Text>
-                  </Box>
-                  <Text variant="labelMedium" style={{ color: theme.colors.secondaryGreen }}>My Account</Text>
-                </Box>
-              )}
-            </Box>
-          </Box>
-        </Box>
-      </Box>
+      <AppSidebar {...sidebar} />
 
       {/* ── Main Content ── */}
       <Box flex={1} backgroundColor="background" style={{ height: '100%' as any }}>
@@ -1115,22 +1045,16 @@ export default function TeamDetail() {
               >
                 <Search size={20} color={theme.colors.textSecondary} />
               </Pressable>
-              <Pressable
-                style={({ pressed, hovered }: any) => ({
-                  width: 110,
-                  height: 36,
-                  borderRadius: 40,
-                  backgroundColor: hovered ? theme.colors.grey05 : pressed ? theme.colors.grey06 : theme.colors.black,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  gap: 8,
-                  cursor: 'pointer' as any,
-                })}
+              <Button
+                variant="fill"
+                size="sm"
+                style={{ backgroundColor: theme.colors.black, borderRadius: 40, width: 110 } as any}
               >
-                <Plus size={15} color={theme.colors.white} />
-                <Text variant="labelMedium" style={{ color: theme.colors.white }}>New Task</Text>
-              </Pressable>
+                <Box flexDirection="row" alignItems="center" style={{ gap: 8 }}>
+                  <Plus size={15} color={theme.colors.white} />
+                  <Text variant="labelMedium" style={{ color: theme.colors.white }}>New Task</Text>
+                </Box>
+              </Button>
             </Box>
           </Box>
         </Box>
@@ -1140,8 +1064,8 @@ export default function TeamDetail() {
           <Box flexDirection="row" alignItems="stretch">
             {[
               { key: 'details', label: 'Details', Icon: CreditCard, count: undefined as number | undefined },
-              { key: 'members', label: 'Members', Icon: Users, count: TEAM_MEMBERS.length as number | undefined },
-              { key: 'invoice', label: 'Invoice', Icon: FileText, count: 1 as number | undefined },
+              { key: 'members', label: 'Members', Icon: Users, count: teamMembers.length as number | undefined },
+              { key: 'invoice', label: 'Invoice', Icon: FileText, count: undefined as number | undefined },
             ].map(({ key, label, Icon, count }) => {
               const isActive = activeTab === key;
               return (
@@ -1300,6 +1224,44 @@ export default function TeamDetail() {
 
           <Box style={{ paddingTop: 0, paddingHorizontal: 16, paddingBottom: 16 }}>
 
+            {/* ── Contextual Banner ── */}
+            {showBanner && (
+              <Box
+                borderRadius="12"
+                padding="16"
+                style={{
+                  backgroundColor: theme.colors.lightMint,
+                  borderWidth: 1,
+                  borderColor: theme.colors.secondaryGreen,
+                  marginBottom: 16,
+                } as any}
+              >
+                <Box flexDirection="row" alignItems="center" gap="12">
+                  <Users size={24} color={theme.colors.secondaryGreen} />
+                  <Box flex={1}>
+                    <Text variant="webLargeLabel" color="textPrimary" style={{ marginBottom: 4 }}>
+                      This team has no members yet
+                    </Text>
+                    <Text variant="webSecondaryBody" color="textSecondary" style={{ lineHeight: 18, paddingRight: 24 }}>
+                      Invite teammates to collaborate on projects, assign tasks, and keep work moving together.
+                    </Text>
+                  </Box>
+                  <Button
+                    variant="fill"
+                    size="sm"
+                    onPress={() => setShowInviteModal(true)}
+                    style={{ backgroundColor: theme.colors.black } as any}
+                  >
+                    <Box flexDirection="row" alignItems="center" style={{ gap: 6 }}>
+                      <UserPlus size={14} color="#fff" />
+                      <Text variant="labelMedium" color="white">Invite members</Text>
+                    </Box>
+                  </Button>
+                </Box>
+              </Box>
+            )}
+
+
             {/* ── Active Table ── */}
             <Box backgroundColor="card" borderWidth={1} borderColor="border" style={{ borderRadius: 8, zIndex: 2 }}>
 
@@ -1309,7 +1271,7 @@ export default function TeamDetail() {
                   <Box flexDirection="row" alignItems="center" gap="8">
                     <Text variant="webLabelEmphasized" color="foreground">Active</Text>
                     <Box width={20} height={20} alignItems="center" justifyContent="center" style={{ borderWidth: 1, borderColor: theme.colors.border, borderRadius: 10 }}>
-                      <Text style={{ fontSize: 11, color: theme.colors.grey05, fontWeight: '500' }}>{TEAM_MEMBERS.length}</Text>
+                      <Text style={{ fontSize: 11, color: theme.colors.grey05, fontWeight: '500' }}>{teamMembers.length}</Text>
                     </Box>
                   </Box>
                   {activeExpanded
@@ -1341,14 +1303,13 @@ export default function TeamDetail() {
                     <Box style={{ width: 120, paddingLeft: 22, paddingRight: 16, paddingVertical: 10 }}>
                       <Text variant="webMetadataPrimary" color="grey05">Role</Text>
                     </Box>
-                    {/* Action: single merged 128px header */}
                     <Box style={{ width: 128, paddingHorizontal: 8, paddingVertical: 10 }} alignItems="center">
                       <Text variant="webMetadataPrimary" color="grey05">Action</Text>
                     </Box>
                   </Box>
 
                   {/* Data rows */}
-                  {TEAM_MEMBERS.map((member, index) => {
+                  {teamMembers.map((member, index) => {
                     const activeRole = memberRoles[index] || member.role;
                     const roleGroup = ['Owner', 'Admin'].includes(activeRole) ? 'Admin' : 'Member';
                     if (filterQuery && !member.name.toLowerCase().includes(filterQuery.toLowerCase()) && !member.email.toLowerCase().includes(filterQuery.toLowerCase())) return null;
@@ -1413,7 +1374,7 @@ export default function TeamDetail() {
                           )}
                         </Box>
 
-                        {/* Action column — 128px merged */}
+                        {/* Action column */}
                         <Box style={{ width: 128, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
                           <HoverIconButton icon={MessageSquare} size={16} color={theme.colors.grey06} tooltip="Send Message" />
                           {member.role !== 'Owner' && (
@@ -1433,12 +1394,7 @@ export default function TeamDetail() {
               {/* Pending header */}
               <Pressable onPress={() => setPendingExpanded(prev => !prev)}>
                 <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ height: 64, paddingHorizontal: 16 }}>
-                  <Box flexDirection="row" alignItems="center" gap="8">
-                    <Text variant="webLabelEmphasized" color="foreground">Pending</Text>
-                    <Box width={20} height={20} alignItems="center" justifyContent="center" style={{ borderWidth: 1, borderColor: theme.colors.border, borderRadius: 10 }}>
-                      <Text style={{ fontSize: 11, color: theme.colors.grey05, fontWeight: '500' }}>{PENDING_INVITES.length}</Text>
-                    </Box>
-                  </Box>
+                  <Text variant="webLabelEmphasized" color="foreground">Pending</Text>
                   {pendingExpanded
                     ? <ChevronUp size={20} color={theme.colors.grey06} />
                     : <ChevronDown size={20} color={theme.colors.grey06} />
@@ -1448,44 +1404,32 @@ export default function TeamDetail() {
 
               {pendingExpanded && (
                 <Box>
-                  {/* Header row */}
-                  <Box flexDirection="row" backgroundColor="grey01">
-                    <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }}>
-                      <Text variant="webMetadataPrimary" color="grey05">Email or Name</Text>
-                    </Box>
-                    <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }}>
-                      <Text variant="webMetadataPrimary" color="grey05">Invited By</Text>
-                    </Box>
-                    <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }}>
-                      <Box flexDirection="row" alignItems="center" gap="4">
-                        <Text variant="webMetadataPrimary" color="grey05">Date Sent</Text>
-                        <ArrowDownUp size={12} color={theme.colors.grey05} />
-                      </Box>
-                    </Box>
-                    <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }}>
-                      <Text variant="webMetadataPrimary" color="grey05">Expiration Date</Text>
-                    </Box>
-                    <Box style={{ width: 120, paddingLeft: 22, paddingRight: 16, paddingVertical: 10 }}>
-                      <Text variant="webMetadataPrimary" color="grey05">Role</Text>
-                    </Box>
-                    {/* Action: single merged 128px header */}
-                    <Box style={{ width: 128, paddingHorizontal: 8, paddingVertical: 10 }} alignItems="center">
-                      <Text variant="webMetadataPrimary" color="grey05">Action</Text>
-                    </Box>
-                  </Box>
+                  {/* Data rows or empty state */}
+                  {pendingInvites.length === 0 ? (
+                    <EmptyState
+                      icon={<Users size={36} color="#CBD5E1" />}
+                      title="No invitations have been sent yet."
+                      style={{ paddingTop: 16, paddingBottom: 24 }}
+                      actions={[
+                        {
+                          label: 'Invite members',
+                          onPress: () => setShowInviteModal(true),
+                          variant: 'primary',
+                          icon: <UserPlus size={16} color="#fff" />,
+                        },
+                      ]}
+                    />
+                  ) : (
+                    pendingInvites.map((invite, index) => {
+                      const roleGroup = ['Owner', 'Admin'].includes(invite.role) ? 'Admin' : 'Member';
+                      if (filterQuery && !invite.emailOrName.toLowerCase().includes(filterQuery.toLowerCase())) return null;
+                      if (filterRoles.length > 0 && !filterRoles.includes(roleGroup)) return null;
 
-                  {/* Data rows */}
-                  {PENDING_INVITES.map((invite, index) => {
-                    const roleGroup = ['Owner', 'Admin'].includes(invite.role) ? 'Admin' : 'Member';
-                    if (filterQuery && !invite.emailOrName.toLowerCase().includes(filterQuery.toLowerCase())) return null;
-                    if (filterRoles.length > 0 && !filterRoles.includes(roleGroup)) return null;
-
-                    const isNearExpiry = invite.status === 'near-expiry';
+                      const isNearExpiry = invite.status === 'near-expiry';
                     const isExpired = invite.status === 'expired';
 
                     return (
                       <Box key={index} flexDirection="row" alignItems="center" borderTopWidth={1} borderColor="border" style={{ height: 48, zIndex: 1000 - index, backgroundColor: 'transparent' }}>
-                        {/* Email / Name with avatar placeholder */}
                         <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 8 }}>
                           <Box flexDirection="row" alignItems="center" gap="8">
                             <Box width={32} height={32} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.grey02 }}>
@@ -1517,26 +1461,17 @@ export default function TeamDetail() {
                             <Text variant="webSecondaryBody" color="foreground">{invite.expirationDate}</Text>
                           )}
                         </Box>
-
-                        {/* Role cell */}
                         <Box style={{ width: 120, paddingHorizontal: 16, paddingVertical: 8, justifyContent: 'center', alignItems: 'flex-start' }}>
                           <Text variant="labelMedium" color="foreground" style={{ paddingHorizontal: 6 }}>{invite.role}</Text>
                         </Box>
-
-                        {/* Action column — 128px merged */}
                         <Box style={{ width: 128, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-                          <HoverIconButton 
-                            icon={Repeat} 
-                            size={16} 
-                            color={theme.colors.grey06} 
-                            tooltip="Resend Invitation"
-                            onPress={() => setShowResendToast(true)}
-                          />
+                          <HoverIconButton icon={Repeat} size={16} color={theme.colors.grey06} tooltip="Resend Invitation" onPress={() => setShowResendToast(true)} />
                           <HoverIconButton icon={Trash2} size={16} color={theme.colors.grey06} tooltip="Remove Invitation" onPress={() => setCancelingInvite(invite.emailOrName)} />
                         </Box>
                       </Box>
                     );
-                  })}
+                  })
+                  )}
                 </Box>
               )}
             </Box>
@@ -1544,83 +1479,23 @@ export default function TeamDetail() {
         </ScrollView>
       </Box>
 
-      {/* ── Chat List Panel ── */}
-      <Box flex={1} backgroundColor="background" borderLeftWidth={1} borderColor="border" style={{ height: '100%' as any, maxWidth: 550, position: 'relative' as any }}>
-        <Box flexDirection="row" alignItems="center" justifyContent="space-between" backgroundColor="background" style={{ height: 74, paddingHorizontal: 24, paddingVertical: 12 }}>
-          <Text style={{ fontSize: 22, fontWeight: '600', color: theme.colors.foreground, lineHeight: 32 }}>Chat</Text>
-          <Box flexDirection="row" alignItems="center">
-            <Pressable style={{ padding: 4 }}><Search size={24} color={theme.colors.textSecondary} /></Pressable>
-            <Pressable style={{ padding: 4 }}><MoreVertical size={24} color={theme.colors.textSecondary} /></Pressable>
-            <Pressable style={{ padding: 4 }}><ChevronsRight size={24} color={theme.colors.textSecondary} /></Pressable>
-          </Box>
-        </Box>
-
-        <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
-          <Box flexDirection="row" alignItems="center" style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 10, gap: 16 }}>
-            <Box width={48} height={48} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelOrange" style={{ flexShrink: 0 } as any}>
-              <Text style={{ fontWeight: '600', color: '#FFFFFF', fontSize: 22 }}>OH</Text>
-            </Box>
-            <Box flex={1} style={{ minWidth: 0, gap: 4 }}>
-              <Text variant="webSecondaryBody" color="foreground">Oscar H.</Text>
-              <Text variant="webMetadataPrimary" color="grey04" numberOfLines={1}>{"Added to Painting Team"}</Text>
-            </Box>
-            <Text variant="webMetadataPrimary" color="grey04">Today</Text>
-          </Box>
-
-          <Box flexDirection="row" alignItems="center" style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 10, gap: 16 }}>
-            <Box width={48} height={48} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelOrange" style={{ flexShrink: 0 } as any}>
-              <Text style={{ fontWeight: '600', color: '#FFFFFF', fontSize: 22 }}>TH</Text>
-            </Box>
-            <Box flex={1} style={{ minWidth: 0, gap: 4 }}>
-              <Text variant="webSecondaryBody" color="foreground">Tasktag Helpdesk</Text>
-              <Text variant="webMetadataPrimary" color="grey04" numberOfLines={1}>
-                Hi there! Welcome to TaskTag! We're here to assist you with any questions or support requests you might have.
-              </Text>
-            </Box>
-            <Text variant="webMetadataPrimary" color="grey04">Yesterday</Text>
-          </Box>
-        </ScrollView>
-
-        <Pressable style={{ position: 'absolute' as any, bottom: 16, right: 16, backgroundColor: theme.colors.foreground, borderRadius: 156, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 12, gap: 8 }}>
-          <MessageSquarePlus size={24} color={theme.colors.white} />
-          <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.white }}>New Message</Text>
-        </Pressable>
-      </Box>
+      {/* ── Chat Panel ── */}
+      <AppChatPanel />
 
       {/* ── Role Dropdown Portal ── */}
       {openRoleDropdown !== null && dropdownPos !== null && (
         <>
-          {/* Click-away overlay */}
           <Pressable
             onPress={closeDropdown}
             style={Platform.select({
-              web: {
-                position: 'fixed',
-                top: 0, left: 0, right: 0, bottom: 0,
-                zIndex: 9990,
-              } as any,
-              default: {
-                position: 'absolute' as any,
-                top: 0, left: 0, right: 0, bottom: 0,
-                zIndex: 9990,
-              },
+              web: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9990 } as any,
+              default: { position: 'absolute' as any, top: 0, left: 0, right: 0, bottom: 0, zIndex: 9990 },
             })}
           />
-          {/* Dropdown positioned under the trigger */}
           <Box
             style={Platform.select({
-              web: {
-                position: 'fixed',
-                top: dropdownTop,
-                right: dropdownRight,
-                zIndex: 9999,
-              } as any,
-              default: {
-                position: 'absolute' as any,
-                top: dropdownTop,
-                right: dropdownRight,
-                zIndex: 9999,
-              },
+              web: { position: 'fixed', top: dropdownTop, right: dropdownRight, zIndex: 9999 } as any,
+              default: { position: 'absolute' as any, top: dropdownTop, right: dropdownRight, zIndex: 9999 },
             })}
           >
             <RoleDropdownContent
