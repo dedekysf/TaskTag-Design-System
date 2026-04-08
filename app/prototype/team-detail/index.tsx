@@ -683,6 +683,40 @@ function InviteModal({ onClose }: { onClose: () => void }) {
   );
 }
 
+function CancelInviteModal({ emailOrName, onClose }: { emailOrName: string; onClose: () => void }) {
+  const theme = useTheme<Theme>();
+  return (
+    <Pressable
+      onPress={onClose}
+      style={Platform.select({
+        web: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 10000, backgroundColor: 'rgba(0,0,0,0.4)', alignItems: 'center', justifyContent: 'center' } as any,
+        default: { position: 'absolute' as any, top: 0, left: 0, right: 0, bottom: 0, zIndex: 10000, backgroundColor: 'rgba(0,0,0,0.4)', alignItems: 'center', justifyContent: 'center' },
+      })}
+    >
+      <Pressable
+        onPress={(e) => e.stopPropagation()}
+        style={{ backgroundColor: theme.colors.white, borderRadius: 16, borderWidth: 1, borderColor: theme.colors.border, width: 480, maxWidth: '90%' as any, padding: 24, gap: 16 }}
+      >
+        <Box flexDirection="row" alignItems="center" justifyContent="space-between">
+          <Text style={{ fontSize: 18, fontWeight: '600', color: theme.colors.foreground }}>Cancel Invite</Text>
+          <Pressable
+            onPress={onClose}
+            style={({ hovered, pressed }: any) => ({ width: 32, height: 32, borderRadius: 8, alignItems: 'center', justifyContent: 'center', backgroundColor: hovered ? theme.colors.grey01 : pressed ? theme.colors.grey02 : 'transparent', cursor: 'pointer' as any })}
+          >
+            <X size={18} color={theme.colors.grey06} />
+          </Pressable>
+        </Box>
+        <Text style={{ fontSize: 14, color: theme.colors.foreground, lineHeight: 22 }}>
+          This will cancel the pending invitation for <Text style={{ fontWeight: '600' }}>{emailOrName}</Text>.
+        </Text>
+        <Box flexDirection="row" justifyContent="flex-end">
+          <Button color="secondary" size="md" onPress={onClose}>Cancel Invite</Button>
+        </Box>
+      </Pressable>
+    </Pressable>
+  );
+}
+
 function RemoveMemberModal({ memberName, onClose }: { memberName: string; onClose: () => void }) {
   const theme = useTheme<Theme>();
   return (
@@ -735,6 +769,9 @@ export default function TeamDetail() {
 
   // Remove member confirmation
   const [removingMember, setRemovingMember] = useState<string | null>(null);
+
+  // Cancel invite confirmation
+  const [cancelingInvite, setCancelingInvite] = useState<string | null>(null);
 
   // Dropdown portal state
   const [openRoleDropdown, setOpenRoleDropdown] = useState<string | null>(null);
@@ -1337,7 +1374,7 @@ export default function TeamDetail() {
                             color={theme.colors.grey06} 
                             tooltip="Resend Invitation" 
                           />
-                          <HoverIconButton icon={Trash2} size={16} color={theme.colors.grey06} tooltip="Remove Invitation" />
+                          <HoverIconButton icon={Trash2} size={16} color={theme.colors.grey06} tooltip="Remove Invitation" onPress={() => setCancelingInvite(invite.emailOrName)} />
                         </Box>
                       </Box>
                     );
@@ -1367,7 +1404,7 @@ export default function TeamDetail() {
             </Box>
             <Box flex={1} style={{ minWidth: 0, gap: 4 }}>
               <Text variant="webSecondaryBody" color="foreground">Oscar H.</Text>
-              <Text variant="webMetadataPrimary" color="grey04" numberOfLines={1}>{"You've been added to Painting Team"}</Text>
+              <Text variant="webMetadataPrimary" color="grey04" numberOfLines={1}>{"Added to Painting Team"}</Text>
             </Box>
             <Text variant="webMetadataPrimary" color="grey04">Today</Text>
           </Box>
@@ -1441,6 +1478,9 @@ export default function TeamDetail() {
 
       {/* ── Remove Member Confirmation ── */}
       {removingMember && <RemoveMemberModal memberName={removingMember} onClose={() => setRemovingMember(null)} />}
+
+      {/* ── Cancel Invite Confirmation ── */}
+      {cancelingInvite && <CancelInviteModal emailOrName={cancelingInvite} onClose={() => setCancelingInvite(null)} />}
 
     </Box>
   );
