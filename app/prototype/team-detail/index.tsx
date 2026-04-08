@@ -5,6 +5,7 @@ import { useTheme } from '@shopify/restyle';
 import {
   Activity,
   ArrowDownUp,
+  Check,
   Calendar,
   CheckCircle,
   ChevronDown,
@@ -42,7 +43,7 @@ import {
   XCircle,
 } from 'lucide-react-native';
 import React, { useRef, useState } from 'react';
-import { Image, Platform, Pressable, ScrollView, TextInput, View } from 'react-native';
+import { Animated, Image, Platform, Pressable, ScrollView, TextInput, View } from 'react-native';
 
 const AVATAR_PHOTOS = [
   { src: require('@/assets/images/sample-three.jpg'), name: 'James Log...' },
@@ -683,6 +684,42 @@ function InviteModal({ onClose }: { onClose: () => void }) {
   );
 }
 
+function ResendToast({ onDone }: { onDone: () => void }) {
+  const theme = useTheme<Theme>();
+  const progress = useRef(new Animated.Value(0)).current;
+
+  React.useEffect(() => {
+    Animated.timing(progress, {
+      toValue: 1,
+      duration: 3000,
+      useNativeDriver: false,
+    }).start(() => onDone());
+  }, []);
+
+  return (
+    <View
+      style={Platform.select({
+        web: { position: 'fixed', bottom: 28, left: 0, right: 0, alignItems: 'center', zIndex: 99999 } as any,
+        default: { position: 'absolute' as any, bottom: 28, left: 0, right: 0, alignItems: 'center', zIndex: 99999 },
+      })}
+    >
+      <View style={{ backgroundColor: theme.colors.foreground, borderRadius: 12, overflow: 'hidden' as any, minWidth: 240 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 20, paddingVertical: 14 }}>
+          <Check size={18} color={theme.colors.white} />
+          <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.white }}>Invitation resent</Text>
+        </View>
+        <Animated.View
+          style={{
+            height: 3,
+            backgroundColor: theme.colors.secondaryGreen,
+            width: progress.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] }),
+          }}
+        />
+      </View>
+    </View>
+  );
+}
+
 function CancelInviteModal({ emailOrName, onClose }: { emailOrName: string; onClose: () => void }) {
   const theme = useTheme<Theme>();
   return (
@@ -772,6 +809,9 @@ export default function TeamDetail() {
 
   // Cancel invite confirmation
   const [cancelingInvite, setCancelingInvite] = useState<string | null>(null);
+
+  // Resend toast
+  const [showResendToast, setShowResendToast] = useState(false);
 
   // Dropdown portal state
   const [openRoleDropdown, setOpenRoleDropdown] = useState<string | null>(null);
@@ -1372,7 +1412,8 @@ export default function TeamDetail() {
                             icon={Repeat} 
                             size={16} 
                             color={theme.colors.grey06} 
-                            tooltip="Resend Invitation" 
+                            tooltip="Resend Invitation"
+                            onPress={() => setShowResendToast(true)}
                           />
                           <HoverIconButton icon={Trash2} size={16} color={theme.colors.grey06} tooltip="Remove Invitation" onPress={() => setCancelingInvite(invite.emailOrName)} />
                         </Box>
@@ -1481,6 +1522,9 @@ export default function TeamDetail() {
 
       {/* ── Cancel Invite Confirmation ── */}
       {cancelingInvite && <CancelInviteModal emailOrName={cancelingInvite} onClose={() => setCancelingInvite(null)} />}
+
+      {/* ── Resend Toast ── */}
+      {showResendToast && <ResendToast onDone={() => setShowResendToast(false)} />}
 
     </Box>
   );
