@@ -101,49 +101,36 @@ function Tooltip({
 }) {
   const theme = useTheme<Theme>();
   const [hovered, setHovered] = useState(false);
-  const triggerRef = useRef<View>(null);
-  const [pos, setPos] = useState<{ top: number; left?: number; right?: number } | null>(null);
   const visible = hovered || forceOpen;
   const isSuccess = variant === 'success';
 
-  const measure = React.useCallback(() => {
-    if (triggerRef.current) {
-      (triggerRef.current as any).measureInWindow((x: number, y: number, w: number, h: number) => {
-        const ww = typeof window !== 'undefined' ? window.innerWidth : 1200;
-        setPos({ top: y + h + 6, ...(align === 'left' ? { left: x } : { right: ww - (x + w) }) });
-      });
-    }
-  }, [align]);
-
-  React.useEffect(() => { if (forceOpen) measure(); }, [forceOpen, measure]);
-
   return (
-    <>
-      <View
-        ref={triggerRef}
-        {...Platform.select({
-          web: {
-            onMouseEnter: () => { setHovered(true); measure(); },
-            onMouseLeave: () => setHovered(false),
-          } as any,
-        })}
-      >
-        {children}
-      </View>
-      {visible && pos && (
+    <View
+      style={{ position: 'relative' as any, zIndex: visible ? 99999 : 'auto' as any }}
+      {...Platform.select({
+        web: {
+          onMouseEnter: () => setHovered(true),
+          onMouseLeave: () => setHovered(false),
+        } as any,
+      })}
+    >
+      {children}
+      {visible && (
         <View
           style={Platform.select({
             web: {
-              position: 'fixed',
-              top: pos.top,
-              ...(pos.left !== undefined ? { left: pos.left } : { right: pos.right }),
+              position: 'absolute',
+              top: '100%',
+              ...(align === 'left' ? { left: 0 } : { right: 0 }),
+              marginTop: 6,
               zIndex: 999999,
               pointerEvents: 'none',
             } as any,
             default: {
               position: 'absolute' as any,
-              top: pos.top,
-              ...(pos.left !== undefined ? { left: pos.left } : { right: pos.right }),
+              top: '100%' as any,
+              ...(align === 'left' ? { left: 0 } : { right: 0 }),
+              marginTop: 6,
               zIndex: 999999,
             },
           })}
@@ -176,7 +163,7 @@ function Tooltip({
           </Box>
         </View>
       )}
-    </>
+    </View>
   );
 }
 
