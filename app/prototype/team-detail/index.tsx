@@ -40,7 +40,7 @@ import {
   XCircle,
 } from 'lucide-react-native';
 import React, { useRef, useState } from 'react';
-import { Image, Platform, Pressable, ScrollView, View } from 'react-native';
+import { Image, Platform, Pressable, ScrollView, TextInput, View } from 'react-native';
 
 const AVATAR_PHOTOS = [
   { src: require('@/assets/images/sample-three.jpg'), name: 'James Log...' },
@@ -314,12 +314,131 @@ function RoleDropdownContent({
   );
 }
 
+const INVITE_ILLUSTRATION = 'https://www.figma.com/api/mcp/asset/59a5ad2a-7699-411a-8562-8146a757cf6c';
+
+function InviteModal({ onClose }: { onClose: () => void }) {
+  const theme = useTheme<Theme>();
+  const [inputValue, setInputValue] = useState('');
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyLink = () => {
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <Pressable
+      onPress={onClose}
+      style={Platform.select({
+        web: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 10000, backgroundColor: 'rgba(0,0,0,0.4)', alignItems: 'center', justifyContent: 'center' } as any,
+        default: { position: 'absolute' as any, top: 0, left: 0, right: 0, bottom: 0, zIndex: 10000, backgroundColor: 'rgba(0,0,0,0.4)', alignItems: 'center', justifyContent: 'center' },
+      })}
+    >
+      <Pressable
+        onPress={(e) => e.stopPropagation()}
+        style={{ backgroundColor: theme.colors.white, borderRadius: 16, borderWidth: 1, borderColor: theme.colors.border, width: 480, maxWidth: '90%' as any, overflow: 'hidden' as any }}
+      >
+        {/* Header */}
+        <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ paddingHorizontal: 24, paddingVertical: 16 }}>
+          <Text style={{ fontSize: 18, fontWeight: '500', color: theme.colors.foreground, lineHeight: 24 }}>Invite or Add Member</Text>
+          <Box flexDirection="row" alignItems="center" gap="8">
+            {/* Copy Link button */}
+            <Pressable
+              onPress={handleCopyLink}
+              style={({ hovered, pressed }: any) => ({
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 6,
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+                borderRadius: 8,
+                backgroundColor: hovered ? theme.colors.grey01 : pressed ? theme.colors.grey02 : 'transparent',
+                cursor: 'pointer' as any,
+              })}
+            >
+              <Link size={14} color={copied ? theme.colors.secondaryGreen : theme.colors.blue} />
+              <Text style={{ fontSize: 14, fontWeight: '500', color: copied ? theme.colors.secondaryGreen : theme.colors.blue, lineHeight: 16 }}>
+                {copied ? 'Copied!' : 'Copy Link'}
+              </Text>
+            </Pressable>
+            {/* Close button */}
+            <Pressable
+              onPress={onClose}
+              style={({ hovered, pressed }: any) => ({
+                width: 32, height: 32, borderRadius: 8, alignItems: 'center', justifyContent: 'center',
+                backgroundColor: hovered ? theme.colors.grey01 : pressed ? theme.colors.grey02 : 'transparent',
+                cursor: 'pointer' as any,
+              })}
+            >
+              <XCircle size={20} color={theme.colors.grey04} />
+            </Pressable>
+          </Box>
+        </Box>
+
+        {/* Body */}
+        <Box style={{ paddingHorizontal: 24, paddingVertical: 8, gap: 24 }}>
+          {/* Input */}
+          <Box style={{ borderWidth: 1, borderColor: theme.colors.border, borderRadius: 8, height: 48, paddingHorizontal: 16, justifyContent: 'center' }}>
+            <TextInput
+              value={inputValue}
+              onChangeText={setInputValue}
+              placeholder="Add members by email, name or group"
+              placeholderTextColor={theme.colors.grey04}
+              style={{ fontSize: 14, color: theme.colors.foreground, outlineStyle: 'none' } as any}
+            />
+          </Box>
+
+          {/* Empty state */}
+          <Box alignItems="center" justifyContent="center" style={{ gap: 10, paddingVertical: 8 }}>
+            <Image source={{ uri: INVITE_ILLUSTRATION }} style={{ width: 86, height: 86 }} resizeMode="contain" />
+            <Text style={{ fontSize: 14, fontWeight: '400', color: theme.colors.foreground, lineHeight: 16, textAlign: 'center' }}>
+              Bring your team on board
+            </Text>
+            <Text style={{ fontSize: 12, color: theme.colors.grey04, lineHeight: 16, textAlign: 'center', letterSpacing: 0.24 }}>
+              Invite teammates or contact groups to start working together seamlessly.
+            </Text>
+          </Box>
+        </Box>
+
+        {/* Footer */}
+        <Box style={{ paddingHorizontal: 24, paddingVertical: 16, gap: 10 }}>
+          {/* Send Invite button */}
+          <Box
+            style={{
+              backgroundColor: inputValue.trim() ? theme.colors.blue : theme.colors.grey02,
+              borderRadius: 8,
+              height: 52,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+            }}
+          >
+            <UserPlus size={20} color={inputValue.trim() ? theme.colors.white : theme.colors.grey04} />
+            <Text style={{ fontSize: 14, fontWeight: '500', color: inputValue.trim() ? theme.colors.white : theme.colors.grey04, lineHeight: 16 }}>
+              Send Invite
+            </Text>
+          </Box>
+          {/* Expiration note */}
+          <Box flexDirection="row" alignItems="center" justifyContent="center" gap="4">
+            <HelpCircle size={14} color={theme.colors.grey04} />
+            <Text style={{ fontSize: 12, color: theme.colors.grey04, letterSpacing: 0.24 }}>Invitations expire after 7 days</Text>
+          </Box>
+        </Box>
+      </Pressable>
+    </Pressable>
+  );
+}
+
 export default function TeamDetail() {
   const theme = useTheme<Theme>();
   const [activeTab, setActiveTab] = useState('members');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeExpanded, setActiveExpanded] = useState(true);
   const [pendingExpanded, setPendingExpanded] = useState(true);
+
+  // Invite modal
+  const [showInviteModal, setShowInviteModal] = useState(false);
 
   // Dropdown portal state
   const [openRoleDropdown, setOpenRoleDropdown] = useState<string | null>(null);
@@ -644,6 +763,7 @@ export default function TeamDetail() {
           <Box flexDirection="row" alignItems="center" gap="md" style={{ paddingLeft: 16 }}>
             <CopyLinkButton />
             <Pressable
+              onPress={() => setShowInviteModal(true)}
               style={({ pressed, hovered }: any) => ({
                 width: 110,
                 height: 36,
@@ -1019,6 +1139,9 @@ export default function TeamDetail() {
           </Box>
         </>
       )}
+
+      {/* ── Invite Modal ── */}
+      {showInviteModal && <InviteModal onClose={() => setShowInviteModal(false)} />}
 
     </Box>
   );
