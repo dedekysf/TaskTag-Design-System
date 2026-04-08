@@ -254,9 +254,9 @@ export default function PrototypeIndex() {
       platforms: ['Web', 'Mobile'] as ('Web' | 'Mobile')[],
     },
     {
-      title: 'Team Detail',
-      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-318?atlOrigin=eyJpIjoiYWI2MjBmYTY2ODRlNDI5NDkzYTE5ZmIyNDVjOTk2ZGIiLCJwIjoiaiJ9',
-      jiraLabel: 'TD-318',
+      title: 'Role Descriptions and Naming Consistency',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-322?atlOrigin=eyJpIjoiZjg4ZWI2MzA2ZWZmNDg3MGFhNjExOTk1NWU5MThjM2YiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-322',
       route: '/prototype/team-detail',
       platform: 'Web' as const,
     },
@@ -286,9 +286,9 @@ export default function PrototypeIndex() {
     platforms: ['Web', 'Mobile'] as ('Web' | 'Mobile')[],
   };
   const designSystem = prototypes.find(p => p.title === 'Design System')!;
-  const teamDetail = prototypes.find(p => p.title === 'Team Detail')!;
+  const teamDetail = prototypes.find(p => p.title === 'Role Descriptions and Naming Consistency')!;
   const expiredNonUsers = prototypes.filter(p => p.title === 'Team Invitation Expired by Email');
-  const rest = prototypes.filter(p => !PINNED_TITLES.includes(p.title) && p.title !== 'Team Invitation Expired by Email' && p.title !== 'Team Detail');
+  const rest = prototypes.filter(p => !PINNED_TITLES.includes(p.title) && p.title !== 'Team Invitation Expired by Email' && p.title !== 'Role Descriptions and Naming Consistency');
 
   const filtered = [github, designSystem, teamDetail, ...expiredNonUsers, ...rest].filter(item => {
     const matchTab = activeTab === 'All Device' || PINNED_TITLES.includes(item.title) || ('platform' in item ? item.platform : 'Web') === activeTab;
