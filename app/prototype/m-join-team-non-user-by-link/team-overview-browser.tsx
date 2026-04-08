@@ -2,7 +2,7 @@ import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import { Clock, Lock, MoreHorizontal, BatteryFull, SignalHigh, WifiHigh } from 'lucide-react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { Pressable, ScrollView, View, Image } from 'react-native';
 
 const TEAM = {
@@ -18,6 +18,7 @@ const MEMBERS = [
 
 export default function TeamOverviewBrowser() {
   const theme = useTheme<Theme>();
+  const [bannerVisible, setBannerVisible] = useState(true);
 
   return (
     <Box flex={1} backgroundColor="background" alignItems="center">
@@ -117,8 +118,29 @@ export default function TeamOverviewBrowser() {
 
         </ScrollView>
 
-        {/* Fixed Bottom Black Banner */}
-        <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, zIndex: 40 }}>
+        {/* Note for Dev + Black Banner stacked at bottom */}
+        <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, zIndex: 40, gap: 8 }}>
+
+          {/* Note for Dev */}
+          {bannerVisible && (
+            <View style={{ backgroundColor: '#fbe676', borderRadius: 12, padding: 14, flexDirection: 'row', alignItems: 'flex-start', gap: 8 }}>
+              <View style={{ flex: 1, gap: 2 }}>
+                <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
+                <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18 }}>
+                  When user presses download button, if already have open the app. If not direct to Play/App store.
+                </Text>
+              </View>
+              <Pressable
+                onPress={() => setBannerVisible(false)}
+                style={{ width: 24, height: 24, alignItems: 'center', justifyContent: 'center', marginTop: 2 }}
+                hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+              >
+                <Text variant="webLabelEmphasized" style={{ color: '#000', fontSize: 16, lineHeight: 16 }}>×</Text>
+              </Pressable>
+            </View>
+          )}
+
+          {/* Black Banner */}
           <View style={{ backgroundColor: '#000000', borderRadius: 12, padding: 20 }}>
             <View style={{ marginBottom: 4 }}>
               <Text variant="webLabelEmphasized" color="white">Hang tight.</Text>
@@ -134,7 +156,6 @@ export default function TeamOverviewBrowser() {
             </Pressable>
           </View>
         </View>
-
 
       </Box>
     </Box>

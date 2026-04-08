@@ -3,7 +3,7 @@ import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import { router } from 'expo-router';
-import { BatteryFull, ChevronRight, FileText, Hammer, HardHat, Hash, Image as ImageIcon, Lock, Share, SignalHigh, User, WifiHigh, Zap } from 'lucide-react-native';
+import { BatteryFull, ChevronRight, FileText, Hammer, HardHat, Hash, Image as ImageIcon, Lock, MoreHorizontal, Share, SignalHigh, WifiHigh, Zap } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Image, Pressable, ScrollView } from 'react-native';
 
@@ -41,44 +41,29 @@ export default function JoinTasktag() {
           </Box>
         </Box>
 
-        {/* Browser Header Mock */}
-        <Box
-          paddingHorizontal="md"
-          paddingBottom="sm"
-          backgroundColor="background"
-          borderBottomWidth={1}
-          borderColor="border"
-        >
-          <Box flexDirection="row" alignItems="center" justifyContent="center" backgroundColor="grey02" paddingHorizontal="12" paddingVertical="12" borderRadius="8" gap="8">
-            <Lock size={12} color={theme.colors.grey05} />
-            <Text variant="caption" color="foreground" style={{ fontSize: 14, fontWeight: '500' }}>tasktag.com</Text>
+        {/* Browser Header */}
+        <Box paddingHorizontal="md" paddingBottom="sm" backgroundColor="background" borderBottomWidth={1} borderColor="border">
+          <Box flexDirection="row" alignItems="center" gap="8">
+            <Box flex={1} flexDirection="row" alignItems="center" justifyContent="center" backgroundColor="grey02" paddingHorizontal="12" paddingVertical="12" gap="8" borderRadius="8">
+              <Lock size={12} color={theme.colors.grey05} />
+              <Text variant="webLabelSmall" color="foreground">tasktag.com</Text>
+            </Box>
+            <Pressable style={{ padding: 4 }}>
+              <MoreHorizontal size={20} color={theme.colors.foreground} strokeWidth={2} />
+            </Pressable>
           </Box>
         </Box>
 
-        {/* Header */}
-        <Box
-          flexDirection="row"
-          alignItems="center"
-          justifyContent="space-between"
-          paddingHorizontal="md"
-          paddingVertical="sm"
-          backgroundColor="background"
-        >
+        {/* TaskTag Logo + Sign Up */}
+        <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#fff' }}>
           <Image
             source={require('@/assets/images/tasktag-logo.png')}
-            style={{ height: 28, width: 100 }}
+            style={{ width: 100, height: 30 }}
             resizeMode="contain"
           />
-          <Box
-            width={32}
-            height={32}
-            borderRadius="full"
-            backgroundColor="grey02"
-            alignItems="center"
-            justifyContent="center"
-          >
-            <User size={18} color={theme.colors.grey06} />
-          </Box>
+          <Pressable>
+            <Text variant="webSecondaryBody" style={{ fontSize: 14, color: theme.colors.secondaryGreen, fontWeight: '600' }}>Sign Up</Text>
+          </Pressable>
         </Box>
 
         <ScrollView
