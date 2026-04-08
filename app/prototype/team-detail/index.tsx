@@ -67,7 +67,7 @@ const TEAM_MEMBERS: {
   role: string;
   avatar: { type: 'initials'; initials: string; color: string };
 }[] = [
-  { name: 'James Smith', skills: ['Lead Painter'], email: 'jamessmith@gmail.com', phone: '232-946-1254', role: 'Owner', avatar: { type: 'initials', initials: 'LS', color: 'pastelMagenta' } },
+  { name: 'Linda Smith', skills: ['Lead Painter'], email: 'lindasmith@gmail.com', phone: '232-946-1254', role: 'Owner', avatar: { type: 'initials', initials: 'LS', color: 'pastelMagenta' } },
   { name: 'Abby Smith', skills: ['Painting'], email: 'abbysmith@gmail.com', phone: '230-124-9988', role: 'Admin', avatar: { type: 'initials', initials: 'AS', color: 'pastelYellow' } },
   { name: 'Oscar H.', skills: ['Primer'], email: 'oscaar@email.com', phone: '242-159-8803', role: 'Admin', avatar: { type: 'initials', initials: 'OH', color: 'pastelOrange' } },
   { name: 'Savannah Nguyen', skills: ['Finishing'], email: 'savannahnguyen@gmail.com', phone: '222-548-5896', role: 'Member', avatar: { type: 'initials', initials: 'SN', color: 'pastelBlue' } },
@@ -81,9 +81,9 @@ const PENDING_INVITES: {
   role: string;
   status: 'pending' | 'expired' | 'near-expiry';
 }[] = [
-  { emailOrName: 'john.doe@gmail.com', invitedBy: 'Melissa Monroe', dateSent: 'Nov 1, 2025', expirationDate: 'Nov 7, 2025', role: 'Admin', status: 'pending' },
+  { emailOrName: 'john.doe@gmail.com', invitedBy: 'Linda Smith', dateSent: 'Nov 1, 2025', expirationDate: 'Nov 7, 2025', role: 'Admin', status: 'pending' },
   { emailOrName: 'roberto@gmail.com', invitedBy: 'Abby Smith', dateSent: 'Nov 2, 2025', expirationDate: 'Nov 3, 2025', role: 'Member', status: 'near-expiry' },
-  { emailOrName: 'sarah.k@gmail.com', invitedBy: 'James Smith', dateSent: 'Oct 20, 2025', expirationDate: 'Oct 27, 2025', role: 'Member', status: 'expired' },
+  { emailOrName: 'sarah.k@gmail.com', invitedBy: 'Oscar H.', dateSent: 'Oct 20, 2025', expirationDate: 'Oct 27, 2025', role: 'Member', status: 'expired' },
 ];
 
 // ── Tooltip ──
@@ -1337,7 +1337,9 @@ export default function TeamDetail() {
                         {/* Action column — 128px merged */}
                         <Box style={{ width: 128, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
                           <HoverIconButton icon={MessageSquare} size={16} color={theme.colors.grey06} tooltip="Send Message" />
-                          <HoverIconButton icon={Trash2} size={16} color={theme.colors.grey06} tooltip="Delete Member" onPress={() => setRemovingMember(member.name)} />
+                          {member.role !== 'Owner' && (
+                            <HoverIconButton icon={Trash2} size={16} color={theme.colors.grey06} tooltip="Delete Member" onPress={() => setRemovingMember(member.name)} />
+                          )}
                         </Box>
                       </Box>
                     );
