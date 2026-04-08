@@ -101,56 +101,82 @@ function Tooltip({
 }) {
   const theme = useTheme<Theme>();
   const [hovered, setHovered] = useState(false);
+  const triggerRef = useRef<View>(null);
+  const [pos, setPos] = useState<{ top: number; left?: number; right?: number } | null>(null);
   const visible = hovered || forceOpen;
-
   const isSuccess = variant === 'success';
 
+  const measure = React.useCallback(() => {
+    if (triggerRef.current) {
+      (triggerRef.current as any).measureInWindow((x: number, y: number, w: number, h: number) => {
+        const ww = typeof window !== 'undefined' ? window.innerWidth : 1200;
+        setPos({ top: y + h + 6, ...(align === 'left' ? { left: x } : { right: ww - (x + w) }) });
+      });
+    }
+  }, [align]);
+
+  React.useEffect(() => { if (forceOpen) measure(); }, [forceOpen, measure]);
+
   return (
-    <View
-      style={{ position: 'relative' as any, zIndex: visible ? 99999 : 1 }}
-      {...Platform.select({
-        web: {
-          onMouseEnter: () => setHovered(true),
-          onMouseLeave: () => setHovered(false),
-        } as any,
-      })}
-    >
-      {children}
-      {visible && (
-        <Box
-          style={{
-            position: 'absolute' as any,
-            top: '100%',
-            ...(align === 'left' ? { left: 0 } : { right: 0 }),
-            marginTop: 6,
-            backgroundColor: isSuccess ? theme.colors.white : theme.colors.grey06,
-            borderRadius: 4,
-            paddingHorizontal: isSuccess ? 12 : 8,
-            paddingVertical: isSuccess ? 8 : 4,
-            zIndex: 999999,
-            ...(isSuccess ? { borderWidth: 1, borderColor: theme.colors.border } : {}),
-            ...Platform.select({
-              web: {
-                pointerEvents: 'none',
-                whiteSpace: 'nowrap',
-                ...(isSuccess ? { boxShadow: '0px 5px 25px 0px rgba(0, 0, 0, 0.05)' } : {}),
-              } as any,
-            }),
-          }}
+    <>
+      <View
+        ref={triggerRef}
+        {...Platform.select({
+          web: {
+            onMouseEnter: () => { setHovered(true); measure(); },
+            onMouseLeave: () => setHovered(false),
+          } as any,
+        })}
+      >
+        {children}
+      </View>
+      {visible && pos && (
+        <View
+          style={Platform.select({
+            web: {
+              position: 'fixed',
+              top: pos.top,
+              ...(pos.left !== undefined ? { left: pos.left } : { right: pos.right }),
+              zIndex: 999999,
+              pointerEvents: 'none',
+            } as any,
+            default: {
+              position: 'absolute' as any,
+              top: pos.top,
+              ...(pos.left !== undefined ? { left: pos.left } : { right: pos.right }),
+              zIndex: 999999,
+            },
+          })}
         >
-          {isSuccess ? (
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <CheckCircle size={16} color={theme.colors.secondaryGreen} />
-              <Text numberOfLines={1} style={{ color: theme.colors.textSecondary, fontSize: 14, fontWeight: '400', whiteSpace: 'nowrap' as any }}>{label}</Text>
-            </View>
-          ) : (
-            <Text numberOfLines={1} style={{ color: '#FFFFFF', fontSize: 11, fontWeight: '500' }}>
-              {label}
-            </Text>
-          )}
-        </Box>
+          <Box
+            style={{
+              backgroundColor: isSuccess ? theme.colors.white : theme.colors.grey06,
+              borderRadius: 4,
+              paddingHorizontal: isSuccess ? 12 : 8,
+              paddingVertical: isSuccess ? 8 : 4,
+              ...(isSuccess ? { borderWidth: 1, borderColor: theme.colors.border } : {}),
+              ...Platform.select({
+                web: {
+                  whiteSpace: 'nowrap',
+                  ...(isSuccess ? { boxShadow: '0px 5px 25px 0px rgba(0, 0, 0, 0.05)' } : {}),
+                } as any,
+              }),
+            }}
+          >
+            {isSuccess ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <CheckCircle size={16} color={theme.colors.secondaryGreen} />
+                <Text numberOfLines={1} style={{ color: theme.colors.textSecondary, fontSize: 14, fontWeight: '400', whiteSpace: 'nowrap' as any }}>{label}</Text>
+              </View>
+            ) : (
+              <Text numberOfLines={1} style={{ color: '#FFFFFF', fontSize: 11, fontWeight: '500' }}>
+                {label}
+              </Text>
+            )}
+          </Box>
+        </View>
       )}
-    </View>
+    </>
   );
 }
 
