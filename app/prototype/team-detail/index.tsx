@@ -423,13 +423,17 @@ function InviteModal({ onClose }: { onClose: () => void }) {
 
   const inputContainerRef = useRef<View>(null);
   const [dropdownPos, setDropdownPos] = useState<{ top: number; left: number; width: number } | null>(null);
-  const measureInputPosition = () => {
+  const measureInputPosition = React.useCallback(() => {
     if (inputContainerRef.current) {
       (inputContainerRef.current as any).measureInWindow((x: number, y: number, w: number, h: number) => {
-        setDropdownPos({ top: y + h + 4, left: x, width: w });
+        if (w > 0) setDropdownPos({ top: y + h + 4, left: x, width: w });
       });
     }
-  };
+  }, []);
+  React.useEffect(() => {
+    if (showDropdown) setTimeout(measureInputPosition, 0);
+    else setDropdownPos(null);
+  }, [showDropdown, measureInputPosition]);
 
   const dropdownItems = (
     <Box style={{ backgroundColor: theme.colors.white, borderWidth: 1, borderColor: theme.colors.border, borderRadius: 12, overflow: 'hidden' as any, maxHeight: 320 }}>
@@ -447,7 +451,7 @@ function InviteModal({ onClose }: { onClose: () => void }) {
         style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, backgroundColor: hovered ? theme.colors.grey01 : 'transparent', cursor: 'pointer' as any })}
       >
         <Box width={40} height={40} borderRadius="full" backgroundColor="grey02" alignItems="center" justifyContent="center">
-          <Mail size={18} color={theme.colors.grey04} />
+          <Mail size={18} color={theme.colors.grey05} />
         </Box>
         <Text style={{ fontSize: 14, color: theme.colors.textSecondary }}>
           Invite: {query.toLowerCase()}@gmail.com
@@ -461,7 +465,7 @@ function InviteModal({ onClose }: { onClose: () => void }) {
             style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, backgroundColor: hovered ? theme.colors.grey01 : 'transparent', cursor: 'pointer' as any })}
           >
             <InviteAvatar avatar={contact.avatar} size={40} />
-            <Box style={{ gap: 4 }}>
+            <Box style={{ gap: 0 }}>
               <HighlightText text={contact.name} query={query} baseStyle={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }} />
               <HighlightText text={contact.email} query={query} baseStyle={{ fontSize: 13, color: theme.colors.grey05 }} />
             </Box>
@@ -480,7 +484,7 @@ function InviteModal({ onClose }: { onClose: () => void }) {
               <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.grey02 }}>
                 {isExpanded ? <ChevronUp size={18} color={theme.colors.grey05} /> : <ChevronDown size={18} color={theme.colors.grey05} />}
               </Box>
-              <Box style={{ gap: 4 }}>
+              <Box style={{ gap: 0 }}>
                 <HighlightText text={group.name} query={query} baseStyle={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }} />
                 <Text style={{ fontSize: 13, color: theme.colors.grey04 }}>{group.memberCount} members</Text>
               </Box>
@@ -495,7 +499,7 @@ function InviteModal({ onClose }: { onClose: () => void }) {
                   <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: INVITE_TEAL }}>
                     <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>{member.initials}</Text>
                   </Box>
-                  <Box style={{ gap: 4 }}>
+                  <Box style={{ gap: 0 }}>
                     <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>{member.name}</Text>
                     <Text style={{ fontSize: 13, color: theme.colors.grey05 }}>{member.email}</Text>
                   </Box>
@@ -555,8 +559,7 @@ function InviteModal({ onClose }: { onClose: () => void }) {
             >
               <TextInput
                 value={inputValue}
-                onChangeText={setInputValue}
-                onFocus={measureInputPosition}
+                onChangeText={(v) => { setInputValue(v); if (v.trim()) setTimeout(measureInputPosition, 0); }}
                 placeholder="Add members by email, name or group"
                 placeholderTextColor={theme.colors.grey04}
                 style={{ flex: 1, fontSize: 14, color: theme.colors.foreground, outlineStyle: 'none' } as any}
@@ -628,17 +631,27 @@ function InviteModal({ onClose }: { onClose: () => void }) {
         </Pressable>
       </Pressable>
 
-      {/* Dropdown portal — fixed outside modal card, tinggi modal tidak berubah */}
+      {/* Dropdown portal — di luar modal card, position fixed agar visible saat scroll */}
       {showDropdown && dropdownPos && (
-        <Pressable
-          onPress={(e) => e.stopPropagation()}
-          style={Platform.select({
-            web: { position: 'fixed', top: dropdownPos.top, left: dropdownPos.left, width: dropdownPos.width, zIndex: 10002 } as any,
-            default: { position: 'absolute' as any, top: dropdownPos.top, left: dropdownPos.left, width: dropdownPos.width, zIndex: 10002 },
-          })}
-        >
-          {dropdownItems}
-        </Pressable>
+        <>
+          {/* click-away untuk tutup dropdown */}
+          <Pressable
+            onPress={() => setInputValue('')}
+            style={Platform.select({
+              web: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 10001 } as any,
+              default: { position: 'absolute' as any, top: 0, left: 0, right: 0, bottom: 0, zIndex: 10001 },
+            })}
+          />
+          <Pressable
+            onPress={(e) => e.stopPropagation()}
+            style={Platform.select({
+              web: { position: 'fixed', top: dropdownPos.top, left: dropdownPos.left, width: dropdownPos.width, zIndex: 10002 } as any,
+              default: { position: 'absolute' as any, top: dropdownPos.top, left: dropdownPos.left, width: dropdownPos.width, zIndex: 10002 },
+            })}
+          >
+            {dropdownItems}
+          </Pressable>
+        </>
       )}
 
       {/* Role dropdown portal for selected invitees */}
@@ -670,6 +683,46 @@ function InviteModal({ onClose }: { onClose: () => void }) {
   );
 }
 
+function RemoveMemberModal({ memberName, onClose }: { memberName: string; onClose: () => void }) {
+  const theme = useTheme<Theme>();
+  return (
+    <Pressable
+      onPress={onClose}
+      style={Platform.select({
+        web: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 10000, backgroundColor: 'rgba(0,0,0,0.4)', alignItems: 'center', justifyContent: 'center' } as any,
+        default: { position: 'absolute' as any, top: 0, left: 0, right: 0, bottom: 0, zIndex: 10000, backgroundColor: 'rgba(0,0,0,0.4)', alignItems: 'center', justifyContent: 'center' },
+      })}
+    >
+      <Pressable
+        onPress={(e) => e.stopPropagation()}
+        style={{ backgroundColor: theme.colors.white, borderRadius: 16, borderWidth: 1, borderColor: theme.colors.border, width: 480, maxWidth: '90%' as any, padding: 24, gap: 16 }}
+      >
+        {/* Header */}
+        <Box flexDirection="row" alignItems="center" justifyContent="space-between">
+          <Text style={{ fontSize: 18, fontWeight: '600', color: theme.colors.foreground }}>Remove Member</Text>
+          <Pressable
+            onPress={onClose}
+            style={({ hovered, pressed }: any) => ({ width: 32, height: 32, borderRadius: 8, alignItems: 'center', justifyContent: 'center', backgroundColor: hovered ? theme.colors.grey01 : pressed ? theme.colors.grey02 : 'transparent', cursor: 'pointer' as any })}
+          >
+            <X size={18} color={theme.colors.grey06} />
+          </Pressable>
+        </Box>
+
+        {/* Body */}
+        <Text style={{ fontSize: 14, color: theme.colors.foreground, lineHeight: 22 }}>
+          <Text style={{ fontWeight: '700' }}>{memberName}</Text>
+          <Text> will no longer have access to the project.</Text>
+        </Text>
+
+        {/* Footer */}
+        <Box flexDirection="row" justifyContent="flex-end">
+          <Button color="secondary" size="md" onPress={onClose}>Remove</Button>
+        </Box>
+      </Pressable>
+    </Pressable>
+  );
+}
+
 export default function TeamDetail() {
   const theme = useTheme<Theme>();
   const [activeTab, setActiveTab] = useState('members');
@@ -679,6 +732,9 @@ export default function TeamDetail() {
 
   // Invite modal
   const [showInviteModal, setShowInviteModal] = useState(false);
+
+  // Remove member confirmation
+  const [removingMember, setRemovingMember] = useState<string | null>(null);
 
   // Dropdown portal state
   const [openRoleDropdown, setOpenRoleDropdown] = useState<string | null>(null);
@@ -1172,7 +1228,7 @@ export default function TeamDetail() {
                         {/* Action column — 128px merged */}
                         <Box style={{ width: 128, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
                           <HoverIconButton icon={MessageSquare} size={16} color={theme.colors.grey06} tooltip="Send Message" />
-                          <HoverIconButton icon={Trash2} size={16} color={theme.colors.grey06} tooltip="Delete Member" />
+                          <HoverIconButton icon={Trash2} size={16} color={theme.colors.grey06} tooltip="Delete Member" onPress={() => setRemovingMember(member.name)} />
                         </Box>
                       </Box>
                     );
@@ -1382,6 +1438,9 @@ export default function TeamDetail() {
 
       {/* ── Invite Modal ── */}
       {showInviteModal && <InviteModal onClose={() => setShowInviteModal(false)} />}
+
+      {/* ── Remove Member Confirmation ── */}
+      {removingMember && <RemoveMemberModal memberName={removingMember} onClose={() => setRemovingMember(null)} />}
 
     </Box>
   );
