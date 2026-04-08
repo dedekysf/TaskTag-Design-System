@@ -10,6 +10,7 @@ import { useTheme } from '@shopify/restyle';
 import React from 'react';
 import { ActivityIndicator, Platform, Pressable, PressableProps, ViewStyle } from 'react-native';
 import { Text } from './primitives';
+import { Tooltip } from './Tooltip';
 
 export type ButtonVariant = 'fill' | 'outline' | 'ghost';
 export type ButtonColor = 'primary' | 'secondary' | 'destructive' | 'blue';
@@ -24,12 +25,18 @@ export interface ButtonProps extends Omit<PressableProps, 'style'> {
   size?: ButtonSize;
   /** Button content */
   children?: React.ReactNode;
+  /** Icon to render on the left */
+  leftIcon?: React.ReactNode;
+  /** Icon to render on the right */
+  rightIcon?: React.ReactNode;
   /** Show loading indicator */
   loading?: boolean;
   /** Custom button variant from theme (overrides standard logic) */
   isIconOnly?: boolean;
   /** Custom button variant from theme (overrides standard logic) */
   buttonVariant?: keyof Theme['buttonVariants'];
+  /** Optional tooltip text to show on hover */
+  tooltip?: string;
   /** Custom style */
   style?: ViewStyle;
 }
@@ -88,10 +95,13 @@ export function Button({
   color = 'primary',
   size = 'md',
   children,
+  leftIcon,
+  rightIcon,
   disabled = false,
   loading = false,
   isIconOnly = false,
   buttonVariant,
+  tooltip,
   style,
   ...rest
 }: ButtonProps) {
@@ -182,7 +192,7 @@ export function Button({
   const buttonStyle = getButtonStyles();
   const textColor = getTextColor();
 
-  return (
+  const buttonContent = (
     <Pressable
       disabled={disabled || loading}
       onHoverIn={() => setIsHovered(true)}
@@ -202,9 +212,10 @@ export function Button({
         <ActivityIndicator
           size="small"
           color={textColor}
-          style={{ marginRight: sizeStyle.gap }}
+          style={{ marginRight: typeof children === 'string' ? sizeStyle.gap : 0 }}
         />
       )}
+      {!loading && leftIcon}
       {typeof children === 'string' ? (
         <Text
           variant="button"
@@ -212,7 +223,6 @@ export function Button({
             color: textColor,
             fontSize: sizeStyle.fontSize,
             fontWeight: '500', // var(--font-weight-medium)
-            gap: sizeStyle.gap,
           }}
         >
           {children}
@@ -220,6 +230,17 @@ export function Button({
       ) : (
         children
       )}
+      {rightIcon}
     </Pressable>
   );
+
+  if (tooltip) {
+    return (
+      <Tooltip content={tooltip} variant="bottom-center" size="sm">
+        {buttonContent}
+      </Tooltip>
+    );
+  }
+
+  return buttonContent;
 }

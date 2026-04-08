@@ -5,37 +5,24 @@
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import React, { useState } from 'react';
-import { Platform, Pressable, ScrollView } from 'react-native';
-import { Box, Text } from './primitives';
+import { Image, Platform, Pressable, ScrollView } from 'react-native';
+import { useRouter, usePathname } from 'expo-router';
+import { Box } from './primitives';
 import { SidebarDropdown } from './SidebarDropdown';
 import { SidebarMenuItem } from './SidebarMenuItem';
 
 interface SidebarProps {
-  activeSection: string;
-  onSectionChange: (section: string) => void;
   isSidebarOpen: boolean;
   setIsSidebarOpen: (open: boolean) => void;
 }
 
-export function Sidebar({ activeSection, onSectionChange, isSidebarOpen, setIsSidebarOpen }: SidebarProps) {
+export function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProps) {
   const theme = useTheme<Theme>();
-  const [openSections, setOpenSections] = useState<string[]>(['foundation']);
+  const router = useRouter();
+  const pathname = usePathname();
 
-  const toggleSection = (sectionId: string) => {
-    setOpenSections((prev) =>
-      prev.includes(sectionId)
-        ? [] // Collapse if already open (optional: could leave it open) - user said "only one expanded", implies toggle behavior. often accordion allows collapsing self.
-        : [sectionId] // Expand this one, collapse others
-    );
-  };
-
-  const handleMenuItemClick = (section: string) => {
-    onSectionChange(section);
-    // Close sidebar on mobile after selection
-    if (Platform.OS === 'web' && typeof window !== 'undefined' && window.innerWidth < 1080) {
-      setIsSidebarOpen(false);
-    }
-  };
+  // Extract the active section ID from the URL (e.g., /design-system/colors -> colors)
+  const activeSection = pathname.split('/').pop() || '';
 
   const foundationItems = [
     { id: 'colors', label: 'Colors' },
@@ -45,21 +32,53 @@ export function Sidebar({ activeSection, onSectionChange, isSidebarOpen, setIsSi
     { id: 'elevation', label: 'Elevation' },
     { id: 'spacing', label: 'Spacing' },
     { id: 'sizes', label: 'Sizes' },
-    // { id: 'logos', label: 'Logos' },
     { id: 'icons', label: 'Icons' },
-    // { id: 'images', label: 'Images' },
   ];
 
   const componentItems = [
     { id: 'alert', label: 'Alert' },
+    { id: 'avatar', label: 'Avatar' },
+    { id: 'badge', label: 'Badge' },
     { id: 'button', label: 'Button' },
     { id: 'card', label: 'Card' },
     { id: 'checkbox', label: 'Checkbox' },
+    { id: 'highlight-text', label: 'Highlight Text' },
+    { id: 'search-input', label: 'Search Input' },
+    { id: 'status-badge', label: 'Status Badge' },
     { id: 'tab', label: 'Tab' },
     { id: 'text-input', label: 'Text Input' },
     { id: 'textarea', label: 'Textarea' },
     { id: 'tooltip', label: 'Tooltip' },
   ];
+
+  const pageItems = [
+    { id: 'auth-landing', label: 'Auth Landing' },
+    { id: 'base-dashboard', label: 'Base Dashboard' },
+    { id: 'empty-state', label: 'Empty State' },
+    { id: 'list-table', label: 'List Table View' },
+  ];
+
+  const initialOpenSection = foundationItems.some(i => i.id === activeSection) ? 'foundation' :
+                             componentItems.some(i => i.id === activeSection) ? 'components' :
+                             pageItems.some(i => i.id === activeSection) ? 'pages' : 'foundation';
+
+  const [openSections, setOpenSections] = useState<string[]>([initialOpenSection]);
+
+  const toggleSection = (sectionId: string) => {
+    setOpenSections((prev) =>
+      prev.includes(sectionId)
+        ? [] // Collapse if already open
+        : [sectionId] // Expand this one, collapse others
+    );
+  };
+
+  const handleMenuItemClick = (section: string) => {
+    router.push(`/design-system/${section}` as any);
+    // Close sidebar on mobile after selection
+    if (Platform.OS === 'web' && typeof window !== 'undefined' && window.innerWidth < 1080) {
+      setIsSidebarOpen(false);
+    }
+  };
 
   const isSectionActive = (sectionId: string, items: Array<{ id: string }>) => {
     return items.some((item) => item.id === activeSection);
@@ -104,9 +123,10 @@ export function Sidebar({ activeSection, onSectionChange, isSidebarOpen, setIsSi
       >
         {/* Logo */}
         <Box padding="lg" borderBottomWidth={1} borderBottomColor="border">
-          <Text variant="h2" color="textPrimary" fontWeight="400">
-            TaskTag DS
-          </Text>
+          <Image
+            source={require('@/assets/images/tasktag-logo.png')}
+            style={{ width: 120, height: 32, resizeMode: 'contain' }}
+          />
         </Box>
 
         {/* Navigation */}
@@ -146,6 +166,23 @@ export function Sidebar({ activeSection, onSectionChange, isSidebarOpen, setIsSi
                   />
                 ))}
               </SidebarDropdown>
+
+              {/* Pages Dropdown - Temporarily Hidden */}
+              {/* <SidebarDropdown
+                label="Pages"
+                isOpen={openSections.includes('pages')}
+                isActive={isSectionActive('pages', pageItems)}
+                onToggle={() => toggleSection('pages')}
+              >
+                {pageItems.map((item) => (
+                  <SidebarMenuItem
+                    key={item.id}
+                    label={item.label}
+                    isActive={activeSection === item.id}
+                    onClick={() => handleMenuItemClick(item.id)}
+                  />
+                ))}
+              </SidebarDropdown> */}
             </Box>
           </Box>
         </ScrollView>

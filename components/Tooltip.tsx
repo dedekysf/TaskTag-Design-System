@@ -13,6 +13,7 @@ import { useTheme } from '@shopify/restyle';
 import React, { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, View, ViewStyle } from 'react-native';
 import { Text } from './primitives';
+import { CheckCircle } from 'lucide-react-native';
 
 export type TooltipVariant = 'top-left' | 'top-center' | 'top-right' | 'left' | 'right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
 export type TooltipSize = 'sm' | 'md' | 'lg';
@@ -272,15 +273,15 @@ export function Tooltip({
                 paddingBottom: tooltipStyle === 'custom' ? 0 : currentSize.paddingVertical,
                 paddingLeft: tooltipStyle === 'custom' ? 0 : currentSize.paddingHorizontal,
                 paddingRight: tooltipStyle === 'custom' ? 0 : currentSize.paddingHorizontal,
-                maxWidth: 200, width: 'max-content',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                maxWidth: tooltipStyle === 'custom' ? 'none' : 200, width: 'max-content',
+                ...(tooltipStyle !== 'custom' ? { boxShadow: '0 2px 8px rgba(0,0,0,0.15)' } : {}),
                 whiteSpace: 'pre-wrap', wordWrap: 'break-word',
                 fontSize: currentSize.fontSize,
                 color: '#fff',
                 fontFamily: 'Inter_400Regular',
                 lineHeight: currentSize.fontSize * 1.5 + 'px',
             }}>
-                {typeof content === 'string' ? content : <span>{content}</span>}
+                {content}
             </div>,
             document.body
         );
