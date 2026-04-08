@@ -25,6 +25,7 @@ import {
   Link,
   ListFilter,
   LogOut,
+  Mail,
   MessageSquare,
   MessageSquarePlus,
   MoreVertical,
@@ -34,6 +35,7 @@ import {
   SortDesc,
   Star,
   Trash2,
+  X,
   User,
   UserPlus,
   Users,
@@ -315,16 +317,96 @@ function RoleDropdownContent({
 }
 
 const INVITE_ILLUSTRATION = 'https://www.figma.com/api/mcp/asset/59a5ad2a-7699-411a-8562-8146a757cf6c';
+const INVITE_TEAL = '#1a6b6b';
+
+type InviteeContact = {
+  id: string;
+  name: string;
+  email: string;
+  avatar: { type: 'photo'; src: any } | { type: 'initials'; initials: string; color: string };
+};
+type InviteeEntry = InviteeContact & { role: 'Member' | 'Admin' };
+type InviteGroup = {
+  id: string; name: string; memberCount: number;
+  members: { id: string; name: string; email: string; initials: string }[];
+};
+
+const INVITE_CONTACTS: InviteeContact[] = [
+  { id: 'chelsea-smith', name: 'Chelsea Smith', email: 'chelseasmith@gmail.com', avatar: { type: 'photo', src: require('@/assets/images/sample-three.jpg') } },
+  { id: 'chelsea-janson', name: 'Chelsea Janson', email: 'chelseajason@gmail.com', avatar: { type: 'initials', initials: 'CJ', color: INVITE_TEAL } },
+];
+const INVITE_GROUPS: InviteGroup[] = [
+  {
+    id: 'chelsea-group', name: 'Chelsea Group', memberCount: 4,
+    members: [
+      { id: 'lj', name: 'Logan Jack', email: 'loganjack@gmail.com', initials: 'LJ' },
+      { id: 'mg', name: 'Mason Gabriel', email: 'masongabriel@gmail.com', initials: 'MG' },
+      { id: 'cg', name: 'Caleb Gabriel', email: 'calebgabriel@gmail.com', initials: 'CG' },
+      { id: 'rp', name: 'Rachel Park', email: 'rachelpark@gmail.com', initials: 'RP' },
+    ],
+  },
+];
+
+function HighlightText({ text, query, baseStyle, boldBase = false }: { text: string; query: string; baseStyle: any; boldBase?: boolean }) {
+  if (!query) return <Text style={baseStyle}>{text}</Text>;
+  const lower = text.toLowerCase();
+  const lowerQ = query.toLowerCase();
+  const idx = lower.indexOf(lowerQ);
+  if (idx === -1) return <Text style={baseStyle}>{text}</Text>;
+  return (
+    <Text style={baseStyle}>
+      {text.slice(0, idx)}
+      <Text style={[baseStyle, { backgroundColor: '#FFF176' }]}>{text.slice(idx, idx + query.length)}</Text>
+      {text.slice(idx + query.length)}
+    </Text>
+  );
+}
+
+function InviteAvatar({ avatar, size = 40 }: { avatar: InviteeContact['avatar']; size?: number }) {
+  if (avatar.type === 'photo') {
+    return <Image source={avatar.src} style={{ width: size, height: size, borderRadius: size / 2 }} />;
+  }
+  return (
+    <Box width={size} height={size} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: avatar.color }}>
+      <Text style={{ color: '#fff', fontWeight: '700', fontSize: size * 0.35 }}>{avatar.initials}</Text>
+    </Box>
+  );
+}
 
 function InviteModal({ onClose }: { onClose: () => void }) {
   const theme = useTheme<Theme>();
   const [inputValue, setInputValue] = useState('');
   const [copied, setCopied] = useState(false);
+  const [invitees, setInvitees] = useState<InviteeEntry[]>([]);
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
-  const handleCopyLink = () => {
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const query = inputValue.trim();
+  const showDropdown = query.length > 0;
+
+  const filteredContacts = INVITE_CONTACTS.filter(c =>
+    c.name.toLowerCase().includes(query.toLowerCase()) ||
+    c.email.toLowerCase().includes(query.toLowerCase())
+  );
+  const filteredGroups = INVITE_GROUPS.filter(g =>
+    g.name.toLowerCase().includes(query.toLowerCase())
+  );
+
+  const addInvitee = (contact: InviteeContact) => {
+    if (!invitees.find(i => i.id === contact.id)) {
+      setInvitees(prev => [...prev, { ...contact, role: 'Member' }]);
+    }
+    setInputValue('');
   };
+
+  const removeInvitee = (id: string) => setInvitees(prev => prev.filter(i => i.id !== id));
+
+  const toggleRole = (id: string) =>
+    setInvitees(prev => prev.map(i => i.id === id ? { ...i, role: i.role === 'Member' ? 'Admin' : 'Member' } : i));
+
+  const toggleGroup = (id: string) =>
+    setExpandedGroups(prev => { const s = new Set(prev); s.has(id) ? s.delete(id) : s.add(id); return s; });
+
+  const handleCopyLink = () => { setCopied(true); setTimeout(() => setCopied(false), 2000); };
 
   return (
     <Pressable
@@ -336,90 +418,192 @@ function InviteModal({ onClose }: { onClose: () => void }) {
     >
       <Pressable
         onPress={(e) => e.stopPropagation()}
-        style={{ backgroundColor: theme.colors.white, borderRadius: 16, borderWidth: 1, borderColor: theme.colors.border, width: 480, maxWidth: '90%' as any, overflow: 'hidden' as any }}
+        style={{ backgroundColor: theme.colors.white, borderRadius: 16, borderWidth: 1, borderColor: theme.colors.border, width: 800, maxWidth: '95%' as any }}
       >
         {/* Header */}
         <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ paddingHorizontal: 24, paddingVertical: 16 }}>
           <Text style={{ fontSize: 18, fontWeight: '500', color: theme.colors.foreground, lineHeight: 24 }}>Invite or Add Member</Text>
           <Box flexDirection="row" alignItems="center" gap="8">
-            {/* Copy Link button */}
             <Pressable
               onPress={handleCopyLink}
-              style={({ hovered, pressed }: any) => ({
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 6,
-                paddingHorizontal: 12,
-                paddingVertical: 6,
-                borderRadius: 8,
-                backgroundColor: hovered ? theme.colors.grey01 : pressed ? theme.colors.grey02 : 'transparent',
-                cursor: 'pointer' as any,
-              })}
+              style={({ hovered, pressed }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, backgroundColor: hovered ? theme.colors.grey01 : pressed ? theme.colors.grey02 : 'transparent', cursor: 'pointer' as any })}
             >
               <Link size={14} color={copied ? theme.colors.secondaryGreen : theme.colors.blue} />
-              <Text style={{ fontSize: 14, fontWeight: '500', color: copied ? theme.colors.secondaryGreen : theme.colors.blue, lineHeight: 16 }}>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: copied ? theme.colors.secondaryGreen : theme.colors.blue }}>
                 {copied ? 'Copied!' : 'Copy Link'}
               </Text>
             </Pressable>
-            {/* Close button */}
             <Pressable
               onPress={onClose}
-              style={({ hovered, pressed }: any) => ({
-                width: 32, height: 32, borderRadius: 8, alignItems: 'center', justifyContent: 'center',
-                backgroundColor: hovered ? theme.colors.grey01 : pressed ? theme.colors.grey02 : 'transparent',
-                cursor: 'pointer' as any,
-              })}
+              style={({ hovered, pressed }: any) => ({ width: 32, height: 32, borderRadius: 8, alignItems: 'center', justifyContent: 'center', backgroundColor: hovered ? theme.colors.grey01 : pressed ? theme.colors.grey02 : 'transparent', cursor: 'pointer' as any })}
             >
-              <XCircle size={20} color={theme.colors.grey04} />
+              <X size={18} color={theme.colors.grey04} />
             </Pressable>
           </Box>
         </Box>
 
         {/* Body */}
-        <Box style={{ paddingHorizontal: 24, paddingVertical: 8, gap: 24 }}>
+        <Box style={{ paddingHorizontal: 24, paddingBottom: 8 }}>
           {/* Input */}
-          <Box style={{ borderWidth: 1, borderColor: theme.colors.border, borderRadius: 8, height: 48, paddingHorizontal: 16, justifyContent: 'center' }}>
+          <Box style={{ borderWidth: 1.5, borderColor: showDropdown ? theme.colors.foreground : theme.colors.border, borderRadius: 8, height: 48, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <TextInput
               value={inputValue}
               onChangeText={setInputValue}
               placeholder="Add members by email, name or group"
               placeholderTextColor={theme.colors.grey04}
-              style={{ fontSize: 14, color: theme.colors.foreground, outlineStyle: 'none' } as any}
+              style={{ flex: 1, fontSize: 14, color: theme.colors.foreground, outlineStyle: 'none' } as any}
             />
+            {inputValue.length > 0 && (
+              <Pressable onPress={() => setInputValue('')} style={{ padding: 2, cursor: 'pointer' as any }}>
+                <X size={16} color={theme.colors.grey04} />
+              </Pressable>
+            )}
           </Box>
 
-          {/* Empty state */}
-          <Box alignItems="center" justifyContent="center" style={{ gap: 10, paddingVertical: 8 }}>
-            <Image source={{ uri: INVITE_ILLUSTRATION }} style={{ width: 86, height: 86 }} resizeMode="contain" />
-            <Text style={{ fontSize: 14, fontWeight: '400', color: theme.colors.foreground, lineHeight: 16, textAlign: 'center' }}>
-              Bring your team on board
-            </Text>
-            <Text style={{ fontSize: 12, color: theme.colors.grey04, lineHeight: 16, textAlign: 'center', letterSpacing: 0.24 }}>
-              Invite teammates or contact groups to start working together seamlessly.
-            </Text>
-          </Box>
+          {/* Dropdown */}
+          {showDropdown && (
+            <Box style={{ borderWidth: 1, borderColor: theme.colors.border, borderRadius: 12, marginTop: 4, overflow: 'hidden' as any, backgroundColor: theme.colors.white }}>
+              {/* Invite by email row */}
+              <Pressable
+                onPress={() => {
+                  const emailContact: InviteeContact = {
+                    id: `email-${query}`,
+                    name: `${query.toLowerCase()}@gmail.com`,
+                    email: `${query.toLowerCase()}@gmail.com`,
+                    avatar: { type: 'initials', initials: query.slice(0, 2).toUpperCase(), color: theme.colors.grey03 },
+                  };
+                  addInvitee(emailContact);
+                }}
+                style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, backgroundColor: hovered ? theme.colors.grey01 : 'transparent', cursor: 'pointer' as any })}
+              >
+                <Box width={40} height={40} borderRadius="full" backgroundColor="grey02" alignItems="center" justifyContent="center">
+                  <Mail size={18} color={theme.colors.grey04} />
+                </Box>
+                <Text style={{ fontSize: 14, color: theme.colors.foreground }}>
+                  Invite: <Text style={{ color: theme.colors.grey04 }}>{query.toLowerCase()}@gmail.com</Text>
+                </Text>
+              </Pressable>
+
+              {/* Contact results */}
+              {filteredContacts.map((contact, i) => (
+                <Box key={contact.id}>
+                  <Box style={{ height: 1, backgroundColor: theme.colors.border }} />
+                  <Pressable
+                    onPress={() => addInvitee(contact)}
+                    style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, backgroundColor: hovered ? theme.colors.grey01 : 'transparent', cursor: 'pointer' as any })}
+                  >
+                    <InviteAvatar avatar={contact.avatar} size={40} />
+                    <Box style={{ gap: 2 }}>
+                      <HighlightText text={contact.name} query={query} baseStyle={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }} />
+                      <HighlightText text={contact.email} query={query} baseStyle={{ fontSize: 13, color: theme.colors.grey04 }} />
+                    </Box>
+                  </Pressable>
+                </Box>
+              ))}
+
+              {/* Group results */}
+              {filteredGroups.map((group) => {
+                const isExpanded = expandedGroups.has(group.id);
+                return (
+                  <Box key={group.id}>
+                    <Box style={{ height: 1, backgroundColor: theme.colors.border }} />
+                    <Pressable
+                      onPress={() => toggleGroup(group.id)}
+                      style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, backgroundColor: hovered ? theme.colors.grey01 : 'transparent', cursor: 'pointer' as any })}
+                    >
+                      <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.grey02 }}>
+                        {isExpanded ? <ChevronUp size={18} color={theme.colors.grey05} /> : <ChevronDown size={18} color={theme.colors.grey05} />}
+                      </Box>
+                      <Box style={{ gap: 2 }}>
+                        <HighlightText text={group.name} query={query} baseStyle={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }} />
+                        <Text style={{ fontSize: 13, color: theme.colors.grey04 }}>{group.memberCount} members</Text>
+                      </Box>
+                    </Pressable>
+                    {isExpanded && group.members.map((member) => (
+                      <Box key={member.id}>
+                        <Box style={{ height: 1, backgroundColor: theme.colors.border }} />
+                        <Pressable
+                          onPress={() => addInvitee({ id: member.id, name: member.name, email: member.email, avatar: { type: 'initials', initials: member.initials, color: INVITE_TEAL } })}
+                          style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingLeft: 36, paddingVertical: 12, backgroundColor: hovered ? theme.colors.grey01 : 'transparent', cursor: 'pointer' as any })}
+                        >
+                          <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: INVITE_TEAL }}>
+                            <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>{member.initials}</Text>
+                          </Box>
+                          <Box style={{ gap: 2 }}>
+                            <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>{member.name}</Text>
+                            <Text style={{ fontSize: 13, color: theme.colors.grey04 }}>{member.email}</Text>
+                          </Box>
+                        </Pressable>
+                      </Box>
+                    ))}
+                  </Box>
+                );
+              })}
+            </Box>
+          )}
+
+          {/* Content: invitees list OR empty state */}
+          {!showDropdown && (
+            <Box style={{ marginTop: 16 }}>
+              {invitees.length > 0 ? (
+                <Box>
+                  {invitees.map((invitee, i) => (
+                    <Box key={invitee.id}>
+                      {i > 0 && <Box style={{ height: 1, backgroundColor: theme.colors.border }} />}
+                      <Box flexDirection="row" alignItems="center" gap="12" style={{ paddingVertical: 12 }}>
+                        <InviteAvatar avatar={invitee.avatar} size={44} />
+                        <Box flex={1} style={{ gap: 2 }}>
+                          <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>{invitee.name}</Text>
+                          <Text style={{ fontSize: 13, color: theme.colors.grey04 }}>{invitee.email}</Text>
+                        </Box>
+                        <Pressable
+                          onPress={() => toggleRole(invitee.id)}
+                          style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, backgroundColor: hovered ? theme.colors.grey01 : 'transparent', cursor: 'pointer' as any })}
+                        >
+                          <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.foreground }}>{invitee.role}</Text>
+                          <ChevronDown size={16} color={theme.colors.foreground} />
+                        </Pressable>
+                        <Pressable
+                          onPress={() => removeInvitee(invitee.id)}
+                          style={({ hovered }: any) => ({ padding: 6, borderRadius: 6, backgroundColor: hovered ? theme.colors.grey01 : 'transparent', cursor: 'pointer' as any })}
+                        >
+                          <Trash2 size={18} color={theme.colors.grey04} />
+                        </Pressable>
+                      </Box>
+                    </Box>
+                  ))}
+                </Box>
+              ) : (
+                <Box alignItems="center" justifyContent="center" style={{ gap: 10, paddingVertical: 24 }}>
+                  <Image source={{ uri: INVITE_ILLUSTRATION }} style={{ width: 86, height: 86 }} resizeMode="contain" />
+                  <Text style={{ fontSize: 14, fontWeight: '400', color: theme.colors.foreground, lineHeight: 16, textAlign: 'center' }}>
+                    Bring your team on board
+                  </Text>
+                  <Text style={{ fontSize: 12, color: theme.colors.grey04, lineHeight: 16, textAlign: 'center', letterSpacing: 0.24 }}>
+                    Invite teammates or contact groups to start working together seamlessly.
+                  </Text>
+                </Box>
+              )}
+            </Box>
+          )}
         </Box>
 
         {/* Footer */}
-        <Box style={{ paddingHorizontal: 24, paddingVertical: 16, gap: 10 }}>
-          {/* Send Invite button */}
-          <Box
-            style={{
-              backgroundColor: inputValue.trim() ? theme.colors.blue : theme.colors.grey02,
-              borderRadius: 8,
-              height: 52,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-            }}
-          >
-            <UserPlus size={20} color={inputValue.trim() ? theme.colors.white : theme.colors.grey04} />
-            <Text style={{ fontSize: 14, fontWeight: '500', color: inputValue.trim() ? theme.colors.white : theme.colors.grey04, lineHeight: 16 }}>
-              Send Invite
-            </Text>
+        <Box style={{ paddingHorizontal: 24, paddingTop: 8, paddingBottom: 16, gap: 10 }}>
+          <Box style={{ borderTopWidth: invitees.length > 0 ? 1 : 0, borderColor: theme.colors.border, paddingTop: invitees.length > 0 ? 16 : 0 }}>
+            <Box
+              style={{
+                backgroundColor: invitees.length > 0 ? theme.colors.foreground : theme.colors.grey02,
+                borderRadius: 8, height: 52,
+                flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
+              }}
+            >
+              <UserPlus size={20} color={invitees.length > 0 ? theme.colors.white : theme.colors.grey04} />
+              <Text style={{ fontSize: 14, fontWeight: '500', color: invitees.length > 0 ? theme.colors.white : theme.colors.grey04 }}>
+                Send Invite
+              </Text>
+            </Box>
           </Box>
-          {/* Expiration note */}
           <Box flexDirection="row" alignItems="center" justifyContent="center" gap="4">
             <HelpCircle size={14} color={theme.colors.grey04} />
             <Text style={{ fontSize: 12, color: theme.colors.grey04, letterSpacing: 0.24 }}>Invitations expire after 7 days</Text>
