@@ -89,6 +89,10 @@ const PENDING_INVITES: {
   { emailOrName: 'sarah.k@gmail.com', invitedBy: 'Oscar H.', dateSent: 'Oct 20, 2025', expirationDate: 'Oct 27, 2025', role: 'Member', status: 'expired' },
 ];
 
+const INVOICE_DATA = [
+  { date: 'March 15, 2026', desc: 'Team plan · 4 members', amount: '$768.00', status: 'Paid' },
+];
+
 // ── Tooltip ──
 function Tooltip({
   label,
@@ -827,6 +831,7 @@ export default function TeamDetail() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeExpanded, setActiveExpanded] = useState(true);
   const [pendingExpanded, setPendingExpanded] = useState(true);
+  const [invoiceExpanded, setInvoiceExpanded] = useState(true);
 
   // Invite modal
   const [showInviteModal, setShowInviteModal] = useState(false);
@@ -1140,10 +1145,10 @@ export default function TeamDetail() {
         <Box flexDirection="row" alignItems="center" justifyContent="space-between" borderBottomWidth={1} borderColor="border" backgroundColor="card" style={{ height: 56, zIndex: 10 }} paddingHorizontal="md">
           <Box flexDirection="row" alignItems="stretch">
             {[
-              { key: 'overview', label: 'Overview', Icon: House, count: undefined as number | undefined },
-              { key: 'members', label: 'Members', Icon: Users, count: TEAM_MEMBERS.length as number | undefined },
-              { key: 'invoice', label: 'Invoice', Icon: FileText, count: 1 as number | undefined },
-            ].map(({ key, label, Icon, count }) => {
+              { key: 'overview', label: 'Overview', Icon: House },
+              { key: 'members', label: 'Members', Icon: Users, count: TEAM_MEMBERS.length },
+              { key: 'invoice', label: 'Invoice', Icon: FileText },
+            ].map(({ key, label, Icon, count, showDot }: any) => {
               const isActive = activeTab === key;
               return (
                 <Pressable key={key} onPress={() => setActiveTab(key)} style={{ height: 56, width: 124 }}>
@@ -1160,6 +1165,9 @@ export default function TeamDetail() {
                             <Box width={20} height={20} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: bgColor, transition: 'background-color 0.2s ease' } as any}>
                               <Text variant="webMetadataSecondary" color="white">{count}</Text>
                             </Box>
+                          )}
+                          {showDot && (
+                            <Box width={8} height={8} borderRadius="full" backgroundColor="vividYellow" />
                           )}
                         </Box>
                         <Box style={{ position: 'absolute' as any, bottom: -1, left: 0, right: 0, height: 2, backgroundColor: isActive ? theme.colors.secondaryGreen : 'transparent', transition: 'background-color 0.2s ease' as any } as any} />
@@ -1595,7 +1603,7 @@ export default function TeamDetail() {
                     <Box flexDirection="row" borderTopWidth={0} borderColor="border">
                       {/* Active projects */}
                       <Box flex={1} alignItems="center" gap="8" borderRightWidth={1} borderColor="border">
-                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="foreground">12</Text>
+                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="foreground">2</Text>
                         <Box flexDirection="row" alignItems="center" gap="4">
                           <Text variant="webMetadataPrimary" color="grey05">Active projects</Text>
                         </Box>
@@ -1603,23 +1611,23 @@ export default function TeamDetail() {
                       
                       {/* Open tasks */}
                       <Box flex={1} alignItems="center" gap="8" borderRightWidth={1} borderColor="border">
-                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="foreground">48</Text>
+                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="foreground">10</Text>
                         <Box flexDirection="row" alignItems="center" gap="4">
                           <Text variant="webMetadataPrimary" color="grey05">Active tasks</Text>
                         </Box>
                       </Box>
-                      
+
                       {/* Completed */}
                       <Box flex={1} alignItems="center" gap="8" borderRightWidth={1} borderColor="border">
-                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="foreground">156</Text>
+                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="foreground">8</Text>
                         <Box flexDirection="row" alignItems="center" gap="4">
                           <Text variant="webMetadataPrimary" color="grey05">Completed</Text>
                         </Box>
                       </Box>
-                      
+
                       {/* Overdue */}
                       <Box flex={1} alignItems="center" gap="8">
-                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="alertRed">7</Text>
+                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="alertRed">2</Text>
                         <Box flexDirection="row" alignItems="center" gap="4">
                           <Text variant="webMetadataPrimary" color="alertRed">Overdue</Text>
                         </Box>
@@ -1647,29 +1655,98 @@ export default function TeamDetail() {
                     
                     <Box flexDirection="row" justifyContent="space-between" alignItems="center" paddingHorizontal="8">
                       <Text variant="webBody" color="grey05">Members</Text>
-                      <Text variant="webBody" color="foreground">3</Text>
+                      <Text variant="webBody" color="foreground">4</Text>
                     </Box>
                     <Box height={1} backgroundColor="border" />
                     
                     <Box flexDirection="row" justifyContent="space-between" alignItems="center" paddingHorizontal="8">
                       <Text variant="webBody" color="grey05">Renews</Text>
-                      <Text variant="webBody" color="foreground">March 15, 2025</Text>
+                      <Text variant="webBody" color="foreground">March 15, 2027</Text>
                     </Box>
                     <Box height={1} backgroundColor="border" />
                   </Box>
 
                   <Box backgroundColor="grey02" padding="16" borderRadius="8" gap="8">
                     <Box flexDirection="row" justifyContent="space-between" alignItems="center">
-                      <Text variant="webSecondaryBody" color="foreground">3 members × $12/month</Text>
-                      <Text variant="webBody" color="foreground">$36</Text>
+                      <Text variant="webSecondaryBody" color="foreground">4 members × $16/month</Text>
+                      <Text variant="webBody" color="foreground">$64</Text>
                     </Box>
                     <Box flexDirection="row" justifyContent="space-between" alignItems="center">
                       <Text variant="webLabelEmphasized" color="foreground">Billed amount</Text>
-                      <Text variant="webLabelEmphasized" style={{ fontSize: 20 }} color="foreground">$36 <Text variant="webBody" color="foreground">/month</Text></Text>
+                      <Text variant="webLabelEmphasized" style={{ fontSize: 20 }} color="foreground">$64 <Text variant="webBody" color="foreground">/month</Text></Text>
                     </Box>
                   </Box>
 
                 </Box>
+              </Box>
+            )}
+
+            {activeTab === 'invoice' && (
+              <Box gap="16">
+
+                {/* ── Plan Header Card ── */}
+                <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24">
+                  <Box flexDirection="row" justifyContent="space-between" alignItems="center">
+                    {/* Left */}
+                    <Box gap="8">
+                      <Box backgroundColor="blue" style={{ paddingHorizontal: 10, paddingVertical: 4, borderRadius: 4, alignSelf: 'flex-start' }}>
+                        <Text variant="labelMedium" color="white">Active</Text>
+                      </Box>
+                      <Text variant="mobileHeading28" color="foreground">Team plan</Text>
+                      <Text variant="webBody" color="textSecondary">Next billing date March 15, 2027</Text>
+                    </Box>
+
+                    {/* Right */}
+                    <Box alignItems="flex-end" gap="4">
+                      <Box flexDirection="row" alignItems="flex-end" gap="4">
+                        <Text style={{ fontSize: 36, fontWeight: '700', color: theme.colors.foreground, lineHeight: 44 }}>$64</Text>
+                        <Text variant="webBody" color="textSecondary" style={{ marginBottom: 6 }}>/month</Text>
+                      </Box>
+                      <Text variant="webMetadataPrimary" color="textSecondary">billed annually</Text>
+                      <Text variant="webMetadataPrimary" color="textSecondary">4 members × $16/month</Text>
+                    </Box>
+                  </Box>
+                </Box>
+
+                {/* ── Invoices Section ── */}
+                {/* ── Invoices Table Card ── */}
+                <Box backgroundColor="card" borderWidth={1} borderColor="border" style={{ borderRadius: 8, zIndex: 1, overflow: 'hidden' }}>
+                    <Box>
+                      {/* Table header row */}
+                      <Box flexDirection="row" backgroundColor="grey01">
+                        <Box style={{ flex: 1.5, paddingHorizontal: 16, paddingVertical: 10 }}>
+                          <Box flexDirection="row" alignItems="center" gap="4">
+                             <Text variant="webMetadataPrimary" color="grey05">DATE</Text>
+                             <ArrowDownUp size={12} color={theme.colors.grey05} />
+                          </Box>
+                        </Box>
+                        <Box style={{ flex: 3.5, paddingHorizontal: 16, paddingVertical: 10 }}>
+                          <Text variant="webMetadataPrimary" color="grey05">DESCRIPTION</Text>
+                        </Box>
+                        <Box style={{ flex: 1.5, paddingHorizontal: 16, paddingVertical: 10 }}>
+                          <Text variant="webMetadataPrimary" color="grey05">AMOUNT</Text>
+                        </Box>
+                        <Box style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 10 }}>
+                          <Text variant="webMetadataPrimary" color="grey05">STATUS</Text>
+                        </Box>
+                      </Box>
+
+                      {/* Data rows */}
+                      {INVOICE_DATA.map((inv, idx) => (
+                        <Box key={idx} flexDirection="row" borderTopWidth={1} borderColor="border" paddingVertical="12" alignItems="center">
+                          <Box flex={1.5} paddingHorizontal={16}><Text variant="webSecondaryBody" color="foreground">{inv.date}</Text></Box>
+                          <Box flex={3.5} paddingHorizontal={16}><Text variant="webSecondaryBody" color="foreground">{inv.desc}</Text></Box>
+                          <Box flex={1.5} paddingHorizontal={16}><Text variant="webSecondaryBody" color="foreground">{inv.amount}</Text></Box>
+                          <Box flex={1} paddingHorizontal={16}>
+                            <Box backgroundColor="lightMint" style={{ alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 4 }}>
+                              <Text style={{ fontSize: 11, fontWeight: '600', color: theme.colors.secondaryGreen }}>{inv.status}</Text>
+                            </Box>
+                          </Box>
+                        </Box>
+                      ))}
+                    </Box>
+                </Box>
+
               </Box>
             )}
           </Box>

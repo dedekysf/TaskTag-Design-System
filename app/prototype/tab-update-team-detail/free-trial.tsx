@@ -21,6 +21,7 @@ import {
   ChevronsUp,
   ChevronUp,
   CreditCard,
+  Database,
   Edit,
   Equal,
   FileText,
@@ -829,6 +830,7 @@ export default function TeamDetail() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeExpanded, setActiveExpanded] = useState(true);
   const [pendingExpanded, setPendingExpanded] = useState(true);
+  const [invoiceExpanded, setInvoiceExpanded] = useState(true);
 
   // Invite modal
   const [showInviteModal, setShowInviteModal] = useState(false);
@@ -1145,10 +1147,10 @@ export default function TeamDetail() {
         <Box flexDirection="row" alignItems="center" justifyContent="space-between" borderBottomWidth={1} borderColor="border" backgroundColor="card" style={{ height: 56, zIndex: 10 }} paddingHorizontal="md">
           <Box flexDirection="row" alignItems="stretch">
             {[
-              { key: 'overview', label: 'Overview', Icon: House, count: undefined as number | undefined },
-              { key: 'members', label: 'Members', Icon: Users, count: TEAM_MEMBERS.length as number | undefined },
-              { key: 'invoice', label: 'Invoice', Icon: FileText, count: 1 as number | undefined },
-            ].map(({ key, label, Icon, count }) => {
+              { key: 'overview', label: 'Overview', Icon: House },
+              { key: 'members', label: 'Members', Icon: Users, count: TEAM_MEMBERS.length },
+              { key: 'invoice', label: 'Invoice', Icon: FileText, showDot: true },
+            ].map(({ key, label, Icon, count, showDot }: any) => {
               const isActive = activeTab === key;
               return (
                 <Pressable key={key} onPress={() => setActiveTab(key)} style={{ height: 56, width: 124 }}>
@@ -1165,6 +1167,9 @@ export default function TeamDetail() {
                             <Box width={20} height={20} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: bgColor, transition: 'background-color 0.2s ease' } as any}>
                               <Text variant="webMetadataSecondary" color="white">{count}</Text>
                             </Box>
+                          )}
+                          {showDot && (
+                            <Box width={8} height={8} borderRadius="full" backgroundColor="vividYellow" />
                           )}
                         </Box>
                         <Box style={{ position: 'absolute' as any, bottom: -1, left: 0, right: 0, height: 2, backgroundColor: isActive ? theme.colors.secondaryGreen : 'transparent', transition: 'background-color 0.2s ease' as any } as any} />
@@ -1600,31 +1605,31 @@ export default function TeamDetail() {
                     <Box flexDirection="row" borderTopWidth={0} borderColor="border">
                       {/* Active projects */}
                       <Box flex={1} alignItems="center" gap="8" borderRightWidth={1} borderColor="border">
-                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="foreground">12</Text>
+                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="foreground">2</Text>
                         <Box flexDirection="row" alignItems="center" gap="4">
                           <Text variant="webMetadataPrimary" color="grey05">Active projects</Text>
                         </Box>
                       </Box>
-                      
+
                       {/* Open tasks */}
                       <Box flex={1} alignItems="center" gap="8" borderRightWidth={1} borderColor="border">
-                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="foreground">48</Text>
+                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="foreground">10</Text>
                         <Box flexDirection="row" alignItems="center" gap="4">
                           <Text variant="webMetadataPrimary" color="grey05">Active tasks</Text>
                         </Box>
                       </Box>
-                      
+
                       {/* Completed */}
                       <Box flex={1} alignItems="center" gap="8" borderRightWidth={1} borderColor="border">
-                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="foreground">156</Text>
+                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="foreground">8</Text>
                         <Box flexDirection="row" alignItems="center" gap="4">
                           <Text variant="webMetadataPrimary" color="grey05">Completed</Text>
                         </Box>
                       </Box>
-                      
+
                       {/* Overdue */}
                       <Box flex={1} alignItems="center" gap="8">
-                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="alertRed">7</Text>
+                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="alertRed">2</Text>
                         <Box flexDirection="row" alignItems="center" gap="4">
                           <Text variant="webMetadataPrimary" color="alertRed">Overdue</Text>
                         </Box>
@@ -1645,7 +1650,7 @@ export default function TeamDetail() {
 
                   <Box backgroundColor="grey02" padding="16" borderRadius="8" gap="4">
                     <Text variant="webBody" color="textSecondary">
-                      Your trial ends on <Text variant="webLabelEmphasized" color="textSecondary">March 15, 2024</Text>
+                      Your trial ends on <Text variant="webLabelEmphasized" color="textSecondary">March 15, 2026</Text>
                     </Text>
                     <Text variant="webMetadataPrimary" color="grey05">No payment will be taken until your trial ends</Text>
                   </Box>
@@ -1671,12 +1676,12 @@ export default function TeamDetail() {
 
                   <Box backgroundColor="grey02" padding="16" borderRadius="8" gap="8">
                     <Box flexDirection="row" justifyContent="space-between" alignItems="center">
-                      <Text variant="webSecondaryBody" color="foreground">3 members × $12/month</Text>
-                      <Text variant="webBody" color="foreground">$36</Text>
+                      <Text variant="webSecondaryBody" color="foreground">4 members × $16/month</Text>
+                      <Text variant="webBody" color="foreground">$64</Text>
                     </Box>
                     <Box flexDirection="row" justifyContent="space-between" alignItems="center">
                       <Text variant="webLabelEmphasized" color="foreground">Billed amount</Text>
-                      <Text variant="webLabelEmphasized" style={{ fontSize: 20 }} color="foreground">$36 <Text variant="webBody" color="foreground">/month</Text></Text>
+                      <Text variant="webLabelEmphasized" style={{ fontSize: 20 }} color="foreground">$64 <Text variant="webBody" color="foreground">/month</Text></Text>
                     </Box>
                   </Box>
 
@@ -1684,10 +1689,127 @@ export default function TeamDetail() {
                     <Button variant="primary" onPress={() => setShowUpgradeModal(true)} style={{ height: 48, backgroundColor: theme.colors.black, borderRadius: 8, justifyContent: 'center' }}>
                       <Text variant="labelMedium" style={{ color: '#fff', fontSize: 16 }}>Activate Plan</Text>
                     </Button>
-                    <Text variant="webMetadataPrimary" color="grey05" style={{ textAlign: 'center' }}>Trial ends March 15, 2024</Text>
+                    <Text variant="webMetadataPrimary" color="grey05" style={{ textAlign: 'center' }}>Trial ends March 15, 2026</Text>
                   </Box>
 
                 </Box>
+              </Box>
+            )}
+
+            {activeTab === 'invoice' && (
+              <Box gap="16">
+
+                {/* ── Plan Header Card ── */}
+                <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24">
+                  <Box flexDirection="row" justifyContent="space-between" alignItems="center">
+                    {/* Left */}
+                    <Box gap="8">
+                      <Box backgroundColor="lightMint" style={{ paddingHorizontal: 10, paddingVertical: 4, borderRadius: 4, alignSelf: 'flex-start' }}>
+                        <Text variant="labelMedium" color="secondaryGreen">Free Trial</Text>
+                      </Box>
+                      <Text variant="mobileHeading28" color="foreground">Team plan</Text>
+                      <Box flexDirection="row" alignItems="center" gap="4">
+                        <Text variant="webBody" color="textSecondary">Trial ends March 15, 2026</Text>
+                        <Text variant="webBody" color="textSecondary">· No payment until then</Text>
+                      </Box>
+                    </Box>
+
+                    {/* Right */}
+                    <Box alignItems="flex-end" gap="4">
+                      <Box flexDirection="row" alignItems="flex-end" gap="4">
+                        <Text style={{ fontSize: 36, fontWeight: '700', color: theme.colors.foreground, lineHeight: 44 }}>$64</Text>
+                        <Text variant="webBody" color="textSecondary" style={{ marginBottom: 6 }}>/month</Text>
+                      </Box>
+                      <Text variant="webMetadataPrimary" color="textSecondary">billed on March 15, 2026</Text>
+                      <Text variant="webMetadataPrimary" color="textSecondary">4 members × $16/month</Text>
+                    </Box>
+                  </Box>
+                </Box>
+
+                {/* ── What's Included Card ── */}
+                <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="20">
+                  <Text variant="webLabelEmphasized" color="textSecondary">What's included in the Team plan</Text>
+                  <Box flexDirection="row" gap="0">
+                    {/* Left column */}
+                    <Box flex={1} gap="20" borderRightWidth={1} borderColor="border" paddingRight="24">
+                      {[
+                        { Icon: Folder, title: 'Unlimited projects', desc: 'No cap on how many projects your team runs' },
+                        { Icon: Hash, title: 'Multiple tasks', desc: 'Create and assign as many tasks as needed' },
+                        { Icon: Users, title: 'Roles & permissions', desc: 'Owner, Admin, and Member access controls' },
+                      ].map(({ Icon, title, desc }) => (
+                        <Box key={title} flexDirection="row" alignItems="center" gap="12">
+                          <Box width={32} height={32} borderRadius="4" backgroundColor="grey02" alignItems="center" justifyContent="center">
+                            <Icon size={16} color={theme.colors.grey06} />
+                          </Box>
+                          <Box style={{ gap: 2 }}>
+                            <Text variant="webBody" color="foreground">{title}</Text>
+                            <Text variant="webMetadataPrimary" color="textSecondary">{desc}</Text>
+                          </Box>
+                        </Box>
+                      ))}
+                    </Box>
+                    {/* Right column */}
+                    <Box flex={1} gap="20" paddingLeft="24">
+                      {[
+                        { Icon: Database, title: '2TB of shared storage', desc: 'Plenty of space for files and assets' },
+                        { Icon: Activity, title: 'Global activity log', desc: 'Full history of everything the team does' },
+                        { Icon: FileText, title: 'All project templates', desc: 'Start faster with ready-made structures' },
+                      ].map(({ Icon, title, desc }) => (
+                        <Box key={title} flexDirection="row" alignItems="center" gap="12">
+                          <Box width={32} height={32} borderRadius="4" backgroundColor="grey02" alignItems="center" justifyContent="center">
+                            <Icon size={16} color={theme.colors.grey06} />
+                          </Box>
+                          <Box style={{ gap: 2 }}>
+                            <Text variant="webBody" color="foreground">{title}</Text>
+                            <Text variant="webMetadataPrimary" color="textSecondary">{desc}</Text>
+                          </Box>
+                        </Box>
+                      ))}
+                    </Box>
+                  </Box>
+                </Box>
+
+                {/* ── Activate CTA Card ── */}
+                <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" flexDirection="row" justifyContent="space-between" alignItems="center">
+                  <Box gap="4">
+                    <Text variant="webLabelEmphasized" color="secondaryGreen">Activate your plan today</Text>
+                    <Text variant="webMetadataPrimary" color="textSecondary">No charge until March 15, 2026 · Cancel anytime</Text>
+                  </Box>
+                  <Button variant="fill" color="secondary" size="lg" onPress={() => setShowUpgradeModal(true)} style={{ paddingHorizontal: 24 }}>
+                    Activate Plan
+                  </Button>
+                </Box>
+
+                {/* ── Invoices Table Card ── */}
+                <Box backgroundColor="card" borderWidth={1} borderColor="border" style={{ borderRadius: 8, zIndex: 1, overflow: 'hidden' }}>
+                    <Box>
+                      {/* Table header row */}
+                      <Box flexDirection="row" backgroundColor="grey01">
+                        <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }}>
+                          <Box flexDirection="row" alignItems="center" gap="4">
+                             <Text variant="webMetadataPrimary" color="grey05">DATE</Text>
+                             <ArrowDownUp size={12} color={theme.colors.grey05} />
+                          </Box>
+                        </Box>
+                        <Box style={{ flex: 4, paddingHorizontal: 16, paddingVertical: 10 }}>
+                          <Text variant="webMetadataPrimary" color="grey05">DESCRIPTION</Text>
+                        </Box>
+                        <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }}>
+                          <Text variant="webMetadataPrimary" color="grey05">AMOUNT</Text>
+                        </Box>
+                        <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }}>
+                          <Text variant="webMetadataPrimary" color="grey05">STATUS</Text>
+                        </Box>
+                      </Box>
+
+                      {/* Empty state */}
+                      <Box alignItems="center" paddingVertical="56" gap="8" borderTopWidth={1} borderColor="border">
+                        <Text variant="webLabelEmphasized" color="textSecondary">No invoices yet</Text>
+                        <Text variant="webMetadataPrimary" color="textSecondary">Your first invoice will be issued on March 15, 2026</Text>
+                      </Box>
+                    </Box>
+                </Box>
+
               </Box>
             )}
           </Box>
