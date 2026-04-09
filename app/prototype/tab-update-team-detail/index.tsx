@@ -1,6 +1,5 @@
 import { Box, Text } from '@/components/primitives';
 import { theme as TTTheme } from '@/constants/theme';
-import { router } from 'expo-router';
 import { Clock, CreditCard, XCircle } from 'lucide-react-native';
 import React from 'react';
 import { Pressable, ScrollView } from 'react-native';
@@ -10,6 +9,12 @@ const VARIANTS = [
     key: 'free-trial',
     label: 'Free Trial',
     description: 'Team on active free trial period',
+    updates: [
+      'Default tab changed to Overview',
+      'Dot indicator added on Invoice tab',
+      'Overview tab content',
+      'Invoice tab content',
+    ],
     Icon: Clock,
     color: TTTheme.colors.secondaryGreen,
     route: '/prototype/tab-update-team-detail/free-trial',
@@ -18,6 +23,11 @@ const VARIANTS = [
     key: 'subscribe',
     label: 'Subscribe',
     description: 'Team with active subscription',
+    updates: [
+      'Default tab changed to Overview',
+      'Overview tab content',
+      'Invoice tab content',
+    ],
     Icon: CreditCard,
     color: TTTheme.colors.blue,
     route: '/prototype/tab-update-team-detail/subscribe',
@@ -26,6 +36,12 @@ const VARIANTS = [
     key: 'expired',
     label: 'Expired',
     description: 'Team with expired subscription',
+    updates: [
+      'Default tab changed to Overview',
+      'Dot indicator added on Invoice tab',
+      'Overview tab content',
+      'Invoice tab content',
+    ],
     Icon: XCircle,
     color: TTTheme.colors.alertRed,
     route: '/prototype/tab-update-team-detail/expired',
@@ -39,32 +55,36 @@ export default function TabUpdateTeamDetailIndex() {
       contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center', padding: 24 }}
       showsVerticalScrollIndicator={false}
     >
-      <Box width="100%" maxWidth={480}>
+      <Box width="100%" maxWidth={960}>
         <Text
           variant="h2"
-          style={{ color: TTTheme.colors.textSecondary, marginBottom: 32, textAlign: 'center' }}
+          style={{ color: TTTheme.colors.textSecondary, marginBottom: 8, textAlign: 'center' }}
         >
-          Tab update for team detail
+          Tab Update For Team Detail
         </Text>
 
-        <Box style={{ gap: 16 }}>
-          {VARIANTS.map(({ key, label, description, Icon, color, route }) => (
-            <Pressable
+        <Text
+          variant="webSecondaryBody"
+          style={{ color: TTTheme.colors.textSecondary, textAlign: 'center', marginBottom: 32 }}
+        >
+          This feature affects 3 states in team details. Please access each state to see the changes.
+        </Text>
+
+        <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'stretch' }}>
+          {VARIANTS.map(({ key, label, description, updates, Icon, color, route }) => (
+            <Box
               key={key}
-              onPress={() => router.push(route as any)}
-              style={({ hovered, pressed }: any) => ({
-                backgroundColor: hovered ? TTTheme.colors.card : TTTheme.colors.background,
+              style={{
+                flex: 1,
+                backgroundColor: TTTheme.colors.card,
                 borderRadius: 16,
                 borderWidth: 1,
                 borderColor: TTTheme.colors.border,
-                padding: 20,
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 16,
-                opacity: pressed ? 0.85 : 1,
-                cursor: 'pointer',
-              })}
+                padding: 24,
+                gap: 0,
+              }}
             >
+              {/* Icon */}
               <Box
                 style={{
                   width: 48,
@@ -73,22 +93,54 @@ export default function TabUpdateTeamDetailIndex() {
                   backgroundColor: key === 'subscribe' ? TTTheme.colors.lightSky : key === 'expired' ? TTTheme.colors.lightPink : color + '1A',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  marginBottom: 16,
                 }}
               >
                 <Icon size={24} color={color} />
               </Box>
-              <Box style={{ flex: 1 }}>
-                <Text
-                  variant="webLargeLabel"
-                  style={{ color: TTTheme.colors.textSecondary, fontWeight: '600', marginBottom: 2 }}
-                >
+
+              {/* Label + description */}
+              <Box style={{ flex: 1, marginBottom: 16 }}>
+                <Text variant="webLargeLabel" style={{ color: TTTheme.colors.textSecondary, fontWeight: '600', lineHeight: 24, marginBottom: 4 }}>
                   {label}
                 </Text>
-                <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.grey05 }}>
+                <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.grey05, lineHeight: 20 }}>
                   {description}
                 </Text>
+
+                {updates && (
+                  <Box style={{ marginTop: 16, paddingTop: 16, borderTopWidth: 1, borderTopColor: TTTheme.colors.border, gap: 6 }}>
+                    <Text variant="webMetadataPrimary" style={{ color: TTTheme.colors.grey05, marginBottom: 6 }}>
+                      WHAT'S UPDATED
+                    </Text>
+                    {updates.map((item, i) => (
+                      <Box key={i} style={{ flexDirection: 'row', gap: 8, alignItems: 'flex-start' }}>
+                        <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.grey05, lineHeight: 20 }}>·</Text>
+                        <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.textSecondary, lineHeight: 20 }}>{item}</Text>
+                      </Box>
+                    ))}
+                  </Box>
+                )}
               </Box>
-            </Pressable>
+
+              {/* Button */}
+              <Pressable
+                onPress={() => window.open(route, '_blank')}
+                style={({ pressed }: any) => ({
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  paddingVertical: 10,
+                  borderRadius: 10,
+                  borderWidth: 1,
+                  borderColor: TTTheme.colors.black,
+                  backgroundColor: 'transparent',
+                  opacity: pressed ? 0.75 : 1,
+                  cursor: 'pointer',
+                })}
+              >
+                <Text variant="webLabelEmphasized" style={{ color: TTTheme.colors.black }}>View Detail</Text>
+              </Pressable>
+            </Box>
           ))}
         </Box>
       </Box>
