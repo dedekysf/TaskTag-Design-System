@@ -3,7 +3,7 @@ import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 
-import { Activity, BatteryFull, ChevronRight, Download, FileText, Hammer, HardHat, Hash, Image as ImageIcon, Lock, MessageSquare, MoreHorizontal, SignalHigh, WifiHigh, Zap } from 'lucide-react-native';
+import { Activity, BatteryFull, ChevronRight, Download, FileText, Hammer, HardHat, Hash, Image as ImageIcon, Lock, MessageSquare, MoreHorizontal, SignalHigh, User, WifiHigh, Zap } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
 
@@ -70,7 +70,9 @@ export default function ProjectOverview() {
             resizeMode="contain"
           />
           <Pressable>
-            <Text variant="webSecondaryBody" style={{ fontSize: 14, color: theme.colors.secondaryGreen, fontWeight: '600' }}>Sign Up</Text>
+            <Box width={36} height={36} borderRadius="full" backgroundColor="grey02" alignItems="center" justifyContent="center">
+              <User size={20} color={theme.colors.grey05} />
+            </Box>
           </Pressable>
         </Box>
 
@@ -310,11 +312,11 @@ export default function ProjectOverview() {
         }}>
           <View style={{ marginBottom: 4 }}>
             <Text variant="webLabelEmphasized" color="white">
-              Welcome to the team!
+              You're all set.
             </Text>
           </View>
           <Text variant="webSecondaryBody" style={{ color: 'rgba(255,255,255,0.8)', marginBottom: 16, lineHeight: 20 }}>
-            You've been added to the project. Download the app to jump in, create tasks, and stay in the loop.
+            Download the app to see your jobs, message the crew, and stay on top of every task.
           </Text>
           <Button
             variant="fill"
@@ -323,7 +325,7 @@ export default function ProjectOverview() {
             onPress={() => { if (typeof window !== 'undefined') window.open('https://play.google.com/store/apps/details?id=com.eloveit.TaskTag', '_blank'); }}
           >
             <Text variant="webLabelEmphasized" color="white">
-              Download App
+              Download the App
             </Text>
           </Button>
         </View>
@@ -409,7 +411,7 @@ export default function ProjectOverview() {
                   onPress={() => { if (typeof window !== 'undefined') window.open('https://play.google.com/store/apps/details?id=com.eloveit.TaskTag', '_blank'); }}
                 >
                   <Download size={18} color={theme.colors.black} />
-                  <Text variant="webLabelEmphasized" color="foreground">Download App</Text>
+                  <Text variant="webLabelEmphasized" color="foreground">Download the App</Text>
                 </Button>
               </View>
             </View>

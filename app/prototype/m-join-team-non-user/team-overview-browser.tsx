@@ -142,7 +142,7 @@ export default function TeamOverviewBrowser() {
           )}
 
           {/* Black Banner */}
-          <View style={{ backgroundColor: '#000000', borderRadius: 12, padding: 20 }}>
+          <View style={{ backgroundColor: '#000000', borderRadius: 12, padding: 16 }}>
             <View style={{ marginBottom: 4 }}>
               <Text variant="webLabelEmphasized" color="white">You're all set.</Text>
             </View>
