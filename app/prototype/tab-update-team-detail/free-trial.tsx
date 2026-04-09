@@ -1648,7 +1648,7 @@ export default function TeamDetail() {
                     </Box>
                   </Box>
 
-                  <Box backgroundColor="grey02" padding="16" borderRadius="8" gap="4">
+                  <Box backgroundColor="lightCream" padding="16" borderRadius="8" gap="4">
                     <Text variant="webBody" color="textSecondary">
                       Your trial ends on <Text variant="webLabelEmphasized" color="textSecondary">March 15, 2026</Text>
                     </Text>
