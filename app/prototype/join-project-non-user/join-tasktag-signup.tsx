@@ -172,6 +172,13 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
         <Box marginBottom="lg" alignItems="center">
           <Box flexDirection="row" gap="md" width="100%" marginBottom="20">
             <Pressable
+              onPress={() => {
+                if (onSuccess) {
+                  onSuccess();
+                } else {
+                  router.push('/prototype/join-project-non-user/project-dashboard' as any);
+                }
+              }}
               onHoverIn={() => setIsGoogleHovered(true)}
               onHoverOut={() => setIsGoogleHovered(false)}
               style={({ pressed }) => [

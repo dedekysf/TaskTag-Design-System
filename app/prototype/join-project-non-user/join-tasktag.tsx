@@ -22,7 +22,7 @@ import {
   Users,
 } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { Image, Modal, Pressable, ScrollView } from 'react-native';
+import { Image, Modal, Pressable, ScrollView, View } from 'react-native';
 import JoinTasktagSignup from './join-tasktag-signup';
 
 
@@ -89,6 +89,7 @@ export default function JoinTasktag() {
   const [activeTab, setActiveTab] = useState('tasks');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showSignupModal, setShowSignupModal] = useState(false);
+  const [noteVisible, setNoteVisible] = useState(true);
 
   return (
     <Box
@@ -587,6 +588,25 @@ export default function JoinTasktag() {
             onPress={() => setShowSignupModal(false)}
             style={{ position: 'absolute' as any, top: 0, left: 0, right: 0, bottom: 0 }}
           />
+
+          {noteVisible && (
+            <View style={{ marginHorizontal: 16, marginBottom: 12, backgroundColor: '#fbe676', borderRadius: 12, padding: 14, flexDirection: 'row', alignItems: 'flex-start', gap: 8, zIndex: 10, width: '100%', maxWidth: 640 }}>
+              <View style={{ flex: 1, gap: 2 }}>
+                <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
+                <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18 }}>
+                  If using a different email, this acts as a standard registration (no invite attached).
+                </Text>
+              </View>
+              <Pressable
+                onPress={() => setNoteVisible(false)}
+                style={{ width: 24, height: 24, alignItems: 'center', justifyContent: 'center', marginTop: 2 }}
+                hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+              >
+                <Text variant="webLabelEmphasized" style={{ color: '#000', fontSize: 16, lineHeight: 16 }}>×</Text>
+              </Pressable>
+            </View>
+          )}
+
           {/* Signup content constrained */}
           <Box style={{ width: '100%', maxWidth: 640, maxHeight: '99%', borderRadius: 16, overflow: 'hidden' as any }}>
             <JoinTasktagSignup
