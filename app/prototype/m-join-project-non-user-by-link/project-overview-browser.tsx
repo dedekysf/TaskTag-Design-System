@@ -2,7 +2,7 @@ import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import { BatteryFull, ChevronRight, Clock, FileText, Hammer, HardHat, Hash, Image as ImageIcon, Lock, MoreHorizontal, SignalHigh, WifiHigh, Zap } from 'lucide-react-native';
+import { BatteryFull, ChevronRight, Clock, FileText, Hammer, HardHat, Hash, Image as ImageIcon, Lock, MoreHorizontal, SignalHigh, User, WifiHigh, Zap } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
 
@@ -62,7 +62,9 @@ export default function ProjectOverview() {
             resizeMode="contain"
           />
           <Pressable>
-            <Text variant="webSecondaryBody" style={{ fontSize: 14, color: theme.colors.secondaryGreen, fontWeight: '600' }}>Sign Up</Text>
+            <Box width={36} height={36} borderRadius="full" backgroundColor="grey02" alignItems="center" justifyContent="center">
+              <User size={20} color={theme.colors.grey05} />
+            </Box>
           </Pressable>
         </Box>
 
@@ -197,10 +199,10 @@ export default function ProjectOverview() {
         {/* Fixed Bottom Banner */}
         <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, backgroundColor: '#000000', borderRadius: 12, padding: 16, zIndex: 10 }}>
           <View style={{ marginBottom: 4 }}>
-            <Text variant="webLabelEmphasized" color="white">You're almost in!</Text>
+            <Text variant="webLabelEmphasized" color="white">Hang tight.</Text>
           </View>
           <Text variant="webSecondaryBody" style={{ color: '#E0E0E0', marginBottom: 16, lineHeight: 20 }}>
-            Your request to join this project is pending approval. Download the app to jump in, create tasks, and stay in the loop.
+            Once approved, you'll get access to the project and chat. Download the app so you're ready to go.
           </Text>
           <Button
             variant="fill"

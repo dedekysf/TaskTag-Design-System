@@ -61,7 +61,7 @@ export default function JoinTasktag() {
             style={{ width: 100, height: 30 }}
             resizeMode="contain"
           />
-          <Pressable>
+          <Pressable onPress={() => router.push('/prototype/m-join-project-non-user-by-link/join-tasktag-signup')}>
             <Text variant="webSecondaryBody" style={{ fontSize: 14, color: theme.colors.secondaryGreen, fontWeight: '600' }}>Sign Up</Text>
           </Pressable>
         </Box>

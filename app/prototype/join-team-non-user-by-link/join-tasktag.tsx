@@ -96,6 +96,7 @@ export default function JoinTasktag() {
             </Pressable>
           </Box>
 
+
         </View>
       </ScrollView>
 
