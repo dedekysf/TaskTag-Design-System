@@ -36,6 +36,7 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
   const [hasTypedPassword, setHasTypedPassword] = useState(false);
   const [isGoogleHovered, setIsGoogleHovered] = useState(false);
   const [isAppleHovered, setIsAppleHovered] = useState(false);
+  const [noteVisible, setNoteVisible] = useState(true);
 
   useEffect(() => {
     if (password.length > 0) {
@@ -399,6 +400,24 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
       style={{ flex: 1, backgroundColor: theme.colors.grey02 }}
       contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: theme.spacing.lg }}
     >
+      {noteVisible && (
+        <View style={{ marginBottom: 16, backgroundColor: '#fbe676', borderRadius: 12, padding: 14, flexDirection: 'row', alignItems: 'flex-start', gap: 8, zIndex: 10, width: '100%', maxWidth: 600 }}>
+          <View style={{ flex: 1, gap: 2 }}>
+            <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
+            <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18 }}>
+              If using a different email, this acts as a standard registration (no invite attached).
+            </Text>
+          </View>
+          <Pressable
+            onPress={() => setNoteVisible(false)}
+            style={{ width: 24, height: 24, alignItems: 'center', justifyContent: 'center', marginTop: 2 }}
+            hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+          >
+            <Text variant="webLabelEmphasized" style={{ color: '#000', fontSize: 16, lineHeight: 16 }}>×</Text>
+          </Pressable>
+        </View>
+      )}
+
       <Box alignItems="center" width="100%" maxWidth={600} marginBottom="lg">
         <Image
           source={require('@/assets/images/tasktag-logo.png')}
