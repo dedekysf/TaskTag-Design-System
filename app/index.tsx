@@ -295,6 +295,13 @@ export default function PrototypeIndex() {
       route: '/prototype/team-invitation-expired-by-email',
       platform: 'Web' as const,
     },
+    {
+      title: 'Tab Update Team Detail',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-321?atlOrigin=eyJpIjoiNzc1MmViYjVjMjYwNDIxODkzZDhjODRhNmVmZTViY2IiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-321',
+      route: '/prototype/tab-update-team-detail',
+      platform: 'Web' as const,
+    },
   ];
 
   const PINNED_TITLES = ['GitHub', 'Design System'];
@@ -311,6 +318,7 @@ export default function PrototypeIndex() {
   const inviteDuringCreation = prototypes.find(p => p.title === 'Invite Members During Team Creation')!;
   const removeMember = prototypes.find(p => p.title === 'Remove Member Discoverable on Active Member')!;
   const teamDetail = prototypes.find(p => p.title === 'Role Descriptions and Naming Consistency')!;
+  const tabUpdateTeamDetail = prototypes.find(p => p.title === 'Tab Update Team Detail')!;
   const expiredNonUsers = prototypes.filter(p => p.title === 'Team Invitation Expired by Email');
   const rest = prototypes.filter(p => 
     !PINNED_TITLES.includes(p.title) && 
@@ -318,10 +326,11 @@ export default function PrototypeIndex() {
     p.title !== 'Role Descriptions and Naming Consistency' && 
     p.title !== 'Remove Member Discoverable on Active Member' &&
     p.title !== 'Email - Task Request Approved' &&
-    p.title !== 'Invite Members During Team Creation'
+    p.title !== 'Invite Members During Team Creation' &&
+    p.title !== 'Tab Update Team Detail'
   );
 
-  const filtered = [github, designSystem, emailTaskApproval, inviteDuringCreation, removeMember, teamDetail, ...expiredNonUsers, ...rest].filter(item => {
+  const filtered = [github, designSystem, emailTaskApproval, tabUpdateTeamDetail, inviteDuringCreation, removeMember, teamDetail, ...expiredNonUsers, ...rest].filter(item => {
     const matchTab = activeTab === 'All Device' || PINNED_TITLES.includes(item.title) || ('platform' in item ? item.platform : 'Web') === activeTab;
     const matchSearch = search.trim() === '' || item.title.toLowerCase().includes(search.toLowerCase()) || item.jiraLabel.toLowerCase().includes(search.toLowerCase());
     return matchTab && matchSearch;
