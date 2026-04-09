@@ -1689,10 +1689,12 @@ export default function TeamDetail() {
                   <Box flexDirection="row" justifyContent="space-between" alignItems="center">
                     {/* Left */}
                     <Box gap="8">
-                      <Box backgroundColor="blue" style={{ paddingHorizontal: 10, paddingVertical: 4, borderRadius: 4, alignSelf: 'flex-start' }}>
-                        <Text variant="labelMedium" color="white">Active</Text>
+                      <Box flexDirection="row" alignItems="center" gap="8">
+                        <Text variant="mobileHeading28" color="foreground">Team plan</Text>
+                        <Box backgroundColor="lightSky" paddingHorizontal="12" paddingVertical="4" borderRadius="4">
+                          <Text variant="labelMedium" color="blue">Active</Text>
+                        </Box>
                       </Box>
-                      <Text variant="mobileHeading28" color="foreground">Team plan</Text>
                       <Text variant="webBody" color="textSecondary">Next billing date March 15, 2027</Text>
                     </Box>
 

@@ -1696,10 +1696,12 @@ export default function TeamDetail() {
                   <Box flexDirection="row" justifyContent="space-between" alignItems="center">
                     {/* Left */}
                     <Box gap="8">
-                      <Box backgroundColor="alertRed" style={{ paddingHorizontal: 10, paddingVertical: 4, borderRadius: 4, alignSelf: 'flex-start' }}>
-                        <Text variant="labelMedium" color="white">Expired</Text>
+                      <Box flexDirection="row" alignItems="center" gap="8">
+                        <Text variant="mobileHeading28" color="alertRed">Team plan</Text>
+                        <Box backgroundColor="lightPink" paddingHorizontal="12" paddingVertical="4" borderRadius="4">
+                          <Text variant="labelMedium" color="alertRed">Expired</Text>
+                        </Box>
                       </Box>
-                      <Text variant="mobileHeading28" color="alertRed">Team plan</Text>
                       <Text variant="webBody" color="textSecondary">Team plan ended March 17, 2026 · Team features suspended</Text>
                     </Box>
 
@@ -1717,7 +1719,7 @@ export default function TeamDetail() {
 
                 {/* ── What You'll Get Back ── */}
                 <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="20">
-                  <Text variant="webLabelEmphasized" color="textSecondary" style={{ textTransform: 'uppercase', fontSize: 11, letterSpacing: 0.5 }}>What you'll get back</Text>
+                  <Text variant="webLabelEmphasized" color="textSecondary">What you'll get back</Text>
                   <Box flexDirection="row" gap="0">
                     {/* Left column */}
                     <Box flex={1} gap="20" borderRightWidth={1} borderColor="border" paddingRight="24">

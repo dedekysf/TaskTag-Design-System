@@ -1704,10 +1704,12 @@ export default function TeamDetail() {
                   <Box flexDirection="row" justifyContent="space-between" alignItems="center">
                     {/* Left */}
                     <Box gap="8">
-                      <Box backgroundColor="lightMint" style={{ paddingHorizontal: 10, paddingVertical: 4, borderRadius: 4, alignSelf: 'flex-start' }}>
-                        <Text variant="labelMedium" color="secondaryGreen">Free Trial</Text>
+                      <Box flexDirection="row" alignItems="center" gap="8">
+                        <Text variant="mobileHeading28" color="foreground">Team plan</Text>
+                        <Box backgroundColor="lightMint" paddingHorizontal="12" paddingVertical="4" borderRadius="4">
+                          <Text variant="labelMedium" color="secondaryGreen">Free Trial</Text>
+                        </Box>
                       </Box>
-                      <Text variant="mobileHeading28" color="foreground">Team plan</Text>
                       <Box flexDirection="row" alignItems="center" gap="4">
                         <Text variant="webBody" color="textSecondary">Trial ends March 15, 2026</Text>
                         <Text variant="webBody" color="textSecondary">· No payment until then</Text>
