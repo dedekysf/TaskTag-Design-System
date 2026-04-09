@@ -247,6 +247,7 @@ export default function JoinTasktagSignup() {
                 <Box marginBottom="lg" alignItems="center">
                   <Box flexDirection="row" gap="md" width="100%" marginBottom="20">
                     <Pressable
+                      onPress={() => router.push('/prototype/m-join-project-non-user-by-link/project-overview-browser' as any)}
                       onHoverIn={() => setIsGoogleHovered(true)}
                       onHoverOut={() => setIsGoogleHovered(false)}
                       style={({ pressed }) => [{

@@ -22,6 +22,7 @@ type Step = 'select' | 'email-form';
 export default function JoinTasktagSignup() {
   const theme = useTheme<Theme>();
   const [step, setStep] = useState<Step>('select');
+  const [noteVisible, setNoteVisible] = useState(true);
 
   const [isGoogleHovered, setIsGoogleHovered] = useState(false);
   const [isAppleHovered, setIsAppleHovered] = useState(false);
@@ -190,6 +191,24 @@ export default function JoinTasktagSignup() {
         onPress={() => router.back()}
       />
 
+      {noteVisible && (
+        <View style={{ marginHorizontal: 12, marginBottom: 12, backgroundColor: '#fbe676', borderRadius: 12, padding: 14, flexDirection: 'row', alignItems: 'flex-start', gap: 8, zIndex: 10 }}>
+          <View style={{ flex: 1, gap: 2 }}>
+            <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
+            <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18 }}>
+              If using a different email, this acts as a standard registration (no invite attached).
+            </Text>
+          </View>
+          <Pressable
+            onPress={() => setNoteVisible(false)}
+            style={{ width: 24, height: 24, alignItems: 'center', justifyContent: 'center', marginTop: 2 }}
+            hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+          >
+            <Text variant="webLabelEmphasized" style={{ color: '#000', fontSize: 16, lineHeight: 16 }}>×</Text>
+          </Pressable>
+        </View>
+      )}
+
       <View style={{
         alignSelf: 'stretch', marginHorizontal: 12, maxHeight: '90%',
         backgroundColor: theme.colors.background, borderRadius: 16, overflow: 'hidden',
@@ -252,6 +271,7 @@ export default function JoinTasktagSignup() {
                   <Box marginBottom="lg" alignItems="center">
                     <Box flexDirection="row" gap="md" width="100%" marginBottom="20">
                       <Pressable
+                        onPress={() => router.push('/prototype/m-join-project-non-user/project-overview-browser' as any)}
                         onHoverIn={() => setIsGoogleHovered(true)}
                         onHoverOut={() => setIsGoogleHovered(false)}
                         style={({ pressed }) => [{
