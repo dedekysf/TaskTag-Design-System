@@ -1230,27 +1230,46 @@ export default function CreateTeamTeamDetail() {
                 borderRadius="12"
                 padding="16"
                 style={{
-                  backgroundColor: theme.colors.lightMint,
+                  backgroundColor: theme.colors.lightSky,
                   borderWidth: 1,
-                  borderColor: theme.colors.secondaryGreen,
+                  borderColor: theme.colors.blue,
                   marginBottom: 16,
                 } as any}
               >
-                <Box flexDirection="row" alignItems="center" gap="12">
-                  <Users size={24} color={theme.colors.secondaryGreen} />
+                {/* Top row: icon + text + dismiss */}
+                <Box flexDirection="row" alignItems="flex-start" gap="12">
+                  <Users size={24} color={theme.colors.blue} />
                   <Box flex={1}>
                     <Text variant="webLargeLabel" color="textPrimary" style={{ marginBottom: 4 }}>
                       This team has no members yet
                     </Text>
-                    <Text variant="webSecondaryBody" color="textSecondary" style={{ lineHeight: 18, paddingRight: 24 }}>
+                    <Text variant="webSecondaryBody" color="textSecondary" style={{ lineHeight: 18 }}>
                       Invite teammates to collaborate on projects, assign tasks, and keep work moving together.
                     </Text>
                   </Box>
+                  <Pressable
+                    onPress={() => setShowBanner(false)}
+                    style={({ hovered }: any) => ({
+                      width: 28,
+                      height: 28,
+                      borderRadius: 6,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: hovered ? theme.colors.blue + '22' : 'transparent',
+                      cursor: 'pointer',
+                    })}
+                  >
+                    <X size={16} color={theme.colors.grey06} />
+                  </Pressable>
+                </Box>
+
+                {/* CTA below desc */}
+                <Box style={{ marginTop: 12, marginLeft: 36 }}>
                   <Button
                     variant="fill"
                     size="sm"
                     onPress={() => setShowInviteModal(true)}
-                    style={{ backgroundColor: theme.colors.black } as any}
+                    style={{ backgroundColor: theme.colors.black, alignSelf: 'flex-start' } as any}
                   >
                     <Box flexDirection="row" alignItems="center" style={{ gap: 6 }}>
                       <UserPlus size={14} color="#fff" />
@@ -1407,7 +1426,7 @@ export default function CreateTeamTeamDetail() {
                   {/* Data rows or empty state */}
                   {pendingInvites.length === 0 ? (
                     <EmptyState
-                      icon={<Users size={36} color="#CBD5E1" />}
+                      icon={<Box width={64} height={64} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.grey02 }}><Mail size={28} color={theme.colors.grey05} /></Box>}
                       title="No invitations have been sent yet."
                       style={{ paddingTop: 16, paddingBottom: 24 }}
                       actions={[
@@ -1433,7 +1452,7 @@ export default function CreateTeamTeamDetail() {
                         <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 8 }}>
                           <Box flexDirection="row" alignItems="center" gap="8">
                             <Box width={32} height={32} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.grey02 }}>
-                              <User size={16} color={theme.colors.grey05} />
+                              <Mail size={16} color={theme.colors.grey05} />
                             </Box>
                             <Text variant="webSecondaryBody" color="foreground" numberOfLines={1}>{invite.emailOrName}</Text>
                           </Box>

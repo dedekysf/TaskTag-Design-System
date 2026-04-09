@@ -1314,7 +1314,7 @@ export default function TeamDetail() {
             </Box>
           )}
 
-          <Box style={{ paddingTop: 16, paddingHorizontal: 16, paddingBottom: 16 }}>
+          <Box style={{ paddingTop: 0, paddingHorizontal: 16, paddingBottom: 16 }}>
 
             {activeTab === 'members' && (
               <>
@@ -1562,7 +1562,7 @@ export default function TeamDetail() {
             )}
 
             {activeTab === 'overview' && (
-              <Box flexDirection="row" gap="16" alignItems="flex-start">
+              <Box flexDirection="row" gap="16" alignItems="flex-start" style={{ paddingTop: 16 }}>
 
                 {/* ── Left Column ── */}
                 <Box flex={2} gap="16">
@@ -1689,7 +1689,7 @@ export default function TeamDetail() {
             )}
 
             {activeTab === 'invoice' && (
-              <Box gap="16">
+              <Box gap="16" style={{ paddingTop: 16 }}>
 
                 {/* ── Plan Header Card ── */}
                 <Box backgroundColor="card" borderWidth={1} borderColor="alertRed" borderRadius="8" padding="24">

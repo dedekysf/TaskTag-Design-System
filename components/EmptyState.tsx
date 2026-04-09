@@ -47,9 +47,10 @@ export function EmptyState({ icon, title, description, actions, style }: EmptySt
                 {
                     alignItems: 'center',
                     justifyContent: 'center',
-                    paddingVertical: 48,
+                    paddingTop: 16,
+                    paddingBottom: 24,
                     paddingHorizontal: 24,
-                    gap: 12,
+                    gap: 8,
                 },
                 style,
             ]}
