@@ -1916,7 +1916,7 @@ export default function TeamDetail() {
       {showResendToast && <ResendToast onDone={() => setShowResendToast(false)} />}
 
       {/* ── Upgrade Modal ── */}
-      <UpgradeModal visible={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} />
+      <UpgradeModal visible={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} teamName="Painting Team" />
 
     </Box>
   );
