@@ -261,6 +261,7 @@ export default function JoinTasktagSignup() {
                       <Text variant="labelMedium" color="foreground">Google</Text>
                     </Pressable>
                     <Pressable
+                      onPress={() => router.push('/prototype/m-join-project-non-user-by-link/project-overview-browser' as any)}
                       onHoverIn={() => setIsAppleHovered(true)}
                       onHoverOut={() => setIsAppleHovered(false)}
                       style={({ pressed }) => [{

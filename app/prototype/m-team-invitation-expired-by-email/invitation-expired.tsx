@@ -59,7 +59,7 @@ export default function InvitationExpired() {
             style={{ width: 100, height: 30 }}
             resizeMode="contain"
           />
-          <Pressable>
+          <Pressable onPress={() => router.push('/prototype/m-team-invitation-expired-by-email/join-tasktag-signup' as any)}>
             <Text variant="webSecondaryBody" style={{ fontSize: 14, color: theme.colors.secondaryGreen, fontWeight: '600' }}>Sign Up</Text>
           </Pressable>
         </Box>

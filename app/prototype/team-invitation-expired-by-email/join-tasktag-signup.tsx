@@ -160,6 +160,7 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
           <Pressable
             onHoverIn={() => setIsGoogleHovered(true)}
             onHoverOut={() => setIsGoogleHovered(false)}
+            onPress={() => { onSuccess ? onSuccess() : router.push('/prototype/team-invitation-expired-by-email/team-dashboard' as any); }}
             style={({ pressed }) => [
               {
                 flex: 1,
@@ -187,6 +188,7 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
           <Pressable
             onHoverIn={() => setIsAppleHovered(true)}
             onHoverOut={() => setIsAppleHovered(false)}
+            onPress={() => { onSuccess ? onSuccess() : router.push('/prototype/team-invitation-expired-by-email/team-dashboard' as any); }}
             style={({ pressed }) => [
               {
                 flex: 1,
