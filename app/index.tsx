@@ -317,6 +317,13 @@ export default function PrototypeIndex() {
       route: '/prototype/tab-update-team-detail',
       platform: 'Web' as const,
     },
+    {
+      title: 'Join Team TT User by Link',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-337?atlOrigin=eyJpIjoiMGQwMDFhZjdkZWEyNDUxYjlkYTk0ZjA1NDIxN2UxNmYiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-337',
+      route: '/prototype/m-join-team-tt-user-by-link',
+      platform: 'Mobile' as const,
+    },
   ];
 
   const PINNED_TITLES = ['GitHub', 'Design System'];
@@ -336,6 +343,7 @@ export default function PrototypeIndex() {
   const teamDetail = prototypes.find(p => p.title === 'Role Descriptions and Naming Consistency')!;
   const tabUpdateTeamDetail = prototypes.find(p => p.title === 'Tab Update Team Detail')!;
   const emailTaskApprovalMobile = prototypes.find(p => p.title === 'Email - Task Request Approved' && p.platform === 'Mobile');
+  const joinTeamTTUser = prototypes.find(p => p.title === 'Join Team TT User by Link');
   const expiredNonUsers = prototypes.filter(p => p.title === 'Team Invitation Expired by Email');
   const rest = prototypes.filter(p => 
     !PINNED_TITLES.includes(p.title) && 
@@ -345,10 +353,11 @@ export default function PrototypeIndex() {
     p.title !== 'Join Task Non User by Email' &&
     p.title !== 'Email - Task Request Approved' &&
     p.title !== 'Invite Members During Team Creation' &&
-    p.title !== 'Tab Update Team Detail'
+    p.title !== 'Tab Update Team Detail' &&
+    p.title !== 'Join Team TT User by Link'
   );
 
-  const rawFiltered = [github, designSystem, emailTaskApprovalWeb, tabUpdateTeamDetail, inviteDuringCreation, removeMember, teamDetail, emailTaskApprovalMobile, ...expiredNonUsers, ...rest].filter(Boolean) as typeof prototypes;
+  const rawFiltered = [github, designSystem, emailTaskApprovalWeb, tabUpdateTeamDetail, inviteDuringCreation, removeMember, teamDetail, emailTaskApprovalMobile, joinTeamTTUser, ...expiredNonUsers, ...rest].filter(Boolean) as typeof prototypes;
 
   const filtered = rawFiltered.filter(item => {
     const matchTab = activeTab === 'All Device' || PINNED_TITLES.includes(item.title) || ('platform' in item ? item.platform : 'Web') === activeTab;
