@@ -859,7 +859,7 @@ function TaskDetailPanel({ onJoin }: { onJoin: () => void }) {
         {/* Description section (Fixed) */}
         <Box style={{ paddingHorizontal: 24, paddingBottom: 24 }}>
           <Box style={{ backgroundColor: theme.colors.grey01, borderRadius: 8, overflow: 'hidden' as any }}>
-            <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 }}>
+            <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ paddingHorizontal: 16, height: 52 }}>
               <Box flexDirection="row" alignItems="center" gap="8">
                 <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.textSecondary, fontFamily: 'Inter_600SemiBold' }}>Description</Text>
               </Box>
@@ -884,7 +884,7 @@ function TaskDetailPanel({ onJoin }: { onJoin: () => void }) {
               onPress={() => setChecklistExpanded(v => !v)}
               style={({ hovered }: any) => ({ borderRadius: 8, backgroundColor: hovered ? theme.colors.grey01 : 'transparent' })}
             >
-              <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ paddingVertical: 12, paddingLeft: 16, paddingRight: 16 }}>
+              <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ height: 52, paddingLeft: 16, paddingRight: 16 }}>
                 <Box flexDirection="row" alignItems="center" gap="8">
                   <Box width={24} height={24} alignItems="center" justifyContent="center">
                     <FileText size={20} color={theme.colors.textSecondary} />
@@ -984,7 +984,7 @@ function TaskDetailPanel({ onJoin }: { onJoin: () => void }) {
               onPress={() => setFilesExpanded(v => !v)}
               style={({ hovered }: any) => ({ borderRadius: 8, backgroundColor: hovered ? theme.colors.grey01 : 'transparent' })}
             >
-              <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ paddingVertical: 12, paddingLeft: 16, paddingRight: 16 }}>
+              <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ height: 52, paddingLeft: 16, paddingRight: 16 }}>
                 <Box flexDirection="row" alignItems="center" gap="8">
                   <Box width={24} height={24} alignItems="center" justifyContent="center">
                     <FileImage size={20} color={theme.colors.textSecondary} />
@@ -1005,7 +1005,7 @@ function TaskDetailPanel({ onJoin }: { onJoin: () => void }) {
               onPress={() => setAssigneeExpanded(v => !v)}
               style={({ hovered }: any) => ({ borderRadius: 8, backgroundColor: hovered ? theme.colors.grey01 : 'transparent' })}
             >
-              <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ paddingVertical: 12, paddingLeft: 16, paddingRight: 16 }}>
+              <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ height: 52, paddingLeft: 16, paddingRight: 16 }}>
                 <Box flexDirection="row" alignItems="center" gap="8">
                   <Box width={24} height={24} alignItems="center" justifyContent="center">
                     <Users size={20} color={theme.colors.textSecondary} />
@@ -1023,7 +1023,7 @@ function TaskDetailPanel({ onJoin }: { onJoin: () => void }) {
               onPress={() => setActivityExpanded(v => !v)}
               style={({ hovered }: any) => ({ borderRadius: 8, backgroundColor: hovered ? theme.colors.grey01 : 'transparent' })}
             >
-              <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ paddingVertical: 12, paddingLeft: 16, paddingRight: 16 }}>
+              <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ height: 52, paddingLeft: 16, paddingRight: 16 }}>
                 <Box flexDirection="row" alignItems="center" gap="8">
                   <Box width={24} height={24} alignItems="center" justifyContent="center">
                     <Activity size={20} color={theme.colors.textSecondary} />
