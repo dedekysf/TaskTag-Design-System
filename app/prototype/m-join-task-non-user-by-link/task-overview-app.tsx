@@ -240,7 +240,7 @@ export default function TaskOverviewApp() {
       )}
 
       {/* FAB — New Update */}
-      <View style={{ position: 'absolute', bottom: 24, right: 16 }}>
+      <View style={{ position: 'absolute', bottom: 40, right: 17 }}>
         <Pressable
           style={{
             flexDirection: 'row', alignItems: 'center', gap: 8,
