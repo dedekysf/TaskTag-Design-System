@@ -93,7 +93,7 @@ export default function EmailApprovalMockup() {
               variant="fill"
               size="xl"
               style={{ width: '100%', backgroundColor: TTTheme.colors.secondaryGreen, borderRadius: 8 }}
-              onPress={() => router.push('/prototype/join-task-non-user-by-link/project-dashboard')}
+              onPress={() => router.push('/prototype/join-task-non-user-by-link/my-task')}
             >
               <Text variant="webButton" color="white">View Task</Text>
             </Button>
