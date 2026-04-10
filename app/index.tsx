@@ -253,13 +253,14 @@ export default function PrototypeIndex() {
       route: '/design-system',
       platforms: ['Web', 'Mobile'] as ('Web' | 'Mobile')[],
     },
-    {
-      title: 'Join Task Non User by Email',
-      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-334?atlOrigin=eyJpIjoiMDVjN2RlMGE4MjYyNDQyNGE3NDkzMzBmZDJjYzhiNWYiLCJwIjoiaiJ9',
-      jiraLabel: 'TD-334',
-      route: '/prototype/join-task-non-user',
-      platform: 'Web' as const,
-    },
+    // hidden: Join Task Non User by Email (Web) — TD-334
+    // {
+    //   title: 'Join Task Non User by Email',
+    //   jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-334?atlOrigin=eyJpIjoiMDVjN2RlMGE4MjYyNDQyNGE3NDkzMzBmZDJjYzhiNWYiLCJwIjoiaiJ9',
+    //   jiraLabel: 'TD-334',
+    //   route: '/prototype/join-task-non-user',
+    //   platform: 'Web' as const,
+    // },
     {
       title: 'Email - Task Request Approved',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-336?atlOrigin=eyJpIjoiYzA5N2RiYTNiYzc4NDc1N2JhZWVmODc1NDBhOTA1ZmUiLCJwIjoiaiJ9',
@@ -347,7 +348,7 @@ export default function PrototypeIndex() {
     p.title !== 'Tab Update Team Detail'
   );
 
-  const rawFiltered = [github, designSystem, joinTaskNonUser, emailTaskApprovalWeb, tabUpdateTeamDetail, inviteDuringCreation, removeMember, teamDetail, emailTaskApprovalMobile, ...expiredNonUsers, ...rest].filter(Boolean) as typeof prototypes;
+  const rawFiltered = [github, designSystem, emailTaskApprovalWeb, tabUpdateTeamDetail, inviteDuringCreation, removeMember, teamDetail, emailTaskApprovalMobile, ...expiredNonUsers, ...rest].filter(Boolean) as typeof prototypes;
 
   const filtered = rawFiltered.filter(item => {
     const matchTab = activeTab === 'All Device' || PINNED_TITLES.includes(item.title) || ('platform' in item ? item.platform : 'Web') === activeTab;
