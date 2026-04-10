@@ -42,6 +42,8 @@ export default function MobileLayout() {
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
           <Stack.Screen name="request-to-join" />
+          <Stack.Screen name="team-detail" />
+          <Stack.Screen name="link" />
         </Stack>
       </Box>
     </View>

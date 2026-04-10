@@ -2,19 +2,28 @@ import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import { 
-  BarChart2, 
+import { Image } from 'expo-image';
+import {
+  BarChart2,
   BatteryFull,
-  Link as LinkIcon, 
-  Lock, 
-  MapPin, 
+  ChevronLeft,
+  Link as LinkIcon,
+  Lock,
   SignalHigh,
   Users,
   WifiHigh
 } from 'lucide-react-native';
 import React from 'react';
 import { Linking, Pressable, ScrollView } from 'react-native';
-import { Image } from 'expo-image';
+
+function SectionLabel({ label }: { label: string }) {
+  const theme = useTheme<Theme>();
+  return (
+    <Text variant="webMetadataPrimary" style={{ color: theme.colors.grey05, letterSpacing: 0.8, textTransform: 'uppercase' }}>
+      {label}
+    </Text>
+  );
+}
 
 const TEAM = {
   name: 'Painting Team',
@@ -26,8 +35,6 @@ const TEAM = {
     'Exterior Painting',
     'Wallpaper Installation',
     'Drywall Repair',
-    'Pressure Washing',
-    'Surface Preparation',
   ],
 };
 
@@ -38,7 +45,7 @@ export default function RequestToJoin() {
   return (
     <Box flex={1} backgroundColor="background">
       {/* Simulation: Outer container is handled by _layout.tsx (375px frame) */}
-      
+
       {/* Status Bar Mock */}
       <Box
         flexDirection="row"
@@ -57,13 +64,30 @@ export default function RequestToJoin() {
         </Box>
       </Box>
 
+      {/* Nav Header */}
+      <Box
+        flexDirection="row"
+        alignItems="center"
+        paddingHorizontal="md"
+        paddingVertical="12"
+        backgroundColor="card"
+        borderBottomWidth={1}
+        borderColor="border"
+        gap="4"
+      >
+        <Pressable hitSlop={8} style={{ padding: 4, marginRight: 4 }}>
+          <ChevronLeft size={22} color={theme.colors.foreground} strokeWidth={2} />
+        </Pressable>
+        <Text variant="mobileLabelEmphasized" color="foreground">Team Profile</Text>
+      </Box>
+
       {/* Shared Link Banner */}
-      <Box 
-        backgroundColor="lightMint" 
-        flexDirection="row" 
-        alignItems="center" 
-        justifyContent="center" 
-        paddingVertical="12" 
+      <Box
+        backgroundColor="lightSky"
+        flexDirection="row"
+        alignItems="center"
+        justifyContent="center"
+        paddingVertical="12"
         gap="8"
       >
         <LinkIcon size={16} color={theme.colors.textSecondary} strokeWidth={2.5} />
@@ -76,9 +100,9 @@ export default function RequestToJoin() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 160 }}
       >
-        {/* Team Card (Grey02) */}
+        {/* Team Card */}
         <Box
-          backgroundColor="grey02"
+          backgroundColor="lightMint"
           borderRadius="8"
           padding="md"
           marginBottom="lg"
@@ -86,19 +110,17 @@ export default function RequestToJoin() {
           alignItems="center"
           gap="12"
         >
-          <Box 
-            width={80} 
-            height={80} 
-            borderRadius="8" 
-            backgroundColor="white" 
-            alignItems="center" 
+          <Box
+            width={80}
+            height={72}
+            borderRadius="8"
+            backgroundColor="white"
+            alignItems="center"
             justifyContent="center"
             overflow="hidden"
-            borderWidth={1}
-            borderColor="border"
             padding="sm"
           >
-            <Image 
+            <Image
               source={require('@/assets/images/sosa-logo.svg')}
               style={{ width: '100%', height: '100%' }}
               contentFit="contain"
@@ -114,17 +136,15 @@ export default function RequestToJoin() {
           </Box>
         </Box>
 
-        <Box marginBottom="lg">
-          <Text variant="mobileLabelEmphasized" color="foreground" marginBottom="sm">
-            Specialisms
-          </Text>
+        <Box marginBottom="xl">
+          <Box marginBottom="sm"><SectionLabel label="Specialisms" /></Box>
           <Box flexDirection="row" flexWrap="wrap" gap="8">
             {TEAM.specializations.map((spec, index) => (
-              <Box 
-                key={index} 
-                paddingHorizontal="sm" 
-                paddingVertical="xs" 
-                borderRadius="4" 
+              <Box
+                key={index}
+                paddingHorizontal="sm"
+                paddingVertical="xs"
+                borderRadius="4"
                 backgroundColor="white"
                 borderWidth={1}
                 borderColor="border"
@@ -136,87 +156,52 @@ export default function RequestToJoin() {
         </Box>
 
         {/* Available After Joining Section */}
-        <Box marginBottom="lg">
+        <Box marginBottom="md">
           <Box flexDirection="row" alignItems="center" gap="8" marginBottom="12">
-             <Lock size={18} color={theme.colors.textSecondary} />
-             <Text variant="mobileLabelEmphasized" color="foreground">
-               Available After Joining
-             </Text>
+            <Lock size={18} color={theme.colors.textSecondary} />
+            <Text variant="mobileLabelEmphasized" color="foreground">
+              Available After Joining
+            </Text>
           </Box>
 
-          <Box gap="md">
-            {/* Members Card */}
-            <Box 
-              flexDirection="row" 
-              alignItems="center" 
-              padding="md" 
-              borderRadius="8" 
-              borderWidth={1} 
+          {[
+            { Icon: Users, title: 'Members', description: 'Join with 3 other members.' },
+            { Icon: BarChart2, title: 'Analytics', description: 'Join to access' },
+          ].map(({ Icon, title, description }, index, arr) => (
+            <Box
+              key={title}
+              flexDirection="row"
+              alignItems="center"
+              paddingVertical="12"
+              gap="12"
+              borderBottomWidth={index < arr.length - 1 ? 1 : 0}
               borderColor="border"
-              backgroundColor="card"
             >
-              <Box 
-                width={40} 
-                height={40} 
-                borderRadius="8" 
-                backgroundColor="grey02" 
-                alignItems="center" 
-                justifyContent="center"
-                marginRight="12"
-              >
-                <Users size={20} color={theme.colors.textSecondary} />
+              <Box width={48} height={48} borderRadius="8" backgroundColor="grey02" alignItems="center" justifyContent="center">
+                <Icon size={22} color={theme.colors.textSecondary} strokeWidth={1.75} />
               </Box>
-              <Box flex={1}>
-                <Box flexDirection="row" alignItems="center" gap="4">
-                  <Text variant="mobileLabelEmphasized" color="foreground">Members</Text>
-                </Box>
-                <Text variant="mobileMetadataPrimary" color="mutedForeground">Join with 3 other members.</Text>
+              <Box flex={1} style={{ gap: 2 }}>
+                <Text variant="mobileLabelEmphasized" color="foreground">{title}</Text>
+                <Text variant="mobileMetadataPrimary" color="mutedForeground">{description}</Text>
               </Box>
-              <Lock size={16} color={theme.colors.textSecondary} />
+              <Lock size={16} color={theme.colors.grey04} />
             </Box>
-
-            {/* Analytics Card */}
-            <Box 
-              flexDirection="row" 
-              alignItems="center" 
-              padding="md" 
-              borderRadius="8" 
-              borderWidth={1} 
-              borderColor="border"
-              backgroundColor="card"
-            >
-              <Box 
-                width={40} 
-                height={40} 
-                borderRadius="8" 
-                backgroundColor="grey02" 
-                alignItems="center" 
-                justifyContent="center"
-                marginRight="12"
-              >
-                <BarChart2 size={20} color={theme.colors.textSecondary} />
-              </Box>
-              <Box flex={1}>
-                <Text variant="mobileLabelEmphasized" color="foreground">Analytics</Text>
-                <Text variant="mobileMetadataPrimary" color="mutedForeground">Join to access</Text>
-              </Box>
-              <Lock size={16} color={theme.colors.textSecondary} />
-            </Box>
-          </Box>
+          ))}
         </Box>
 
         <Text variant="mobileMetadataPrimary" color="mutedForeground">
           You can leave this team at any time.
         </Text>
+
       </ScrollView>
 
       {/* Bottom Sticky CTA */}
-      <Box 
-        position="absolute" 
-        bottom={24} 
-        left={0} 
-        right={0} 
-        padding="md" 
+      <Box
+        position="absolute"
+        bottom={24}
+        left={0}
+        right={0}
+        padding="md"
         backgroundColor="background"
         paddingBottom="md"
       >
@@ -230,13 +215,13 @@ export default function RequestToJoin() {
         >
           {requestSent ? "Request sent" : "Request to join"}
         </Button>
-        <Text 
-          variant="mobileMetadataPrimary" 
-          color="mutedForeground" 
-          textAlign="center" 
+        <Text
+          variant="mobileMetadataPrimary"
+          color="mutedForeground"
+          textAlign="center"
           marginTop="sm"
         >
-          {requestSent 
+          {requestSent
             ? "You'll be notified when an admin approves your request"
             : "A team admin will review your request to join"
           }

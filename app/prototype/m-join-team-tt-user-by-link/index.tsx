@@ -1,31 +1,96 @@
 import { Box, Text } from '@/components/primitives';
+import { Theme } from '@/constants/theme';
+import { useTheme } from '@shopify/restyle';
 import { router } from 'expo-router';
+import { ChevronRight } from 'lucide-react-native';
 import React from 'react';
-import { Pressable } from 'react-native';
+import { Pressable, ScrollView } from 'react-native';
 
-const INVITE_URL =
-  'https://app.tasktag.com/my-account/subscriptionPlanDetail/2cae243f-5f17-48ef-bc20-c53a6ede11bf/TeamDetails';
+const SCREENS = [
+  {
+    title: 'Request to Join Team',
+    description: 'Send a request to join the team as a TaskTag user',
+    route: '/prototype/m-join-team-tt-user-by-link/link',
+  },
+  {
+    title: 'Team Detail',
+    description: 'View team info after opening an invite link',
+    route: '/prototype/m-join-team-tt-user-by-link/team-detail',
+  },
+];
 
-export default function InviteLinkEntry() {
+function ScreenCard({ title, description, route, theme }: { title: string; description: string; route: string; theme: Theme }) {
+  const [hovered, setHovered] = React.useState(false);
+
   return (
-    <Box flex={1} justifyContent="center" alignItems="center" backgroundColor="grey02" padding="lg">
+    <Pressable
+      onHoverIn={() => setHovered(true)}
+      onHoverOut={() => setHovered(false)}
+      onPress={() => router.push(route as any)}
+      style={{ width: '100%' }}
+    >
       <Box
         backgroundColor="card"
-        borderRadius="xl"
-        paddingHorizontal="16"
-        paddingVertical="24"
-        width="100%"
-        style={{ boxShadow: 'rgba(0, 0, 0, 0.05) 0px 1px 3px 0px' } as any}
+        borderWidth={1}
+        borderColor={hovered ? 'primary' : 'border'}
+        borderRadius="lg"
+        flexDirection="row"
+        alignItems="center"
+        justifyContent="space-between"
+        paddingHorizontal="20"
+        paddingVertical="20"
+        gap="16"
+        style={{
+          transition: 'all 0.15s ease-in-out',
+          ...(hovered ? {
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.08,
+            shadowRadius: 12,
+            elevation: 4,
+            transform: [{ translateY: -2 }],
+          } : {}),
+        } as any}
       >
-        <Text variant="webLabelEmphasized" color="foreground" marginBottom="12">
-          Please click this link
-        </Text>
-        <Pressable onPress={() => router.push('/prototype/m-join-team-tt-user-by-link/request-to-join')}>
-          <Text variant="webMetadataPrimary" color="primary" style={{ textDecorationLine: 'underline', marginBottom: 16 }}>
-            {INVITE_URL}
-          </Text>
-        </Pressable>
+        <Box flex={1} gap="4">
+          <Text variant="webLabelEmphasized" color="foreground">{title}</Text>
+          <Text variant="webMetadataPrimary" color="textSecondary">{description}</Text>
+        </Box>
+        <ChevronRight size={18} color={theme.colors.grey04} />
       </Box>
-    </Box>
+    </Pressable>
+  );
+}
+
+export default function MJoinTeamTTUserByLinkIndex() {
+  const theme = useTheme<Theme>();
+
+  return (
+    <ScrollView
+      style={{ flex: 1, backgroundColor: theme.colors.grey02 }}
+      contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center', padding: 24 }}
+      showsVerticalScrollIndicator={false}
+    >
+      <Box width="100%" maxWidth={480} gap="xl">
+
+        {/* Headline */}
+        <Box gap="8">
+          <Text variant="webHeading22" color="foreground">
+            Team Detail Update Design
+          </Text>
+          <Text variant="webMetadataPrimary" color="textSecondary">
+            This feature affects when users view the team details page or request to join. Please access each card below.
+          </Text>
+        </Box>
+
+        {/* Cards */}
+        <Box gap="12">
+          {SCREENS.map((s) => (
+            <ScreenCard key={s.route} {...s} theme={theme} />
+          ))}
+        </Box>
+
+      </Box>
+    </ScrollView>
   );
 }
