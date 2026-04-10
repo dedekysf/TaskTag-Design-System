@@ -81,7 +81,9 @@ export default function ProjectOverview() {
               <Box width={24} height={24} backgroundColor="black" borderRadius="4" alignItems="center" justifyContent="center" overflow="hidden">
                 <Hammer size={14} color={theme.colors.white} />
               </Box>
-              <Text variant="webMetadataPrimary" color="white">Aquaworks Construct...</Text>
+              <Text variant="webMetadataPrimary" color="white">
+                {'Aquaworks Construction'.length > 20 ? `${'Aquaworks Construction'.substring(0, 20)}...` : 'Aquaworks Construction'}
+              </Text>
             </Box>
             <Box flexDirection="row" alignItems="center" gap="8">
               <Box width={24} height={24} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.pastelOrange }}>

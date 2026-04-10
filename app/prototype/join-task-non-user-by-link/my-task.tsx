@@ -760,7 +760,7 @@ function TaskDetailPanel({ onJoin }: { onJoin: () => void }) {
                   numberOfLines={1}
                   style={{ color: theme.colors.textSecondary, textDecorationLine: 'underline', flexShrink: 1, fontSize: 12, fontWeight: '500', fontFamily: 'Inter_500Medium' }}
                 >
-                  {'Raintree Hollow Court Renovation'.length > 24 ? 'Raintree Hollow Court Renovation'.substring(0, 24) + '...' : 'Raintree Hollow Court Renovation'}
+                  {'Raintree Hollow Court Renovation'.length > 20 ? 'Raintree Hollow Court Renovation'.substring(0, 20) + '...' : 'Raintree Hollow Court Renovation'}
                 </Text>
               </Box>
             </Pressable>

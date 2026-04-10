@@ -9,21 +9,23 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronsUp,
-  FileImage,
+  Image as ImageIcon,
   FileText,
+  HardHat,
   MoreVertical,
   Plus,
   SignalHigh,
   UserPlus,
   WifiHigh,
+  X,
   Zap,
 } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
 
 const TASK = {
-  name: 'Room renovation and Electricity board fix and reconfiguration label all circuit connections properly, replace damaged breakers, and verify power stability before final inspection.',
-  project: 'LA Avenue 34 G',
+  name: 'Install Sink and Faucet in Kitchen',
+  project: 'Raintree Hollow Court Renovation',
   assignee: 'Alex Smith',
   assigneeInitials: 'AS',
   assigneeColor: '#e6b566',
@@ -103,9 +105,9 @@ export default function TaskOverviewApp() {
           <Box flexDirection="row" alignItems="center" style={{ gap: 16, paddingLeft: 32 }}>
             {/* Project tag */}
             <Box flexDirection="row" alignItems="center" style={{ gap: 4 }}>
-              <Zap size={16} color={TTTheme.colors.vividYellow} strokeWidth={1.5} />
-              <Text style={{ fontSize: 12, fontWeight: '400', color: TTTheme.colors.textSecondary, fontFamily: 'Inter_400Regular', letterSpacing: 0.24 }}>
-                {TASK.project}
+              <HardHat size={16} color={TTTheme.colors.vividYellow} strokeWidth={1.5} />
+              <Text numberOfLines={1} style={{ fontSize: 12, fontWeight: '400', color: TTTheme.colors.textSecondary, fontFamily: 'Inter_400Regular', letterSpacing: 0.24 }}>
+                {TASK.project.length > 20 ? `${TASK.project.substring(0, 20)}...` : TASK.project}
               </Text>
             </Box>
             {/* Assignee tag */}
@@ -126,104 +128,116 @@ export default function TaskOverviewApp() {
           <Box
             flexDirection="row" alignItems="center"
             backgroundColor="card"
-            style={{ borderRadius: 40, paddingHorizontal: 16, paddingVertical: 8, gap: 8 }}
+            style={{ borderRadius: 40, height: 32, paddingHorizontal: 16, gap: 8 }}
           >
             <ChevronsUp size={16} color={TTTheme.colors.alertRed} />
             <Text style={{ fontSize: 14, fontWeight: '400', color: TTTheme.colors.alertRed, fontFamily: 'Inter_400Regular', letterSpacing: 0.28 }}>
               {TASK.priority}
             </Text>
-            <ChevronRight size={16} color={TTTheme.colors.grey04} />
           </Box>
           {/* Date */}
           <Box
             flexDirection="row" alignItems="center"
             backgroundColor="card"
-            style={{ borderRadius: 40, paddingHorizontal: 16, paddingVertical: 8, gap: 8 }}
+            style={{ borderRadius: 40, height: 32, paddingHorizontal: 16, gap: 8 }}
           >
             <Calendar size={16} color={TTTheme.colors.textSecondary} strokeWidth={1.5} />
             <Text style={{ fontSize: 14, fontWeight: '400', color: TTTheme.colors.textSecondary, fontFamily: 'Inter_400Regular', letterSpacing: 0.28 }}>
               {TASK.dateRange}
             </Text>
-            <ChevronRight size={16} color={TTTheme.colors.grey04} />
           </Box>
         </Box>
 
         {/* Description */}
-        <Box backgroundColor="card" borderRadius="lg" style={{ paddingHorizontal: 15, paddingVertical: 16, gap: 12 }}>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: TTTheme.colors.black, fontFamily: 'Inter_600SemiBold' }}>
-            Description
-          </Text>
-          <Text style={{ fontSize: 12, fontWeight: '400', color: TTTheme.colors.textSecondary, lineHeight: 16, fontFamily: 'Inter_400Regular', letterSpacing: 0.24 }}>
+        <Box backgroundColor="card" borderRadius="8" padding="16">
+          <Box flexDirection="row" justifyContent="space-between" alignItems="center" marginBottom="12">
+            <Text variant="webLabelEmphasized" color="foreground">Description</Text>
+          </Box>
+          <Text variant="webMetadataPrimary" color="textSecondary" style={{ lineHeight: 16 }}>
             {TASK.description}
           </Text>
         </Box>
 
         {/* Assignee */}
-        <Box backgroundColor="card" borderRadius="lg" style={{ paddingHorizontal: 15, paddingVertical: 16, gap: 12 }}>
-          <Box flexDirection="row" alignItems="center" justifyContent="space-between">
-            <Text style={{ fontSize: 16, fontWeight: '600', color: TTTheme.colors.black, fontFamily: 'Inter_600SemiBold' }}>
-              Assignee (1)
-            </Text>
-            <Text style={{ fontSize: 12, fontWeight: '400', color: TTTheme.colors.grey04, fontFamily: 'Inter_400Regular' }}>
-              See All
-            </Text>
+        <Box backgroundColor="card" borderRadius="8" padding="16">
+          <Box flexDirection="row" justifyContent="space-between" alignItems="center" marginBottom="12">
+            <Text variant="webLabelEmphasized" color="foreground">Assignee (2)</Text>
+            <Text variant="webMetadataPrimary" color="grey05">See All</Text>
           </Box>
-          <Box flexDirection="row" style={{ gap: 8 }}>
+          <Box flexDirection="row" gap="8">
             {/* Add Assignee button */}
-            <Box alignItems="center" style={{ gap: 4, width: 56 }}>
-              <View style={{ width: 56, height: 56, borderRadius: 40, backgroundColor: TTTheme.colors.grey01, alignItems: 'center', justifyContent: 'center' }}>
-                <UserPlus size={24} color={TTTheme.colors.textSecondary} />
-              </View>
-              <Text style={{ fontSize: 12, color: TTTheme.colors.grey04, fontFamily: 'Inter_400Regular', textAlign: 'center' }}>Assignee</Text>
+            <Box alignItems="center" gap="4" width={56}>
+              <Box width={56} height={56} borderRadius="full" backgroundColor="grey02" alignItems="center" justifyContent="center">
+                <UserPlus size={24} color={theme.colors.grey05} strokeWidth={1.5} />
+              </Box>
+              <Text variant="webMetadataPrimary" color="grey05" numberOfLines={1}>Assignee</Text>
             </Box>
-            {/* Assignee avatar */}
-            <Box alignItems="center" style={{ gap: 4, width: 56 }}>
-              <View style={{ width: 56, height: 56, borderRadius: 40, backgroundColor: TASK.assigneeColor, alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ fontSize: 18, fontWeight: '600', color: '#fff', fontFamily: 'Inter_600SemiBold' }}>CS</Text>
-              </View>
-              <Text numberOfLines={1} style={{ fontSize: 12, color: TTTheme.colors.grey04, fontFamily: 'Inter_400Regular', textAlign: 'center', width: 56 }}>Chelse...</Text>
+            {/* Linda Smith (Owner) */}
+            <Box alignItems="center" gap="4" width={56}>
+              <Box width={56} height={56} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.pastelOrange }}>
+                <Text variant="h2" color="white" style={{ fontWeight: '400' }}>LS</Text>
+              </Box>
+              <Text variant="webMetadataPrimary" color="grey05" numberOfLines={1}>Linda S...</Text>
+            </Box>
+            {/* Oscar Horizon */}
+            <Box alignItems="center" gap="4" width={56}>
+              <Box width={56} height={56} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: '#2ba4e0' }}>
+                <Text variant="h2" color="white" style={{ fontWeight: '400' }}>OH</Text>
+              </Box>
+              <Text variant="webMetadataPrimary" color="grey05" numberOfLines={1}>Oscar H...</Text>
             </Box>
           </Box>
         </Box>
 
         {/* Checklist */}
-        <Box backgroundColor="card" borderRadius="lg" style={{ paddingHorizontal: 15, paddingVertical: 16 }}>
-          <Box flexDirection="row" alignItems="center" justifyContent="space-between">
-            <Box flexDirection="row" alignItems="center" style={{ gap: 9 }}>
-              <View style={{ backgroundColor: TTTheme.colors.black, borderRadius: 6, padding: 6 }}>
-                <FileText size={20} color="#fff" />
-              </View>
-              <Text style={{ fontSize: 16, fontWeight: '600', color: TTTheme.colors.black, fontFamily: 'Inter_600SemiBold' }}>
-                Checklist (0/{CHECKLIST_ITEMS.length})
-              </Text>
+        <Box flexDirection="row" alignItems="center" justifyContent="space-between" backgroundColor="card" borderRadius="8" padding="16">
+          <Box flexDirection="row" alignItems="center" gap="12">
+            <Box width={32} height={32} borderRadius="8" backgroundColor="black" alignItems="center" justifyContent="center">
+              <FileText size={20} color={theme.colors.white} />
             </Box>
-            <ChevronRight size={24} color={TTTheme.colors.textSecondary} />
+            <Text variant="webLabelEmphasized" color="foreground">
+              Checklist (0/{CHECKLIST_ITEMS.length})
+            </Text>
           </Box>
+          <ChevronRight size={24} color={theme.colors.textSecondary} />
         </Box>
 
         {/* Activity Log + Files & Media */}
-        <Box flexDirection="row" style={{ gap: 12 }}>
+        <Box flexDirection="row" gap="12">
           {/* Activity Log */}
-          <Box flex={1} backgroundColor="card" borderRadius="lg" style={{ padding: 16, gap: 12 }}>
-            <View style={{ backgroundColor: TTTheme.colors.black, borderRadius: 6, padding: 6, alignSelf: 'flex-start' }}>
-              <Zap size={20} color="#fff" />
-            </View>
-            <Text style={{ fontSize: 16, fontWeight: '600', color: TTTheme.colors.black, fontFamily: 'Inter_600SemiBold' }}>
-              Activity Log
-            </Text>
+          <Box flex={1} backgroundColor="card" borderRadius="8" padding="16">
+            <Box width={32} height={32} borderRadius="8" backgroundColor="black" alignItems="center" justifyContent="center" marginBottom="12">
+              <Zap size={18} color={theme.colors.white} />
+            </Box>
+            <Text variant="webLabelEmphasized" color="foreground">Activity Log</Text>
           </Box>
           {/* Files & Media */}
-          <Box flex={1} backgroundColor="card" borderRadius="lg" style={{ padding: 16, gap: 12 }}>
-            <View style={{ backgroundColor: TTTheme.colors.black, borderRadius: 6, padding: 6, alignSelf: 'flex-start' }}>
-              <FileImage size={20} color="#fff" />
-            </View>
-            <Text style={{ fontSize: 16, fontWeight: '600', color: TTTheme.colors.black, fontFamily: 'Inter_600SemiBold' }}>
-              {`Files & Media`}
-            </Text>
+          <Box flex={1} backgroundColor="card" borderRadius="8" padding="16">
+            <Box width={32} height={32} borderRadius="8" backgroundColor="black" alignItems="center" justifyContent="center" marginBottom="12">
+              <ImageIcon size={18} color={theme.colors.white} />
+            </Box>
+            <Text variant="webLabelEmphasized" color="foreground">Files & Media</Text>
           </Box>
         </Box>
 
       </ScrollView>
+
+      {/* Note Banner */}
+      {bannerVisible && (
+        <View style={{ position: 'absolute', bottom: 104, left: 16, right: 16, backgroundColor: theme.colors.brightYellow, borderRadius: 12, padding: 16, gap: 4 }}>
+          <Pressable
+            onPress={() => setBannerVisible(false)}
+            style={{ position: 'absolute', top: 8, right: 8, width: 32, height: 32, alignItems: 'center', justifyContent: 'center', zIndex: 10 }}
+            hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+          >
+            <X size={16} color="#000" />
+          </Pressable>
+          <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
+          <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18, opacity: 0.7, paddingRight: 20 }}>
+            After tapping view task, if already installed app then open app, if not direct to app/play store.
+          </Text>
+        </View>
+      )}
 
       {/* FAB — New Update */}
       <View style={{ position: 'absolute', bottom: 24, right: 16 }}>

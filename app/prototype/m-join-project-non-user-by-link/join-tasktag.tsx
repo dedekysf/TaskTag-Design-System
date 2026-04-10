@@ -114,7 +114,7 @@ export default function JoinTasktag() {
                   <Hammer size={14} color={theme.colors.white} />
                 </Box>
                 <Text variant="webMetadataPrimary" color="white">
-                  Aquaworks Construct...
+                  {'Aquaworks Construction'.length > 20 ? `${'Aquaworks Construction'.substring(0, 20)}...` : 'Aquaworks Construction'}
                 </Text>
               </Box>
 
