@@ -76,7 +76,7 @@ export default function EmailApprovalMockup() {
             </Box>
             <Box height={1} backgroundColor="border" marginBottom="16" />
             <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.textSecondary, marginBottom: 12 }}>
-              <Text variant="webSecondaryBody" style={{ fontWeight: '600', color: TTTheme.colors.foreground }}>As a member</Text>
+              <Text variant="webSecondaryBody" style={{ fontWeight: '600', color: TTTheme.colors.foreground }}>As an assignee</Text>
               {", you'll be able to:"}
             </Text>
             {PERMISSIONS.map((perm, i) => (
