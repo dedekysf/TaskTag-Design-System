@@ -289,6 +289,13 @@ export default function PrototypeIndex() {
       platform: 'Web' as const,
     },
     {
+      title: 'Email - Task Request Approved',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-336?atlOrigin=eyJpIjoiYzA5N2RiYTNiYzc4NDc1N2JhZWVmODc1NDBhOTA1ZmUiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-336',
+      route: '/prototype/m-join-task-non-user-by-link/email-approval',
+      platform: 'Mobile' as const,
+    },
+    {
       title: 'Team Invitation Expired by Email',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-318?atlOrigin=eyJpIjoiYWI2MjBmYTY2ODRlNDI5NDkzYTE5ZmIyNDVjOTk2ZGIiLCJwIjoiaiJ9',
       jiraLabel: 'TD-318',
@@ -322,11 +329,12 @@ export default function PrototypeIndex() {
   };
   const designSystem = prototypes.find(p => p.title === 'Design System')!;
   const joinTaskNonUser = prototypes.find(p => p.title === 'Join Task Non User by Email' && p.platform === 'Web')!;
-  const emailTaskApproval = prototypes.find(p => p.title === 'Email - Task Request Approved')!;
+  const emailTaskApprovalWeb = prototypes.find(p => p.title === 'Email - Task Request Approved' && p.platform === 'Web')!;
   const inviteDuringCreation = prototypes.find(p => p.title === 'Invite Members During Team Creation')!;
   const removeMember = prototypes.find(p => p.title === 'Remove Member Discoverable on Active Member')!;
   const teamDetail = prototypes.find(p => p.title === 'Role Descriptions and Naming Consistency')!;
   const tabUpdateTeamDetail = prototypes.find(p => p.title === 'Tab Update Team Detail')!;
+  const emailTaskApprovalMobile = prototypes.find(p => p.title === 'Email - Task Request Approved' && p.platform === 'Mobile');
   const expiredNonUsers = prototypes.filter(p => p.title === 'Team Invitation Expired by Email');
   const rest = prototypes.filter(p => 
     !PINNED_TITLES.includes(p.title) && 
@@ -339,7 +347,9 @@ export default function PrototypeIndex() {
     p.title !== 'Tab Update Team Detail'
   );
 
-  const filtered = [github, designSystem, joinTaskNonUser, emailTaskApproval, tabUpdateTeamDetail, inviteDuringCreation, removeMember, teamDetail, ...expiredNonUsers, ...rest].filter(item => {
+  const rawFiltered = [github, designSystem, joinTaskNonUser, emailTaskApprovalWeb, tabUpdateTeamDetail, inviteDuringCreation, removeMember, teamDetail, emailTaskApprovalMobile, ...expiredNonUsers, ...rest].filter(Boolean) as typeof prototypes;
+
+  const filtered = rawFiltered.filter(item => {
     const matchTab = activeTab === 'All Device' || PINNED_TITLES.includes(item.title) || ('platform' in item ? item.platform : 'Web') === activeTab;
     const matchSearch = search.trim() === '' || item.title.toLowerCase().includes(search.toLowerCase()) || item.jiraLabel.toLowerCase().includes(search.toLowerCase());
     return matchTab && matchSearch;
