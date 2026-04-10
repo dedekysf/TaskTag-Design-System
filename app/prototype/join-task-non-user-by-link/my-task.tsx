@@ -757,11 +757,10 @@ function TaskDetailPanel({ onJoin }: { onJoin: () => void }) {
               <Box flexDirection="row" alignItems="center" gap="4">
                 <HardHat size={14} color={theme.colors.purple} />
                 <Text
-                  variant="webLabelSmall"
                   numberOfLines={1}
-                  style={{ color: theme.colors.textSecondary, textDecorationLine: 'underline', flexShrink: 1 }}
+                  style={{ color: theme.colors.textSecondary, textDecorationLine: 'underline', flexShrink: 1, fontSize: 12, fontWeight: '500', fontFamily: 'Inter_500Medium' }}
                 >
-                  Raintree Hollow Court Renovation
+                  {'Raintree Hollow Court Renovation'.length > 24 ? 'Raintree Hollow Court Renovation'.substring(0, 24) + '...' : 'Raintree Hollow Court Renovation'}
                 </Text>
               </Box>
             </Pressable>
@@ -858,13 +857,13 @@ function TaskDetailPanel({ onJoin }: { onJoin: () => void }) {
 
         {/* Description section (Fixed) */}
         <Box style={{ paddingHorizontal: 24, paddingBottom: 24 }}>
-          <Box style={{ backgroundColor: theme.colors.grey01, borderRadius: 8, overflow: 'hidden' as any }}>
-            <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ paddingHorizontal: 16, height: 52 }}>
+          <Box style={{ backgroundColor: theme.colors.grey02, borderRadius: 8, overflow: 'hidden' as any }}>
+            <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ paddingHorizontal: 16, paddingTop: 16 }}>
               <Box flexDirection="row" alignItems="center" gap="8">
                 <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.textSecondary, fontFamily: 'Inter_600SemiBold' }}>Description</Text>
               </Box>
             </Box>
-            <Box style={{ paddingLeft: 16, paddingRight: 16, paddingBottom: 16 }}>
+            <Box style={{ paddingLeft: 16, paddingRight: 16, paddingBottom: 16, paddingTop: 8 }}>
               <Text style={{ fontSize: 12, fontWeight: '400', color: theme.colors.textSecondary, lineHeight: 16, fontFamily: 'Inter_400Regular' }}>
                 Complete the installation of the kitchen sink and faucet, ensuring all plumbing connections are secure, leak-free, and fully functional as part of the Raintree renovation.
               </Text>
@@ -960,7 +959,7 @@ function TaskDetailPanel({ onJoin }: { onJoin: () => void }) {
                   <Pressable
                     style={({ pressed, hovered }: any) => ({
                       height: 56, flexDirection: 'row', alignItems: 'center', gap: 8,
-                      backgroundColor: pressed ? theme.colors.grey02 : hovered ? theme.colors.grey02 : theme.colors.grey01,
+                      backgroundColor: pressed ? theme.colors.grey03 : hovered ? theme.colors.grey03 : theme.colors.grey02,
                       borderRadius: 8, paddingLeft: 16, paddingRight: 16,
                       opacity: 1,
                       ...Platform.select({ web: { cursor: 'pointer' } as any }),
