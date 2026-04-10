@@ -254,6 +254,13 @@ export default function PrototypeIndex() {
       platforms: ['Web', 'Mobile'] as ('Web' | 'Mobile')[],
     },
     {
+      title: 'Join Task Non User by Email',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-334?atlOrigin=eyJpIjoiMDVjN2RlMGE4MjYyNDQyNGE3NDkzMzBmZDJjYzhiNWYiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-334',
+      route: '/prototype/join-task-non-user',
+      platform: 'Web' as const,
+    },
+    {
       title: 'Email - Task Request Approved',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-336?atlOrigin=eyJpIjoiYzA5N2RiYTNiYzc4NDc1N2JhZWVmODc1NDBhOTA1ZmUiLCJwIjoiaiJ9',
       jiraLabel: 'TD-336',
@@ -314,6 +321,7 @@ export default function PrototypeIndex() {
     platforms: ['Web', 'Mobile'] as ('Web' | 'Mobile')[],
   };
   const designSystem = prototypes.find(p => p.title === 'Design System')!;
+  const joinTaskNonUser = prototypes.find(p => p.title === 'Join Task Non User by Email' && p.platform === 'Web')!;
   const emailTaskApproval = prototypes.find(p => p.title === 'Email - Task Request Approved')!;
   const inviteDuringCreation = prototypes.find(p => p.title === 'Invite Members During Team Creation')!;
   const removeMember = prototypes.find(p => p.title === 'Remove Member Discoverable on Active Member')!;
@@ -325,12 +333,13 @@ export default function PrototypeIndex() {
     p.title !== 'Team Invitation Expired by Email' && 
     p.title !== 'Role Descriptions and Naming Consistency' && 
     p.title !== 'Remove Member Discoverable on Active Member' &&
+    p.title !== 'Join Task Non User by Email' &&
     p.title !== 'Email - Task Request Approved' &&
     p.title !== 'Invite Members During Team Creation' &&
     p.title !== 'Tab Update Team Detail'
   );
 
-  const filtered = [github, designSystem, emailTaskApproval, tabUpdateTeamDetail, inviteDuringCreation, removeMember, teamDetail, ...expiredNonUsers, ...rest].filter(item => {
+  const filtered = [github, designSystem, joinTaskNonUser, emailTaskApproval, tabUpdateTeamDetail, inviteDuringCreation, removeMember, teamDetail, ...expiredNonUsers, ...rest].filter(item => {
     const matchTab = activeTab === 'All Device' || PINNED_TITLES.includes(item.title) || ('platform' in item ? item.platform : 'Web') === activeTab;
     const matchSearch = search.trim() === '' || item.title.toLowerCase().includes(search.toLowerCase()) || item.jiraLabel.toLowerCase().includes(search.toLowerCase());
     return matchTab && matchSearch;
