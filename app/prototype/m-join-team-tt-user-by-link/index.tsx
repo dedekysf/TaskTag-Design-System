@@ -9,12 +9,12 @@ import { Pressable, ScrollView } from 'react-native';
 const SCREENS = [
   {
     title: 'Request to Join Team',
-    description: 'Send a request to join the team as a TaskTag user',
+    description: 'Send a request to join the team',
     route: '/prototype/m-join-team-tt-user-by-link/link',
   },
   {
     title: 'Team Detail',
-    description: 'View team info after opening an invite link',
+    description: 'View team info for members',
     route: '/prototype/m-join-team-tt-user-by-link/team-detail',
   },
 ];
@@ -79,7 +79,7 @@ export default function MJoinTeamTTUserByLinkIndex() {
             Team Detail Update Design
           </Text>
           <Text variant="webMetadataPrimary" color="textSecondary">
-            This feature affects when users view the team details page or request to join. Please access each card below.
+            This feature affects when users view the team details page or request to join. Access each card below.
           </Text>
         </Box>
 
