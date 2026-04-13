@@ -1586,7 +1586,7 @@ export default function TeamDetail() {
                       <Box height={1} backgroundColor="border" />
                       
                       <Box gap="12" paddingHorizontal="8">
-                        <Text variant="webMetadataPrimary" color="grey05" style={{ textTransform: 'uppercase' }}>Specialisms</Text>
+                        <Text variant="webMetadataPrimary" color="grey05" style={{ textTransform: 'uppercase' }}>Skills</Text>
                         <Box flexDirection="row" flexWrap="wrap" gap="8">
                           {['Construction', 'Electrical', 'Plumbing', 'HVAC', 'Carpentry'].map(spec => (
                             <Box key={spec} backgroundColor="grey02" style={{ paddingHorizontal: 10, paddingVertical: 4, borderRadius: 4 }}>
