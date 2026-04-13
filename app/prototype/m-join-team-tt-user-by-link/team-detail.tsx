@@ -12,6 +12,7 @@ import {
   Key,
   Link as LinkIcon,
   LogOut,
+  MoreVertical,
   Pencil,
   SignalHigh,
   Star,
@@ -19,7 +20,7 @@ import {
   WifiHigh,
 } from 'lucide-react-native';
 import React, { useState } from 'react'; // useState used in MenuItem
-import { Linking, Pressable, ScrollView } from 'react-native';
+import { Linking, Pressable, ScrollView, View } from 'react-native';
 
 const TEAM = {
   name: 'Painting Team',
@@ -39,12 +40,11 @@ const TEAM_MANAGEMENT = [
   { Icon: Users, title: 'Members', description: '3 members', action: 'chevron', danger: false, comingSoon: false },
   { Icon: LinkIcon, title: 'Invite to Team', description: 'Copy link to invite', action: 'copy', danger: false, comingSoon: false },
   { Icon: BarChart2, title: 'Analytics', description: 'Activity & usage insights', action: 'chevron', danger: false, comingSoon: false },
+  { Icon: CreditCard, title: 'Subscription', description: 'Manage team plan', action: 'chevron', danger: false, comingSoon: false },
 ];
 
 const PERSONAL_SETTINGS = [
-  { Icon: Star, title: 'Set up as Primary', description: 'Default team for new projects', action: 'active', danger: false, comingSoon: false },
-  { Icon: Key, title: 'Preferences', description: 'Manage preferences', action: 'chevron', danger: false, comingSoon: true },
-  { Icon: CreditCard, title: 'Subscription', description: 'Manage team plan', action: 'chevron', danger: false, comingSoon: false },
+  { Icon: Star, title: 'Primary Team', description: 'This is your default team for new projects', action: 'active', danger: false, comingSoon: false, iconColor: '#FBBF24', iconFill: '#FBBF24' },
 ];
 
 function SectionLabel({ label }: { label: string }) {
@@ -56,9 +56,9 @@ function SectionLabel({ label }: { label: string }) {
   );
 }
 
-function MenuItem({ Icon, title, description, action, danger, comingSoon, isLast, onCopy }: {
+function MenuItem({ Icon, title, description, action, danger, comingSoon, isLast, onCopy, iconColor, iconFill }: {
   Icon: any; title: string; description: string; action: string;
-  danger: boolean; comingSoon: boolean; isLast: boolean; onCopy?: () => void;
+  danger: boolean; comingSoon: boolean; isLast: boolean; onCopy?: () => void; iconColor?: string; iconFill?: string;
 }) {
   const theme = useTheme<Theme>();
 
@@ -78,7 +78,7 @@ function MenuItem({ Icon, title, description, action, danger, comingSoon, isLast
         style={{ opacity: comingSoon ? 0.5 : 1 }}
       >
         <Box width={48} height={48} borderRadius="8" backgroundColor="grey02" alignItems="center" justifyContent="center">
-          <Icon size={22} color={danger ? theme.colors.alertRed : theme.colors.textSecondary} strokeWidth={1.75} />
+          <Icon size={22} color={iconColor ?? (danger ? theme.colors.alertRed : theme.colors.textSecondary)} fill={iconFill ?? 'none'} strokeWidth={iconFill ? 0 : 1.75} />
         </Box>
         <Box flex={1} style={{ gap: 2 }}>
           <Text variant="mobileLabelEmphasized" style={{ color: danger ? theme.colors.alertRed : theme.colors.foreground }}>
@@ -110,6 +110,7 @@ function MenuItem({ Icon, title, description, action, danger, comingSoon, isLast
 export default function TeamDetail() {
   const theme = useTheme<Theme>();
   const [showToast, setShowToast] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
 
   const handleCopy = () => {
     setShowToast(true);
@@ -151,7 +152,12 @@ export default function TeamDetail() {
         <Pressable hitSlop={8} style={{ padding: 4, marginRight: 4 }}>
           <ChevronLeft size={22} color={theme.colors.foreground} strokeWidth={2} />
         </Pressable>
-        <Text variant="mobileLabelEmphasized" color="foreground">Team Profile</Text>
+        <Box flex={1}>
+          <Text variant="mobileLabelEmphasized" color="foreground">Team Profile</Text>
+        </Box>
+        <Pressable hitSlop={8} style={{ padding: 4 }} onPress={() => setMenuVisible(true)}>
+          <MoreVertical size={20} color={theme.colors.foreground} strokeWidth={2} />
+        </Pressable>
       </Box>
 
       <ScrollView
@@ -193,34 +199,30 @@ export default function TeamDetail() {
               </Pressable>
             </Box>
           </Box>
-          {/* Edit icon — top right */}
-          <Pressable
-            hitSlop={8}
-            style={{ position: 'absolute' as any, top: 12, right: 12, width: 28, height: 28, borderRadius: 14, backgroundColor: theme.colors.grey06, alignItems: 'center', justifyContent: 'center' }}
-          >
-            <Pencil size={13} color={theme.colors.white} strokeWidth={2} />
-          </Pressable>
+
         </Box>
 
         {/* Specialisms */}
-        <Box marginBottom="xl">
-          <Box marginBottom="sm"><SectionLabel label="Specialisms" /></Box>
-          <Box flexDirection="row" flexWrap="wrap" gap="8">
-            {TEAM.specializations.map((spec, index) => (
-              <Box
-                key={index}
-                paddingHorizontal="sm"
-                paddingVertical="xs"
-                borderRadius="4"
-                backgroundColor="white"
-                borderWidth={1}
-                borderColor="border"
-              >
-                <Text variant="mobileMetadataPrimary" color="textSecondary">{spec}</Text>
-              </Box>
-            ))}
+        {TEAM.specializations.length > 0 && (
+          <Box marginBottom="xl">
+            <Box marginBottom="sm"><SectionLabel label="SKILLS" /></Box>
+            <Box flexDirection="row" flexWrap="wrap" gap="8">
+              {TEAM.specializations.map((spec, index) => (
+                <Box
+                  key={index}
+                  paddingHorizontal="sm"
+                  paddingVertical="xs"
+                  borderRadius="4"
+                  backgroundColor="white"
+                  borderWidth={1}
+                  borderColor="border"
+                >
+                  <Text variant="mobileMetadataPrimary" color="textSecondary">{spec}</Text>
+                </Box>
+              ))}
+            </Box>
           </Box>
-        </Box>
+        )}
 
         {/* Team Management */}
         <Box marginBottom="lg">
@@ -238,18 +240,7 @@ export default function TeamDetail() {
           ))}
         </Box>
 
-        {/* Leave — standalone */}
-        <Pressable>
-          <Box flexDirection="row" alignItems="center" paddingVertical="12" gap="12">
-            <Box width={48} height={48} borderRadius="8" backgroundColor="grey02" alignItems="center" justifyContent="center">
-              <LogOut size={22} color={theme.colors.alertRed} strokeWidth={1.75} />
-            </Box>
-            <Box flex={1} style={{ gap: 2 }}>
-              <Text variant="mobileLabelEmphasized" style={{ color: theme.colors.alertRed }}>Leave team</Text>
-              <Text variant="mobileMetadataPrimary" color="mutedForeground">Remove yourself from this team</Text>
-            </Box>
-          </Box>
-        </Pressable>
+
 
       </ScrollView>
 
@@ -267,6 +258,39 @@ export default function TeamDetail() {
             <Text style={{ fontSize: 12, color: theme.colors.white, fontFamily: 'Inter_500Medium' }}>Link copied!</Text>
           </Box>
         </Box>
+      )}
+
+
+
+      {/* Menu Bottom Sheet */}
+      {menuVisible && (
+        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1000 }}>
+          <Pressable
+            style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)' }}
+            onPress={() => setMenuVisible(false)}
+          />
+          <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: theme.colors.white, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24 }}>
+            <View style={{ alignItems: 'center', marginBottom: 16 }}>
+              <View style={{ width: 40, height: 4, backgroundColor: theme.colors.border, borderRadius: 2 }} />
+            </View>
+            
+            <Pressable onPress={() => setMenuVisible(false)}>
+              <Box flexDirection="row" alignItems="center" paddingVertical="12" gap="16">
+                <Pencil size={24} color={theme.colors.textSecondary} />
+                <Text style={{ fontSize: 16, fontWeight: '400', color: theme.colors.foreground }}>Edit Team Info</Text>
+              </Box>
+            </Pressable>
+
+            <Box height={1} backgroundColor="border" marginVertical="8" />
+
+            <Pressable onPress={() => setMenuVisible(false)}>
+              <Box flexDirection="row" alignItems="center" paddingVertical="12" gap="16">
+                <LogOut size={24} color={theme.colors.alertRed} />
+                <Text style={{ fontSize: 16, fontWeight: '400', color: theme.colors.alertRed }}>Leave team</Text>
+              </Box>
+            </Pressable>
+          </View>
+        </View>
       )}
 
       {/* Bottom Home Indicator */}
