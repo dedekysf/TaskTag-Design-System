@@ -1687,7 +1687,10 @@ export default function TeamDetail() {
                       </Box>
                       <Text variant="webBody" color="textSecondary">Team plan ended March 17, 2026 · Team features suspended</Text>
                     </Box>
-
+                    {/* Right */}
+                    <Button variant="fill" color="secondary" size="lg" style={{ paddingHorizontal: 24, backgroundColor: theme.colors.black }}>
+                      Renew Plan
+                    </Button>
                   </Box>
                 </Box>
 
@@ -1732,17 +1735,6 @@ export default function TeamDetail() {
                       ))}
                     </Box>
                   </Box>
-                </Box>
-
-                {/* ── Renew CTA Card ── */}
-                <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" flexDirection="row" justifyContent="space-between" alignItems="center">
-                  <Box gap="4">
-                    <Text variant="webLabelEmphasized" color="alertRed">Renew to restore full access</Text>
-                    <Text variant="webMetadataPrimary" color="textSecondary">Your team gets full access back the moment payment is confirmed</Text>
-                  </Box>
-                  <Button variant="fill" color="secondary" size="lg" style={{ paddingHorizontal: 24, backgroundColor: theme.colors.black }}>
-                    Renew Plan
-                  </Button>
                 </Box>
 
                 {/* ── Invoices Table Card ── */}
