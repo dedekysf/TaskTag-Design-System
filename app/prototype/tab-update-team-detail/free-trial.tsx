@@ -1615,18 +1615,7 @@ export default function TeamDetail() {
                    *   × 100
                    */}
                   <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="24">
-                    <Box gap="12">
-                      <Text variant="webBody" color="foreground">Team Performance · This Month</Text>
-                      <Box style={{ backgroundColor: '#fbe676', borderRadius: 12, padding: 16, gap: 8, boxShadow: '0px 4px 12px rgba(0,0,0,0.1)' } as any}>
-                        <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
-                        <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18 }}>
-                          {`Metric 1 — On-time delivery %\n  COUNT(tasks WHERE completion_date <= due_date AND completion_date IN current_month)\n  ÷ COUNT(tasks WHERE completion_date IN current_month AND due_date IS NOT NULL)\n  × 100`}
-                        </Text>
-                        <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18 }}>
-                          {`Metric 2 — High-priority completion rate %\n  COUNT(tasks WHERE priority = 'high' AND completion_date IN current_month)\n  ÷ COUNT(tasks WHERE priority = 'high' AND due_date IN current_month)\n  × 100`}
-                        </Text>
-                      </Box>
-                    </Box>
+                    <Text variant="webBody" color="foreground">Team Performance · This Month</Text>
                     <Box flexDirection="row" alignItems="stretch">
                       <Box flex={1} paddingRight="16" style={{ minHeight: 96, justifyContent: 'space-between' }}>
                         <Box gap="8">
@@ -1644,6 +1633,17 @@ export default function TeamDetail() {
                         <Text variant="webMetadataPrimary" color="grey05" style={{ marginTop: 8 }}>Of all critical tasks due this month that were closed on time</Text>
                       </Box>
                     </Box>
+                  </Box>
+
+                  {/* Note for Dev */}
+                  <Box style={{ backgroundColor: '#fbe676', borderRadius: 12, padding: 16, gap: 8, boxShadow: '0px 4px 12px rgba(0,0,0,0.1)' } as any}>
+                    <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
+                    <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18 }}>
+                      {`Metric 1 — On-time delivery\n(tasks completed on or before due date this month)\n÷ (tasks completed this month with a due date) × 100`}
+                    </Text>
+                    <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18 }}>
+                      {`Metric 2 — High-priority completion rate\n(high priority tasks completed this month)\n÷ (high priority tasks due this month) × 100`}
+                    </Text>
                   </Box>
 
                 </Box>
