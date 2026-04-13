@@ -1599,9 +1599,34 @@ export default function TeamDetail() {
                     </Box>
                   </Box>
 
-                  {/* Card 3: TEAM PERFORMANCE */}
+                  {/*
+                   * Card 3: TEAM PERFORMANCE
+                   *
+                   * DEV NOTE — Metric formulas:
+                   *
+                   * Metric 1 — On-time delivery %
+                   *   COUNT(tasks WHERE completion_date <= due_date AND completion_date IN current_month)
+                   *   ÷ COUNT(tasks WHERE completion_date IN current_month AND due_date IS NOT NULL)
+                   *   × 100
+                   *
+                   * Metric 2 — High-priority completion rate %
+                   *   COUNT(tasks WHERE priority = 'high' AND completion_date IN current_month)
+                   *   ÷ COUNT(tasks WHERE priority = 'high' AND due_date IN current_month)
+                   *   × 100
+                   */}
                   <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="24">
-                    <Text variant="webBody" color="foreground">Team Performance · This Month</Text>
+                    <Box gap="12">
+                      <Text variant="webBody" color="foreground">Team Performance · This Month</Text>
+                      <Box style={{ backgroundColor: '#fbe676', borderRadius: 12, padding: 16, gap: 8, boxShadow: '0px 4px 12px rgba(0,0,0,0.1)' } as any}>
+                        <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
+                        <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18 }}>
+                          {`Metric 1 — On-time delivery %\n  COUNT(tasks WHERE completion_date <= due_date AND completion_date IN current_month)\n  ÷ COUNT(tasks WHERE completion_date IN current_month AND due_date IS NOT NULL)\n  × 100`}
+                        </Text>
+                        <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18 }}>
+                          {`Metric 2 — High-priority completion rate %\n  COUNT(tasks WHERE priority = 'high' AND completion_date IN current_month)\n  ÷ COUNT(tasks WHERE priority = 'high' AND due_date IN current_month)\n  × 100`}
+                        </Text>
+                      </Box>
+                    </Box>
                     <Box flexDirection="row" alignItems="stretch">
                       <Box flex={1} paddingRight="16" style={{ minHeight: 96, justifyContent: 'space-between' }}>
                         <Box gap="8">
