@@ -1570,13 +1570,13 @@ export default function TeamDetail() {
                   
                   {/* Card 1: TEAM INFO */}
                   <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="24">
-                    <Text variant="webBody" color="foreground">Team Info</Text>
+                    <Text variant="webEmphasizedBody" color="foreground">Team Info</Text>
                     
                     <Box gap="16">
                       <Box flexDirection="row" justifyContent="space-between" alignItems="center" paddingHorizontal="8">
                         <Text variant="webBody" color="foreground">Owner</Text>
                         <Box flexDirection="row" alignItems="center" gap="8">
-                          <Text variant="webLabelEmphasized" color="foreground">Linda Smith</Text>
+                          <Text variant="webBody" color="foreground">Linda Smith</Text>
                         </Box>
                       </Box>
                       <Box height={1} backgroundColor="border" />
@@ -1590,7 +1590,7 @@ export default function TeamDetail() {
                       <Box height={1} backgroundColor="border" />
                       
                       <Box gap="12" paddingHorizontal="8">
-                        <Text variant="webMetadataPrimary" color="grey05" style={{ textTransform: 'uppercase' }}>Skills</Text>
+                        <Text variant="webBody" color="foreground">Skills</Text>
                         <Box flexDirection="row" flexWrap="wrap" gap="8">
                           {['Construction', 'Electrical', 'Plumbing', 'HVAC', 'Carpentry'].map(spec => (
                             <Box key={spec} backgroundColor="grey02" style={{ paddingHorizontal: 10, paddingVertical: 4, borderRadius: 4 }}>
@@ -1618,7 +1618,7 @@ export default function TeamDetail() {
                    *   × 100
                    */}
                   <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="24">
-                    <Text variant="webBody" color="foreground">Team Performance · This Month</Text>
+                    <Text variant="webEmphasizedBody" color="foreground">Team Performance · This Month</Text>
                     <Box flexDirection="row" alignItems="stretch">
                       <Box flex={1} paddingRight="16" style={{ minHeight: 96, justifyContent: 'space-between' }}>
                         <Box gap="8">
@@ -1661,7 +1661,7 @@ export default function TeamDetail() {
                 {/* ── Right Column ── */}
                 <Box flex={windowWidth < 1280 ? undefined : 1.2} style={windowWidth < 1280 ? { width: '100%' } : undefined} backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="24">
                   <Box flexDirection="row" justifyContent="space-between" alignItems="center">
-                    <Text variant="webBody" color="foreground">Subscription</Text>
+                    <Text variant="webEmphasizedBody" color="foreground">Subscription</Text>
                     <Box backgroundColor="lightMint" paddingHorizontal="12" paddingVertical="4" borderRadius="4">
                       <Text variant="labelMedium" color="secondaryGreen">Free Trial</Text>
                     </Box>
@@ -1720,7 +1720,7 @@ export default function TeamDetail() {
 
                 {/* ── Plan Header Card ── */}
                 <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24">
-                  <Box flexDirection="row" justifyContent="space-between" alignItems="center">
+                  <Box flexDirection={windowWidth < 1280 ? 'column' : 'row'} justifyContent="space-between" alignItems={windowWidth < 1280 ? 'flex-start' : 'center'} gap={windowWidth < 1280 ? "16" : undefined}>
                     {/* Left */}
                     <Box gap="8">
                       <Box flexDirection="row" alignItems="center" gap="8">
@@ -1736,7 +1736,7 @@ export default function TeamDetail() {
                     </Box>
 
                     {/* Right */}
-                    <Box alignItems="flex-end" gap="4">
+                    <Box alignItems={windowWidth < 1280 ? 'flex-start' : 'flex-end'} gap="4">
                       <Box flexDirection="row" alignItems="flex-end" gap="4">
                         <Text style={{ fontSize: 36, fontWeight: '700', color: theme.colors.foreground, lineHeight: 44 }}>$64</Text>
                         <Text variant="webBody" color="textSecondary" style={{ marginBottom: 6 }}>/month</Text>
@@ -1750,9 +1750,9 @@ export default function TeamDetail() {
                 {/* ── What's Included Card ── */}
                 <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="20">
                   <Text variant="webLabelEmphasized" color="textSecondary">What's included in the Team plan</Text>
-                  <Box flexDirection="row" gap="0">
+                  <Box flexDirection={windowWidth < 1280 ? 'column' : 'row'} gap={windowWidth < 1280 ? '20' : '0'}>
                     {/* Left column */}
-                    <Box flex={1} gap="20" borderRightWidth={1} borderColor="border" paddingRight="24">
+                    <Box flex={1} gap="20" borderRightWidth={windowWidth < 1280 ? 0 : 1} borderColor="border" paddingRight={windowWidth < 1280 ? undefined : "24"}>
                       {[
                         { Icon: Folder, title: 'Unlimited projects', desc: 'No cap on how many projects your team runs' },
                         { Icon: Hash, title: 'Multiple tasks', desc: 'Create and assign as many tasks as needed' },
@@ -1769,8 +1769,9 @@ export default function TeamDetail() {
                         </Box>
                       ))}
                     </Box>
+                    {windowWidth < 1280 && <Box height={1} backgroundColor="border" />}
                     {/* Right column */}
-                    <Box flex={1} gap="20" paddingLeft="24">
+                    <Box flex={1} gap="20" paddingLeft={windowWidth < 1280 ? undefined : "24"}>
                       {[
                         { Icon: Database, title: '2TB of shared storage', desc: 'Plenty of space for files and assets' },
                         { Icon: Activity, title: 'Global activity log', desc: 'Full history of everything the team does' },
@@ -1791,25 +1792,26 @@ export default function TeamDetail() {
                 </Box>
 
                 {/* ── Activate CTA Card ── */}
-                <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" flexDirection="row" justifyContent="space-between" alignItems="center">
+                <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" flexDirection={windowWidth < 1280 ? 'column' : 'row'} justifyContent="space-between" alignItems={windowWidth < 1280 ? 'flex-start' : 'center'} gap={windowWidth < 1280 ? "16" : undefined}>
                   <Box gap="4">
                     <Text variant="webLabelEmphasized" color="secondaryGreen">Activate your plan today</Text>
                     <Text variant="webMetadataPrimary" color="textSecondary">No charge until March 15, 2026 · Cancel anytime</Text>
                   </Box>
-                  <Button variant="fill" color="secondary" size="lg" onPress={() => setShowUpgradeModal(true)} style={{ paddingHorizontal: 24 }}>
+                  <Button variant="fill" color="secondary" size="lg" onPress={() => setShowUpgradeModal(true)} style={windowWidth < 1280 ? { paddingHorizontal: 24, width: '100%' } : { paddingHorizontal: 24 }}>
                     Activate Plan
                   </Button>
                 </Box>
 
                 {/* ── Invoices Table Card ── */}
                 <Box backgroundColor="card" borderWidth={1} borderColor="border" style={{ borderRadius: 8, zIndex: 1, overflow: 'hidden' }}>
-                    <Box>
-                      {/* Table header row */}
+                  <Box>
+                    {windowWidth >= 1280 && (
+                      /* Table header row — desktop only */
                       <Box flexDirection="row" backgroundColor="grey01">
                         <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }}>
                           <Box flexDirection="row" alignItems="center" gap="4">
-                             <Text variant="webMetadataPrimary" color="grey05">DATE</Text>
-                             <ArrowDownUp size={12} color={theme.colors.grey05} />
+                            <Text variant="webMetadataPrimary" color="grey05">DATE</Text>
+                            <ArrowDownUp size={12} color={theme.colors.grey05} />
                           </Box>
                         </Box>
                         <Box style={{ flex: 4, paddingHorizontal: 16, paddingVertical: 10 }}>
@@ -1822,13 +1824,14 @@ export default function TeamDetail() {
                           <Text variant="webMetadataPrimary" color="grey05">STATUS</Text>
                         </Box>
                       </Box>
+                    )}
 
-                      {/* Empty state */}
-                      <Box alignItems="center" paddingVertical="56" gap="8" borderTopWidth={1} borderColor="border">
-                        <Text variant="webLabelEmphasized" color="textSecondary">No invoices yet</Text>
-                        <Text variant="webMetadataPrimary" color="textSecondary">Your first invoice will be issued on March 15, 2026</Text>
-                      </Box>
+                    {/* Empty state */}
+                    <Box alignItems="center" paddingVertical="56" gap="8" borderTopWidth={windowWidth >= 1280 ? 1 : 0} borderColor="border">
+                      <Text variant="webLabelEmphasized" color="textSecondary">No invoices yet</Text>
+                      <Text variant="webMetadataPrimary" color="textSecondary" style={{ textAlign: 'center' }}>Your first invoice will be issued on March 15, 2026</Text>
                     </Box>
+                  </Box>
                 </Box>
 
               </Box>

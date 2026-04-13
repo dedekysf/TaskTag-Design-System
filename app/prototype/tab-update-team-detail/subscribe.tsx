@@ -1566,13 +1566,13 @@ export default function TeamDetail() {
                   
                   {/* Card 1: TEAM INFO */}
                   <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="24">
-                    <Text variant="webBody" color="foreground">Team Info</Text>
+                    <Text variant="webEmphasizedBody" color="foreground">Team Info</Text>
                     
                     <Box gap="16">
                       <Box flexDirection="row" justifyContent="space-between" alignItems="center" paddingHorizontal="8">
                         <Text variant="webBody" color="foreground">Owner</Text>
                         <Box flexDirection="row" alignItems="center" gap="8">
-                          <Text variant="webLabelEmphasized" color="foreground">Linda Smith</Text>
+                          <Text variant="webBody" color="foreground">Linda Smith</Text>
                         </Box>
                       </Box>
                       <Box height={1} backgroundColor="border" />
@@ -1586,7 +1586,7 @@ export default function TeamDetail() {
                       <Box height={1} backgroundColor="border" />
                       
                       <Box gap="12" paddingHorizontal="8">
-                        <Text variant="webMetadataPrimary" color="grey05" style={{ textTransform: 'uppercase' }}>Skills</Text>
+                        <Text variant="webBody" color="foreground">Skills</Text>
                         <Box flexDirection="row" flexWrap="wrap" gap="8">
                           {['Construction', 'Electrical', 'Plumbing', 'HVAC', 'Carpentry'].map(spec => (
                             <Box key={spec} backgroundColor="grey02" style={{ paddingHorizontal: 10, paddingVertical: 4, borderRadius: 4 }}>
@@ -1614,7 +1614,7 @@ export default function TeamDetail() {
                    *   × 100
                    */}
                   <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="24">
-                    <Text variant="webBody" color="foreground">Team Performance · This Month</Text>
+                    <Text variant="webEmphasizedBody" color="foreground">Team Performance · This Month</Text>
                     <Box flexDirection="row" alignItems="stretch">
                       <Box flex={1} paddingRight="16" style={{ minHeight: 96, justifyContent: 'space-between' }}>
                         <Box gap="8">
@@ -1657,7 +1657,7 @@ export default function TeamDetail() {
                 {/* ── Right Column ── */}
                 <Box flex={windowWidth < 1280 ? undefined : 1.2} style={windowWidth < 1280 ? { width: '100%' } : undefined} backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="24">
                   <Box flexDirection="row" justifyContent="space-between" alignItems="center">
-                    <Text variant="webBody" color="foreground">Subscription</Text>
+                    <Text variant="webEmphasizedBody" color="foreground">Subscription</Text>
                     <Box backgroundColor="lightSky" paddingHorizontal="12" paddingVertical="4" borderRadius="4">
                       <Text variant="labelMedium" color="blue">Active</Text>
                     </Box>
@@ -1691,7 +1691,7 @@ export default function TeamDetail() {
 
                 {/* ── Plan Header Card ── */}
                 <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24">
-                  <Box flexDirection="row" justifyContent="space-between" alignItems="center">
+                  <Box flexDirection={windowWidth < 1280 ? 'column' : 'row'} justifyContent="space-between" alignItems={windowWidth < 1280 ? 'flex-start' : 'center'}>
                     {/* Left */}
                     <Box gap="8">
                       <Box flexDirection="row" alignItems="center" gap="8">
@@ -1709,40 +1709,70 @@ export default function TeamDetail() {
                 {/* ── Invoices Section ── */}
                 {/* ── Invoices Table Card ── */}
                 <Box backgroundColor="card" borderWidth={1} borderColor="border" style={{ borderRadius: 8, zIndex: 1, overflow: 'hidden' }}>
-                    <Box>
-                      {/* Table header row */}
-                      <Box flexDirection="row" backgroundColor="grey01">
-                        <Box style={{ flex: 1.5, paddingHorizontal: 16, paddingVertical: 10 }}>
-                          <Box flexDirection="row" alignItems="center" gap="4">
-                             <Text variant="webMetadataPrimary" color="grey05">DATE</Text>
-                             <ArrowDownUp size={12} color={theme.colors.grey05} />
-                          </Box>
-                        </Box>
-                        <Box style={{ flex: 3.5, paddingHorizontal: 16, paddingVertical: 10 }}>
-                          <Text variant="webMetadataPrimary" color="grey05">DESCRIPTION</Text>
-                        </Box>
-                        <Box style={{ flex: 1.5, paddingHorizontal: 16, paddingVertical: 10 }}>
-                          <Text variant="webMetadataPrimary" color="grey05">AMOUNT</Text>
-                        </Box>
-                        <Box style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 10 }}>
-                          <Text variant="webMetadataPrimary" color="grey05">STATUS</Text>
-                        </Box>
-                      </Box>
-
-                      {/* Data rows */}
-                      {INVOICE_DATA.map((inv, idx) => (
-                        <Box key={idx} flexDirection="row" borderTopWidth={1} borderColor="border" paddingVertical="12" alignItems="center">
-                          <Box flex={1.5} paddingHorizontal={16}><Text variant="webSecondaryBody" color="foreground">{inv.date}</Text></Box>
-                          <Box flex={3.5} paddingHorizontal={16}><Text variant="webSecondaryBody" color="foreground">{inv.desc}</Text></Box>
-                          <Box flex={1.5} paddingHorizontal={16}><Text variant="webSecondaryBody" color="foreground">{inv.amount}</Text></Box>
-                          <Box flex={1} paddingHorizontal={16}>
-                            <Box backgroundColor="lightMint" style={{ alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 4 }}>
-                              <Text style={{ fontSize: 11, fontWeight: '600', color: theme.colors.secondaryGreen }}>{inv.status}</Text>
+                  <Box>
+                    {windowWidth >= 1280 ? (
+                      /* Desktop: table layout */
+                      <>
+                        {/* Table header row */}
+                        <Box flexDirection="row" backgroundColor="grey01">
+                          <Box style={{ flex: 1.5, paddingHorizontal: 16, paddingVertical: 10 }}>
+                            <Box flexDirection="row" alignItems="center" gap="4">
+                              <Text variant="webMetadataPrimary" color="grey05">DATE</Text>
+                              <ArrowDownUp size={12} color={theme.colors.grey05} />
                             </Box>
                           </Box>
+                          <Box style={{ flex: 3.5, paddingHorizontal: 16, paddingVertical: 10 }}>
+                            <Text variant="webMetadataPrimary" color="grey05">DESCRIPTION</Text>
+                          </Box>
+                          <Box style={{ flex: 1.5, paddingHorizontal: 16, paddingVertical: 10 }}>
+                            <Text variant="webMetadataPrimary" color="grey05">AMOUNT</Text>
+                          </Box>
+                          <Box style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 10 }}>
+                            <Text variant="webMetadataPrimary" color="grey05">STATUS</Text>
+                          </Box>
                         </Box>
-                      ))}
-                    </Box>
+                        {/* Data rows */}
+                        {INVOICE_DATA.map((inv, idx) => (
+                          <Box key={idx} flexDirection="row" borderTopWidth={1} borderColor="border" paddingVertical="12" alignItems="center">
+                            <Box flex={1.5} paddingHorizontal={16}><Text variant="webSecondaryBody" color="foreground">{inv.date}</Text></Box>
+                            <Box flex={3.5} paddingHorizontal={16}><Text variant="webSecondaryBody" color="foreground">{inv.desc}</Text></Box>
+                            <Box flex={1.5} paddingHorizontal={16}><Text variant="webSecondaryBody" color="foreground">{inv.amount}</Text></Box>
+                            <Box flex={1} paddingHorizontal={16}>
+                              <Box backgroundColor="lightMint" style={{ alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 4 }}>
+                                <Text style={{ fontSize: 11, fontWeight: '600', color: theme.colors.secondaryGreen }}>{inv.status}</Text>
+                              </Box>
+                            </Box>
+                          </Box>
+                        ))}
+                      </>
+                    ) : (
+                      /* Mobile: card list layout */
+                      <>
+                        {INVOICE_DATA.map((inv, idx) => (
+                          <Box key={idx} borderTopWidth={idx === 0 ? 0 : 1} borderColor="border" style={{ padding: 16, gap: 10 }}>
+                            <Box flexDirection="row" justifyContent="space-between" alignItems="center">
+                              <Text variant="webMetadataPrimary" color="grey05">DATE</Text>
+                              <Text variant="webSecondaryBody" color="foreground">{inv.date}</Text>
+                            </Box>
+                            <Box flexDirection="row" justifyContent="space-between" alignItems="flex-start" gap="8">
+                              <Text variant="webMetadataPrimary" color="grey05">DESCRIPTION</Text>
+                              <Text variant="webSecondaryBody" color="foreground" style={{ flex: 1, textAlign: 'right' }}>{inv.desc}</Text>
+                            </Box>
+                            <Box flexDirection="row" justifyContent="space-between" alignItems="center">
+                              <Text variant="webMetadataPrimary" color="grey05">AMOUNT</Text>
+                              <Text variant="webSecondaryBody" color="foreground">{inv.amount}</Text>
+                            </Box>
+                            <Box flexDirection="row" justifyContent="space-between" alignItems="center">
+                              <Text variant="webMetadataPrimary" color="grey05">STATUS</Text>
+                              <Box backgroundColor="lightMint" style={{ paddingHorizontal: 8, paddingVertical: 2, borderRadius: 4 }}>
+                                <Text style={{ fontSize: 11, fontWeight: '600', color: theme.colors.secondaryGreen }}>{inv.status}</Text>
+                              </Box>
+                            </Box>
+                          </Box>
+                        ))}
+                      </>
+                    )}
+                  </Box>
                 </Box>
 
               </Box>

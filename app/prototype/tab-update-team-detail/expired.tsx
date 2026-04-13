@@ -1,15 +1,15 @@
 import { Button } from '@/components/Button';
 import { Checkbox } from '@/components/Checkbox';
-import { TextInput as DSTextInput } from '@/components/TextInput';
 import { Box, Text } from '@/components/primitives';
+import { TextInput as DSTextInput } from '@/components/TextInput';
 import { UpgradeModal } from '@/components/UpgradeModal';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import {
   Activity,
   ArrowDownUp,
-  Check,
   Calendar,
+  Check,
   CheckCircle,
   ChevronDown,
   ChevronLeft,
@@ -19,7 +19,6 @@ import {
   ChevronsRight,
   ChevronsUp,
   ChevronUp,
-  CreditCard,
   Database,
   Edit,
   Equal,
@@ -38,18 +37,17 @@ import {
   Plus,
   Repeat,
   Search,
-  SortDesc,
   Star,
   Trash2,
-  X,
   User,
   UserPlus,
   Users,
-  XCircle,
+  X,
+  XCircle
 } from 'lucide-react-native';
 import React, { useRef, useState } from 'react';
-import { Animated, Image, Platform, Pressable, ScrollView, TextInput, View, useWindowDimensions } from 'react-native';
 import ReactDOM from 'react-dom';
+import { Animated, Image, Platform, Pressable, ScrollView, useWindowDimensions, View } from 'react-native';
 
 const AVATAR_PHOTOS = [
   { src: require('@/assets/images/sample-three.jpg'), name: 'James Log...' },
@@ -72,11 +70,11 @@ const TEAM_MEMBERS: {
   role: string;
   avatar: { type: 'initials'; initials: string; color: string };
 }[] = [
-  { name: 'Linda Smith', skills: ['Lead Painter'], email: 'lindasmith@gmail.com', phone: '232-946-1254', role: 'Owner', avatar: { type: 'initials', initials: 'LS', color: 'pastelMagenta' } },
-  { name: 'Abby Smith', skills: ['Painting'], email: 'abbysmith@gmail.com', phone: '230-124-9988', role: 'Admin', avatar: { type: 'initials', initials: 'AS', color: 'pastelYellow' } },
-  { name: 'Oscar H.', skills: ['Primer'], email: 'oscaar@email.com', phone: '242-159-8803', role: 'Admin', avatar: { type: 'initials', initials: 'OH', color: 'pastelOrange' } },
-  { name: 'Savannah Nguyen', skills: ['Finishing'], email: 'savannahnguyen@gmail.com', phone: '222-548-5896', role: 'Member', avatar: { type: 'initials', initials: 'SN', color: 'pastelBlue' } },
-];
+    { name: 'Linda Smith', skills: ['Lead Painter'], email: 'lindasmith@gmail.com', phone: '232-946-1254', role: 'Owner', avatar: { type: 'initials', initials: 'LS', color: 'pastelMagenta' } },
+    { name: 'Abby Smith', skills: ['Painting'], email: 'abbysmith@gmail.com', phone: '230-124-9988', role: 'Admin', avatar: { type: 'initials', initials: 'AS', color: 'pastelYellow' } },
+    { name: 'Oscar H.', skills: ['Primer'], email: 'oscaar@email.com', phone: '242-159-8803', role: 'Admin', avatar: { type: 'initials', initials: 'OH', color: 'pastelOrange' } },
+    { name: 'Savannah Nguyen', skills: ['Finishing'], email: 'savannahnguyen@gmail.com', phone: '222-548-5896', role: 'Member', avatar: { type: 'initials', initials: 'SN', color: 'pastelBlue' } },
+  ];
 
 const PENDING_INVITES: {
   emailOrName: string;
@@ -86,10 +84,10 @@ const PENDING_INVITES: {
   role: string;
   status: 'pending' | 'expired' | 'near-expiry';
 }[] = [
-  { emailOrName: 'john.doe@gmail.com', invitedBy: 'Linda Smith', dateSent: 'Nov 1, 2025', expirationDate: 'Nov 7, 2025', role: 'Admin', status: 'pending' },
-  { emailOrName: 'roberto@gmail.com', invitedBy: 'Abby Smith', dateSent: 'Nov 2, 2025', expirationDate: 'Nov 3, 2025', role: 'Member', status: 'near-expiry' },
-  { emailOrName: 'sarah.k@gmail.com', invitedBy: 'Oscar H.', dateSent: 'Oct 20, 2025', expirationDate: 'Oct 27, 2025', role: 'Member', status: 'expired' },
-];
+    { emailOrName: 'john.doe@gmail.com', invitedBy: 'Linda Smith', dateSent: 'Nov 1, 2025', expirationDate: 'Nov 7, 2025', role: 'Admin', status: 'pending' },
+    { emailOrName: 'roberto@gmail.com', invitedBy: 'Abby Smith', dateSent: 'Nov 2, 2025', expirationDate: 'Nov 3, 2025', role: 'Member', status: 'near-expiry' },
+    { emailOrName: 'sarah.k@gmail.com', invitedBy: 'Oscar H.', dateSent: 'Oct 20, 2025', expirationDate: 'Oct 27, 2025', role: 'Member', status: 'expired' },
+  ];
 
 const INVOICE_DATA = [
   { date: 'March 15, 2025', desc: 'Team plan · 4 members', amount: '$768.00', status: 'Paid' },
@@ -198,12 +196,12 @@ function Tooltip({
 function CopyLinkButton() {
   const theme = useTheme<Theme>();
   const [copied, setCopied] = useState(false);
-  
+
   const handleCopy = () => {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-  
+
   return (
     <Tooltip
       label={copied ? "Link copied!" : "Copy link to invite"}
@@ -222,8 +220,8 @@ function CopyLinkButton() {
           backgroundColor: hovered
             ? theme.colors.grey02
             : pressed
-            ? theme.colors.grey03
-            : 'transparent',
+              ? theme.colors.grey03
+              : 'transparent',
           cursor: 'pointer' as any,
         })}
       >
@@ -255,8 +253,8 @@ function HoverIconButton({ icon: IconComp, size = 16, color, tooltip, onPress }:
         backgroundColor: hovered
           ? theme.colors.grey02
           : pressed
-          ? theme.colors.grey03
-          : 'transparent',
+            ? theme.colors.grey03
+            : 'transparent',
         cursor: 'pointer' as any,
       })}
     >
@@ -345,8 +343,8 @@ function RoleDropdownContent({
             backgroundColor: hovered
               ? theme.colors.grey01
               : pressed
-              ? theme.colors.grey02
-              : 'transparent',
+                ? theme.colors.grey02
+                : 'transparent',
             cursor: 'pointer' as any,
           })}
         >
@@ -483,77 +481,77 @@ function InviteModal({ onClose }: { onClose: () => void }) {
       shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.12, shadowRadius: 24, elevation: 8,
     }}>
       <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 320 }}>
-      <Pressable
-        onPress={() => {
-          const emailContact: InviteeContact = {
-            id: `email-${query}`,
-            name: `${query.toLowerCase()}@gmail.com`,
-            email: `${query.toLowerCase()}@gmail.com`,
-            avatar: { type: 'initials', initials: query.slice(0, 2).toUpperCase(), color: theme.colors.grey03 },
-          };
-          addInvitee(emailContact);
-        }}
-        style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, backgroundColor: hovered ? theme.colors.grey01 : 'transparent', cursor: 'pointer' as any })}
-      >
-        <Box width={40} height={40} borderRadius="full" backgroundColor="grey02" alignItems="center" justifyContent="center">
-          <Mail size={18} color={theme.colors.grey05} />
-        </Box>
-        <Text style={{ fontSize: 14, color: theme.colors.textSecondary }}>
-          Invite: {query.toLowerCase()}@gmail.com
-        </Text>
-      </Pressable>
-      {filteredContacts.map((contact) => (
-        <Box key={contact.id}>
-          <Box style={{ height: 1, backgroundColor: theme.colors.border }} />
-          <Pressable
-            onPress={() => addInvitee(contact)}
-            style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, backgroundColor: hovered ? theme.colors.grey01 : 'transparent', cursor: 'pointer' as any })}
-          >
-            <InviteAvatar avatar={contact.avatar} size={40} />
-            <Box style={{ gap: 0 }}>
-              <HighlightText text={contact.name} query={query} baseStyle={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }} />
-              <HighlightText text={contact.email} query={query} baseStyle={{ fontSize: 13, color: theme.colors.grey05 }} />
-            </Box>
-          </Pressable>
-        </Box>
-      ))}
-      {filteredGroups.map((group) => {
-        const isExpanded = expandedGroups.has(group.id);
-        return (
-          <Box key={group.id}>
+        <Pressable
+          onPress={() => {
+            const emailContact: InviteeContact = {
+              id: `email-${query}`,
+              name: `${query.toLowerCase()}@gmail.com`,
+              email: `${query.toLowerCase()}@gmail.com`,
+              avatar: { type: 'initials', initials: query.slice(0, 2).toUpperCase(), color: theme.colors.grey03 },
+            };
+            addInvitee(emailContact);
+          }}
+          style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, backgroundColor: hovered ? theme.colors.grey01 : 'transparent', cursor: 'pointer' as any })}
+        >
+          <Box width={40} height={40} borderRadius="full" backgroundColor="grey02" alignItems="center" justifyContent="center">
+            <Mail size={18} color={theme.colors.grey05} />
+          </Box>
+          <Text style={{ fontSize: 14, color: theme.colors.textSecondary }}>
+            Invite: {query.toLowerCase()}@gmail.com
+          </Text>
+        </Pressable>
+        {filteredContacts.map((contact) => (
+          <Box key={contact.id}>
             <Box style={{ height: 1, backgroundColor: theme.colors.border }} />
             <Pressable
-              onPress={() => toggleGroup(group.id)}
+              onPress={() => addInvitee(contact)}
               style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, backgroundColor: hovered ? theme.colors.grey01 : 'transparent', cursor: 'pointer' as any })}
             >
-              <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.grey02 }}>
-                {isExpanded ? <ChevronUp size={18} color={theme.colors.grey05} /> : <ChevronDown size={18} color={theme.colors.grey05} />}
-              </Box>
+              <InviteAvatar avatar={contact.avatar} size={40} />
               <Box style={{ gap: 0 }}>
-                <HighlightText text={group.name} query={query} baseStyle={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }} />
-                <Text style={{ fontSize: 13, color: theme.colors.grey04 }}>{group.memberCount} members</Text>
+                <HighlightText text={contact.name} query={query} baseStyle={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }} />
+                <HighlightText text={contact.email} query={query} baseStyle={{ fontSize: 13, color: theme.colors.grey05 }} />
               </Box>
             </Pressable>
-            {isExpanded && group.members.map((member) => (
-              <Box key={member.id}>
-                <Box style={{ height: 1, backgroundColor: theme.colors.border }} />
-                <Pressable
-                  onPress={() => addInvitee({ id: member.id, name: member.name, email: member.email, avatar: { type: 'initials', initials: member.initials, color: INVITE_TEAL } })}
-                  style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingLeft: 68, paddingRight: 16, paddingVertical: 12, backgroundColor: hovered ? theme.colors.grey01 : 'transparent', cursor: 'pointer' as any })}
-                >
-                  <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: INVITE_TEAL }}>
-                    <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>{member.initials}</Text>
-                  </Box>
-                  <Box style={{ gap: 0 }}>
-                    <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>{member.name}</Text>
-                    <Text style={{ fontSize: 13, color: theme.colors.grey05 }}>{member.email}</Text>
-                  </Box>
-                </Pressable>
-              </Box>
-            ))}
           </Box>
-        );
-      })}
+        ))}
+        {filteredGroups.map((group) => {
+          const isExpanded = expandedGroups.has(group.id);
+          return (
+            <Box key={group.id}>
+              <Box style={{ height: 1, backgroundColor: theme.colors.border }} />
+              <Pressable
+                onPress={() => toggleGroup(group.id)}
+                style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, backgroundColor: hovered ? theme.colors.grey01 : 'transparent', cursor: 'pointer' as any })}
+              >
+                <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.grey02 }}>
+                  {isExpanded ? <ChevronUp size={18} color={theme.colors.grey05} /> : <ChevronDown size={18} color={theme.colors.grey05} />}
+                </Box>
+                <Box style={{ gap: 0 }}>
+                  <HighlightText text={group.name} query={query} baseStyle={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }} />
+                  <Text style={{ fontSize: 13, color: theme.colors.grey04 }}>{group.memberCount} members</Text>
+                </Box>
+              </Pressable>
+              {isExpanded && group.members.map((member) => (
+                <Box key={member.id}>
+                  <Box style={{ height: 1, backgroundColor: theme.colors.border }} />
+                  <Pressable
+                    onPress={() => addInvitee({ id: member.id, name: member.name, email: member.email, avatar: { type: 'initials', initials: member.initials, color: INVITE_TEAL } })}
+                    style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingLeft: 68, paddingRight: 16, paddingVertical: 12, backgroundColor: hovered ? theme.colors.grey01 : 'transparent', cursor: 'pointer' as any })}
+                  >
+                    <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: INVITE_TEAL }}>
+                      <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>{member.initials}</Text>
+                    </Box>
+                    <Box style={{ gap: 0 }}>
+                      <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>{member.name}</Text>
+                      <Text style={{ fontSize: 13, color: theme.colors.grey05 }}>{member.email}</Text>
+                    </Box>
+                  </Pressable>
+                </Box>
+              ))}
+            </Box>
+          );
+        })}
       </ScrollView>
     </View>
   );
@@ -1256,11 +1254,11 @@ export default function TeamDetail() {
                       }}
                     >
                       <Box style={{ padding: 12, paddingBottom: 0, borderBottomWidth: 1, borderColor: theme.colors.border }}>
-                        <DSTextInput 
-                          placeholder="Search members..." 
-                          icon={Search} 
-                          size="sm" 
-                          showClearButton={false} 
+                        <DSTextInput
+                          placeholder="Search members..."
+                          icon={Search}
+                          size="sm"
+                          showClearButton={false}
                           value={filterQuery}
                           onChangeText={setFilterQuery}
                         />
@@ -1268,8 +1266,8 @@ export default function TeamDetail() {
 
                       <Box style={{ paddingVertical: 8 }}>
                         {['Admin', 'Member'].map((role) => (
-                          <Pressable 
-                            key={role} 
+                          <Pressable
+                            key={role}
                             onPress={() => setFilterRoles(prev => prev.includes(role) ? prev.filter(r => r !== role) : [...prev, role])}
                             style={({ hovered }: any) => ({ paddingHorizontal: 16, paddingVertical: 10, backgroundColor: hovered ? theme.colors.grey01 : 'transparent', cursor: 'pointer' as any })}
                           >
@@ -1283,11 +1281,11 @@ export default function TeamDetail() {
                       <Box height={1} backgroundColor="border" />
 
                       <Box padding="sm">
-                        <Button 
-                          variant="ghost" 
-                          color="secondary" 
-                          size="sm" 
-                          style={{ width: '100%' }} 
+                        <Button
+                          variant="ghost"
+                          color="secondary"
+                          size="sm"
+                          style={{ width: '100%' }}
                           disabled={filterQuery.length === 0 && filterRoles.length === 0}
                           onPress={() => { setFilterQuery(''); setFilterRoles([]); }}
                         >
@@ -1421,8 +1419,8 @@ export default function TeamDetail() {
                                       backgroundColor: hovered
                                         ? theme.colors.grey02
                                         : pressed
-                                        ? theme.colors.grey03
-                                        : 'transparent',
+                                          ? theme.colors.grey03
+                                          : 'transparent',
                                       cursor: 'pointer' as any,
                                     })}
                                   >
@@ -1545,10 +1543,10 @@ export default function TeamDetail() {
 
                             {/* Action column — 128px merged */}
                             <Box style={{ width: 128, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-                              <HoverIconButton 
-                                icon={Repeat} 
-                                size={16} 
-                                color={theme.colors.grey06} 
+                              <HoverIconButton
+                                icon={Repeat}
+                                size={16}
+                                color={theme.colors.grey06}
                                 tooltip="Resend Invitation"
                                 onPress={() => setShowResendToast(true)}
                               />
@@ -1571,12 +1569,12 @@ export default function TeamDetail() {
 
                   {/* Card 1: TEAM INFO */}
                   <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="24">
-                    <Text variant="webBody" color="foreground">Team Info</Text>
+                    <Text variant="webEmphasizedBody" color="foreground">Team Info</Text>
 
                     <Box gap="16">
                       <Box flexDirection="row" justifyContent="space-between" alignItems="center" paddingHorizontal="8">
                         <Text variant="webBody" color="foreground">Owner</Text>
-                        <Text variant="webLabelEmphasized" color="foreground">Linda Smith</Text>
+                        <Text variant="webBody" color="foreground">Linda Smith</Text>
                       </Box>
                       <Box height={1} backgroundColor="border" />
 
@@ -1589,7 +1587,7 @@ export default function TeamDetail() {
                       <Box height={1} backgroundColor="border" />
 
                       <Box gap="12" paddingHorizontal="8">
-                        <Text variant="webMetadataPrimary" color="grey05" style={{ textTransform: 'uppercase' }}>Skills</Text>
+                        <Text variant="webBody" color="foreground">Skills</Text>
                         <Box flexDirection="row" flexWrap="wrap" gap="8">
                           {['Construction', 'Electrical', 'Plumbing', 'HVAC', 'Carpentry'].map(spec => (
                             <Box key={spec} backgroundColor="grey02" style={{ paddingHorizontal: 10, paddingVertical: 4, borderRadius: 4 }}>
@@ -1618,7 +1616,7 @@ export default function TeamDetail() {
                    */}
                   <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="24">
                     <Box gap="4">
-                      <Text variant="webBody" color="foreground">Team Performance · This Month</Text>
+                      <Text variant="webEmphasizedBody" color="foreground">Team Performance · This Month</Text>
                       <Text variant="webMetadataPrimary" color="grey05">Performance data unavailable while subscription is inactive</Text>
                     </Box>
                     <Box flexDirection="row" alignItems="stretch">
@@ -1663,7 +1661,7 @@ export default function TeamDetail() {
                 {/* ── Right Column ── */}
                 <Box flex={windowWidth < 1280 ? undefined : 1.2} style={windowWidth < 1280 ? { width: '100%' } : undefined} backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="24">
                   <Box flexDirection="row" justifyContent="space-between" alignItems="center">
-                    <Text variant="webBody" color="foreground">Subscription</Text>
+                    <Text variant="webEmphasizedBody" color="foreground">Subscription</Text>
                   </Box>
 
                   <Box backgroundColor="lightCream" padding="16" borderRadius="8" gap="4">
@@ -1706,16 +1704,16 @@ export default function TeamDetail() {
 
                 {/* ── Plan Header Card ── */}
                 <Box backgroundColor="lightCream" borderRadius="8" padding="24">
-                  <Box flexDirection="row" justifyContent="space-between" alignItems="center">
+                  <Box flexDirection={windowWidth < 1280 ? 'column' : 'row'} justifyContent="space-between" alignItems={windowWidth < 1280 ? 'flex-start' : 'center'} gap={windowWidth < 1280 ? "16" : undefined}>
                     {/* Left */}
                     <Box gap="8">
                       <Box flexDirection="row" alignItems="center" gap="8">
                         <Text variant="mobileHeading28" color="foreground">Team plan</Text>
                       </Box>
-                      <Text variant="webBody" color="textSecondary">Team plan ended March 17, 2026 · Team features suspended</Text>
+                      <Text variant="webBody" color="textSecondary">Ended March 17, 2026 · Team features suspended</Text>
                     </Box>
                     {/* Right */}
-                    <Button variant="fill" color="secondary" size="lg" style={{ paddingHorizontal: 24, backgroundColor: theme.colors.black }}>
+                    <Button variant="fill" color="secondary" size="lg" onPress={() => setShowUpgradeModal(true)} style={windowWidth < 1280 ? { paddingHorizontal: 24, width: '100%', backgroundColor: theme.colors.black } : { paddingHorizontal: 24, backgroundColor: theme.colors.black }}>
                       Renew Plan
                     </Button>
                   </Box>
@@ -1724,9 +1722,9 @@ export default function TeamDetail() {
                 {/* ── What You'll Get Back ── */}
                 <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="20">
                   <Text variant="webLabelEmphasized" color="textSecondary">What you'll get back</Text>
-                  <Box flexDirection="row" gap="0">
+                  <Box flexDirection={windowWidth < 1280 ? 'column' : 'row'} gap={windowWidth < 1280 ? '20' : '0'}>
                     {/* Left column */}
-                    <Box flex={1} gap="20" borderRightWidth={1} borderColor="border" paddingRight="24">
+                    <Box flex={1} gap="20" borderRightWidth={windowWidth < 1280 ? 0 : 1} borderColor="border" paddingRight={windowWidth < 1280 ? undefined : "24"}>
                       {[
                         { Icon: Folder, title: 'Unlimited projects', desc: 'No cap on how many projects your team runs' },
                         { Icon: Hash, title: 'Multiple tasks', desc: 'Create and assign as many tasks as needed' },
@@ -1743,8 +1741,9 @@ export default function TeamDetail() {
                         </Box>
                       ))}
                     </Box>
+                    {windowWidth < 1280 && <Box height={1} backgroundColor="border" />}
                     {/* Right column */}
-                    <Box flex={1} gap="20" paddingLeft="24">
+                    <Box flex={1} gap="20" paddingLeft={windowWidth < 1280 ? undefined : "24"}>
                       {[
                         { Icon: Database, title: '2TB of shared storage', desc: 'Plenty of space for files and assets' },
                         { Icon: Activity, title: 'Global activity log', desc: 'Full history of everything the team does' },
@@ -1766,40 +1765,70 @@ export default function TeamDetail() {
 
                 {/* ── Invoices Table Card ── */}
                 <Box backgroundColor="card" borderWidth={1} borderColor="border" style={{ borderRadius: 8, zIndex: 1, overflow: 'hidden' }}>
-                    <Box>
-                      {/* Table header row */}
-                      <Box flexDirection="row" backgroundColor="grey01">
-                        <Box style={{ flex: 1.5, paddingHorizontal: 16, paddingVertical: 10 }}>
-                          <Box flexDirection="row" alignItems="center" gap="4">
-                             <Text variant="webMetadataPrimary" color="grey05">DATE</Text>
-                             <ArrowDownUp size={12} color={theme.colors.grey05} />
-                          </Box>
-                        </Box>
-                        <Box style={{ flex: 3.5, paddingHorizontal: 16, paddingVertical: 10 }}>
-                          <Text variant="webMetadataPrimary" color="grey05">DESCRIPTION</Text>
-                        </Box>
-                        <Box style={{ flex: 1.5, paddingHorizontal: 16, paddingVertical: 10 }}>
-                          <Text variant="webMetadataPrimary" color="grey05">AMOUNT</Text>
-                        </Box>
-                        <Box style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 10 }}>
-                          <Text variant="webMetadataPrimary" color="grey05">STATUS</Text>
-                        </Box>
-                      </Box>
-
-                      {/* Data rows */}
-                      {INVOICE_DATA.map((inv, idx) => (
-                        <Box key={idx} flexDirection="row" borderTopWidth={1} borderColor="border" paddingVertical="12" alignItems="center">
-                          <Box flex={1.5} paddingHorizontal={16}><Text variant="webSecondaryBody" color="foreground">{inv.date}</Text></Box>
-                          <Box flex={3.5} paddingHorizontal={16}><Text variant="webSecondaryBody" color="foreground">{inv.desc}</Text></Box>
-                          <Box flex={1.5} paddingHorizontal={16}><Text variant="webSecondaryBody" color="foreground">{inv.amount}</Text></Box>
-                          <Box flex={1} paddingHorizontal={16}>
-                            <Box backgroundColor="lightMint" style={{ alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 4 }}>
-                              <Text style={{ fontSize: 11, fontWeight: '600', color: theme.colors.secondaryGreen }}>{inv.status}</Text>
+                  <Box>
+                    {windowWidth >= 1280 ? (
+                      /* Desktop: table layout */
+                      <>
+                        {/* Table header row */}
+                        <Box flexDirection="row" backgroundColor="grey01">
+                          <Box style={{ flex: 1.5, paddingHorizontal: 16, paddingVertical: 10 }}>
+                            <Box flexDirection="row" alignItems="center" gap="4">
+                              <Text variant="webMetadataPrimary" color="grey05">DATE</Text>
+                              <ArrowDownUp size={12} color={theme.colors.grey05} />
                             </Box>
                           </Box>
+                          <Box style={{ flex: 3.5, paddingHorizontal: 16, paddingVertical: 10 }}>
+                            <Text variant="webMetadataPrimary" color="grey05">DESCRIPTION</Text>
+                          </Box>
+                          <Box style={{ flex: 1.5, paddingHorizontal: 16, paddingVertical: 10 }}>
+                            <Text variant="webMetadataPrimary" color="grey05">AMOUNT</Text>
+                          </Box>
+                          <Box style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 10 }}>
+                            <Text variant="webMetadataPrimary" color="grey05">STATUS</Text>
+                          </Box>
                         </Box>
-                      ))}
-                    </Box>
+                        {/* Data rows */}
+                        {INVOICE_DATA.map((inv, idx) => (
+                          <Box key={idx} flexDirection="row" borderTopWidth={1} borderColor="border" paddingVertical="12" alignItems="center">
+                            <Box flex={1.5} paddingHorizontal={16}><Text variant="webSecondaryBody" color="foreground">{inv.date}</Text></Box>
+                            <Box flex={3.5} paddingHorizontal={16}><Text variant="webSecondaryBody" color="foreground">{inv.desc}</Text></Box>
+                            <Box flex={1.5} paddingHorizontal={16}><Text variant="webSecondaryBody" color="foreground">{inv.amount}</Text></Box>
+                            <Box flex={1} paddingHorizontal={16}>
+                              <Box backgroundColor="lightMint" style={{ alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 4 }}>
+                                <Text style={{ fontSize: 11, fontWeight: '600', color: theme.colors.secondaryGreen }}>{inv.status}</Text>
+                              </Box>
+                            </Box>
+                          </Box>
+                        ))}
+                      </>
+                    ) : (
+                      /* Mobile: card list layout */
+                      <>
+                        {INVOICE_DATA.map((inv, idx) => (
+                          <Box key={idx} borderTopWidth={idx === 0 ? 0 : 1} borderColor="border" style={{ padding: 16, gap: 10 }}>
+                            <Box flexDirection="row" justifyContent="space-between" alignItems="center">
+                              <Text variant="webMetadataPrimary" color="grey05">DATE</Text>
+                              <Text variant="webSecondaryBody" color="foreground">{inv.date}</Text>
+                            </Box>
+                            <Box flexDirection="row" justifyContent="space-between" alignItems="flex-start" gap="8">
+                              <Text variant="webMetadataPrimary" color="grey05">DESCRIPTION</Text>
+                              <Text variant="webSecondaryBody" color="foreground" style={{ flex: 1, textAlign: 'right' }}>{inv.desc}</Text>
+                            </Box>
+                            <Box flexDirection="row" justifyContent="space-between" alignItems="center">
+                              <Text variant="webMetadataPrimary" color="grey05">AMOUNT</Text>
+                              <Text variant="webSecondaryBody" color="foreground">{inv.amount}</Text>
+                            </Box>
+                            <Box flexDirection="row" justifyContent="space-between" alignItems="center">
+                              <Text variant="webMetadataPrimary" color="grey05">STATUS</Text>
+                              <Box backgroundColor="lightMint" style={{ paddingHorizontal: 8, paddingVertical: 2, borderRadius: 4 }}>
+                                <Text style={{ fontSize: 11, fontWeight: '600', color: theme.colors.secondaryGreen }}>{inv.status}</Text>
+                              </Box>
+                            </Box>
+                          </Box>
+                        ))}
+                      </>
+                    )}
+                  </Box>
                 </Box>
 
               </Box>

@@ -215,7 +215,7 @@ export function UpgradeModal({
                       color="textSecondary"
                       fontWeight="700"
                     >
-                      {selectedPlan === 'yearly' ? '$192 per year.' : '$20 per month.'}
+                      {selectedPlan === 'yearly' ? '$768 per year.' : '$20 per month.'}
                     </Text>
                   </Text>
                   <Text variant="webMetadataPrimary" color="textSecondary">

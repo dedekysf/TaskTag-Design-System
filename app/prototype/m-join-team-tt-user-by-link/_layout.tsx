@@ -1,4 +1,4 @@
-import { Box } from '@/components/primitives';
+import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import { Stack } from 'expo-router';
@@ -46,6 +46,28 @@ export default function MobileLayout() {
           <Stack.Screen name="link" />
         </Stack>
       </Box>
+      
+      {/* Note For Dev — Positioned beside the frame */}
+      {Platform.OS === 'web' && (
+        <Box
+          style={{
+            position: 'absolute' as any,
+            left: 'calc(50% + 212px)' as any, // 375/2 + 24px gap = 211.5
+            top: 100,
+            width: 240,
+            backgroundColor: '#fbe676',
+            borderRadius: 12,
+            padding: 16,
+            gap: 4,
+            boxShadow: '0px 4px 12px rgba(0,0,0,0.1)',
+          }}
+        >
+          <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
+          <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18 }}>
+            Hide the skills section when no data is available.
+          </Text>
+        </Box>
+      )}
     </View>
   );
 }
