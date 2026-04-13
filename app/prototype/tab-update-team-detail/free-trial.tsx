@@ -49,7 +49,7 @@ import {
   XCircle,
 } from 'lucide-react-native';
 import React, { useRef, useState } from 'react';
-import { Animated, Image, Platform, Pressable, ScrollView, TextInput, View } from 'react-native';
+import { Animated, Image, Platform, Pressable, ScrollView, TextInput, View, useWindowDimensions } from 'react-native';
 import ReactDOM from 'react-dom';
 
 const AVATAR_PHOTOS = [
@@ -826,8 +826,9 @@ function RemoveMemberModal({ memberName, onClose }: { memberName: string; onClos
 
 export default function TeamDetail() {
   const theme = useTheme<Theme>();
+  const { width: windowWidth } = useWindowDimensions();
   const [activeTab, setActiveTab] = useState('overview');
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(windowWidth < 1280);
   const [activeExpanded, setActiveExpanded] = useState(true);
   const [pendingExpanded, setPendingExpanded] = useState(true);
   const [invoiceExpanded, setInvoiceExpanded] = useState(true);

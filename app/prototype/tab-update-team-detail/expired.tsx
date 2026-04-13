@@ -48,7 +48,7 @@ import {
   XCircle,
 } from 'lucide-react-native';
 import React, { useRef, useState } from 'react';
-import { Animated, Image, Platform, Pressable, ScrollView, TextInput, View } from 'react-native';
+import { Animated, Image, Platform, Pressable, ScrollView, TextInput, View, useWindowDimensions } from 'react-native';
 import ReactDOM from 'react-dom';
 
 const AVATAR_PHOTOS = [
@@ -829,8 +829,9 @@ function RemoveMemberModal({ memberName, onClose }: { memberName: string; onClos
 
 export default function TeamDetail() {
   const theme = useTheme<Theme>();
+  const { width: windowWidth } = useWindowDimensions();
   const [activeTab, setActiveTab] = useState('overview');
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(windowWidth < 1280);
   const [activeExpanded, setActiveExpanded] = useState(true);
   const [pendingExpanded, setPendingExpanded] = useState(true);
   const [invoiceExpanded, setInvoiceExpanded] = useState(true);
@@ -1601,7 +1602,10 @@ export default function TeamDetail() {
 
                   {/* Card 3: TEAM PERFORMANCE */}
                   <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="16">
-                    <Text variant="webBody" color="foreground">Team Performance · This Month</Text>
+                    <Box gap="4">
+                      <Text variant="webBody" color="foreground">Team Performance · This Month</Text>
+                      <Text variant="webMetadataPrimary" color="grey05">Performance data unavailable while subscription is inactive</Text>
+                    </Box>
                     <Box flexDirection="row">
                       <Box flex={1} gap="4" borderRightWidth={1} borderColor="border" paddingRight="16">
                         <Text variant="webBody" style={{ fontSize: 28, fontWeight: '700' }} color="grey05">—</Text>
@@ -1614,7 +1618,6 @@ export default function TeamDetail() {
                         <Text variant="webMetadataPrimary" color="grey05">Critical tasks closed vs total critical tasks due</Text>
                       </Box>
                     </Box>
-                    <Text variant="webMetadataPrimary" color="grey05" style={{ textAlign: 'center' }}>Performance data unavailable while subscription is inactive</Text>
                   </Box>
 
                 </Box>
