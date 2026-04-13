@@ -44,7 +44,7 @@ const TEAM_MANAGEMENT = [
 ];
 
 const PERSONAL_SETTINGS = [
-  { Icon: Star, title: 'Primary Team', description: 'This is your default team for new projects', action: 'active', danger: false, comingSoon: false, iconColor: '#FBBF24', iconFill: '#FBBF24' },
+  { Icon: Star, title: 'Primary Team', description: 'Your default team for new projects', action: 'active', danger: false, comingSoon: false, iconColor: '#FBBF24', iconFill: '#FBBF24' },
 ];
 
 function SectionLabel({ label }: { label: string }) {
