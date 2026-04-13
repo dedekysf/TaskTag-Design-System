@@ -1678,12 +1678,12 @@ export default function TeamDetail() {
               <Box gap="16" style={{ paddingTop: 16 }}>
 
                 {/* ── Plan Header Card ── */}
-                <Box backgroundColor="card" borderWidth={1} borderColor="alertRed" borderRadius="8" padding="24">
+                <Box backgroundColor="lightCream" borderWidth={1} borderColor="border" borderRadius="8" padding="24">
                   <Box flexDirection="row" justifyContent="space-between" alignItems="center">
                     {/* Left */}
                     <Box gap="8">
                       <Box flexDirection="row" alignItems="center" gap="8">
-                        <Text variant="mobileHeading28" color="alertRed">Team plan</Text>
+                        <Text variant="mobileHeading28" color="foreground">Team plan</Text>
                       </Box>
                       <Text variant="webBody" color="textSecondary">Team plan ended March 17, 2026 · Team features suspended</Text>
                     </Box>
