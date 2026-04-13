@@ -1563,10 +1563,10 @@ export default function TeamDetail() {
             )}
 
             {activeTab === 'overview' && (
-              <Box flexDirection="row" gap="16" alignItems="flex-start" style={{ paddingTop: 16 }}>
+              <Box flexDirection={windowWidth < 1280 ? 'column' : 'row'} gap="16" alignItems="flex-start" style={{ paddingTop: 16 }}>
 
                 {/* ── Left Column ── */}
-                <Box flex={2} gap="16">
+                <Box flex={windowWidth < 1280 ? undefined : 2} style={windowWidth < 1280 ? { width: '100%' } : undefined} gap="16">
 
                   {/* Card 1: TEAM INFO */}
                   <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="24">
@@ -1606,16 +1606,16 @@ export default function TeamDetail() {
                       <Text variant="webBody" color="foreground">Team Performance · This Month</Text>
                       <Text variant="webMetadataPrimary" color="grey05">Performance data unavailable while subscription is inactive</Text>
                     </Box>
-                    <Box flexDirection="row">
+                    <Box flexDirection="row" style={{ paddingTop: 8 }}>
                       <Box flex={1} gap="4" borderRightWidth={1} borderColor="border" paddingRight="16">
-                        <Text variant="webBody" style={{ fontSize: 28, fontWeight: '700' }} color="grey05">—</Text>
+                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="grey05">—</Text>
                         <Text variant="webBody" color="foreground" style={{ fontWeight: '500' }}>On-time delivery</Text>
                         <Text variant="webMetadataPrimary" color="grey05">Tasks completed by their due date this month</Text>
                       </Box>
                       <Box flex={1} gap="4" paddingLeft="16">
-                        <Text variant="webBody" style={{ fontSize: 28, fontWeight: '700' }} color="grey05">—</Text>
-                        <Text variant="webBody" color="foreground" style={{ fontWeight: '500' }}>High-priority completion</Text>
-                        <Text variant="webMetadataPrimary" color="grey05">Critical tasks closed vs total critical tasks due</Text>
+                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="grey05">—</Text>
+                        <Text variant="webBody" color="foreground" style={{ fontWeight: '500' }}>High-priority completion rate</Text>
+                        <Text variant="webMetadataPrimary" color="grey05">How well the team handled its most important work this month</Text>
                       </Box>
                     </Box>
                   </Box>
@@ -1623,7 +1623,7 @@ export default function TeamDetail() {
                 </Box>
 
                 {/* ── Right Column ── */}
-                <Box flex={1.2} backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="24">
+                <Box flex={windowWidth < 1280 ? undefined : 1.2} style={windowWidth < 1280 ? { width: '100%' } : undefined} backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="24">
                   <Box flexDirection="row" justifyContent="space-between" alignItems="center">
                     <Text variant="webBody" color="foreground">Subscription</Text>
                   </Box>
@@ -1771,7 +1771,7 @@ export default function TeamDetail() {
       </Box>
 
       {/* ── Chat List Panel ── */}
-      <Box flex={1} backgroundColor="background" borderLeftWidth={1} borderColor="border" style={{ height: '100%' as any, maxWidth: 550, position: 'relative' as any }}>
+      <Box backgroundColor="background" borderLeftWidth={1} borderColor="border" style={{ height: '100%' as any, width: 550, flexShrink: 0, position: 'relative' as any }}>
         <Box flexDirection="row" alignItems="center" justifyContent="space-between" backgroundColor="background" style={{ height: 74, paddingHorizontal: 24, paddingVertical: 12 }}>
           <Text style={{ fontSize: 22, fontWeight: '600', color: theme.colors.foreground, lineHeight: 32 }}>Chat</Text>
           <Box flexDirection="row" alignItems="center">
