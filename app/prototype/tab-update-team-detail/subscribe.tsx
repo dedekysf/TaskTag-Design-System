@@ -1663,18 +1663,6 @@ export default function TeamDetail() {
                       <Text variant="webBody" color="grey05">Renews</Text>
                       <Text variant="webBody" color="foreground">March 15, 2027</Text>
                     </Box>
-                    <Box height={1} backgroundColor="border" />
-                  </Box>
-
-                  <Box backgroundColor="grey02" padding="16" borderRadius="8" gap="8">
-                    <Box flexDirection="row" justifyContent="space-between" alignItems="center">
-                      <Text variant="webSecondaryBody" color="foreground">4 members × $16/month</Text>
-                      <Text variant="webBody" color="foreground">$64</Text>
-                    </Box>
-                    <Box flexDirection="row" justifyContent="space-between" alignItems="center">
-                      <Text variant="webLabelEmphasized" color="foreground">Billed amount</Text>
-                      <Text variant="webLabelEmphasized" style={{ fontSize: 20 }} color="foreground">$64 <Text variant="webBody" color="foreground">/month</Text></Text>
-                    </Box>
                   </Box>
 
                 </Box>
@@ -1698,15 +1686,6 @@ export default function TeamDetail() {
                       <Text variant="webBody" color="textSecondary">Next billing date March 15, 2027</Text>
                     </Box>
 
-                    {/* Right */}
-                    <Box alignItems="flex-end" gap="4">
-                      <Box flexDirection="row" alignItems="flex-end" gap="4">
-                        <Text style={{ fontSize: 36, fontWeight: '700', color: theme.colors.foreground, lineHeight: 44 }}>$64</Text>
-                        <Text variant="webBody" color="textSecondary" style={{ marginBottom: 6 }}>/month</Text>
-                      </Box>
-                      <Text variant="webMetadataPrimary" color="textSecondary">billed annually</Text>
-                      <Text variant="webMetadataPrimary" color="textSecondary">4 members × $16/month</Text>
-                    </Box>
                   </Box>
                 </Box>
 
