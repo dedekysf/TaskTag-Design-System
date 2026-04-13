@@ -1637,9 +1637,6 @@ export default function TeamDetail() {
                 <Box flex={1.2} backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="24">
                   <Box flexDirection="row" justifyContent="space-between" alignItems="center">
                     <Text variant="webBody" color="foreground">Subscription</Text>
-                    <Box backgroundColor="lightPink" paddingHorizontal="12" paddingVertical="4" borderRadius="4">
-                      <Text variant="labelMedium" color="alertRed">Expired</Text>
-                    </Box>
                   </Box>
 
                   <Box backgroundColor="lightCream" padding="16" borderRadius="8" gap="4">
@@ -1666,17 +1663,6 @@ export default function TeamDetail() {
                     </Box>
                   </Box>
 
-                  <Box backgroundColor="grey02" padding="16" borderRadius="8" gap="8">
-                    <Box flexDirection="row" justifyContent="space-between" alignItems="center">
-                      <Text variant="webBody" color="foreground">4 members × $16/month</Text>
-                      <Text variant="webBody" color="foreground">$64</Text>
-                    </Box>
-                    <Box flexDirection="row" justifyContent="space-between" alignItems="center">
-                      <Text variant="webLabelEmphasized" color="foreground">Billed amount</Text>
-                      <Text variant="webLabelEmphasized" style={{ fontSize: 20 }} color="foreground">$64 <Text variant="webBody" color="foreground">/month</Text></Text>
-                    </Box>
-                  </Box>
-
                   <Box gap="12">
                     <Button variant="primary" onPress={() => setShowUpgradeModal(true)} style={{ height: 48, backgroundColor: theme.colors.black, borderRadius: 8, justifyContent: 'center' }}>
                       <Text variant="labelMedium" style={{ color: '#fff', fontSize: 16 }}>Renew Plan</Text>
@@ -1698,22 +1684,10 @@ export default function TeamDetail() {
                     <Box gap="8">
                       <Box flexDirection="row" alignItems="center" gap="8">
                         <Text variant="mobileHeading28" color="alertRed">Team plan</Text>
-                        <Box backgroundColor="lightPink" paddingHorizontal="12" paddingVertical="4" borderRadius="4">
-                          <Text variant="labelMedium" color="alertRed">Expired</Text>
-                        </Box>
                       </Box>
                       <Text variant="webBody" color="textSecondary">Team plan ended March 17, 2026 · Team features suspended</Text>
                     </Box>
 
-                    {/* Right */}
-                    <Box alignItems="flex-end" gap="4">
-                      <Box flexDirection="row" alignItems="flex-end" gap="4">
-                        <Text style={{ fontSize: 36, fontWeight: '700', color: theme.colors.foreground, lineHeight: 44 }}>$64</Text>
-                        <Text variant="webBody" color="textSecondary" style={{ marginBottom: 6 }}>/month</Text>
-                      </Box>
-                      <Text variant="webMetadataPrimary" color="textSecondary">billed annually</Text>
-                      <Text variant="webMetadataPrimary" color="textSecondary">4 members × $16/month</Text>
-                    </Box>
                   </Box>
                 </Box>
 
