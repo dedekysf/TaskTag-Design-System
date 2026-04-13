@@ -1598,45 +1598,23 @@ export default function TeamDetail() {
                     </Box>
                   </Box>
 
-                  {/* Card 2: ACTIVITY */}
-                  <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="24">
-                    <Text variant="webBody" color="foreground">Activity · This Month</Text>
-                    
-                    <Box flexDirection="row" borderTopWidth={0} borderColor="border">
-                      {/* Active projects */}
-                      <Box flex={1} alignItems="center" gap="8" borderRightWidth={1} borderColor="border">
-                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="foreground">2</Text>
-                        <Box flexDirection="row" alignItems="center" gap="4">
-                          <Text variant="webMetadataPrimary" color="grey05">Active projects</Text>
-                        </Box>
+                  {/* Card 3: TEAM PERFORMANCE */}
+                  <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="16">
+                    <Text variant="webBody" color="foreground">Team Performance · This Month</Text>
+                    <Box flexDirection="row">
+                      <Box flex={1} gap="4" borderRightWidth={1} borderColor="border" paddingRight="16">
+                        <Text variant="webBody" style={{ fontSize: 28, fontWeight: '700' }} color="secondaryGreen">87%</Text>
+                        <Text variant="webBody" color="foreground" style={{ fontWeight: '500' }}>On-time delivery</Text>
+                        <Text variant="webMetadataPrimary" color="grey05">Tasks completed by their due date this month</Text>
                       </Box>
-
-                      {/* Open tasks */}
-                      <Box flex={1} alignItems="center" gap="8" borderRightWidth={1} borderColor="border">
-                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="foreground">10</Text>
-                        <Box flexDirection="row" alignItems="center" gap="4">
-                          <Text variant="webMetadataPrimary" color="grey05">Active tasks</Text>
-                        </Box>
-                      </Box>
-
-                      {/* Completed */}
-                      <Box flex={1} alignItems="center" gap="8" borderRightWidth={1} borderColor="border">
-                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="foreground">8</Text>
-                        <Box flexDirection="row" alignItems="center" gap="4">
-                          <Text variant="webMetadataPrimary" color="grey05">Completed</Text>
-                        </Box>
-                      </Box>
-
-                      {/* Overdue */}
-                      <Box flex={1} alignItems="center" gap="8">
-                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="alertRed">2</Text>
-                        <Box flexDirection="row" alignItems="center" gap="4">
-                          <Text variant="webMetadataPrimary" color="alertRed">Overdue</Text>
-                        </Box>
+                      <Box flex={1} gap="4" paddingLeft="16">
+                        <Text variant="webBody" style={{ fontSize: 28, fontWeight: '700' }} color="secondaryGreen">94%</Text>
+                        <Text variant="webBody" color="foreground" style={{ fontWeight: '500' }}>High-priority completion</Text>
+                        <Text variant="webMetadataPrimary" color="grey05">Critical tasks closed vs total critical tasks due</Text>
                       </Box>
                     </Box>
                   </Box>
-                  
+
                 </Box>
 
                 {/* ── Right Column ── */}

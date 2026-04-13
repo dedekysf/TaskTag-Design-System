@@ -1599,36 +1599,22 @@ export default function TeamDetail() {
                     </Box>
                   </Box>
 
-                  {/* Card 2: ACTIVITY */}
-                  <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="24">
-                    <Text variant="webBody" color="foreground">Activity · This Month</Text>
-
+                  {/* Card 3: TEAM PERFORMANCE */}
+                  <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="16">
+                    <Text variant="webBody" color="foreground">Team Performance · This Month</Text>
                     <Box flexDirection="row">
-                      {/* Active projects */}
-                      <Box flex={1} alignItems="center" gap="8" borderRightWidth={1} borderColor="border">
-                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="grey04">2</Text>
-                        <Text variant="webMetadataPrimary" color="grey05">Active projects</Text>
+                      <Box flex={1} gap="4" borderRightWidth={1} borderColor="border" paddingRight="16">
+                        <Text variant="webBody" style={{ fontSize: 28, fontWeight: '700' }} color="grey05">—</Text>
+                        <Text variant="webBody" color="foreground" style={{ fontWeight: '500' }}>On-time delivery</Text>
+                        <Text variant="webMetadataPrimary" color="grey05">Tasks completed by their due date this month</Text>
                       </Box>
-
-                      {/* Active tasks */}
-                      <Box flex={1} alignItems="center" gap="8" borderRightWidth={1} borderColor="border">
-                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="grey04">10</Text>
-                        <Text variant="webMetadataPrimary" color="grey05">Active tasks</Text>
-                      </Box>
-
-                      {/* Completed */}
-                      <Box flex={1} alignItems="center" gap="8" borderRightWidth={1} borderColor="border">
-                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="grey04">8</Text>
-                        <Text variant="webMetadataPrimary" color="grey05">Completed</Text>
-                      </Box>
-
-                      {/* Overdue */}
-                      <Box flex={1} alignItems="center" gap="8">
-                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="grey04">2</Text>
-                        <Text variant="webMetadataPrimary" color="grey05">Overdue</Text>
+                      <Box flex={1} gap="4" paddingLeft="16">
+                        <Text variant="webBody" style={{ fontSize: 28, fontWeight: '700' }} color="grey05">—</Text>
+                        <Text variant="webBody" color="foreground" style={{ fontWeight: '500' }}>High-priority completion</Text>
+                        <Text variant="webMetadataPrimary" color="grey05">Critical tasks closed vs total critical tasks due</Text>
                       </Box>
                     </Box>
-
+                    <Text variant="webMetadataPrimary" color="grey05" style={{ textAlign: 'center' }}>Performance data unavailable while subscription is inactive</Text>
                   </Box>
 
                 </Box>
@@ -1678,7 +1664,7 @@ export default function TeamDetail() {
               <Box gap="16" style={{ paddingTop: 16 }}>
 
                 {/* ── Plan Header Card ── */}
-                <Box backgroundColor="lightCream" borderWidth={1} borderColor="border" borderRadius="8" padding="24">
+                <Box backgroundColor="lightCream" borderRadius="8" padding="24">
                   <Box flexDirection="row" justifyContent="space-between" alignItems="center">
                     {/* Left */}
                     <Box gap="8">
