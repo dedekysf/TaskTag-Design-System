@@ -1601,21 +1601,26 @@ export default function TeamDetail() {
                   </Box>
 
                   {/* Card 3: TEAM PERFORMANCE */}
-                  <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="16">
+                  <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" gap="24">
                     <Box gap="4">
                       <Text variant="webBody" color="foreground">Team Performance · This Month</Text>
                       <Text variant="webMetadataPrimary" color="grey05">Performance data unavailable while subscription is inactive</Text>
                     </Box>
-                    <Box flexDirection="row" style={{ paddingTop: 8 }}>
-                      <Box flex={1} gap="4" borderRightWidth={1} borderColor="border" paddingRight="16">
-                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="grey05">—</Text>
-                        <Text variant="webBody" color="foreground" style={{ fontWeight: '500' }}>On-time delivery</Text>
-                        <Text variant="webMetadataPrimary" color="grey05">Tasks completed by their due date this month</Text>
+                    <Box flexDirection="row" alignItems="stretch">
+                      <Box flex={1} paddingRight="16" style={{ minHeight: 96, justifyContent: 'space-between' }}>
+                        <Box gap="8">
+                          <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="grey05">—</Text>
+                          <Text variant="webBody" color="foreground" style={{ fontWeight: '500' }}>On-time delivery</Text>
+                        </Box>
+                        <Text variant="webMetadataPrimary" color="grey05" style={{ marginTop: 8 }}>Of all tasks completed this month that met their deadline</Text>
                       </Box>
-                      <Box flex={1} gap="4" paddingLeft="16">
-                        <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="grey05">—</Text>
-                        <Text variant="webBody" color="foreground" style={{ fontWeight: '500' }}>High-priority completion rate</Text>
-                        <Text variant="webMetadataPrimary" color="grey05">How well the team handled its most important work this month</Text>
+                      <Box width={1} backgroundColor="border" />
+                      <Box flex={1} paddingLeft="16" style={{ minHeight: 96, justifyContent: 'space-between' }}>
+                        <Box gap="8">
+                          <Text variant="webBody" style={{ fontSize: 24, fontWeight: '700' }} color="grey05">—</Text>
+                          <Text variant="webBody" color="foreground" style={{ fontWeight: '500' }}>High-priority completion rate</Text>
+                        </Box>
+                        <Text variant="webMetadataPrimary" color="grey05" style={{ marginTop: 8 }}>Of all critical tasks due this month that were closed on time</Text>
                       </Box>
                     </Box>
                   </Box>
