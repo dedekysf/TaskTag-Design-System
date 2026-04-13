@@ -65,10 +65,27 @@ export default function TabUpdateTeamDetailIndex() {
 
         <Text
           variant="webSecondaryBody"
-          style={{ color: TTTheme.colors.textSecondary, textAlign: 'center', marginBottom: 32 }}
+          style={{ color: TTTheme.colors.textSecondary, textAlign: 'center', marginBottom: 16 }}
         >
           This feature affects 3 states in team details. Please access each state to see the changes.
         </Text>
+
+        <Box
+          style={{
+            backgroundColor: TTTheme.colors.lightSky,
+            borderRadius: 10,
+            borderWidth: 1,
+            borderColor: TTTheme.colors.blue,
+            paddingVertical: 10,
+            paddingHorizontal: 16,
+            marginBottom: 32,
+            alignItems: 'center',
+          }}
+        >
+          <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.blue, textAlign: 'center' }}>
+            This page is not for implementation — it is only an explanation. The page to be implemented is the next one.
+          </Text>
+        </Box>
 
         <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'stretch' }}>
           {VARIANTS.map(({ key, label, description, updates, Icon, color, route }) => (
