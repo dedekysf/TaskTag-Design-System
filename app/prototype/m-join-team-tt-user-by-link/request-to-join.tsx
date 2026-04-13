@@ -9,15 +9,12 @@ import {
   ChevronLeft,
   Link as LinkIcon,
   Lock,
-  LogOut,
-  MoreVertical,
-  Pencil,
   SignalHigh,
   Users,
   WifiHigh
 } from 'lucide-react-native';
 import React from 'react';
-import { Linking, Pressable, ScrollView, View } from 'react-native';
+import { Linking, Pressable, ScrollView } from 'react-native';
 
 function SectionLabel({ label }: { label: string }) {
   const theme = useTheme<Theme>();
@@ -44,7 +41,7 @@ const TEAM = {
 export default function RequestToJoin() {
   const theme = useTheme<Theme>();
   const [requestSent, setRequestSent] = React.useState(false);
-  const [menuVisible, setMenuVisible] = React.useState(false);
+  const [showToast, setShowToast] = React.useState(false);
 
   return (
     <Box flex={1} backgroundColor="background">
@@ -82,12 +79,7 @@ export default function RequestToJoin() {
         <Pressable hitSlop={8} style={{ padding: 4, marginRight: 4 }}>
           <ChevronLeft size={22} color={theme.colors.foreground} strokeWidth={2} />
         </Pressable>
-        <Box flex={1}>
-          <Text variant="mobileLabelEmphasized" color="foreground">Team Profile</Text>
-        </Box>
-        <Pressable hitSlop={8} style={{ padding: 4 }} onPress={() => setMenuVisible(true)}>
-          <MoreVertical size={20} color={theme.colors.foreground} strokeWidth={2} />
-        </Pressable>
+        <Text variant="mobileLabelEmphasized" color="foreground">Team Profile</Text>
       </Box>
 
       {/* Shared Link Banner */}
@@ -219,7 +211,11 @@ export default function RequestToJoin() {
           color="secondary"
           size="lg"
           style={{ width: '100%' }}
-          onPress={() => setRequestSent(true)}
+          onPress={() => {
+            setRequestSent(true);
+            setShowToast(true);
+            setTimeout(() => setShowToast(false), 3000);
+          }}
           disabled={requestSent}
         >
           {requestSent ? "Request sent" : "Request to join"}
@@ -238,36 +234,20 @@ export default function RequestToJoin() {
       </Box>
 
 
-
-      {/* Menu Bottom Sheet */}
-      {menuVisible && (
-        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1000 }}>
-          <Pressable
-            style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)' }}
-            onPress={() => setMenuVisible(false)}
-          />
-          <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: theme.colors.white, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24 }}>
-            <View style={{ alignItems: 'center', marginBottom: 16 }}>
-              <View style={{ width: 40, height: 4, backgroundColor: theme.colors.border, borderRadius: 2 }} />
-            </View>
-            
-            <Pressable onPress={() => setMenuVisible(false)}>
-              <Box flexDirection="row" alignItems="center" paddingVertical="12" gap="16">
-                <Pencil size={24} color={theme.colors.textSecondary} />
-                <Text style={{ fontSize: 16, fontWeight: '400', color: theme.colors.foreground }}>Edit Team Info</Text>
-              </Box>
-            </Pressable>
-
-            <Box height={1} backgroundColor="border" marginVertical="8" />
-
-            <Pressable onPress={() => setMenuVisible(false)}>
-              <Box flexDirection="row" alignItems="center" paddingVertical="12" gap="16">
-                <LogOut size={24} color={theme.colors.alertRed} />
-                <Text style={{ fontSize: 16, fontWeight: '400', color: theme.colors.alertRed }}>Leave team</Text>
-              </Box>
-            </Pressable>
-          </View>
-        </View>
+      {/* Toast */}
+      {showToast && (
+        <Box
+          style={{ position: 'absolute' as any, bottom: 120, left: 0, right: 0, alignItems: 'center', zIndex: 999 }}
+          pointerEvents="none"
+        >
+          <Box
+            backgroundColor="grey06"
+            borderRadius="8"
+            style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 16, paddingVertical: 10 }}
+          >
+            <Text style={{ fontSize: 12, color: theme.colors.white, fontFamily: 'Inter_500Medium' }}>Request sent!</Text>
+          </Box>
+        </Box>
       )}
 
       {/* Bottom Home Indicator — 24px, no background */}
