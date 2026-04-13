@@ -171,7 +171,7 @@ export default function RequestToJoin() {
           <Box flexDirection="row" alignItems="center" gap="8" marginBottom="12">
             <Lock size={18} color={theme.colors.textSecondary} />
             <Text variant="mobileLabelEmphasized" color="foreground">
-              Once you're a member, you'll see
+              Once you're a member, you'll have
             </Text>
           </Box>
 
