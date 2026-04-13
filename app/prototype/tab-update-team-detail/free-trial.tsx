@@ -848,6 +848,9 @@ export default function TeamDetail() {
   // Resend toast
   const [showResendToast, setShowResendToast] = useState(false);
 
+  // Dev note dismiss
+  const [showDevNote, setShowDevNote] = useState(true);
+
   // Dropdown portal state
   const [openRoleDropdown, setOpenRoleDropdown] = useState<string | null>(null);
   const [openTeamMenu, setOpenTeamMenu] = useState(false);
@@ -1636,15 +1639,22 @@ export default function TeamDetail() {
                   </Box>
 
                   {/* Note for Dev */}
-                  <Box style={{ backgroundColor: '#fbe676', borderRadius: 12, padding: 16, gap: 8, boxShadow: '0px 4px 12px rgba(0,0,0,0.1)' } as any}>
-                    <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
-                    <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18 }}>
-                      {`Metric 1 — On-time delivery\n(tasks completed on or before due date this month)\n÷ (tasks completed this month with a due date) × 100`}
-                    </Text>
-                    <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18 }}>
-                      {`Metric 2 — High-priority completion rate\n(high priority tasks completed this month)\n÷ (high priority tasks due this month) × 100`}
-                    </Text>
-                  </Box>
+                  {showDevNote && (
+                    <Box style={{ backgroundColor: '#fbe676', borderRadius: 12, padding: 16, gap: 8, boxShadow: '0px 4px 12px rgba(0,0,0,0.1)' } as any}>
+                      <Box flexDirection="row" justifyContent="space-between" alignItems="center">
+                        <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
+                        <Pressable onPress={() => setShowDevNote(false)} hitSlop={8}>
+                          <X size={16} color="#000" />
+                        </Pressable>
+                      </Box>
+                      <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18 }}>
+                        {`Metric 1 — On-time delivery\n(tasks completed on or before due date this month)\n÷ (tasks completed this month with a due date) × 100`}
+                      </Text>
+                      <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18 }}>
+                        {`Metric 2 — High-priority completion rate\n(high priority tasks completed this month)\n÷ (high priority tasks due this month) × 100`}
+                      </Text>
+                    </Box>
+                  )}
 
                 </Box>
 
