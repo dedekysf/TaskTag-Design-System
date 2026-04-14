@@ -76,19 +76,22 @@ export default function TaskOverviewBrowser() {
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 40, gap: 16, paddingTop: 16 }}>
 
-
-          {/* Pending Banner */}
-          <Box alignSelf="center">
-            <Box
-              flexDirection="row" alignItems="center" gap="sm"
-              backgroundColor="lightSky" paddingHorizontal="lg" paddingVertical="xs"
-              borderRadius="full" borderWidth={1} borderColor="border"
-              style={{ paddingVertical: 6 }}
-            >
-              <Clock size={16} color={theme.colors.grey06} />
-              <Text variant="webMetadataPrimary" color="textSecondary" fontWeight="500">Request Sent · Awaiting Approval</Text>
+          {/* Note for Dev */}
+          {bannerVisible && (
+            <Box backgroundColor="brightYellow" borderRadius="xl" padding="md" gap="xs">
+              <Pressable
+                onPress={() => setBannerVisible(false)}
+                style={{ position: 'absolute', top: 8, right: 8, width: 32, height: 32, alignItems: 'center', justifyContent: 'center', zIndex: 10 }}
+                hitSlop={8}
+              >
+                <X size={16} color="#000" />
+              </Pressable>
+              <Text variant="webLabelEmphasized" color="grey07">Note for Dev</Text>
+              <Text variant="webMetadataPrimary" color="grey07" style={{ lineHeight: 18, paddingRight: 20 }}>
+                When user presses download button, if already have open the app. If not direct to Play/App store.
+              </Text>
             </Box>
-          </Box>
+          )}
 
           {/* Task Card (Matches join-tasktag.tsx) */}
           <Box backgroundColor="card" style={{ borderRadius: 16 }} padding="md" gap="md" borderWidth={1} borderColor="border">
@@ -152,9 +155,7 @@ export default function TaskOverviewBrowser() {
             </Box>
           </Box>
 
-          {/* Note for Dev moved to absolute below */}
-
-          {/* Download Banner (Restored inside ScrollView) */}
+          {/* Download Banner */}
           <Box
             backgroundColor="secondary" padding="16" borderRadius={12}
             style={{ backgroundColor: '#000000' }}
@@ -174,26 +175,6 @@ export default function TaskOverviewBrowser() {
             </Button>
           </Box>
         </ScrollView>
-
-        {/* Note for Dev (Absolute position above the bottom area) */}
-        {bannerVisible && (
-          <Box
-            style={{ position: 'absolute', bottom: 210, left: 16, right: 16, zIndex: 40 }}
-            backgroundColor="brightYellow" borderRadius="xl" padding="md" gap="xs"
-          >
-            <Pressable
-              onPress={() => setBannerVisible(false)}
-              style={{ position: 'absolute', top: 8, right: 8, width: 32, height: 32, alignItems: 'center', justifyContent: 'center', zIndex: 10 }}
-              hitSlop={8}
-            >
-              <X size={16} color="#000" />
-            </Pressable>
-            <Text variant="webLabelEmphasized" color="grey07">Note for Dev</Text>
-            <Text variant="webMetadataPrimary" color="grey07" style={{ lineHeight: 18, paddingRight: 20 }}>
-              When user presses download button, if already have open the app. If not direct to Play/App store.
-            </Text>
-          </Box>
-        )}
 
         {/* Bottom Sheet */}
         {sheetVisible && (
