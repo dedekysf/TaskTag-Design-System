@@ -253,7 +253,6 @@ export default function PrototypeIndex() {
       route: '/design-system',
       platforms: ['Web', 'Mobile'] as ('Web' | 'Mobile')[],
     },
-    // hidden: Join Task Non User by Email (Web) — TD-334
     // {
     //   title: 'Join Task Non User by Email',
     //   jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-334?atlOrigin=eyJpIjoiMDVjN2RlMGE4MjYyNDQyNGE3NDkzMzBmZDJjYzhiNWYiLCJwIjoiaiJ9',
@@ -261,6 +260,13 @@ export default function PrototypeIndex() {
     //   route: '/prototype/join-task-non-user',
     //   platform: 'Web' as const,
     // },
+    {
+      title: 'Join Task Non User by Link',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-335?atlOrigin=eyJpIjoiYjYxNDA2OWMzZjllNGM5ZGEwM2QyNjQxZTZlZWQwYmEiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-335',
+      route: '/prototype/m-join-task-non-user-by-link',
+      platform: 'Mobile' as const,
+    },
     {
       title: 'Email - Task Request Approved',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-336?atlOrigin=eyJpIjoiYzA5N2RiYTNiYzc4NDc1N2JhZWVmODc1NDBhOTA1ZmUiLCJwIjoiaiJ9',
@@ -343,6 +349,7 @@ export default function PrototypeIndex() {
   const teamDetail = prototypes.find(p => p.title === 'Role Descriptions and Naming Consistency')!;
   const tabUpdateTeamDetail = prototypes.find(p => p.title === 'Tab Update Team Detail')!;
   const emailTaskApprovalMobile = prototypes.find(p => p.title === 'Email - Task Request Approved' && p.platform === 'Mobile');
+  const joinTaskByLinkMobile = prototypes.find(p => p.title === 'Join Task Non User by Link' && p.platform === 'Mobile');
   const joinTeamTTUser = prototypes.find(p => p.title === 'Join Team TT User by Link');
   const expiredNonUsers = prototypes.filter(p => p.title === 'Team Invitation Expired by Email');
   const rest = prototypes.filter(p => 
@@ -354,10 +361,11 @@ export default function PrototypeIndex() {
     p.title !== 'Email - Task Request Approved' &&
     p.title !== 'Invite Members During Team Creation' &&
     p.title !== 'Tab Update Team Detail' &&
-    p.title !== 'Join Team TT User by Link'
+    p.title !== 'Join Team TT User by Link' &&
+    p.title !== 'Join Task Non User by Link'
   );
 
-  const rawFiltered = [github, designSystem, emailTaskApprovalWeb, tabUpdateTeamDetail, inviteDuringCreation, removeMember, teamDetail, emailTaskApprovalMobile, joinTeamTTUser, ...expiredNonUsers, ...rest].filter(Boolean) as typeof prototypes;
+  const rawFiltered = [github, designSystem, emailTaskApprovalWeb, tabUpdateTeamDetail, inviteDuringCreation, removeMember, teamDetail, joinTaskByLinkMobile, emailTaskApprovalMobile, joinTeamTTUser, ...expiredNonUsers, ...rest].filter(Boolean) as typeof prototypes;
 
   const filtered = rawFiltered.filter(item => {
     const matchTab = activeTab === 'All Device' || PINNED_TITLES.includes(item.title) || ('platform' in item ? item.platform : 'Web') === activeTab;

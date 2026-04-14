@@ -42,7 +42,7 @@ export default function TaskOverviewApp() {
   const [bannerVisible2, setBannerVisible2] = useState(true);
 
   return (
-    <Box flex={1} backgroundColor="grey01">
+    <Box flex={1} backgroundColor="grey02">
 
       {/* Status Bar */}
       <Box

@@ -1,17 +1,17 @@
 import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
 import { TextInput } from '@/components/TextInput';
-import { Tooltip } from '@/components/Tooltip';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import { AlertTriangle, Check, ChevronLeft, Eye, EyeOff, X } from 'lucide-react-native';
 import { router } from 'expo-router';
+import { AlertTriangle, Check, ChevronLeft, Eye, EyeOff, Hammer, X } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
-import { Image, Platform, Pressable, ScrollView, TextInput as RNTextInput, View } from 'react-native';
+import { Image, Platform, Pressable, TextInput as RNTextInput, ScrollView, View } from 'react-native';
 
 const INVITE = {
-  inviterName: 'James Hammer',
-  projectName: 'Painting Team',
+  inviterName: 'Paul Anderson',
+  taskName: 'Deep clean the kitchen appliances',
+  projectName: 'LA Avenue 37 D',
   email: 'newuser@example.com',
 };
 
@@ -50,10 +50,10 @@ export default function JoinTasktagSignup() {
     }
   }, [password, hasTypedPassword, passwordError]);
 
-  const validLength    = password.length >= 8;
-  const validNumber    = /\d/.test(password);
+  const validLength = password.length >= 8;
+  const validNumber = /\d/.test(password);
   const validUppercase = /[A-Z]/.test(password);
-  const validSpecial   = /[!@#$%^&*]/.test(password);
+  const validSpecial = /[!@#$%^&*]/.test(password);
 
   const emailError = REGISTERED_EMAILS.includes(email)
     ? 'This email is already registered. Please log in instead.'
@@ -67,14 +67,14 @@ export default function JoinTasktagSignup() {
   const handleSubmit = () => {
     let valid = true;
     if (!firstName.trim()) { setFirstNameError('First name is required.'); valid = false; } else setFirstNameError('');
-    if (!lastName.trim())  { setLastNameError('Last name is required.');   valid = false; } else setLastNameError('');
+    if (!lastName.trim()) { setLastNameError('Last name is required.'); valid = false; } else setLastNameError('');
     if (!password) {
       setPasswordError('Password is required.'); valid = false;
     } else if (!validLength || !validNumber || !validUppercase || !validSpecial) {
       setPasswordError('Invalid password'); valid = false;
     } else setPasswordError('');
     if (!valid || emailError) return;
-    router.push('/prototype/m-join-team-non-user-by-link/team-overview-browser' as any);
+    router.push('/prototype/m-join-task-non-user-by-link/task-overview-browser' as any);
   };
 
   const emailFormContent = (
@@ -162,10 +162,10 @@ export default function JoinTasktagSignup() {
               <Box gap="4" marginTop="12">
                 <Text variant="webMetadataPrimary" color="textSecondary">Your password must contain:</Text>
                 {[
-                  { label: 'At least 8 characters',                        valid: validLength    },
-                  { label: 'At least 1 number (0-9)',                       valid: validNumber    },
-                  { label: 'At least 1 uppercase letter (A-Z)',             valid: validUppercase },
-                  { label: 'At least 1 special character (e.g. !@#$%&*)', valid: validSpecial   },
+                  { label: 'At least 8 characters', valid: validLength },
+                  { label: 'At least 1 number (0-9)', valid: validNumber },
+                  { label: 'At least 1 uppercase letter (A-Z)', valid: validUppercase },
+                  { label: 'At least 1 special character (e.g. !@#$%&*)', valid: validSpecial },
                 ].map((rule, i) => (
                   <Box key={i} flexDirection="row" alignItems="center" gap="4">
                     {rule.valid
@@ -235,14 +235,18 @@ export default function JoinTasktagSignup() {
                   backgroundColor="lightSky" alignItems="flex-start" padding="md"
                   borderRadius="xl" marginBottom="lg" width="100%"
                 >
-                  <Text variant="webLabelEmphasized" color="foreground" style={{ marginBottom: 8 }}>{INVITE.projectName}</Text>
+                  <Text variant="webLabelEmphasized" color="foreground" style={{ marginBottom: 2 }}>{INVITE.taskName}</Text>
+                  <Box flexDirection="row" alignItems="center" gap="xs" style={{ marginBottom: 16 }}>
+                    <Hammer size={14} color={theme.colors.grey06} strokeWidth={2.5} />
+                    <Text variant="webMetadataPrimary" color="textSecondary">{INVITE.projectName}</Text>
+                  </Box>
                   <Box gap="4">
                     <Text variant="webMetadataPrimary" color="mutedForeground">
                       {"You'll join as a "}
                       <Text variant="webMetadataPrimary" color="foreground" fontWeight="700">Viewer (Pending Approval)</Text>
                     </Text>
                     <Text variant="webMetadataPrimary" color="mutedForeground">
-                      with 3 other members.
+                      with 3 other person.
                     </Text>
                   </Box>
                 </Box>
@@ -251,7 +255,7 @@ export default function JoinTasktagSignup() {
                 <Box marginBottom="lg" alignItems="center">
                   <Box flexDirection="row" gap="md" width="100%" marginBottom="20">
                     <Pressable
-                      onPress={() => router.push('/prototype/m-join-team-non-user-by-link/team-overview-browser' as any)}
+                      onPress={() => router.push('/prototype/m-join-task-non-user-by-link/task-overview-browser' as any)}
                       onHoverIn={() => setIsGoogleHovered(true)}
                       onHoverOut={() => setIsGoogleHovered(false)}
                       style={({ pressed }) => [{
@@ -265,7 +269,7 @@ export default function JoinTasktagSignup() {
                       <Text variant="labelMedium" color="foreground">Google</Text>
                     </Pressable>
                     <Pressable
-                      onPress={() => router.push('/prototype/m-join-team-non-user-by-link/team-overview-browser' as any)}
+                      onPress={() => router.push('/prototype/m-join-task-non-user-by-link/task-overview-browser' as any)}
                       onHoverIn={() => setIsAppleHovered(true)}
                       onHoverOut={() => setIsAppleHovered(false)}
                       style={({ pressed }) => [{

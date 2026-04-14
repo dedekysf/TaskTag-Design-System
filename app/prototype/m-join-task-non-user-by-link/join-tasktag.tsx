@@ -1,14 +1,17 @@
 import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
-import { BatteryFull, Lock, MoreHorizontal, SignalHigh, Users, WifiHigh } from 'lucide-react-native';
-import { router } from 'expo-router';
 import { useTheme } from '@shopify/restyle';
+import { router } from 'expo-router';
+import { BatteryFull, Calendar, ChevronsUp, Hammer, Lock, MoreHorizontal, SignalHigh, User, Users, WifiHigh } from 'lucide-react-native';
 import React from 'react';
-import { Image, Pressable, ScrollView, View } from 'react-native';
+import { Image, Pressable, ScrollView } from 'react-native';
 
-const TEAM = {
-  name: 'Painting Team',
-  description: '3 members on this team.',
+const TASK_DATA = {
+  title: 'Deep clean the kitchen appliances',
+  project: 'LA Avenue 37 D',
+  assigner: 'Paul Anderson',
+  date: 'Dec 15 - Dec 20',
+  description: 'Please verify the exact location where the electrical meter rack should be installed. Check the site plans and confirm with the electrical contractor before proceeding.',
 };
 
 export default function JoinTasktag() {
@@ -37,11 +40,11 @@ export default function JoinTasktag() {
           paddingHorizontal="md" paddingBottom="sm"
           backgroundColor="background" borderBottomWidth={1} borderColor="border"
         >
-          <Box flexDirection="row" alignItems="center" gap="8">
+          <Box flexDirection="row" alignItems="center" gap="sm">
             <Box
               flex={1} flexDirection="row" alignItems="center" justifyContent="center"
               backgroundColor="grey02" paddingHorizontal="12" paddingVertical="12"
-              gap="8" borderRadius="8"
+              gap="sm" borderRadius="sm"
             >
               <Lock size={12} color={theme.colors.grey05} />
               <Text variant="webLabelSmall" color="foreground">tasktag.com</Text>
@@ -59,7 +62,7 @@ export default function JoinTasktag() {
             style={{ width: 100, height: 30 }}
             resizeMode="contain"
           />
-          <Pressable onPress={() => router.push('/prototype/m-join-team-non-user-by-link/join-tasktag-signup')}>
+          <Pressable onPress={() => router.push('/prototype/m-join-task-non-user-by-link/join-tasktag-signup')}>
             <Text variant="webSecondaryBody" style={{ fontSize: 14, color: theme.colors.secondaryGreen, fontWeight: '600' }}>Sign Up</Text>
           </Pressable>
         </Box>
@@ -67,46 +70,106 @@ export default function JoinTasktag() {
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingBottom: 40, paddingHorizontal: 16, paddingTop: 24 }}>
 
           {/* Heading */}
-          <Text variant="h1" color="foreground" style={{ marginBottom: 8, fontSize: 28, textAlign: 'center' }}>
-            You're invited to join
+          <Text variant="mobileHeading22" color="foreground" textAlign="center" style={{ marginBottom: 12 }}>
+            You're invited to join a task
           </Text>
 
-          {/* Team Card — light gray surface, generous logo breathing room */}
-          <View style={{ backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 24, paddingVertical: 24, marginBottom: 24, alignItems: 'center', justifyContent: 'center', gap: 8, borderWidth: 1, borderColor: 'rgba(0,0,0,0.06)' }}>
-            <Image
-              source={require('@/assets/images/sosa-logo.svg')}
-              style={{ width: 160, height: 80, borderRadius: 8 }}
-              resizeMode="contain"
-            />
-            <Box alignItems="center" style={{ gap: 8 }}>
-              <Text variant="h1" color="foreground" style={{ textAlign: 'center', fontSize: 32 }}>{TEAM.name}</Text>
-              <Box flexDirection="row" alignItems="center" style={{ gap: 6 }}>
-                <Users size={14} color={theme.colors.textSecondary} strokeWidth={2} />
-                <Text variant="webSecondaryBody" color="textSecondary">{TEAM.description}</Text>
+          {/* Task Card */}
+          <Box backgroundColor="card" style={{ borderRadius: 16, marginBottom: 24 }} padding="md" gap="md" borderWidth={1} borderColor="border">
+            {/* Top Info Group (Grey background) */}
+            <Box backgroundColor="grey02" borderRadius="md" padding="md" gap="md">
+              {/* Title */}
+              <Text variant="mobileLargeLabel" color="foreground">
+                {TASK_DATA.title}
+              </Text>
+
+              {/* Project & Assigner Row */}
+              <Box flexDirection="row" alignItems="center" gap="md">
+                <Box flexDirection="row" alignItems="center" gap="xs">
+                  <Hammer size={14} color={theme.colors.secondaryGreen} strokeWidth={2.5} />
+                  <Text variant="mobileMetadataPrimary" color="textSecondary">{TASK_DATA.project}</Text>
+                </Box>
+                <Box flexDirection="row" alignItems="center" gap="xs">
+                  <Box width={14} height={14} borderRadius="full" backgroundColor="darkGreen" alignItems="center" justifyContent="center">
+                    <User size={10} color="white" />
+                  </Box>
+                  <Text variant="mobileMetadataPrimary" color="textSecondary">{TASK_DATA.assigner}</Text>
+                </Box>
               </Box>
             </Box>
-          </View>
+
+
+            {/* Priority & Date Row (Action Pills Style) */}
+            <Box flexDirection="row" alignItems="center" gap="sm" marginBottom="xs">
+              <Box
+                flexDirection="row" alignItems="center"
+                backgroundColor="card"
+                paddingHorizontal="md"
+                height={28}
+                borderRadius="full"
+                gap="xs"
+                borderWidth={1}
+                borderColor="border"
+              >
+                <ChevronsUp size={12} color={theme.colors.alertRed} />
+                <Text variant="mobileMetadataPrimary" color="alertRed">
+                  High
+                </Text>
+              </Box>
+              <Box
+                flexDirection="row" alignItems="center"
+                backgroundColor="card"
+                paddingHorizontal="md"
+                height={28}
+                borderRadius="full"
+                gap="xs"
+                borderWidth={1}
+                borderColor="border"
+              >
+                <Calendar size={12} color={theme.colors.textSecondary} strokeWidth={1.5} />
+                <Text variant="mobileMetadataPrimary" color="textSecondary">
+                  {TASK_DATA.date}
+                </Text>
+              </Box>
+            </Box>
+
+            {/* Description */}
+            <Box gap="xs">
+              <Text variant="mobileLabelSmall" color="foreground">Description</Text>
+              <Text variant="mobileMetadataPrimary" color="textSecondary" style={{ lineHeight: 18 }}>
+                {TASK_DATA.description}
+              </Text>
+            </Box>
+
+            {/* Assigned To */}
+            <Box gap="xs">
+              <Text variant="mobileLabelSmall" color="foreground">Assigned To</Text>
+              <Box flexDirection="row" alignItems="center" gap="xs">
+                <Users size={12} color={theme.colors.textSecondary} strokeWidth={2} />
+                <Text variant="mobileMetadataPrimary" color="textSecondary">3 person working on this task</Text>
+              </Box>
+            </Box>
+          </Box>
 
           {/* Request to Join Button */}
           <Pressable
             style={{ width: '100%', backgroundColor: theme.colors.secondaryGreen, borderRadius: 12, height: 52, alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}
-            onPress={() => router.push('/prototype/m-join-team-non-user-by-link/join-tasktag-signup')}
+            onPress={() => router.push('/prototype/m-join-task-non-user-by-link/join-tasktag-signup' as any)}
           >
             <Text variant="webLabelEmphasized" color="white">Request to Join</Text>
           </Pressable>
 
-          <Text variant="webMetadataPrimary" color="textSecondary" style={{ textAlign: 'center', marginBottom: 20 }}>
-            A Team admin will receive your request after sign up.
+          <Text variant="webMetadataPrimary" color="textSecondary" style={{ textAlign: 'center', marginBottom: 20, paddingHorizontal: 16 }}>
+            Admin will receive your request after sign up
           </Text>
 
           {/* Already on TaskTag */}
           <Box flexDirection="row" justifyContent="center" style={{ gap: 4, marginTop: 24 }}>
             <Text variant="webSecondaryBody" color="textSecondary">Already on TaskTag?</Text>
             <Pressable>
-              <Text variant="webSecondaryBody" style={{ color: theme.colors.secondaryGreen, fontWeight: '600' }}>Log in</Text>
+              <Text variant="webSecondaryBody" color="secondaryGreen" style={{ fontWeight: '600' }}>Log in</Text>
             </Pressable>
           </Box>
-
 
         </ScrollView>
 

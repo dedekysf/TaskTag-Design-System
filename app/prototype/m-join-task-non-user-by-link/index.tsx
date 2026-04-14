@@ -4,7 +4,7 @@ import React from 'react';
 import { Pressable } from 'react-native';
 
 const INVITE_URL =
-  'https://app.tasktag.com/invited-user?invitation_token=cee138b6-5bac-4ac4-9087-a4d08edee277&type=project&id=c220f167-e1b6-486b-b89e-51079d96e033';
+  'https://app.tasktag.com/invited-user?invitation_token=cee138b6-5bac-4ac4-9087-a4d08edee277&type=task&id=40078';
 
 export default function InviteLinkEntry() {
   return (
@@ -20,7 +20,7 @@ export default function InviteLinkEntry() {
         <Text variant="webLabelEmphasized" color="foreground" marginBottom="12">
           Please click this link
         </Text>
-        <Pressable onPress={() => router.push('/prototype/m-join-team-non-user-by-link/join-tasktag')}>
+        <Pressable onPress={() => router.push('/prototype/m-join-task-non-user-by-link/join-tasktag')}>
           <Text variant="webMetadataPrimary" color="primary" style={{ textDecorationLine: 'underline', marginBottom: 16 }}>
             {INVITE_URL}
           </Text>
