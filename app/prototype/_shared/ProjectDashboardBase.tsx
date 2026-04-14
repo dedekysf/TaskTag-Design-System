@@ -40,6 +40,7 @@ import {
   SortDesc,
   TriangleAlert,
   Check,
+  CheckCheck,
   UserCheck,
   UserPlus,
   Users,
@@ -569,7 +570,7 @@ export default function ProjectDashboardBase({
                         </Box>
                       </Box>
                     </Box>
-                    <Check size={14} color={theme.colors.secondaryGreen} style={{ marginBottom: 2 }} />
+                    <CheckCheck size={14} color={theme.colors.secondaryGreen} style={{ marginBottom: 2 }} />
                   </Box>
                 ) : (
                   <Box style={{ backgroundColor: theme.colors.card, borderRadius: 12, borderTopLeftRadius: 0, padding: 8, alignSelf: 'flex-start' as any }}>

@@ -4,16 +4,15 @@ import { TextInput } from '@/components/TextInput';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import { router } from 'expo-router';
-import { AlertTriangle, Check, Eye, EyeOff, MapPin, X } from 'lucide-react-native';
+import { AlertTriangle, Check, Eye, EyeOff, Hammer, X } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { Image, Platform, Pressable, TextInput as RNTextInput, ScrollView } from 'react-native';
 
 // Simulated invite token data
 const INVITE = {
-  inviterName: 'James Hammer',
-  projectName: 'Raintree Hollow Court Renovation',
-  address: '11 N Raintree Hollow Court',
-  role: 'Editor',
+  inviterName: 'Paul Anderson',
+  taskName: 'Deep clean the kitchen appliances',
+  projectName: 'LA Avenue 37 D',
   email: 'newuser@example.com',
 };
 
@@ -132,7 +131,7 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
       </Text>
       <Box flexDirection="row" justifyContent="center" flexWrap="wrap" marginBottom="16">
         <Text variant="webMetadataPrimary" color="mutedForeground">
-          {"Someone shared this project with you"}
+          {"Someone shared this task with you"}
         </Text>
       </Box>
 
@@ -144,25 +143,21 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
         borderRadius="xl"
         marginBottom="lg"
         width="100%"
-        position="relative"
-        zIndex="10"
       >
-        <Text variant="webLabelEmphasized" style={{ marginBottom: 4 }}>
-          {INVITE.projectName}
+        <Text variant="webLabelEmphasized" color="foreground" style={{ marginBottom: 8, fontSize: 18 }}>
+          {INVITE.taskName}
         </Text>
-        <Box flexDirection="row" alignItems="center" gap="4" marginBottom="16">
-          <MapPin size={14} color={theme.colors.textSecondary} />
+        <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="16">
+          <Hammer size={14} color={theme.colors.grey06} strokeWidth={2.5} />
           <Text variant="webSecondaryBody" color="mutedForeground">
-            {INVITE.address}
+            {INVITE.projectName}
           </Text>
         </Box>
-
-        <Box flexDirection="row" alignItems="center" gap="4">
-          <Text variant="webSecondaryBody" color="mutedForeground">Your Role : </Text>
-          <Text variant="webSecondaryBody" color="foreground" fontWeight="700">
-            Viewer <Text variant="webMetadataPrimary" fontWeight="400">(Pending Approval)</Text>
-          </Text>
-        </Box>
+        <Text variant="webSecondaryBody" color="mutedForeground">
+          {"You'll join as a "}
+          <Text variant="webSecondaryBody" color="foreground" fontWeight="700">Viewer (Pending Approval)</Text>
+          {" with 3 other person."}
+        </Text>
       </Box>
 
       {/* Social sign-in */}
@@ -171,6 +166,7 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
           <Pressable
             onHoverIn={() => setIsGoogleHovered(true)}
             onHoverOut={() => setIsGoogleHovered(false)}
+            onPress={() => router.push('/prototype/join-task-non-user-by-link/task-panel-request-to-join')}
             style={({ pressed }) => [
               {
                 flex: 1,
@@ -198,6 +194,7 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
           <Pressable
             onHoverIn={() => setIsAppleHovered(true)}
             onHoverOut={() => setIsAppleHovered(false)}
+            onPress={() => router.push('/prototype/join-task-non-user-by-link/task-panel-request-to-join')}
             style={({ pressed }) => [
               {
                 flex: 1,
