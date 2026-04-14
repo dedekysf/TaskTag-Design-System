@@ -35,10 +35,13 @@ import {
   Link,
   ListChecks,
   ListFilter,
+  Maximize2,
   MessageSquarePlus,
   MoreVertical,
   Plus,
   Search,
+  Send,
+  Smile,
   Upload,
   UserPlus,
   Users,
@@ -1040,93 +1043,123 @@ function TaskDetailPanel({ onJoin }: { onJoin: () => void }) {
   );
 }
 
+// ── Mini Chat Sidebar ─────────────────────────────────────────────────────────
+function MiniChatSidebar() {
+  const theme = useTheme<Theme>();
+
+  return (
+    <Box width={72} backgroundColor="card" borderLeftWidth={1} borderColor="border" alignItems="center" style={{ height: '100%' as any, paddingTop: 16, paddingBottom: 20 }}>
+      <Pressable style={{ padding: 8, marginBottom: 12 }}>
+        <ChevronsLeft size={20} color={theme.colors.grey04} />
+      </Pressable>
+      <Box alignItems="center" justifyContent="center" style={{ width: '100%', paddingVertical: 10, backgroundColor: theme.colors.lightMint, marginBottom: 8 }}>
+        <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelMagenta">
+          <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 14 }}>LS</Text>
+        </Box>
+      </Box>
+      <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelBlue" style={{ marginBottom: 8 }}>
+        <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 14 }}>SN</Text>
+      </Box>
+      <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelOrange">
+        <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 14 }}>TH</Text>
+      </Box>
+      <Box flex={1} justifyContent="flex-end">
+        <Pressable
+          style={{
+            width: 44, height: 44, borderRadius: 22,
+            backgroundColor: theme.colors.foreground,
+            alignItems: 'center', justifyContent: 'center',
+            ...Platform.select({
+              web: { boxShadow: '0 4px 16px rgba(0,0,0,0.2)' } as any,
+              default: { elevation: 6, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 8 },
+            }),
+          }}
+        >
+          <MessageSquarePlus size={20} color={theme.colors.white} />
+        </Pressable>
+      </Box>
+    </Box>
+  );
+}
+
 // ── Chat Panel ────────────────────────────────────────────────────────────────
 function ChatPanel() {
   const theme = useTheme<Theme>();
 
   return (
-    <Box
-      flex={1}
-      backgroundColor="background"
-      borderLeftWidth={1}
-      borderColor="border"
-      style={{ height: '100%' as any, maxWidth: 550, position: 'relative' as any }}
-    >
-      {/* Chat Header */}
-      <Box
-        flexDirection="row"
-        alignItems="center"
-        justifyContent="space-between"
-        backgroundColor="background"
-        style={{ height: 74, paddingHorizontal: 24, paddingVertical: 12 }}
-      >
-        <Text style={{ fontSize: 22, fontWeight: '600', color: theme.colors.foreground, lineHeight: 32 }}>
-          Chat
-        </Text>
+    <Box flex={1} backgroundColor="grey01" borderLeftWidth={1} borderColor="border" style={{ height: '100%' as any, maxWidth: 550 }}>
+      {/* Header */}
+      <Box flexDirection="row" alignItems="center" justifyContent="space-between" backgroundColor="card" borderBottomWidth={1} borderColor="border" style={{ height: 72, paddingHorizontal: 20 }}>
+        <Box flexDirection="row" alignItems="center" gap="12">
+          <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelMagenta">
+            <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 14 }}>LS</Text>
+          </Box>
+          <Text variant="webLabelEmphasized" color="foreground">Linda Smith</Text>
+        </Box>
         <Box flexDirection="row" alignItems="center">
-          <Pressable style={({ hovered }: any) => ({ padding: 4, borderRadius: 4, backgroundColor: hovered ? theme.colors.grey02 : 'transparent' })}>
-            <Search size={24} color={theme.colors.textSecondary} />
-          </Pressable>
-          <Pressable style={({ hovered }: any) => ({ padding: 4, borderRadius: 4, backgroundColor: hovered ? theme.colors.grey02 : 'transparent' })}>
-            <MoreVertical size={24} color={theme.colors.textSecondary} />
-          </Pressable>
-          <Pressable style={({ hovered }: any) => ({ padding: 4, borderRadius: 4, backgroundColor: hovered ? theme.colors.grey02 : 'transparent' })}>
-            <ChevronsRight size={24} color={theme.colors.textSecondary} />
-          </Pressable>
+          <Pressable style={{ padding: 8 }}><Maximize2 size={18} color={theme.colors.textSecondary} /></Pressable>
+          <Pressable style={{ padding: 8 }}><MoreVertical size={18} color={theme.colors.textSecondary} /></Pressable>
+          <Pressable style={{ padding: 8 }}><X size={18} color={theme.colors.textSecondary} /></Pressable>
         </Box>
       </Box>
 
-      {/* Chat List */}
-      <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
-        <Box
-          flexDirection="row"
-          alignItems="center"
-          style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 10, gap: 16 }}
-        >
-          <Box
-            width={48}
-            height={48}
-            borderRadius="full"
-            alignItems="center"
-            justifyContent="center"
-            backgroundColor="pastelOrange"
-            style={{ flexShrink: 0 } as any}
-          >
-            <Text style={{ fontWeight: '600', color: '#FFFFFF', fontSize: 22 }}>TH</Text>
-          </Box>
-          <Box flex={1} style={{ minWidth: 0, gap: 4 }}>
-            <Text variant="webSecondaryBody" color="foreground">
-              Tasktag Helpdesk
-            </Text>
-            <Text variant="webMetadataPrimary" color="grey04" numberOfLines={1}>
-              Hi there! Welcome to TaskTag! We're here to assist you with any questions or support requests you might
-              have.
-            </Text>
-          </Box>
-          <Text variant="webMetadataPrimary" color="grey04">
-            Yesterday
-          </Text>
+      <Box flex={1} justifyContent="flex-end">
+        {/* Date divider */}
+        <Box flexDirection="row" alignItems="center" style={{ paddingHorizontal: 24, paddingVertical: 20 }}>
+          <Box flex={1} height={1} backgroundColor="border" />
+          <Text style={{ fontSize: 12, color: theme.colors.grey03, marginHorizontal: 12 }}>Friday, November 20</Text>
+          <Box flex={1} height={1} backgroundColor="border" />
         </Box>
-      </ScrollView>
 
-      {/* New Message FAB */}
-      <Pressable
-        style={{
-          position: 'absolute' as any,
-          bottom: 16,
-          right: 16,
-          backgroundColor: theme.colors.foreground,
-          borderRadius: 156,
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingHorizontal: 12,
-          paddingVertical: 12,
-          gap: 8,
-        }}
-      >
-        <MessageSquarePlus size={24} color={theme.colors.white} />
-        <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.white }}>New Message</Text>
-      </Pressable>
+        {/* Message bubble */}
+        <Box style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
+          <Box flexDirection="row" gap="12" alignItems="flex-start">
+            <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelMagenta" style={{ marginTop: 2 }}>
+              <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 14 }}>LS</Text>
+            </Box>
+            <Box flex={1}>
+              <Box flexDirection="row" alignItems="center" gap="8" style={{ marginBottom: 8 }}>
+                <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>Linda Smith</Text>
+                <Text style={{ fontSize: 11, color: theme.colors.grey04 }}>12:25 PM</Text>
+              </Box>
+              <Box style={{ backgroundColor: theme.colors.card, borderRadius: 12, borderTopLeftRadius: 0, padding: 8, alignSelf: 'flex-start' as any }}>
+                <Box borderWidth={1} borderColor="border" style={{ borderRadius: 10, overflow: 'hidden' as any }}>
+                  <Box flexDirection="row" alignItems="center" gap="8" style={{ padding: 10, backgroundColor: '#f9eefa' }}>
+                    <Users size={14} color={theme.colors.darkMagenta} />
+                    <Text style={{ fontSize: 12, color: theme.colors.darkMagenta, fontWeight: '500' }}>Member Activity</Text>
+                  </Box>
+                  <Box backgroundColor="card" style={{ padding: 8 }}>
+                    <Text style={{ fontSize: 14, color: theme.colors.mutedForeground, marginBottom: 8, lineHeight: 22 }}>
+                      {"You've been added to this task"}
+                    </Text>
+                    <Box flexDirection="row" alignItems="center" gap="4" style={{ backgroundColor: '#000000', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 5, alignSelf: 'flex-start' as any, maxWidth: 200 }}>
+                      <Hash size={12} color={theme.colors.white} />
+                      <Text style={{ fontSize: 12, color: theme.colors.white, fontWeight: '500' }} numberOfLines={1}>{'Comprehensive Electrical Service'}</Text>
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
+
+      {/* Message input */}
+      <Box style={{ paddingHorizontal: 16, paddingVertical: 16 }}>
+        <Box backgroundColor="card" borderWidth={1} borderColor="border" style={{ borderRadius: 16, paddingHorizontal: 16, paddingTop: 12, paddingBottom: 10 }}>
+          <Text style={{ fontSize: 14, color: theme.colors.grey03, paddingBottom: 20 }}>Type message here...</Text>
+          <Box flexDirection="row" alignItems="center" justifyContent="space-between">
+            <Box flexDirection="row" alignItems="center">
+              {([Plus, Hash, FileText, ImageIcon, Smile] as any[]).map((Icon, i) => (
+                <Pressable key={i} style={{ padding: 8 }}><Icon size={20} color={theme.colors.grey04} /></Pressable>
+              ))}
+            </Box>
+            <Pressable disabled style={{ width: 40, height: 40, borderRadius: 10, backgroundColor: theme.colors.grey02, alignItems: 'center', justifyContent: 'center' }}>
+              <Send size={18} color={theme.colors.grey04} />
+            </Pressable>
+          </Box>
+        </Box>
+      </Box>
     </Box>
   );
 }
@@ -1254,6 +1287,9 @@ export default function MyTask() {
 
       {/* ── Chat Panel ── */}
       <ChatPanel />
+
+      {/* ── Mini Chat Sidebar ── */}
+      <MiniChatSidebar />
 
       {/* ── Signup Modal ── */}
       <Modal visible={showSignupModal} transparent animationType="fade" onRequestClose={() => setShowSignupModal(false)}>
