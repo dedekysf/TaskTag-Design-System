@@ -15,6 +15,7 @@ const PROJECT = {
 export default function ProjectOverview() {
   const theme = useTheme<Theme>();
   const [bannerVisible, setBannerVisible] = useState(true);
+  const [bannerVisible2, setBannerVisible2] = useState(true);
 
   return (
     <Box flex={1} backgroundColor="grey02">
@@ -192,6 +193,23 @@ export default function ProjectOverview() {
           <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
           <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18, opacity: 0.7, paddingRight: 20 }}>
             After tapping view project, if already installed app then open app, if not direct to app/play store.
+          </Text>
+        </View>
+      )}
+
+      {/* Note Banner 2 — Chat bubble */}
+      {bannerVisible2 && (
+        <View style={{ position: 'absolute', bottom: bannerVisible ? 220 : 104, left: 16, right: 16, backgroundColor: theme.colors.brightYellow, borderRadius: 12, padding: 16, gap: 4 }}>
+          <Pressable
+            onPress={() => setBannerVisible2(false)}
+            style={{ position: 'absolute', top: 8, right: 8, width: 32, height: 32, alignItems: 'center', justifyContent: 'center', zIndex: 10 }}
+            hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+          >
+            <X size={16} color="#000" />
+          </Pressable>
+          <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
+          <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18, opacity: 0.7, paddingRight: 20 }}>
+            Make sure the user gets the member activity chat bubble from the project owner — "You've been added to this project".
           </Text>
         </View>
       )}
