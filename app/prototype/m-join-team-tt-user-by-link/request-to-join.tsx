@@ -13,6 +13,7 @@ import {
   Users,
   WifiHigh
 } from 'lucide-react-native';
+import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { Linking, Pressable, ScrollView } from 'react-native';
 
@@ -40,7 +41,8 @@ const TEAM = {
 
 export default function RequestToJoin() {
   const theme = useTheme<Theme>();
-  const [requestSent, setRequestSent] = React.useState(false);
+  const params = useLocalSearchParams();
+  const [requestSent, setRequestSent] = React.useState(params.sent === 'true');
   const [showToast, setShowToast] = React.useState(false);
 
   return (

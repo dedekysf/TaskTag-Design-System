@@ -2,8 +2,9 @@ import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import { Clock, Lock, MoreHorizontal, BatteryFull, SignalHigh, WifiHigh } from 'lucide-react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { Pressable, ScrollView, View, Image } from 'react-native';
+import { Link } from 'expo-router';
 
 const TEAM = {
   name: 'Painting Team',
@@ -18,6 +19,7 @@ const MEMBERS = [
 
 export default function TeamOverviewBrowser() {
   const theme = useTheme<Theme>();
+  const [bannerVisible, setBannerVisible] = React.useState(true);
 
   return (
     <Box flex={1} backgroundColor="background" alignItems="center">
@@ -118,8 +120,32 @@ export default function TeamOverviewBrowser() {
         </ScrollView>
 
         {/* Fixed Bottom Black Banner */}
-        <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, zIndex: 40 }}>
-          <View style={{ backgroundColor: '#000000', borderRadius: 12, padding: 20 }}>
+        <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, zIndex: 40, gap: 8 }}>
+          {/* Note for Dev */}
+          {bannerVisible && (
+            <View style={{ backgroundColor: '#fbe676', borderRadius: 12, padding: 14, flexDirection: 'row', alignItems: 'flex-start', gap: 8 }}>
+              <View style={{ flex: 1, gap: 2 }}>
+                <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
+                <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18, fontSize: 12 }}>
+                  When the user presses the download button, the app will open immediately and be redirected to this page {' '}
+                  <Link href="/prototype/m-join-team-tt-user-by-link/request-to-join?sent=true" asChild>
+                    <Text style={{ textDecorationLine: 'underline', fontWeight: '600', fontSize: 12 }}>"Join Team TT User by Link" (please click)</Text>
+                  </Link>
+                  . If not, they will be redirected to the Play Store/App Store.
+                </Text>
+              </View>
+              <Pressable
+                onPress={() => setBannerVisible(false)}
+                style={{ width: 24, height: 24, alignItems: 'center', justifyContent: 'center', marginTop: 2 }}
+                hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+              >
+                <Text variant="webLabelEmphasized" style={{ color: '#000', fontSize: 16, lineHeight: 16 }}>×</Text>
+              </Pressable>
+            </View>
+          )}
+
+          {/* Black Banner */}
+          <View style={{ backgroundColor: '#000000', borderRadius: 12, padding: 16 }}>
             <View style={{ marginBottom: 4 }}>
               <Text variant="webLabelEmphasized" color="white">Hang tight.</Text>
             </View>

@@ -4,6 +4,7 @@ import { useTheme } from '@shopify/restyle';
 import { Clock, Lock, MoreHorizontal, BatteryFull, SignalHigh, WifiHigh } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Pressable, ScrollView, View, Image } from 'react-native';
+import { Link } from 'expo-router';
 
 const TEAM = {
   name: 'Painting Team',
@@ -126,8 +127,12 @@ export default function TeamOverviewBrowser() {
             <View style={{ backgroundColor: '#fbe676', borderRadius: 12, padding: 14, flexDirection: 'row', alignItems: 'flex-start', gap: 8 }}>
               <View style={{ flex: 1, gap: 2 }}>
                 <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
-                <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18 }}>
-                  When user presses download button, if already have open the app. If not direct to Play/App store.
+                <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18, fontSize: 12 }}>
+                  When the user presses the download button, the app will open immediately and be redirected to this page {' '}
+                  <Link href="/prototype/m-join-team-tt-user-by-link/request-to-join?sent=true" asChild>
+                    <Text style={{ textDecorationLine: 'underline', fontWeight: '600', fontSize: 12 }}>"Join Team TT User by Link" (please click)</Text>
+                  </Link>
+                  . If not, they will be redirected to the Play Store/App Store.
                 </Text>
               </View>
               <Pressable
