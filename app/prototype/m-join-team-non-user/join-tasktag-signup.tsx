@@ -4,7 +4,7 @@ import { TextInput } from '@/components/TextInput';
 import { Tooltip } from '@/components/Tooltip';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import { AlertTriangle, Check, ChevronLeft, Eye, EyeOff } from 'lucide-react-native';
+import { AlertTriangle, BatteryFull, Check, ChevronLeft, Eye, EyeOff, Lock, MoreHorizontal, SignalHigh, WifiHigh } from 'lucide-react-native';
 import { router } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Image, Platform, Pressable, ScrollView, TextInput as RNTextInput, View } from 'react-native';
@@ -184,34 +184,54 @@ export default function JoinTasktagSignup() {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      {noteVisible && (
-        <View style={{ marginHorizontal: 16, marginTop: 16, backgroundColor: '#fbe676', borderRadius: 12, padding: 14, flexDirection: 'row', alignItems: 'flex-start', gap: 8, zIndex: 10 }}>
-          <View style={{ flex: 1, gap: 2 }}>
-            <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
-            <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18 }}>
-              If using a different email, this acts as a standard registration (no invite attached).
-            </Text>
-          </View>
-          <Pressable
-            onPress={() => setNoteVisible(false)}
-            style={{ width: 24, height: 24, alignItems: 'center', justifyContent: 'center', marginTop: 2 }}
-            hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
-          >
-            <Text variant="webLabelEmphasized" style={{ color: '#000', fontSize: 16, lineHeight: 16 }}>×</Text>
-          </Pressable>
-        </View>
-      )}
-      {step === 'select' && (
-        <>
-          {tooltipOpen && (
-            <Pressable
-              style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 10, backgroundColor: 'transparent' }}
-              onPress={() => setTooltipOpen(false)}
-            />
-          )}
-          <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 24, flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Box width="100%" maxWidth={480}>
+    <Box flex={1} backgroundColor="background" alignItems="center">
+      <Box flex={1} width="100%" maxWidth={480} backgroundColor="grey02">
+
+        {/* Status Bar */}
+        <Box
+          flexDirection="row" alignItems="center" justifyContent="space-between"
+          paddingHorizontal="xl" paddingTop="md" paddingBottom="sm"
+          backgroundColor="background"
+        >
+          <Text color="foreground" paddingLeft="8" style={{ fontWeight: '600', fontSize: 15 }}>9:41</Text>
+          <Box flexDirection="row" alignItems="center" gap="8" paddingRight="8">
+            <SignalHigh size={15} color={theme.colors.foreground} strokeWidth={2.5} />
+            <WifiHigh size={15} color={theme.colors.foreground} strokeWidth={2.5} />
+            <BatteryFull size={22} color={theme.colors.foreground} strokeWidth={2} />
+          </Box>
+        </Box>
+
+        {/* Browser Header */}
+        <Box
+          paddingHorizontal="md" paddingBottom="sm"
+          backgroundColor="background" borderBottomWidth={1} borderColor="border"
+        >
+          <Box flexDirection="row" alignItems="center" gap="8">
+            <Box
+              flex={1} flexDirection="row" alignItems="center" justifyContent="center"
+              backgroundColor="grey02" paddingHorizontal="12" paddingVertical="12"
+              gap="8" borderRadius="8"
+            >
+              <Lock size={12} color={theme.colors.grey05} />
+              <Text variant="webLabelSmall" color="foreground">tasktag.com</Text>
+            </Box>
+            <Pressable style={{ padding: 4 }}>
+              <MoreHorizontal size={20} color={theme.colors.foreground} strokeWidth={2} />
+            </Pressable>
+          </Box>
+        </Box>
+
+        <Box flex={1} backgroundColor="background">
+          {step === 'select' && (
+            <>
+              {tooltipOpen && (
+                <Pressable
+                  style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 10, backgroundColor: 'transparent' }}
+                  onPress={() => setTooltipOpen(false)}
+                />
+              )}
+              <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 24, flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Box width="100%" maxWidth={480}>
                   <Text variant="h2" textAlign="center" marginBottom="4">Create an account</Text>
                   <Box flexDirection="row" justifyContent="center" flexWrap="wrap" marginBottom="16">
                     <Text variant="webMetadataPrimary" color="foreground" fontWeight="700">{INVITE.inviterName}</Text>
@@ -294,12 +314,33 @@ export default function JoinTasktagSignup() {
                       </Text>
                     </Text>
                   </Box>
-              </Box>
-            </ScrollView>
-          </>
-        )}
+                </Box>
+              </ScrollView>
+            </>
+          )}
 
-        {step === 'email-form' && emailFormContent}
-    </View>
+          {step === 'email-form' && emailFormContent}
+
+          {/* Note for Dev positioned at the bottom */}
+          {noteVisible && (
+            <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, backgroundColor: '#fbe676', borderRadius: 12, padding: 14, flexDirection: 'row', alignItems: 'flex-start', gap: 8, zIndex: 10 }}>
+              <View style={{ flex: 1, gap: 2 }}>
+                <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
+                <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18 }}>
+                  If using a different email, this acts as a standard registration (no invite attached).
+                </Text>
+              </View>
+              <Pressable
+                onPress={() => setNoteVisible(false)}
+                style={{ width: 24, height: 24, alignItems: 'center', justifyContent: 'center', marginTop: 2 }}
+                hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+              >
+                <Text variant="webLabelEmphasized" style={{ color: '#000', fontSize: 16, lineHeight: 16 }}>×</Text>
+              </Pressable>
+            </View>
+          )}
+        </Box>
+      </Box>
+    </Box>
   );
 }
