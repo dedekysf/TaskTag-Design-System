@@ -554,17 +554,17 @@ export default function ProjectDashboardBase({
                 </Box>
                 {viewVariant === 'pending' ? (
                   <Box flexDirection="row" alignItems="flex-end" gap="8">
-                    <Box flex={1} style={{ backgroundColor: theme.colors.lightMint, borderRadius: 12, borderTopLeftRadius: 0, padding: 8 }}>
+                    <Box style={{ backgroundColor: theme.colors.lightMint, borderRadius: 12, borderTopLeftRadius: 0, padding: 8, alignSelf: 'flex-start' as any }}>
                       <Box borderWidth={1} borderColor="border" style={{ borderRadius: 10, overflow: 'hidden' as any }}>
                         <Box flexDirection="row" alignItems="center" gap="8" style={{ padding: 10, backgroundColor: '#f9eefa' }}>
                           <Users size={13} color={theme.colors.darkMagenta} />
                           <Text style={{ fontSize: 12, color: theme.colors.darkMagenta, fontWeight: '500' }}>Member Activity</Text>
                         </Box>
-                        <Box backgroundColor="card" style={{ padding: 12 }}>
+                        <Box backgroundColor="card" style={{ padding: 8 }}>
                           <Text style={{ fontSize: 14, color: theme.colors.textSecondary, marginBottom: 10, lineHeight: 20 }}>Ask to join this project</Text>
                           <Box flexDirection="row" alignItems="center" gap="8" style={{ backgroundColor: theme.colors.secondaryGreen, borderRadius: 6, paddingHorizontal: 8, paddingVertical: 5, alignSelf: 'flex-start' as any }}>
                             <Folder size={12} color={theme.colors.white} />
-                            <Text style={{ fontSize: 12, color: theme.colors.white, fontWeight: '500' }}>Raintree Hollow Court Ren...</Text>
+                            <Text style={{ fontSize: 12, color: theme.colors.white, fontWeight: '500' }} numberOfLines={1}>{PROJECT.name.length > 20 ? PROJECT.name.slice(0, 20) + '...' : PROJECT.name}</Text>
                           </Box>
                         </Box>
                       </Box>
@@ -572,16 +572,18 @@ export default function ProjectDashboardBase({
                     <Check size={14} color={theme.colors.secondaryGreen} style={{ marginBottom: 2 }} />
                   </Box>
                 ) : (
-                  <Box borderWidth={1} borderColor="border" style={{ borderRadius: 10, overflow: 'hidden' as any }}>
-                    <Box flexDirection="row" alignItems="center" gap="8" style={{ padding: 10, backgroundColor: '#f9eefa' }}>
-                      <Users size={13} color={theme.colors.darkMagenta} />
-                      <Text style={{ fontSize: 12, color: theme.colors.darkMagenta, fontWeight: '500' }}>Member Activity</Text>
-                    </Box>
-                    <Box backgroundColor="card" style={{ padding: 12 }}>
-                      <Text style={{ fontSize: 14, color: theme.colors.textSecondary, marginBottom: 10, lineHeight: 20 }}>You've been added to this project</Text>
-                      <Box flexDirection="row" alignItems="center" gap="8" style={{ backgroundColor: theme.colors.secondaryGreen, borderRadius: 6, paddingHorizontal: 8, paddingVertical: 5, alignSelf: 'flex-start' as any }}>
-                        <Folder size={12} color={theme.colors.white} />
-                        <Text style={{ fontSize: 12, color: theme.colors.white, fontWeight: '500' }}>Raintree Hollow Court Ren...</Text>
+                  <Box style={{ backgroundColor: theme.colors.card, borderRadius: 12, borderTopLeftRadius: 0, padding: 8, alignSelf: 'flex-start' as any }}>
+                    <Box borderWidth={1} borderColor="border" style={{ borderRadius: 10, overflow: 'hidden' as any }}>
+                      <Box flexDirection="row" alignItems="center" gap="8" style={{ padding: 10, backgroundColor: '#f9eefa' }}>
+                        <Users size={13} color={theme.colors.darkMagenta} />
+                        <Text style={{ fontSize: 12, color: theme.colors.darkMagenta, fontWeight: '500' }}>Member Activity</Text>
+                      </Box>
+                      <Box backgroundColor="card" style={{ padding: 8 }}>
+                        <Text style={{ fontSize: 14, color: theme.colors.textSecondary, marginBottom: 10, lineHeight: 20 }}>You've been added to this project</Text>
+                        <Box flexDirection="row" alignItems="center" gap="8" style={{ backgroundColor: theme.colors.secondaryGreen, borderRadius: 6, paddingHorizontal: 8, paddingVertical: 5, alignSelf: 'flex-start' as any }}>
+                          <Folder size={12} color={theme.colors.white} />
+                          <Text style={{ fontSize: 12, color: theme.colors.white, fontWeight: '500' }} numberOfLines={1}>{PROJECT.name.length > 20 ? PROJECT.name.slice(0, 20) + '...' : PROJECT.name}</Text>
+                        </Box>
                       </Box>
                     </Box>
                   </Box>
