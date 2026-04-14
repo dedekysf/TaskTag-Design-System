@@ -1669,7 +1669,7 @@ export default function TeamDetail() {
 
                   <Box backgroundColor="lightCream" padding="16" borderRadius="8" gap="4">
                     <Text variant="webBody" color="textSecondary">
-                      Your trial ends on <Text variant="webLabelEmphasized" color="textSecondary">March 15, 2026</Text>
+                      Your trial ends on <Text variant="webLabelEmphasized" color="textSecondary">March 17, 2026</Text>
                     </Text>
                     <Text variant="webMetadataPrimary" color="grey05">No payment will be taken until your trial ends</Text>
                   </Box>
@@ -1697,7 +1697,7 @@ export default function TeamDetail() {
                     <Button variant="primary" onPress={() => setShowUpgradeModal(true)} style={{ height: 48, backgroundColor: theme.colors.black, borderRadius: 8, justifyContent: 'center' }}>
                       <Text variant="labelMedium" style={{ color: '#fff', fontSize: 16 }}>Activate Plan</Text>
                     </Button>
-                    <Text variant="webMetadataPrimary" color="grey05" style={{ textAlign: 'center' }}>Trial ends March 15, 2026</Text>
+                    <Text variant="webMetadataPrimary" color="grey05" style={{ textAlign: 'center' }}>Trial ends March 17, 2026</Text>
                   </Box>
 
                 </Box>
@@ -1719,7 +1719,7 @@ export default function TeamDetail() {
                         </Box>
                       </Box>
                       <Box flexDirection="row" alignItems="center" gap="4">
-                        <Text variant="webBody" color="textSecondary">Trial ends March 15, 2026</Text>
+                        <Text variant="webBody" color="textSecondary">Trial ends March 17, 2026</Text>
                         <Text variant="webBody" color="textSecondary">· No payment until then</Text>
                       </Box>
                     </Box>
@@ -1730,7 +1730,7 @@ export default function TeamDetail() {
                         <Text style={{ fontSize: 36, fontWeight: '700', color: theme.colors.foreground, lineHeight: 44 }}>$64</Text>
                         <Text variant="webBody" color="textSecondary" style={{ marginBottom: 6 }}>/month</Text>
                       </Box>
-                      <Text variant="webMetadataPrimary" color="textSecondary">billed on March 15, 2026</Text>
+                      <Text variant="webMetadataPrimary" color="textSecondary">billed on March 17, 2026</Text>
                       <Text variant="webMetadataPrimary" color="textSecondary">4 members × $16/month</Text>
                     </Box>
                   </Box>
@@ -1784,7 +1784,7 @@ export default function TeamDetail() {
                 <Box backgroundColor="card" borderWidth={1} borderColor="border" borderRadius="8" padding="24" flexDirection={windowWidth < 1280 ? 'column' : 'row'} justifyContent="space-between" alignItems={windowWidth < 1280 ? 'flex-start' : 'center'} gap={windowWidth < 1280 ? "16" : undefined}>
                   <Box gap="4">
                     <Text variant="webLabelEmphasized" color="secondaryGreen">Activate your plan today</Text>
-                    <Text variant="webMetadataPrimary" color="textSecondary">No charge until March 15, 2026 · Cancel anytime</Text>
+                    <Text variant="webMetadataPrimary" color="textSecondary">No charge until March 17, 2026 · Cancel anytime</Text>
                   </Box>
                   <Button variant="fill" color="secondary" size="lg" onPress={() => setShowUpgradeModal(true)} style={windowWidth < 1280 ? { paddingHorizontal: 24, width: '100%' } : { paddingHorizontal: 24 }}>
                     Activate Plan

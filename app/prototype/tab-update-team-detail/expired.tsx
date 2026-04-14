@@ -90,7 +90,7 @@ const PENDING_INVITES: {
   ];
 
 const INVOICE_DATA = [
-  { date: 'March 15, 2025', desc: 'Team plan · 4 members', amount: '$768.00', status: 'Paid' },
+  { date: 'March 17, 2025', desc: 'Annual renewal', amount: '$768.00', status: 'Paid' },
 ];
 
 // ── Tooltip ──
@@ -1786,6 +1786,7 @@ export default function TeamDetail() {
                           <Box style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 10 }}>
                             <Text variant="webMetadataPrimary" color="grey05">STATUS</Text>
                           </Box>
+                          <Box style={{ width: 80, paddingHorizontal: 16, paddingVertical: 10 }} />
                         </Box>
                         {/* Data rows */}
                         {INVOICE_DATA.map((inv, idx) => (
@@ -1797,6 +1798,9 @@ export default function TeamDetail() {
                               <Box backgroundColor="lightMint" style={{ alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 4 }}>
                                 <Text style={{ fontSize: 11, fontWeight: '600', color: theme.colors.secondaryGreen }}>{inv.status}</Text>
                               </Box>
+                            </Box>
+                            <Box style={{ width: 80, paddingHorizontal: 16 }}>
+                              <Button variant="ghost" color="primary" size="sm">View</Button>
                             </Box>
                           </Box>
                         ))}
@@ -1823,6 +1827,10 @@ export default function TeamDetail() {
                               <Box backgroundColor="lightMint" style={{ paddingHorizontal: 8, paddingVertical: 2, borderRadius: 4 }}>
                                 <Text style={{ fontSize: 11, fontWeight: '600', color: theme.colors.secondaryGreen }}>{inv.status}</Text>
                               </Box>
+                            </Box>
+                            <Box style={{ height: 1, backgroundColor: theme.colors.border, marginTop: 4, marginBottom: 4 }} />
+                            <Box flexDirection="row" justifyContent="flex-end">
+                              <Button variant="ghost" color="primary" size="sm">View</Button>
                             </Box>
                           </Box>
                         ))}
