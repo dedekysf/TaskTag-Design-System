@@ -28,7 +28,7 @@ function SectionLabel({ label }: { label: string }) {
 const TEAM = {
   name: 'Painting Team',
   logo: 'PT',
-  location: 'San Francisco, CA',
+  location: '123 Main St, Suite 456, Austin, TX 78701, USA',
   memberCount: 11,
   specializations: [
     'Interior Painting',
@@ -127,10 +127,10 @@ export default function RequestToJoin() {
               contentFit="contain"
             />
           </Box>
-          <Box>
+          <Box flex={1}>
             <Text variant="mobileHeading22" color="foreground" style={{ marginBottom: 4 }}>{TEAM.name}</Text>
             <Pressable onPress={() => Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(TEAM.location)}`)}>
-              <Text variant="mobileMetadataPrimary" color="blue" style={{ textDecorationLine: 'underline' }}>
+              <Text variant="mobileMetadataPrimary" color="blue" numberOfLines={1} style={{ textDecorationLine: 'underline' }}>
                 {TEAM.location}
               </Text>
             </Pressable>

@@ -20,12 +20,12 @@ import {
   WifiHigh,
 } from 'lucide-react-native';
 import React, { useState } from 'react'; // useState used in MenuItem
-import { Linking, Pressable, ScrollView, View } from 'react-native';
+import { Linking, Pressable, ScrollView, Text as RNText, View } from 'react-native';
 
 const TEAM = {
   name: 'Painting Team',
   logo: 'PT',
-  location: 'San Francisco, CA',
+  location: '123 Main St, Suite 456, Austin, TX 78701, USA',
   memberCount: 3,
   isPrimary: true,
   specializations: [
@@ -44,7 +44,7 @@ const TEAM_MANAGEMENT = [
 ];
 
 const PERSONAL_SETTINGS = [
-  { Icon: Star, title: 'Primary Team', description: 'Your default team for new projects', action: 'active', danger: false, comingSoon: false, iconColor: '#FBBF24', iconFill: '#FBBF24' },
+  { Icon: Star, title: 'Set up as Primary', description: 'Default team for new projects', action: 'primary', danger: false, comingSoon: false },
 ];
 
 function SectionLabel({ label }: { label: string }) {
@@ -56,14 +56,15 @@ function SectionLabel({ label }: { label: string }) {
   );
 }
 
-function MenuItem({ Icon, title, description, action, danger, comingSoon, isLast, onCopy, iconColor, iconFill }: {
+function MenuItem({ Icon, title, description, action, danger, comingSoon, isLast, onCopy, onPrimary, iconColor, iconFill }: {
   Icon: any; title: string; description: string; action: string;
-  danger: boolean; comingSoon: boolean; isLast: boolean; onCopy?: () => void; iconColor?: string; iconFill?: string;
+  danger: boolean; comingSoon: boolean; isLast: boolean; onCopy?: () => void; onPrimary?: () => void; iconColor?: string; iconFill?: string;
 }) {
   const theme = useTheme<Theme>();
 
   const handlePress = () => {
     if (action === 'copy') onCopy?.();
+    if (action === 'primary') onPrimary?.();
   };
 
   return (
@@ -78,7 +79,7 @@ function MenuItem({ Icon, title, description, action, danger, comingSoon, isLast
         style={{ opacity: comingSoon ? 0.5 : 1 }}
       >
         <Box width={48} height={48} borderRadius="8" backgroundColor="grey02" alignItems="center" justifyContent="center">
-          <Icon size={22} color={iconColor ?? (danger ? theme.colors.alertRed : theme.colors.textSecondary)} fill={iconFill ?? 'none'} strokeWidth={iconFill ? 0 : 1.75} />
+          <Icon size={22} color={iconColor ?? (danger ? theme.colors.alertRed : theme.colors.textSecondary)} fill="none" strokeWidth={1.75} />
         </Box>
         <Box flex={1} style={{ gap: 2 }}>
           <Text variant="mobileLabelEmphasized" style={{ color: danger ? theme.colors.alertRed : theme.colors.foreground }}>
@@ -91,11 +92,6 @@ function MenuItem({ Icon, title, description, action, danger, comingSoon, isLast
         {action === 'copy' && <Copy size={18} color={theme.colors.grey06} />}
         {action === 'chevron' && !comingSoon && (
           <ChevronRight size={18} color={theme.colors.grey06} />
-        )}
-        {action === 'active' && (
-          <Box backgroundColor="lightMint" borderRadius="4" paddingHorizontal="8" paddingVertical="4">
-            <Text variant="webMetadataSecondary" color="secondaryGreen">Active</Text>
-          </Box>
         )}
         {comingSoon && (
           <Box backgroundColor="lightMint" borderRadius="4" paddingHorizontal="8" paddingVertical="4">
@@ -111,6 +107,8 @@ export default function TeamDetail() {
   const theme = useTheme<Theme>();
   const [showToast, setShowToast] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
+  const [showPrimaryModal, setShowPrimaryModal] = useState(false);
+  const [isPrimary, setIsPrimary] = useState(false);
 
   const handleCopy = () => {
     setShowToast(true);
@@ -191,14 +189,31 @@ export default function TeamDetail() {
               />
             </Box>
             <Box flex={1}>
+
               <Text variant="mobileHeading22" color="foreground" style={{ marginBottom: 4 }}>{TEAM.name}</Text>
-              <Pressable onPress={() => Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(TEAM.location)}`)}>
-                <Text variant="mobileMetadataPrimary" color="blue" style={{ textDecorationLine: 'underline' }}>
-                  {TEAM.location}
-                </Text>
-              </Pressable>
+              <Box flexDirection="row" alignItems="center">
+                {isPrimary && (
+                  <>
+                    <Box flexDirection="row" alignItems="center" flexShrink={0} style={{ gap: 4 }}>
+                      <Star size={14} color={theme.colors.vividYellow} fill={theme.colors.vividYellow} strokeWidth={0} />
+                      <Text variant="mobileMetadataPrimary" color="textSecondary" style={{ lineHeight: 14 }}>Primary</Text>
+                    </Box>
+                    <Box width={3} height={3} borderRadius="full" backgroundColor="grey06" marginHorizontal="sm" flexShrink={0} />
+                  </>
+                )}
+                <Box flex={1}>
+                  <Pressable onPress={() => Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(TEAM.location)}`)}>
+                    <Text variant="mobileMetadataPrimary" color="blue" numberOfLines={1} style={{ textDecorationLine: 'underline' }}>
+                      {TEAM.location}
+                    </Text>
+                  </Pressable>
+                </Box>
+              </Box>
+
             </Box>
           </Box>
+
+
 
         </Box>
 
@@ -233,12 +248,20 @@ export default function TeamDetail() {
         </Box>
 
         {/* Personal Settings */}
-        <Box marginBottom="lg">
-          <SectionLabel label="Personal Settings" />
-          {PERSONAL_SETTINGS.map((item, index) => (
-            <MenuItem key={item.title} {...item} isLast={index === PERSONAL_SETTINGS.length - 1} />
-          ))}
-        </Box>
+        {!isPrimary && (
+          <Box marginBottom="lg">
+            <SectionLabel label="Personal Settings" />
+            {PERSONAL_SETTINGS.map((item, index) => (
+              <MenuItem
+                key={item.title}
+                {...item}
+                isLast={index === PERSONAL_SETTINGS.length - 1}
+                iconColor={theme.colors.grey06}
+                onPrimary={() => setShowPrimaryModal(true)}
+              />
+            ))}
+          </Box>
+        )}
 
 
 
@@ -281,14 +304,43 @@ export default function TeamDetail() {
               </Box>
             </Pressable>
 
-            <Box height={1} backgroundColor="border" marginVertical="8" />
+            {!isPrimary && (
+              <>
+                <Box height={1} backgroundColor="border" marginVertical="8" />
+                <Pressable onPress={() => setMenuVisible(false)}>
+                  <Box flexDirection="row" alignItems="center" paddingVertical="12" gap="16">
+                    <LogOut size={24} color={theme.colors.alertRed} />
+                    <Text style={{ fontSize: 16, fontWeight: '400', color: theme.colors.alertRed }}>Leave team</Text>
+                  </Box>
+                </Pressable>
+              </>
+            )}
+          </View>
+        </View>
+      )}
 
-            <Pressable onPress={() => setMenuVisible(false)}>
-              <Box flexDirection="row" alignItems="center" paddingVertical="12" gap="16">
-                <LogOut size={24} color={theme.colors.alertRed} />
-                <Text style={{ fontSize: 16, fontWeight: '400', color: theme.colors.alertRed }}>Leave team</Text>
-              </Box>
-            </Pressable>
+      {/* Set as Primary Modal */}
+      {showPrimaryModal && (
+        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 2000, justifyContent: 'center', alignItems: 'center' }}>
+          <Pressable
+            style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.4)' }}
+            onPress={() => setShowPrimaryModal(false)}
+          />
+          <View style={{ backgroundColor: theme.colors.white, borderRadius: 16, padding: 24, marginHorizontal: 24, width: '85%' }}>
+            <Text variant="mobileHeading22" color="foreground" style={{ marginBottom: 10 }}>Set up as Primary</Text>
+            <Text variant="mobileBody" color="foreground" style={{ marginBottom: 24 }}>
+              {'Set up '}
+              <RNText style={{ fontWeight: '600', fontFamily: 'Inter_600SemiBold', color: theme.colors.foreground }}>"Painting Team"</RNText>
+              {' as the Primary Team?'}
+            </Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+              <Pressable onPress={() => setShowPrimaryModal(false)} style={{ marginRight: 24 }}>
+                <Text variant="mobileLabelEmphasized" color="foreground">Cancel</Text>
+              </Pressable>
+              <Pressable onPress={() => { setIsPrimary(true); setShowPrimaryModal(false); }}>
+                <Text variant="mobileLabelEmphasized" style={{ color: theme.colors.secondaryGreen }}>Set</Text>
+              </Pressable>
+            </View>
           </View>
         </View>
       )}
