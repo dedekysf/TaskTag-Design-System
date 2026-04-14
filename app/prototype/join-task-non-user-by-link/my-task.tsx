@@ -746,7 +746,7 @@ function TaskDetailPanel({ onJoin }: { onJoin: () => void }) {
       backgroundColor="card"
       borderLeftWidth={1}
       borderColor="border"
-      style={{ position: 'absolute' as any, top: 0, bottom: 0, right: 550, width: 580, zIndex: 30, overflow: 'hidden' as any }}
+      style={{ position: 'absolute' as any, top: 0, bottom: 0, right: 622, width: 580, zIndex: 30, overflow: 'hidden' as any }}
     >
       {/* ── Fixed Top Section ── */}
       <Box>
@@ -1275,7 +1275,7 @@ export default function MyTask() {
       {/* ── Overlay: darkens sidebar + main, behind task detail panel ── */}
       <Box
         style={{
-          position: 'absolute' as any, top: 0, left: 0, right: 550, bottom: 0,
+          position: 'absolute' as any, top: 0, left: 0, right: 622, bottom: 0,
           backgroundColor: 'rgba(0,0,0,0.75)',
           zIndex: 20,
         }}
