@@ -1693,17 +1693,6 @@ export default function TeamDetail() {
                     </Box>
                   </Box>
 
-                  <Box backgroundColor="grey02" padding="16" borderRadius="8" gap="8">
-                    <Box flexDirection="row" justifyContent="space-between" alignItems="center">
-                      <Text variant="webSecondaryBody" color="foreground">4 members × $16/month</Text>
-                      <Text variant="webBody" color="foreground">$64</Text>
-                    </Box>
-                    <Box flexDirection="row" justifyContent="space-between" alignItems="center">
-                      <Text variant="webLabelEmphasized" color="foreground">Billed amount</Text>
-                      <Text variant="webLabelEmphasized" style={{ fontSize: 20 }} color="foreground">$64 <Text variant="webBody" color="foreground">/month</Text></Text>
-                    </Box>
-                  </Box>
-
                   <Box gap="12">
                     <Button variant="primary" onPress={() => setShowUpgradeModal(true)} style={{ height: 48, backgroundColor: theme.colors.black, borderRadius: 8, justifyContent: 'center' }}>
                       <Text variant="labelMedium" style={{ color: '#fff', fontSize: 16 }}>Activate Plan</Text>
