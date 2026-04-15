@@ -344,6 +344,13 @@ export default function PrototypeIndex() {
       route: '/prototype/m-join-team-tt-user-by-link',
       platform: 'Mobile' as const,
     },
+    {
+      title: 'Task Invitation Expired by Email',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-340?atlOrigin=eyJpIjoiZTNhNzAwYzA1ZDlkNDAxZDhkYWYxN2UwYzlkYjhmNDgiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-340',
+      route: '/prototype/m-task-invitation-expired-by-email',
+      platform: 'Mobile' as const,
+    },
   ];
 
   const PINNED_TITLES = ['GitHub', 'Design System'];
@@ -366,6 +373,7 @@ export default function PrototypeIndex() {
   const joinTaskByLinkMobile = prototypes.find(p => p.title === 'Join Task Non User by Link' && p.platform === 'Mobile');
   const joinTaskByLinkWeb = prototypes.find(p => p.title === 'Join Task Non User by Link' && p.platform === 'Web');
   const joinTaskByEmailMobile = prototypes.find(p => p.title === 'Join Task Non User by Email' && p.platform === 'Mobile');
+  const expiredTaskMobile = prototypes.find(p => p.title === 'Task Invitation Expired by Email' && p.platform === 'Mobile');
   const joinTeamTTUser = prototypes.find(p => p.title === 'Join Team TT User by Link');
   const expiredNonUsers = prototypes.filter(p => p.title === 'Team Invitation Expired by Email');
   const rest = prototypes.filter(p => 
@@ -384,6 +392,7 @@ export default function PrototypeIndex() {
   const rawFiltered = [
     github, 
     designSystem, 
+    expiredTaskMobile,
     joinTaskByLinkMobile,
     joinTaskByEmailMobile,
     joinTaskByLinkWeb, 
