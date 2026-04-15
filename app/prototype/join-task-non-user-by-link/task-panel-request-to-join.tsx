@@ -27,6 +27,7 @@ import {
   FileText,
   Folder,
   Hash,
+  HardHat,
   HelpCircle,
   Image as ImageIcon,
   Link,
@@ -87,7 +88,6 @@ type Task = {
 
 // ── Task data ─────────────────────────────────────────────────────────────────
 const INITIAL_CURRENT_TASKS: Task[] = [
-  { id: 1, name: 'Ensure all components within the electric...', project: 'Electrical Board Service', items: null, priority: 'high', date: 'Oct 18', people: [], assigneeLabel: 'Assignee' },
   { id: 2, name: 'Fix the sink', project: '11 N Raintree Hollow Court', items: 3, priority: 'high', date: 'Oct 18', people: [0], assigneeLabel: null },
   { id: 3, name: 'Install new door locks', project: '11 N Raintree Hollow Court', items: 5, priority: 'low', date: 'Oct 18', people: [0, 1, 2], assigneeLabel: null },
   { id: 4, name: 'Paint the living room', project: 'LA Avenue 37 D', items: 5, priority: 'medium', date: 'Oct 18', people: [0, 1, 2], assigneeLabel: null },
@@ -468,7 +468,7 @@ function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: () => void; onSuc
       </Box>
 
       {/* Context banner */}
-      <Box backgroundColor="lightMint" alignItems="flex-start" padding="md" borderRadius="xl" marginBottom="lg" width="100%" position="relative" zIndex="10">
+      <Box backgroundColor="lightSky" alignItems="flex-start" padding="md" borderRadius="xl" marginBottom="lg" width="100%" position="relative" zIndex="10">
         <Text variant="webLabelEmphasized" style={{ marginBottom: 4 }}>{INVITE.taskName}</Text>
         <Box flexDirection="row" alignItems="center" gap="4" marginBottom="16">
           <Text variant="webSecondaryBody" color="mutedForeground">{INVITE.projectName}</Text>
@@ -699,16 +699,16 @@ function Sidebar({ collapsed, onToggleCollapsed }: { collapsed: boolean; onToggl
             )}
             {collapsed ? (
               <Box alignItems="center" justifyContent="center" style={{ height: 54 }}>
-                <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.darkGreen }}>
-                  <Text variant="labelMedium" style={{ color: '#FFFFFF', fontWeight: '700' }}>OC</Text>
+                <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelOrange">
+                  <Text variant="labelMedium" style={{ color: '#FFFFFF', fontWeight: '700' }}>OH</Text>
                 </Box>
               </Box>
             ) : (
-              <Box flexDirection="row" alignItems="center" gap="8" style={{ height: 54, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 15 }}>
-                <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.darkGreen }}>
-                  <Text variant="labelMedium" style={{ color: '#FFFFFF', fontWeight: '700' }}>OC</Text>
+              <Box flexDirection="row" alignItems="center" gap="8" style={{ height: 54, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 15, backgroundColor: theme.colors.lightMint }}>
+                <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelOrange">
+                  <Text variant="labelMedium" style={{ color: '#FFFFFF', fontWeight: '700' }}>OH</Text>
                 </Box>
-                <Text variant="labelMedium" style={{ color: theme.colors.textSecondary }}>Oscar</Text>
+                <Text variant="labelMedium" style={{ color: theme.colors.secondaryGreen }}>My Account</Text>
               </Box>
             )}
           </Box>
@@ -737,12 +737,12 @@ function TaskDetailPanel({ onJoin }: { onJoin: () => void }) {
         <Box flexDirection="row" alignItems="center" gap="4" flex={1} flexShrink={1} style={{ minWidth: 0 }}>
           <Pressable style={{ padding: 4 }}>
             <Box flexDirection="row" alignItems="center" gap="4">
-              <Zap size={14} color="#ff4444" />
+              <HardHat size={14} color={theme.colors.purple} />
               <Text
                 numberOfLines={1}
                 style={{ color: theme.colors.textSecondary, textDecorationLine: 'underline', flexShrink: 1, fontSize: 12, fontWeight: '500', fontFamily: 'Inter_500Medium' }}
               >
-                Electrical Board Service
+                {INVITE.projectName.length > 20 ? INVITE.projectName.substring(0, 20) + '...' : INVITE.projectName}
               </Text>
             </Box>
           </Pressable>
@@ -755,7 +755,7 @@ function TaskDetailPanel({ onJoin }: { onJoin: () => void }) {
       {/* Task name */}
       <Box style={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 8 }}>
         <Text variant="webHeading22" color="foreground">
-          Ensure all components within the electrical board
+          {INVITE.taskName}
         </Text>
       </Box>
 
@@ -767,7 +767,7 @@ function TaskDetailPanel({ onJoin }: { onJoin: () => void }) {
           </Box>
           <Box style={{ paddingLeft: 16, paddingRight: 16, paddingBottom: 16, paddingTop: 8 }}>
             <Text style={{ fontSize: 12, fontWeight: '400', color: theme.colors.textSecondary, lineHeight: 16, fontFamily: 'Inter_400Regular' }}>
-              {'Ensure all components within the electrical board are carefully inspected, reconfigured if necessary, and properly labeled. Replace any damaged breakers, test each circuit for stability, and verify consistent voltage performance before the final inspection is approved.'}
+              Complete the installation of the kitchen sink and faucet, ensuring all plumbing connections are secure, leak-free, and fully functional as part of the Raintree renovation.
             </Text>
           </Box>
         </Box>
@@ -814,8 +814,8 @@ function MiniChatSidebar() {
           <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 14 }}>LS</Text>
         </Box>
       </Box>
-      <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelBlue" style={{ marginBottom: 8 }}>
-        <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 14 }}>SN</Text>
+      <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelOrange" style={{ marginBottom: 8 }}>
+        <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 14 }}>OH</Text>
       </Box>
       <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelOrange">
         <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 14 }}>TH</Text>
@@ -871,16 +871,16 @@ function ChatPanel() {
         {/* Message bubble */}
         <Box style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
           <Box flexDirection="row" gap="12" alignItems="flex-start">
-            <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.lightMint, marginTop: 2 }}>
-              <Text style={{ fontWeight: '700', color: theme.colors.secondaryGreen, fontSize: 14 }}>OC</Text>
+            <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelOrange" style={{ marginTop: 2 }}>
+              <Text style={{ fontWeight: '700', color: '#FFFFFF', fontSize: 14 }}>OH</Text>
             </Box>
             <Box flex={1}>
               <Box flexDirection="row" alignItems="center" gap="8" style={{ marginBottom: 8 }}>
-                <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>Oscar</Text>
+                <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>Oscar H.</Text>
                 <Text style={{ fontSize: 11, color: theme.colors.grey04 }}>12:25 PM</Text>
               </Box>
               <Box flexDirection="row" alignItems="flex-end" gap="8">
-                <Box style={{ backgroundColor: theme.colors.lightMint, borderRadius: 12, borderTopLeftRadius: 0, padding: 8, alignSelf: 'flex-start' as any }}>
+                <Box style={{ backgroundColor: '#E0F2F1', borderRadius: 12, borderTopLeftRadius: 0, padding: 8, alignSelf: 'flex-start' as any }}>
                   <Box borderWidth={1} borderColor="border" style={{ borderRadius: 10, overflow: 'hidden' as any }}>
                     <Box flexDirection="row" alignItems="center" gap="8" style={{ padding: 10, backgroundColor: '#f9eefa' }}>
                       <Users size={13} color={theme.colors.darkMagenta} />
@@ -890,7 +890,7 @@ function ChatPanel() {
                       <Text style={{ fontSize: 14, color: theme.colors.textSecondary, marginBottom: 10, lineHeight: 20 }}>Ask to join this task</Text>
                       <Box flexDirection="row" alignItems="center" gap="4" style={{ backgroundColor: '#000000', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 5, alignSelf: 'flex-start' as any, maxWidth: 200 }}>
                         <Hash size={12} color={theme.colors.white} />
-                        <Text style={{ fontSize: 12, color: theme.colors.white, fontWeight: '500' }} numberOfLines={1}>{'Electrical Board Service'.length > 20 ? 'Electrical Board Service'.slice(0, 20) + '...' : 'Electrical Board Service'}</Text>
+                        <Text style={{ fontSize: 12, color: theme.colors.white, fontWeight: '500' }} numberOfLines={1}>{INVITE.taskName.length > 20 ? INVITE.taskName.slice(0, 20) + '...' : INVITE.taskName}</Text>
                       </Box>
                     </Box>
                   </Box>

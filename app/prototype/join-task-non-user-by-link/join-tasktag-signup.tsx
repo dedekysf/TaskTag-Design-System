@@ -166,7 +166,7 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
           <Pressable
             onHoverIn={() => setIsGoogleHovered(true)}
             onHoverOut={() => setIsGoogleHovered(false)}
-            onPress={() => router.push('/prototype/join-task-non-user-by-link/task-panel-request-to-join')}
+            onPress={() => onSuccess ? onSuccess() : router.push('/prototype/join-task-non-user-by-link/task-panel-request-to-join')}
             style={({ pressed }) => [
               {
                 flex: 1,
@@ -194,7 +194,7 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
           <Pressable
             onHoverIn={() => setIsAppleHovered(true)}
             onHoverOut={() => setIsAppleHovered(false)}
-            onPress={() => router.push('/prototype/join-task-non-user-by-link/task-panel-request-to-join')}
+            onPress={() => onSuccess ? onSuccess() : router.push('/prototype/join-task-non-user-by-link/task-panel-request-to-join')}
             style={({ pressed }) => [
               {
                 flex: 1,

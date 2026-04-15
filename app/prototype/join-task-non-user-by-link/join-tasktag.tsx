@@ -9,11 +9,11 @@ import { Image, Modal, Pressable, ScrollView } from 'react-native';
 import JoinTasktagSignup from './join-tasktag-signup';
 
 const TASK_DATA = {
-  title: 'Deep clean the kitchen appliances',
-  project: 'LA Avenue 37 D',
+  title: 'Install Sink and Faucet in Kitchen',
+  project: 'Raintree Hollow Court Renovation',
   assigner: 'Paul Anderson',
   date: 'Dec 15 - Dec 20',
-  description: 'Please verify the exact location where the electrical meter rack should be installed. Check the site plans and confirm with the electrical contractor before proceeding.',
+  description: 'Complete the installation of the kitchen sink and faucet, ensuring all plumbing connections are secure, leak-free, and fully functional as part of the Raintree renovation.',
 };
 
 export default function JoinTasktag() {
@@ -76,16 +76,16 @@ export default function JoinTasktag() {
               </Text>
 
               {/* Project & Assigner Row */}
-              <Box flexDirection="row" alignItems="center" gap="lg">
+              <Box flexDirection="row" alignItems="center" gap="md">
                 <Box flexDirection="row" alignItems="center" gap="sm">
-                  <Hammer size={24} color={theme.colors.secondaryGreen} strokeWidth={2} />
-                  <Text variant="webBody" color="textSecondary">{TASK_DATA.project}</Text>
+                  <Hammer size={20} color={theme.colors.secondaryGreen} strokeWidth={2} />
+                  <Text variant="webLabelSmall" color="textSecondary">{TASK_DATA.project}</Text>
                 </Box>
                 <Box flexDirection="row" alignItems="center" gap="sm">
-                  <Box width={24} height={24} borderRadius="full" backgroundColor="darkGreen" alignItems="center" justifyContent="center">
-                    <User size={16} color="white" />
+                  <Box width={20} height={20} borderRadius="full" backgroundColor="darkGreen" alignItems="center" justifyContent="center">
+                    <User size={14} color="white" />
                   </Box>
-                  <Text variant="webBody" color="textSecondary">{TASK_DATA.assigner}</Text>
+                  <Text variant="webLabelSmall" color="textSecondary">{TASK_DATA.assigner}</Text>
                 </Box>
               </Box>
             </Box>
@@ -143,7 +143,7 @@ export default function JoinTasktag() {
             size="xl"
             color="primary"
             style={{ width: '100%', marginBottom: 8 } as any}
-            onPress={() => router.push('/prototype/join-task-non-user-by-link/task-panel-request-to-join')}
+            onPress={() => setShowSignupModal(true)}
           >
             Request to Join
           </Button>
@@ -185,7 +185,7 @@ export default function JoinTasktag() {
               onClose={() => setShowSignupModal(false)}
               onSuccess={() => {
                 setShowSignupModal(false);
-                router.push('/prototype/join-task-non-user-by-link/my-task');
+                router.push('/prototype/join-task-non-user-by-link/task-panel-request-to-join');
               }}
             />
           </Box>

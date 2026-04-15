@@ -15,23 +15,22 @@ import {
   Check,
   CheckCircle,
   ChevronDown,
+  ChevronRight,
   ChevronUp,
   ChevronsDown,
   ChevronsLeft,
   ChevronsRight,
   ChevronsUp,
-  ChevronRight,
   Equal,
   Eye,
   EyeOff,
-  FileText,
   FileImage,
+  FileText,
   Folder,
   HardHat,
   Hash,
   HelpCircle,
   Image as ImageIcon,
-  Images,
   Link,
   ListChecks,
   ListFilter,
@@ -42,15 +41,14 @@ import {
   Search,
   Send,
   Smile,
-  Upload,
   UserPlus,
   Users,
   X,
-  Zap,
+  Zap
 } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Image, Modal, Platform, Pressable, ScrollView, StyleSheet, Switch, TextInput, TextInput as RNTextInput, View } from 'react-native';
 import ReactDOM from 'react-dom';
+import { Animated, Image, Modal, Platform, Pressable, TextInput as RNTextInput, ScrollView, TextInput, View } from 'react-native';
 
 // ── Nav items ─────────────────────────────────────────────────────────────────
 const NAV_ITEMS = [
@@ -62,10 +60,10 @@ const NAV_ITEMS = [
 
 // ── Project config (icon + color per project) ─────────────────────────────────
 const PROJECT_CONFIG: Record<string, { Icon: any; color: string }> = {
-  'Electrical Board Service':   { Icon: Zap,       color: '#ff4444' },
+  'Electrical Board Service': { Icon: Zap, color: '#ff4444' },
   '11 N Raintree Hollow Court': { Icon: Building2, color: '#1572a1' },
-  'LA Avenue 37 D':             { Icon: Building2, color: '#1572a1' },
-  'LA Avenue 34 G':             { Icon: Zap,       color: '#ff4444' },
+  'LA Avenue 37 D': { Icon: Building2, color: '#1572a1' },
+  'LA Avenue 34 G': { Icon: Zap, color: '#ff4444' },
 };
 
 // ── People (initial avatars) ──────────────────────────────────────────────────
@@ -203,9 +201,9 @@ function CopyLinkTooltip({
 function PriorityBadge({ priority }: { priority: string }) {
   const theme = useTheme<Theme>();
   const config = {
-    high:   { color: theme.colors.alertRed,       Icon: ChevronsUp },
-    medium: { color: '#f59e0b',                   Icon: Equal },
-    low:    { color: theme.colors.blue,           Icon: ChevronsDown },
+    high: { color: theme.colors.alertRed, Icon: ChevronsUp },
+    medium: { color: '#f59e0b', Icon: Equal },
+    low: { color: theme.colors.blue, Icon: ChevronsDown },
   }[priority] ?? { color: theme.colors.grey04, Icon: Equal };
   return (
     <Box width={36} height={36} borderRadius="full" alignItems="center" justifyContent="center" style={{ borderWidth: 1, borderColor: theme.colors.border }}>
@@ -1134,7 +1132,7 @@ function ChatPanel() {
                     </Text>
                     <Box flexDirection="row" alignItems="center" gap="4" style={{ backgroundColor: '#000000', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 5, alignSelf: 'flex-start' as any, maxWidth: 200 }}>
                       <Hash size={12} color={theme.colors.white} />
-                      <Text style={{ fontSize: 12, color: theme.colors.white, fontWeight: '500' }} numberOfLines={1}>{'Comprehensive Electrical Service'}</Text>
+                      <Text style={{ fontSize: 12, color: theme.colors.white, fontWeight: '500' }} numberOfLines={1}>{'Install Sink and Faucet in Kitchen'}</Text>
                     </Box>
                   </Box>
                 </Box>

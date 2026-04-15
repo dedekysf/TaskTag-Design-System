@@ -227,7 +227,7 @@ export default function JoinTasktagSignup() {
               <Box width="100%">
                 <Text variant="h2" textAlign="center" marginBottom="4">Create an Account</Text>
                 <Box flexDirection="row" justifyContent="center" flexWrap="wrap" marginBottom="16">
-                  <Text variant="webMetadataPrimary" color="mutedForeground">Someone shared this team with you</Text>
+                  <Text variant="webMetadataPrimary" color="mutedForeground">Someone shared this task with you</Text>
                 </Box>
 
                 {/* Context banner */}
