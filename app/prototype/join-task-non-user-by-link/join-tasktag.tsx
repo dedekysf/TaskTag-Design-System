@@ -3,7 +3,7 @@ import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import { router } from 'expo-router';
-import { Calendar, ChevronsUp, Hammer, User, Users } from 'lucide-react-native';
+import { Hammer, User } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Image, Modal, Pressable, ScrollView } from 'react-native';
 import JoinTasktagSignup from './join-tasktag-signup';
@@ -55,7 +55,7 @@ export default function JoinTasktag() {
 
           {/* Heading */}
           <Text variant="webHeading32" color="foreground" marginBottom="md" style={{ textAlign: 'center' } as any}>
-            You're invited to join a task
+            You&apos;re invited to join a task
           </Text>
 
           {/* Task Card */}
@@ -102,8 +102,7 @@ export default function JoinTasktag() {
                 borderWidth={1}
                 borderColor="border"
               >
-                <ChevronsUp size={14} color={theme.colors.alertRed} />
-                <Text variant="webSecondaryBody" color="alertRed">High</Text>
+                <Text variant="webSecondaryBody" color="alertRed">High Priority</Text>
               </Box>
               <Box
                 flexDirection="row" alignItems="center"
@@ -115,8 +114,7 @@ export default function JoinTasktag() {
                 borderWidth={1}
                 borderColor="border"
               >
-                <Calendar size={14} color={theme.colors.textSecondary} strokeWidth={1.5} />
-                <Text variant="webSecondaryBody" color="textSecondary">{TASK_DATA.date}</Text>
+                <Text variant="webSecondaryBody" color="textSecondary">Due: {TASK_DATA.date}</Text>
               </Box>
             </Box>
 
@@ -132,8 +130,7 @@ export default function JoinTasktag() {
             <Box gap="xs">
               <Text variant="webEmphasizedBody" color="foreground">Assigned To</Text>
               <Box flexDirection="row" alignItems="center" gap="sm">
-                <Users size={16} color={theme.colors.textSecondary} strokeWidth={2} />
-                <Text variant="webSecondaryBody" color="textSecondary">3 person working on this task</Text>
+                <Text variant="webSecondaryBody" color="textSecondary">3 people working on this task</Text>
               </Box>
             </Box>
           </Box>
