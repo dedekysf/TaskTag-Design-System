@@ -384,8 +384,8 @@ export default function PrototypeIndex() {
   const rawFiltered = [
     github, 
     designSystem, 
-    joinTaskByEmailMobile,
     joinTaskByLinkMobile,
+    joinTaskByEmailMobile,
     joinTaskByLinkWeb, 
     joinTaskNonUser, 
     emailTaskApprovalWeb, 

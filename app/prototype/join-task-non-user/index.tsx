@@ -1,183 +1,164 @@
 import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
-import { Tooltip } from '@/components/Tooltip';
-import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import { Image } from 'expo-image';
+import { Image as ExpoImage } from 'expo-image';
 import { router } from 'expo-router';
-import { Check, Clock } from 'lucide-react-native';
-import React, { useState } from 'react';
-import { Image as RNImage, Platform, Pressable, ScrollView } from 'react-native';
+import { Clock } from 'lucide-react-native';
+import React from 'react';
+import { Image, Pressable, ScrollView, View } from 'react-native';
 
-const TASK = {
-  name: 'Comprehensive Electrical Board Inspection and Reconfiguration',
-  category: 'Electrical Board Service',
-  members: [
-    { type: 'initials' as const, initials: 'LS', color: '#2e7d7d', name: 'Laura Smith' },
-    { type: 'photo'    as const, src: require('@/assets/images/sample-two.jpg'), name: 'Rachel Monroe' },
-    { type: 'initials' as const, initials: 'SS', color: '#e65100', name: 'Sara Singh' },
-    { type: 'photo'    as const, src: require('@/assets/images/sample-four.jpg'), name: 'Amy Lee' },
-    { type: 'initials' as const, initials: 'AS', color: '#6a1b9a', name: 'Amy Scott' },
-  ],
-  extraMemberNames: ['Tom Lee', 'Nina Patel', 'Carlos Reyes', 'Fiona Webb', 'James Osei'],
-  extraMembers: 5,
+const TASK_DATA = {
+  title: 'Install Sink and Faucet in Kitchen',
+  project: 'Raintree Hollow Court Renovation',
+  assigner: 'Paul Anderson',
+  date: 'Dec 15 - Dec 20',
+  description: 'Please verify the exact location where the electrical meter rack should be installed. Check the site plans and confirm with the electrical contractor before proceeding.',
 };
 
-const PERMISSIONS: [string, string][] = [
-  ['View and manage tasks', 'Collaborate with team'],
-  ['Upload files & media', 'Track task progress'],
-];
-
 export default function JoinTaskNonUser() {
-  const theme = useTheme<Theme>();
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const theme = useTheme<TTTheme>();
 
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: theme.colors.grey02 }}
-      contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}
-    >
-      <Box width="100%" maxWidth={480}>
+    <Box flex={1} backgroundColor="grey02">
 
-        {/* Logo */}
-        <Box marginBottom="lg" alignItems="center">
-          <Image
-            source={require('@/assets/images/tasktag-logo.png')}
-            style={{ height: 36, width: 120 }}
-            contentFit="contain"
-          />
-        </Box>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={{ width: '100%' }}
+        contentContainerStyle={{ flexGrow: 1, alignItems: 'center', paddingVertical: 64, paddingHorizontal: 40 }}
+      >
+        <Box width="100%" maxWidth={560}>
 
-        {/* Card */}
-        <Box backgroundColor="card" borderRadius="xl" padding="24" marginBottom="lg">
+          {/* Logo - Centered like mobile */}
+          <Box marginBottom="xl" alignItems="center">
+            <Image
+              source={require('@/assets/images/tasktag-logo.png')}
+              style={{ width: 134, height: 40 }}
+              resizeMode="contain"
+            />
+          </Box>
 
-          {/* Header */}
-          <Text variant="webMetadataPrimary" color="mutedForeground" textAlign="center" marginBottom="20">
-            {"You've been invited to this task by "}
-            <Text variant="webMetadataPrimary" fontWeight="700" color="foreground">James Hammer</Text>
-          </Text>
+          {/* Main Invitation Card */}
+          <Box
+            backgroundColor="card"
+            borderRadius="xl"
+            padding="24"
+            paddingTop="32"
+            marginBottom="xl"
+          >
 
-          {/* Task card */}
-          <Box backgroundColor="lightMint" borderRadius="xl" padding="md" marginBottom="20">
-            <Text variant="webLabelEmphasized" marginBottom="4">{TASK.name}</Text>
-            <Text variant="webSecondaryBody" color="mutedForeground" marginBottom="md">{TASK.category}</Text>
+            {/* Greeting */}
+            <Box marginBottom="24">
+              <Text variant="h2" style={{ color: theme.colors.textSecondary, marginBottom: 8 }}>
+                Hi Oscar 👋,
+              </Text>
+              <Text variant="webLargeLabel" style={{ color: theme.colors.textSecondary }}>
+                <Text variant="webLargeLabel" style={{ fontWeight: '600', color: theme.colors.textSecondary }}>James Hammer</Text>
+                {" has assigned you a new task on Tasktag."}
+              </Text>
+            </Box>
 
-            <Text variant="labelMedium" color="mutedForeground" marginBottom="sm">Task Members</Text>
+            {/* Task Identity (Grey Box) */}
+            <Box backgroundColor="grey02" borderRadius="xl" padding="md" gap="md" marginBottom="24" borderWidth={1} borderColor="grey03">
+              {/* Title */}
+              <Text variant="webHeading22" color="foreground">
+                {TASK_DATA.title}
+              </Text>
 
-            {/* Avatar stack */}
-            <Box flexDirection="row" alignItems="center">
-              {TASK.members.map((member, index) => (
-                <Box
-                  key={index}
-                  position="relative"
-                  zIndex={hoveredIndex === index ? "50" : "10"}
-                  style={{ marginLeft: index === 0 ? 0 : -8 }}
-                  {...(Platform.OS === 'web' ? { onMouseEnter: () => setHoveredIndex(index), onMouseLeave: () => setHoveredIndex(null) } as any : {})}
-                >
-                  <Tooltip content={member.name} variant="bottom-center" size="sm" tooltipStyle="default">
-                    {member.type === 'photo' ? (
-                      <RNImage
-                        source={member.src}
-                        style={{ width: 34, height: 34, borderRadius: 17, borderWidth: 2, borderColor: theme.colors.lightMint }}
-                      />
-                    ) : (
-                      <Box
-                        width={34} height={34} borderRadius="full"
-                        alignItems="center" justifyContent="center"
-                        borderWidth={2} borderColor="lightMint"
-                        style={{ backgroundColor: member.color }}
-                      >
-                        <Text variant="webMetadataSecondary" fontWeight="700" color="white">{member.initials}</Text>
-                      </Box>
-                    )}
-                  </Tooltip>
-                </Box>
-              ))}
+              <Box height={1} backgroundColor="grey03" />
 
-              {/* +N badge */}
-              <Box
-                position="relative"
-                zIndex={hoveredIndex === TASK.members.length ? "50" : "10"}
-                style={{ marginLeft: -8 }}
-                {...(Platform.OS === 'web' ? { onMouseEnter: () => setHoveredIndex(TASK.members.length), onMouseLeave: () => setHoveredIndex(null) } as any : {})}
-              >
-                <Tooltip content={TASK.extraMemberNames.join('\n')} variant="bottom-center" size="sm" tooltipStyle="default">
-                  <Box
-                    width={34} height={34} borderRadius="full" backgroundColor="white"
-                    alignItems="center" justifyContent="center"
-                    borderWidth={2} borderColor="lightMint"
-                  >
-                    <Text variant="webMetadataSecondary" fontWeight="600" color="primary">+{TASK.extraMembers}</Text>
+              <Box gap="sm">
+                {/* Project Info */}
+                <Box flexDirection="row" alignItems="center" gap="md">
+                  <Box width={120}>
+                    <Text variant="webBody" color="grey05" textAlign="left">Project Name</Text>
                   </Box>
-                </Tooltip>
+                  <Text variant="webBody" color="foreground">{TASK_DATA.project}</Text>
+                </Box>
+
+                {/* Due Date Info */}
+                <Box flexDirection="row" alignItems="center" gap="md">
+                  <Box width={120}>
+                    <Text variant="webBody" color="grey05" textAlign="left">Due Date</Text>
+                  </Box>
+                  <Text variant="webBody" color="foreground">{TASK_DATA.date}</Text>
+                </Box>
               </Box>
+
+              <Box height={1} backgroundColor="grey03" />
+
+              {/* Role Info */}
+              <Text variant="webBody" style={{ color: theme.colors.textSecondary, textAlign: 'left' }}>
+                {"You'll join as an "}
+                <Text variant="webBody" style={{ fontWeight: '600', color: theme.colors.textSecondary }}>Assignee</Text>
+                {" with 3 other people."}
+              </Text>
+            </Box>
+
+            {/* CTA Button */}
+            <Box marginBottom="8">
+              <Button
+                variant="fill"
+                size="xl"
+                style={{ width: '100%', backgroundColor: theme.colors.secondaryGreen, borderRadius: 8 }}
+                onPress={() => router.push('/prototype/join-task-non-user/join-tasktag' as any)}
+              >
+                <Text style={{ fontSize: 16, fontWeight: '400', color: '#fff' }}>Accept & Join Task</Text>
+              </Button>
+            </Box>
+
+            {/* Expiry */}
+            <Box flexDirection="row" alignItems="center" justifyContent="center" gap="4">
+              <Clock size={14} color={theme.colors.foreground} />
+              <Text variant="webSecondaryBody" style={{ color: theme.colors.foreground }}>This invite expires in 7 days</Text>
             </Box>
           </Box>
 
-          {/* Permissions */}
-          <Box marginBottom="lg" backgroundColor="grey02" padding="md" borderRadius="xl">
-            <Text variant="labelMedium" marginBottom="sm">{"As an assignee, you'll be able to:"}</Text>
-            {PERMISSIONS.map(([left, right], i) => (
-              <Box key={i} flexDirection="row" marginBottom="8">
-                <Box flex={1} flexDirection="row" alignItems="center" gap="8">
-                  <Check size={14} color={theme.colors.primary} strokeWidth={2.5} />
-                  <Text variant="webMetadataPrimary" color="mutedForeground">{left}</Text>
-                </Box>
-                <Box flex={1} flexDirection="row" alignItems="center" gap="8">
-                  <Check size={14} color={theme.colors.primary} strokeWidth={2.5} />
-                  <Text variant="webMetadataPrimary" color="mutedForeground">{right}</Text>
-                </Box>
-              </Box>
-            ))}
+          {/* Download Section */}
+          <Box alignItems="center" marginBottom="xl" marginTop="xl">
+            <Text variant="webHeading22" style={{ color: theme.colors.textSecondary, marginBottom: 8, textAlign: 'center' }}>
+              Download The App
+            </Text>
+            <Text variant="webBody" style={{ color: theme.colors.textSecondary, marginBottom: 20, textAlign: 'center' }}>
+              Get the most of Tasktag by installing our new mobile app.
+            </Text>
+            <Box flexDirection="row" gap="24" justifyContent="center">
+              <Pressable style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}>
+                <ExpoImage
+                  source={require('@/assets/images/app-store.svg')}
+                  style={{ width: 140, height: 44 }}
+                  contentFit="contain"
+                />
+              </Pressable>
+              <Pressable style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}>
+                <ExpoImage
+                  source={require('@/assets/images/play-store.svg')}
+                  style={{ width: 148, height: 44 }}
+                  contentFit="contain"
+                />
+              </Pressable>
+            </Box>
           </Box>
 
-          {/* CTA */}
-          <Button
-            variant="fill"
-            color="primary"
-            size="lg"
-            style={{ width: '100%' }}
-            onPress={() => router.push('/prototype/join-task-non-user/join-tasktag' as any)}
-          >
-            Accept & Join
-          </Button>
-
-          {/* Expiry */}
-          <Box flexDirection="row" alignItems="center" justifyContent="center" gap="4" marginTop="12">
-            <Clock size={13} color={theme.colors.grey05} />
-            <Text variant="caption" color="mutedForeground">Invitations expire after 7 days</Text>
+          {/* Footer */}
+          <Box alignItems="center" gap="24" paddingBottom="xl">
+            <Text variant="webSecondaryBody" style={{ color: theme.colors.grey05, textAlign: 'center' }}>
+              Have questions? Contact our support team
+            </Text>
+            <Box flexDirection="row" alignItems="center" gap="sm">
+              <Text variant="webMetadataPrimary" style={{ color: theme.colors.grey05, textDecorationLine: 'underline' }}>Terms & conditions</Text>
+              <View style={{ width: 1, height: 12, backgroundColor: theme.colors.grey03 }} />
+              <Text variant="webMetadataPrimary" style={{ color: theme.colors.grey05, textDecorationLine: 'underline' }}>Privacy policy</Text>
+              <View style={{ width: 1, height: 12, backgroundColor: theme.colors.grey03 }} />
+              <Text variant="webMetadataPrimary" style={{ color: theme.colors.grey05, textDecorationLine: 'underline' }}>Contact us</Text>
+            </Box>
+            <Text variant="webSecondaryBody" style={{ color: theme.colors.grey05, textAlign: 'center' }}>
+              © 2026 Tasktag, Houston, Texas 77001
+            </Text>
           </Box>
 
         </Box>
+      </ScrollView>
 
-        {/* Download section */}
-        <Box>
-          <Text variant="h3" marginBottom="sm">Download the app</Text>
-          <Text variant="webSecondaryBody" color="mutedForeground" marginBottom="md">
-            Get the most of Tasktag by installing our new mobile app.
-          </Text>
-        </Box>
-
-        <Box flexDirection="row" gap="12" marginBottom="xl">
-          <Pressable style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}>
-            <Image
-              source={require('@/assets/images/app-store.svg')}
-              style={{ width: 140, height: 44 }}
-              contentFit="contain"
-            />
-          </Pressable>
-          <Pressable style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}>
-            <Image
-              source={require('@/assets/images/play-store.svg')}
-              style={{ width: 148, height: 44 }}
-              contentFit="contain"
-            />
-          </Pressable>
-        </Box>
-
-        <Text variant="caption">© 2026 Tasktag, Houston, Texas VIC 3000</Text>
-
-      </Box>
-    </ScrollView>
+    </Box>
   );
 }

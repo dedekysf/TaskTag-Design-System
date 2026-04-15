@@ -99,7 +99,7 @@ export default function MJoinTaskNonUser() {
               style={{ width: '100%', backgroundColor: TTTheme.colors.secondaryGreen, borderRadius: 8 }}
               onPress={() => router.push('/prototype/m-join-task-non-user/join-tasktag' as any)}
             >
-              <Text variant="webLabelEmphasized" color="white">Accept & Join Task</Text>
+              <Text variant="webSecondaryBody" color="white" style={{ fontSize: 16, fontWeight: '400' }}>Accept & Join Task</Text>
             </Button>
           </Box>
 

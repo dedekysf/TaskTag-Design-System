@@ -73,7 +73,7 @@ export default function JoinTasktag() {
           {/* Heading */}
           <Box style={{ marginBottom: 16 }}>
             <Text variant="mobileHeading22" color="foreground" textAlign="center">
-              You've been assigned a task
+              You&apos;ve been assigned a task
             </Text>
             <Text variant="mobileBody" color="textSecondary" textAlign="center" style={{ marginTop: 4 }}>
               by James Hammer
@@ -163,7 +163,7 @@ export default function JoinTasktag() {
               style={{ width: '100%', backgroundColor: theme.colors.secondaryGreen, borderRadius: 12 }}
               onPress={() => router.push('/prototype/m-join-task-non-user/join-tasktag-signup' as any)}
             >
-              <Text variant="webLabelEmphasized" color="white">Join This Task</Text>
+              <Text variant="webSecondaryBody" color="white" style={{ fontSize: 16, fontWeight: '400' }}>Join This Task</Text>
             </Button>
           </Box>
 

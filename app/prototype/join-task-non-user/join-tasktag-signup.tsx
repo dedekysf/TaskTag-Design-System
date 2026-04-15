@@ -4,16 +4,16 @@ import { TextInput } from '@/components/TextInput';
 import { Tooltip } from '@/components/Tooltip';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import { AlertTriangle, Check, Eye, EyeOff, X } from 'lucide-react-native';
+import { AlertTriangle, Check, Eye, EyeOff, X, HardHat } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Image, Platform, Pressable, TextInput as RNTextInput, ScrollView, View } from 'react-native';
 
 // Simulated invite token data
 const INVITE = {
   inviterName: 'James Hammer',
-  taskName: 'Comprehensive Electrical Board Inspection and Reconfiguration',
-  projectName: 'Raintree Hollow Court Renovation',
-  role: 'Assignee',
+  taskName: 'Install Sink and Faucet in Kitchen',
+  project: 'Raintree Hollow Court Renovation',
   email: 'newuser@example.com',
 };
 
@@ -22,6 +22,7 @@ const REGISTERED_EMAILS: string[] = [];
 
 export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: () => void; onSuccess?: () => void } = {}) {
   const theme = useTheme<Theme>();
+  const router = useRouter();
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -36,6 +37,8 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
   const [hasTypedPassword, setHasTypedPassword] = useState(false);
   const [isGoogleHovered, setIsGoogleHovered] = useState(false);
   const [isAppleHovered, setIsAppleHovered] = useState(false);
+  const [noteVisible, setNoteVisible] = useState(true);
+  const [tooltipOpen, setTooltipOpen] = useState(false);
 
   useEffect(() => {
     if (password.length > 0) {
@@ -99,6 +102,10 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
     if (onSuccess) {
       onSuccess();
     }
+    if (onClose) {
+      onClose();
+    }
+    router.push('/prototype/join-task-non-user/my-task');
   };
 
   const shadowStyle = Platform.select({
@@ -107,6 +114,34 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
     android: { elevation: 1 },
   });
 
+  const devNote = (
+    <Box
+      backgroundColor="card"
+      borderRadius="xl"
+      padding="md"
+      flexDirection="row"
+      alignItems="flex-start"
+      gap="sm"
+      marginBottom="md"
+      width="100%"
+      style={{ zIndex: 10, backgroundColor: '#fbe676' } as any}
+    >
+      <Box flex={1} gap="xs">
+        <Text variant="webLabelEmphasized" style={{ color: '#000' }}>Note for Dev</Text>
+        <Text variant="webMetadataPrimary" style={{ color: '#000', lineHeight: 18 }}>
+          If using a different email, this acts as a standard registration (no invite attached).
+        </Text>
+      </Box>
+      <Pressable
+        onPress={() => setNoteVisible(false)}
+        style={{ width: 24, height: 24, alignItems: 'center', justifyContent: 'center' }}
+        hitSlop={8}
+      >
+        <Text style={{ fontSize: 18, fontWeight: '600', color: '#000' }}>×</Text>
+      </Pressable>
+    </Box>
+  );
+
   const cardContent = (
     <>
         {/* Heading */}
@@ -114,11 +149,11 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
           Create an account
         </Text>
         <Box flexDirection="row" justifyContent="center" flexWrap="wrap" marginBottom="16">
-          <Text variant="webMetadataPrimary" color="mutedForeground">
-            {"You're assigned a task by "}
-          </Text>
-          <Text variant="webMetadataPrimary" color="foreground" fontWeight="700">
+          <Text variant="webLabelSmall" color="foreground" fontWeight="700">
             {INVITE.inviterName}
+          </Text>
+          <Text variant="webLabelSmall" color="mutedForeground">
+            {' assigned this task'}
           </Text>
         </Box>
 
@@ -133,22 +168,26 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
           position="relative"
           zIndex="10"
         >
-          <Text variant="webLabelEmphasized" style={{ marginBottom: 4 }}>
+          <Text variant="webHeading22" color="foreground" style={{ marginBottom: 2 }}>
             {INVITE.taskName}
           </Text>
-          <Box flexDirection="row" alignItems="center" gap="4" marginBottom="16">
-            <Text variant="webSecondaryBody" color="mutedForeground">
-              {INVITE.projectName}
+          <Box flexDirection="row" alignItems="center" gap="xs" style={{ marginBottom: 16 }}>
+            <HardHat size={16} color={theme.colors.grey06} strokeWidth={2.5} />
+            <Text variant="webLabelSmall" color="textSecondary">
+              {INVITE.project}
             </Text>
           </Box>
 
-          <Box flexDirection="row" alignItems="center" gap="4">
-            <Text variant="webSecondaryBody" color="mutedForeground">Your Role : </Text>
+          <Box flexDirection="row" alignItems="center" flexWrap="wrap" gap="4">
+            <Text variant="webLabelSmall" color="mutedForeground">{"You'll join as an "}</Text>
             <Tooltip
               variant="bottom-left"
+              trigger="hover"
+              open={tooltipOpen}
+              onOpenChange={setTooltipOpen}
               content={
                 <View style={{ gap: 4 }}>
-                  {['View and manage tasks', 'Collaborate with team', 'Upload files & media', 'Track task progress'].map((item, i) => (
+                  {['View and manage tasks', 'Collaborate with team', 'Upload files & media', 'Track project progress'].map((item, i) => (
                     <Text key={i} style={{ color: theme.colors.white, fontSize: 12, fontFamily: 'Inter_400Regular' }}>
                       {'• '}{item}
                     </Text>
@@ -157,9 +196,10 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
               }
             >
               <Box borderBottomWidth={1} borderColor="foreground" style={{ borderStyle: 'dotted' }}>
-                <Text variant="webSecondaryBody" color="foreground" fontWeight="700">Assignee</Text>
+                <Text variant="webLabelSmall" color="foreground" fontWeight="700">Assignee</Text>
               </Box>
             </Tooltip>
+            <Text variant="webLabelSmall" color="mutedForeground">{" with 3 other people"}</Text>
           </Box>
         </Box>
 
@@ -169,6 +209,10 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
             <Pressable
               onHoverIn={() => setIsGoogleHovered(true)}
               onHoverOut={() => setIsGoogleHovered(false)}
+              onPress={() => {
+                if (onClose) onClose();
+                router.push('/prototype/join-task-non-user/my-task');
+              }}
               style={({ pressed }) => [
                 {
                   flex: 1,
@@ -223,7 +267,7 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
 
           <Box flexDirection="row" alignItems="center" width="100%" gap="12">
             <Box flex={1} height={1} backgroundColor="border" />
-            <Text variant="webMetadataPrimary" color="mutedForeground">or continue with email</Text>
+            <Text variant="webLabelSmall" color="mutedForeground">or continue with email</Text>
             <Box flex={1} height={1} backgroundColor="border" />
           </Box>
         </Box>
@@ -373,22 +417,24 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
   if (onClose) {
     return (
       <Box style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: theme.spacing.lg }}>
-        <Box
-          backgroundColor="card"
-          width="100%"
-          maxWidth={600}
-          borderRadius="16"
-          style={[shadowStyle, { flex: 1, maxHeight: '100%', overflow: 'hidden' as any, position: 'relative' as any }]}
-        >
-          <Pressable
-            onPress={onClose}
-            style={{ position: 'absolute' as any, top: 16, right: 16, zIndex: 10, cursor: 'pointer' } as any}
+        <Box width="100%" maxWidth={600}>
+          {noteVisible && devNote}
+          <Box
+            backgroundColor="card"
+            width="100%"
+            borderRadius="16"
+            style={[shadowStyle, { maxHeight: '100%', overflow: 'hidden' as any, position: 'relative' as any }]}
           >
-            <X size={20} color={theme.colors.grey06} />
-          </Pressable>
-          <ScrollView contentContainerStyle={{ padding: 24 }}>
-            {cardContent}
-          </ScrollView>
+            <Pressable
+              onPress={onClose}
+              style={{ position: 'absolute' as any, top: 16, right: 16, zIndex: 10, cursor: 'pointer' } as any}
+            >
+              <X size={20} color={theme.colors.grey06} />
+            </Pressable>
+            <ScrollView contentContainerStyle={{ padding: 24 }}>
+              {cardContent}
+            </ScrollView>
+          </Box>
         </Box>
       </Box>
     );
@@ -400,21 +446,25 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
       style={{ flex: 1, backgroundColor: theme.colors.grey02 }}
       contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: theme.spacing.lg }}
     >
-      <Box alignItems="center" width="100%" maxWidth={600} marginBottom="lg">
-        <Image
-          source={require('@/assets/images/tasktag-logo.png')}
-          style={{ height: 36, width: 120, resizeMode: 'contain' }}
-        />
-      </Box>
-      <Box
-        backgroundColor="card"
-        width="100%"
-        maxWidth={600}
-        borderRadius="16"
-        padding="24"
-        style={shadowStyle}
-      >
-        {cardContent}
+      <Box width="100%" maxWidth={600}>
+        <Box alignItems="center" width="100%" marginBottom="lg">
+          <Image
+            source={require('@/assets/images/tasktag-logo.png')}
+            style={{ height: 36, width: 120, resizeMode: 'contain' }}
+          />
+        </Box>
+        
+        {noteVisible && devNote}
+
+        <Box
+          backgroundColor="card"
+          width="100%"
+          borderRadius="16"
+          padding="24"
+          style={shadowStyle}
+        >
+          {cardContent}
+        </Box>
       </Box>
     </ScrollView>
   );
