@@ -1,3 +1,4 @@
+import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
@@ -56,13 +57,13 @@ export default function JoinTasktag() {
         </Box>
 
         {/* TaskTag Logo + Sign Up */}
-        <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#fff' }}>
+        <Box flexDirection="row" alignItems="center" justifyContent="space-between" paddingHorizontal="md" paddingVertical="12" backgroundColor="card">
           <Image
             source={require('@/assets/images/tasktag-logo.png')}
             style={{ width: 100, height: 30 }}
             resizeMode="contain"
           />
-          <Pressable onPress={() => router.push('/prototype/m-join-task-non-user-by-link/join-tasktag-signup')}>
+          <Pressable onPress={() => router.push('/prototype/m-join-task-non-user/join-tasktag-signup')}>
             <Text variant="webSecondaryBody" style={{ fontSize: 14, color: theme.colors.secondaryGreen, fontWeight: '600' }}>Sign Up</Text>
           </Pressable>
         </Box>
@@ -70,9 +71,14 @@ export default function JoinTasktag() {
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingBottom: 40, paddingHorizontal: 16, paddingTop: 24 }}>
 
           {/* Heading */}
-          <Text variant="mobileHeading22" color="foreground" textAlign="center" style={{ marginBottom: 12 }}>
-            You&apos;re invited to join a task
-          </Text>
+          <Box style={{ marginBottom: 16 }}>
+            <Text variant="mobileHeading22" color="foreground" textAlign="center">
+              You've been assigned a task
+            </Text>
+            <Text variant="mobileBody" color="textSecondary" textAlign="center" style={{ marginTop: 4 }}>
+              by James Hammer
+            </Text>
+          </Box>
 
           {/* Task Card */}
           <Box backgroundColor="card" style={{ borderRadius: 16, marginBottom: 24 }} padding="md" gap="md" borderWidth={1} borderColor="border">
@@ -150,16 +156,16 @@ export default function JoinTasktag() {
           </Box>
 
           {/* Request to Join Button */}
-          <Pressable
-            style={{ width: '100%', backgroundColor: theme.colors.secondaryGreen, borderRadius: 12, height: 52, alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}
-            onPress={() => router.push('/prototype/m-join-task-non-user-by-link/join-tasktag-signup' as any)}
-          >
-            <Text variant="webLabelEmphasized" color="white">Request to Join</Text>
-          </Pressable>
-
-          <Text variant="webMetadataPrimary" color="textSecondary" style={{ textAlign: 'center', marginBottom: 20, paddingHorizontal: 16 }}>
-            Admin will receive your request after sign up
-          </Text>
+          <Box marginBottom="8">
+            <Button
+              variant="fill"
+              size="lg"
+              style={{ width: '100%', backgroundColor: theme.colors.secondaryGreen, borderRadius: 12 }}
+              onPress={() => router.push('/prototype/m-join-task-non-user/join-tasktag-signup' as any)}
+            >
+              <Text variant="webLabelEmphasized" color="white">Join This Task</Text>
+            </Button>
+          </Box>
 
           {/* Already on TaskTag */}
           <Box flexDirection="row" justifyContent="center" style={{ gap: 4, marginTop: 24 }}>

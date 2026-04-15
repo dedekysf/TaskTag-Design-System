@@ -253,13 +253,20 @@ export default function PrototypeIndex() {
       route: '/design-system',
       platforms: ['Web', 'Mobile'] as ('Web' | 'Mobile')[],
     },
-    // {
-    //   title: 'Join Task Non User by Email',
-    //   jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-334?atlOrigin=eyJpIjoiMDVjN2RlMGE4MjYyNDQyNGE3NDkzMzBmZDJjYzhiNWYiLCJwIjoiaiJ9',
-    //   jiraLabel: 'TD-334',
-    //   route: '/prototype/join-task-non-user',
-    //   platform: 'Web' as const,
-    // },
+    {
+      title: 'Join Task Non User by Email',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-334?atlOrigin=eyJpIjoiNmVmOTg1MjIwOTY5NDdhNTk4YTc4NmVkMzhlMjdmYjIiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-334',
+      route: '/prototype/m-join-task-non-user',
+      platform: 'Mobile' as const,
+    },
+    {
+      title: 'Join Task Non User by Email',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-334?atlOrigin=eyJpIjoiNmVmOTg1MjIwOTY5NDdhNTk4YTc4NmVkMzhlMjdmYjIiLCJwIjoiaiJ9',
+      jiraLabel: 'TD-334',
+      route: '/prototype/join-task-non-user',
+      platform: 'Web' as const,
+    },
     {
       title: 'Join Task Non User by Link',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-335?atlOrigin=eyJpIjoiYjYxNDA2OWMzZjllNGM5ZGEwM2QyNjQxZTZlZWQwYmEiLCJwIjoiaiJ9',
@@ -358,6 +365,7 @@ export default function PrototypeIndex() {
   const emailTaskApprovalMobile = prototypes.find(p => p.title === 'Email - Task Request Approved' && p.platform === 'Mobile');
   const joinTaskByLinkMobile = prototypes.find(p => p.title === 'Join Task Non User by Link' && p.platform === 'Mobile');
   const joinTaskByLinkWeb = prototypes.find(p => p.title === 'Join Task Non User by Link' && p.platform === 'Web');
+  const joinTaskByEmailMobile = prototypes.find(p => p.title === 'Join Task Non User by Email' && p.platform === 'Mobile');
   const joinTeamTTUser = prototypes.find(p => p.title === 'Join Team TT User by Link');
   const expiredNonUsers = prototypes.filter(p => p.title === 'Team Invitation Expired by Email');
   const rest = prototypes.filter(p => 
@@ -373,7 +381,23 @@ export default function PrototypeIndex() {
     p.title !== 'Join Task Non User by Link'
   );
 
-  const rawFiltered = [github, designSystem, joinTaskByLinkWeb, emailTaskApprovalWeb, tabUpdateTeamDetail, inviteDuringCreation, removeMember, teamDetail, joinTaskByLinkMobile, emailTaskApprovalMobile, joinTeamTTUser, ...expiredNonUsers, ...rest].filter(Boolean) as typeof prototypes;
+  const rawFiltered = [
+    github, 
+    designSystem, 
+    joinTaskByEmailMobile,
+    joinTaskByLinkMobile,
+    joinTaskByLinkWeb, 
+    joinTaskNonUser, 
+    emailTaskApprovalWeb, 
+    tabUpdateTeamDetail, 
+    inviteDuringCreation, 
+    removeMember, 
+    teamDetail, 
+    emailTaskApprovalMobile, 
+    joinTeamTTUser, 
+    ...expiredNonUsers, 
+    ...rest
+  ].filter(Boolean) as typeof prototypes;
 
   const filtered = rawFiltered.filter(item => {
     const matchTab = activeTab === 'All Device' || PINNED_TITLES.includes(item.title) || ('platform' in item ? item.platform : 'Web') === activeTab;
