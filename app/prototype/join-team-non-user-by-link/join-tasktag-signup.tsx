@@ -149,7 +149,7 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
         </Text>
         <Text variant="webSecondaryBody" color="mutedForeground">
           {"You'll join as a "}
-          <Text variant="webSecondaryBody" color="foreground" fontWeight="700">Viewer (Pending Approval)</Text>
+          <Text variant="webSecondaryBody" color="foreground" fontWeight="700">Member (Pending Approval)</Text>
           {" with 3 other members."}
         </Text>
       </Box>

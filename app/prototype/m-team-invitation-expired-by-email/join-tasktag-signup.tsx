@@ -235,7 +235,7 @@ export default function JoinTasktagSignup() {
                   <Box gap="4">
                     <Text variant="webMetadataPrimary" color="mutedForeground">
                       {"You'll join as a "}
-                      <Text variant="webMetadataPrimary" color="foreground" fontWeight="700">Viewer (Pending Approval)</Text>
+                      <Text variant="webMetadataPrimary" color="foreground" fontWeight="700">Member (Pending Approval)</Text>
                     </Text>
                     <Text variant="webMetadataPrimary" color="mutedForeground">
                       with 3 other members.
