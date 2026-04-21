@@ -1,6 +1,6 @@
 import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
-import { Clock, MapPin } from 'lucide-react-native';
+import { Clock, Hammer, User, Users } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { useTheme } from '@shopify/restyle';
 import React, { useState } from 'react';
@@ -11,7 +11,7 @@ import JoinTasktagSignup from './join-tasktag-signup';
 const PROJECT_DATA = {
   name: 'Raintree Hollow Court Renovation',
   address: '11 N Raintree Hollow Court',
-  team: 'Painting Team',
+  team: 'Aquaworks Construction',
   inviter: 'James Hammer',
   memberCount: 12,
   description: 'Residential renovation project covering kitchen, living room, and exterior painting. Coordinating with multiple contractors across three floors.',
@@ -76,29 +76,34 @@ export default function InvitationExpired() {
             borderRadius="16"
             padding="md"
             marginBottom="lg"
-            gap="md"
+            gap="lg"
             borderWidth={1}
             borderColor="border"
             style={{ width: '100%' as any }}
           >
             {/* Top Info Group (Grey background) */}
-            <Box backgroundColor="grey02" borderRadius="xl" padding="md" borderWidth={1} borderColor="grey03">
-              <Text variant="webHeading22" color="foreground" marginBottom="xs">
-                {PROJECT_DATA.name}
-              </Text>
-              <Box flexDirection="row" alignItems="center" gap="4" marginBottom="md">
-                <MapPin size={14} color={theme.colors.grey06} />
-                <Text variant="webMetadataPrimary" style={{ color: theme.colors.grey06, fontSize: 14 }}>
+            <Box backgroundColor="grey02" borderRadius="md" padding="md" gap="lg" borderWidth={1} borderColor="grey03">
+              <Box gap="sm">
+                <Text variant="webHeading22" color="foreground">
+                  {PROJECT_DATA.name}
+                </Text>
+                <Text variant="webLabelSmall" color="textSecondary">
                   {PROJECT_DATA.address}
                 </Text>
               </Box>
-              <Text variant="webBody" style={{ color: theme.colors.textSecondary }}>
-                {"You'll join as a "}
-                <Text variant="webBody" style={{ fontWeight: '600', color: theme.colors.textSecondary }}>Member</Text>
-                {` with ${PROJECT_DATA.memberCount} other people.`}
-              </Text>
+              <Box flexDirection="row" alignItems="center" gap="md">
+                <Box flexDirection="row" alignItems="center" gap="sm">
+                  <Hammer size={20} color={theme.colors.secondaryGreen} strokeWidth={2} />
+                  <Text variant="webLabelSmall" color="textSecondary">{PROJECT_DATA.team}</Text>
+                </Box>
+                <Box flexDirection="row" alignItems="center" gap="sm">
+                  <Box width={20} height={20} borderRadius="full" backgroundColor="darkGreen" alignItems="center" justifyContent="center">
+                    <User size={14} color="white" />
+                  </Box>
+                  <Text variant="webLabelSmall" color="textSecondary">{PROJECT_DATA.inviter}</Text>
+                </Box>
+              </Box>
             </Box>
-
 
             {/* Description */}
             <Box gap="xs">
@@ -106,6 +111,17 @@ export default function InvitationExpired() {
               <Text variant="webSecondaryBody" color="textSecondary" style={{ lineHeight: 20 } as any}>
                 {PROJECT_DATA.description}
               </Text>
+            </Box>
+
+            {/* Total Member */}
+            <Box gap="xs">
+              <Text variant="webEmphasizedBody" color="foreground">Total Member</Text>
+              <Box flexDirection="row" alignItems="center" gap="xs">
+                <Users size={16} color={theme.colors.textSecondary} strokeWidth={2} />
+                <Text variant="webSecondaryBody" color="textSecondary">
+                  {PROJECT_DATA.memberCount} people working on this project
+                </Text>
+              </Box>
             </Box>
           </Box>
 
