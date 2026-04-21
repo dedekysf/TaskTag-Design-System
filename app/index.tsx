@@ -358,6 +358,13 @@ export default function PrototypeIndex() {
       route: '/prototype/task-invitation-expired-by-email',
       platform: 'Web' as const,
     },
+    {
+      title: 'Project Invitation Expired by Email',
+      jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-339',
+      jiraLabel: 'TD-339',
+      route: '/prototype/project-invitation-expired-by-email',
+      platform: 'Web' as const,
+    },
   ];
 
   const PINNED_TITLES = ['GitHub', 'Design System'];
@@ -382,6 +389,7 @@ export default function PrototypeIndex() {
   const joinTaskByEmailMobile = prototypes.find(p => p.title === 'Join Task Non User by Email' && p.platform === 'Mobile');
   const expiredTaskMobile = prototypes.find(p => p.title === 'Task Invitation Expired by Email' && p.platform === 'Mobile');
   const expiredTaskWeb = prototypes.find(p => p.title === 'Task Invitation Expired by Email' && p.platform === 'Web');
+  const expiredProjectWeb = prototypes.find(p => p.title === 'Project Invitation Expired by Email' && p.platform === 'Web');
   const joinTeamTTUser = prototypes.find(p => p.title === 'Join Team TT User by Link');
   const expiredNonUsers = prototypes.filter(p => p.title === 'Team Invitation Expired by Email');
   const rest = prototypes.filter(p => 
@@ -395,7 +403,8 @@ export default function PrototypeIndex() {
     p.title !== 'Tab Update Team Detail' &&
     p.title !== 'Join Team TT User by Link' &&
     p.title !== 'Join Task Non User by Link' &&
-    p.title !== 'Task Invitation Expired by Email'
+    p.title !== 'Task Invitation Expired by Email' &&
+    p.title !== 'Project Invitation Expired by Email'
   );
 
   const rawFiltered = [
@@ -404,6 +413,7 @@ export default function PrototypeIndex() {
     expiredTaskMobile,
     joinTaskByLinkMobile,
     joinTaskByEmailMobile,
+    expiredProjectWeb,
     expiredTaskWeb,
     joinTaskByLinkWeb, 
     joinTaskNonUser, 
@@ -417,6 +427,13 @@ export default function PrototypeIndex() {
     ...expiredNonUsers, 
     ...rest
   ].filter(Boolean) as typeof prototypes;
+
+  const nonPinned = rawFiltered.filter(item => !PINNED_TITLES.includes(item.title));
+  const tabCounts: Record<PlatformFilter, number> = {
+    'All Device': nonPinned.length,
+    'Web': nonPinned.filter(item => ('platform' in item ? item.platform : 'Web') === 'Web').length,
+    'Mobile': nonPinned.filter(item => ('platform' in item ? item.platform : 'Web') === 'Mobile').length,
+  };
 
   const filtered = rawFiltered.filter(item => {
     const matchTab = activeTab === 'All Device' || PINNED_TITLES.includes(item.title) || ('platform' in item ? item.platform : 'Web') === activeTab;
@@ -451,7 +468,7 @@ export default function PrototypeIndex() {
                     variant="webLabelSmall"
                     style={{ color: isActive ? '#fff' : theme.colors.textPrimary }}
                   >
-                    {tab}
+                    {tab} ({tabCounts[tab]})
                   </Text>
                 </Box>
               </Pressable>
