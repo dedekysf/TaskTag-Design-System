@@ -4,14 +4,14 @@ import { theme as TTTheme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import { Image as ExpoImage } from 'expo-image';
 import { router } from 'expo-router';
-import { Clock, MapPin } from 'lucide-react-native';
+import { Clock } from 'lucide-react-native';
 import React from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
 
 const PROJECT_DATA = {
   name: 'Raintree Hollow Court Renovation',
   address: '11 N Raintree Hollow Court',
-  team: 'Painting Team',
+  team: 'Aquaworks Construction',
   inviter: 'James Hammer',
   memberCount: 12,
 };
@@ -25,11 +25,11 @@ export default function JoinProjectExpiredNonUserWeb() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{ width: '100%' }}
-        contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 64, paddingHorizontal: 40 }}
+        contentContainerStyle={{ flexGrow: 1, alignItems: 'center', paddingVertical: 64, paddingHorizontal: 40 }}
       >
         <Box width="100%" maxWidth={560}>
 
-          {/* Logo - Centered like mobile */}
+          {/* Logo */}
           <Box marginBottom="xl" alignItems="center">
             <Image
               source={require('@/assets/images/tasktag-logo.png')}
@@ -59,16 +59,35 @@ export default function JoinProjectExpiredNonUserWeb() {
             </Box>
 
             {/* Project Identity (Grey Box) */}
-            <Box backgroundColor="grey02" borderRadius="xl" padding="md" marginBottom="24" borderWidth={1} borderColor="grey03">
-              <Text variant="webHeading22" color="foreground" marginBottom="xs">
+            <Box backgroundColor="grey02" borderRadius="xl" padding="md" gap="md" marginBottom="24" borderWidth={1} borderColor="grey03">
+              {/* Project Name */}
+              <Text variant="webHeading22" color="foreground">
                 {PROJECT_DATA.name}
               </Text>
-              <Box flexDirection="row" alignItems="center" gap="4" marginBottom="md">
-                <MapPin size={14} color={theme.colors.grey06} />
-                <Text variant="webMetadataPrimary" style={{ color: theme.colors.grey06, fontSize: 14 }}>
-                  {PROJECT_DATA.address}
-                </Text>
+
+              <Box height={1} backgroundColor="grey03" />
+
+              <Box gap="sm">
+                {/* Address */}
+                <Box flexDirection="row" alignItems="center" gap="md">
+                  <Box width={120}>
+                    <Text variant="webBody" color="grey05" textAlign="left">Address</Text>
+                  </Box>
+                  <Text variant="webBody" color="foreground">{PROJECT_DATA.address}</Text>
+                </Box>
+
+                {/* Team Name */}
+                <Box flexDirection="row" alignItems="center" gap="md">
+                  <Box width={120}>
+                    <Text variant="webBody" color="grey05" textAlign="left">Team Name</Text>
+                  </Box>
+                  <Text variant="webBody" color="foreground">{PROJECT_DATA.team}</Text>
+                </Box>
               </Box>
+
+              <Box height={1} backgroundColor="grey03" />
+
+              {/* Role Info */}
               <Text variant="webBody" style={{ color: theme.colors.textSecondary, textAlign: 'left' }}>
                 {"You'll join as a "}
                 <Text variant="webBody" style={{ fontWeight: '600', color: theme.colors.textSecondary }}>Member</Text>
@@ -123,17 +142,17 @@ export default function JoinProjectExpiredNonUserWeb() {
 
           {/* Footer */}
           <Box alignItems="center" gap="24" paddingBottom="xl">
-            <Text variant="webSecondaryBody" style={{ color: theme.colors.grey06, textAlign: 'center' }}>
+            <Text variant="webSecondaryBody" style={{ color: theme.colors.grey05, textAlign: 'center' }}>
               Have questions? Contact our support team
             </Text>
             <Box flexDirection="row" alignItems="center" gap="sm">
-              <Text variant="webMetadataPrimary" style={{ color: theme.colors.grey06, textDecorationLine: 'underline' }}>Terms & conditions</Text>
+              <Text variant="webMetadataPrimary" style={{ color: theme.colors.grey05, textDecorationLine: 'underline' }}>Terms & conditions</Text>
               <View style={{ width: 1, height: 12, backgroundColor: theme.colors.grey03 }} />
-              <Text variant="webMetadataPrimary" style={{ color: theme.colors.grey06, textDecorationLine: 'underline' }}>Privacy policy</Text>
+              <Text variant="webMetadataPrimary" style={{ color: theme.colors.grey05, textDecorationLine: 'underline' }}>Privacy policy</Text>
               <View style={{ width: 1, height: 12, backgroundColor: theme.colors.grey03 }} />
-              <Text variant="webMetadataPrimary" style={{ color: theme.colors.grey06, textDecorationLine: 'underline' }}>Contact us</Text>
+              <Text variant="webMetadataPrimary" style={{ color: theme.colors.grey05, textDecorationLine: 'underline' }}>Contact us</Text>
             </Box>
-            <Text variant="webSecondaryBody" style={{ color: theme.colors.grey06, textAlign: 'center' }}>
+            <Text variant="webSecondaryBody" style={{ color: theme.colors.grey05, textAlign: 'center' }}>
               © 2026 Tasktag, Houston, Texas 77001
             </Text>
           </Box>

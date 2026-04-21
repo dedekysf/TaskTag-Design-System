@@ -1,0 +1,153 @@
+import { Box, Text } from '@/components/primitives';
+import { Theme } from '@/constants/theme';
+import { BatteryFull, Clock, Hammer, Lock, MapPin, MoreHorizontal, SignalHigh, User, Users, WifiHigh } from 'lucide-react-native';
+import { router } from 'expo-router';
+import { useTheme } from '@shopify/restyle';
+import React from 'react';
+import { Image, Pressable, ScrollView, View } from 'react-native';
+
+const PROJECT_DATA = {
+  name: 'Raintree Hollow Court Renovation',
+  address: '11 N Raintree Hollow Court',
+  team: 'Aquaworks Construction',
+  inviter: 'James Hammer',
+  memberCount: 12,
+  description: 'Residential renovation project covering kitchen, living room, and exterior painting. Coordinating with multiple contractors across three floors.',
+};
+
+export default function InvitationExpired() {
+  const theme = useTheme<Theme>();
+
+  return (
+    <Box flex={1} backgroundColor="background" alignItems="center">
+      <Box flex={1} width="100%" maxWidth={480} backgroundColor="grey02">
+
+        {/* Status Bar */}
+        <Box
+          flexDirection="row" alignItems="center" justifyContent="space-between"
+          paddingHorizontal="xl" paddingTop="md" paddingBottom="sm"
+          backgroundColor="background"
+        >
+          <Text color="foreground" paddingLeft="8" style={{ fontWeight: '600', fontSize: 15 }}>9:41</Text>
+          <Box flexDirection="row" alignItems="center" gap="8" paddingRight="8">
+            <SignalHigh size={15} color={theme.colors.foreground} strokeWidth={2.5} />
+            <WifiHigh size={15} color={theme.colors.foreground} strokeWidth={2.5} />
+            <BatteryFull size={22} color={theme.colors.foreground} strokeWidth={2} />
+          </Box>
+        </Box>
+
+        {/* Browser Header */}
+        <Box
+          paddingHorizontal="md" paddingBottom="sm"
+          backgroundColor="background" borderBottomWidth={1} borderColor="border"
+        >
+          <Box flexDirection="row" alignItems="center" gap="8">
+            <Box
+              flex={1} flexDirection="row" alignItems="center" justifyContent="center"
+              backgroundColor="grey02" paddingHorizontal="12" paddingVertical="12"
+              gap="8" borderRadius="8"
+            >
+              <Lock size={12} color={theme.colors.grey05} />
+              <Text variant="webLabelSmall" color="foreground">tasktag.com</Text>
+            </Box>
+            <Pressable style={{ padding: 4 }}>
+              <MoreHorizontal size={20} color={theme.colors.foreground} strokeWidth={2} />
+            </Pressable>
+          </Box>
+        </Box>
+
+        {/* TaskTag Logo + Sign Up */}
+        <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#fff' }}>
+          <Image
+            source={require('@/assets/images/tasktag-logo.png')}
+            style={{ width: 100, height: 30 }}
+            resizeMode="contain"
+          />
+          <Pressable onPress={() => router.push('/prototype/m-project-invitation-expired-by-email/join-tasktag-signup' as any)}>
+            <Text variant="webSecondaryBody" style={{ fontSize: 14, color: theme.colors.secondaryGreen, fontWeight: '600' }}>Sign Up</Text>
+          </Pressable>
+        </Box>
+
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingBottom: 40, paddingHorizontal: 16, paddingTop: 24 }}>
+
+          {/* Expired Header */}
+          <Box alignItems="center" style={{ marginBottom: 16, gap: 12 }}>
+            <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: theme.colors.lightPink, alignItems: 'center', justifyContent: 'center' }}>
+              <Clock size={32} color={theme.colors.alertRed} strokeWidth={2} />
+            </View>
+            <Box alignItems="center" style={{ gap: 8 }}>
+              <Text variant="mobileHeading28" color="foreground" style={{ textAlign: 'center' }}>
+                Invitation has expired
+              </Text>
+              <Text variant="mobileBody" color="textSecondary" style={{ textAlign: 'center' }}>
+                You can still request to join this project.
+              </Text>
+            </Box>
+          </Box>
+
+          {/* Project Card */}
+          <Box backgroundColor="card" style={{ borderRadius: 16, marginBottom: 24 }} padding="md" gap="md" borderWidth={1} borderColor="border">
+            {/* Top Info Group (Grey background) */}
+            <Box backgroundColor="grey02" borderRadius="md" padding="md">
+              <Text variant="mobileLargeLabel" color="foreground" marginBottom="sm">
+                {PROJECT_DATA.name}
+              </Text>
+              <Text variant="mobileMetadataPrimary" color="textSecondary" numberOfLines={1} marginBottom="md">{PROJECT_DATA.address}</Text>
+              <Box flexDirection="row" alignItems="center" gap="md">
+                <Box flex={1} flexDirection="row" alignItems="center" gap="xs">
+                  <Hammer size={14} color={theme.colors.secondaryGreen} strokeWidth={2.5} style={{ flexShrink: 0 }} />
+                  <Text variant="mobileMetadataPrimary" color="textSecondary" numberOfLines={1} style={{ flex: 1 }}>{PROJECT_DATA.team}</Text>
+                </Box>
+                <Box flex={1} flexDirection="row" alignItems="center" gap="xs">
+                  <Box width={14} height={14} borderRadius="full" backgroundColor="darkGreen" alignItems="center" justifyContent="center" style={{ flexShrink: 0 }}>
+                    <User size={10} color="white" />
+                  </Box>
+                  <Text variant="mobileMetadataPrimary" color="textSecondary" numberOfLines={1} style={{ flex: 1 }}>{PROJECT_DATA.inviter}</Text>
+                </Box>
+              </Box>
+            </Box>
+
+            {/* Description */}
+            <Box gap="xs">
+              <Text variant="mobileLabelSmall" color="foreground">Description</Text>
+              <Text variant="mobileMetadataPrimary" color="textSecondary" style={{ lineHeight: 18 }}>
+                {PROJECT_DATA.description}
+              </Text>
+            </Box>
+
+            {/* Total Member */}
+            <Box gap="xs">
+              <Text variant="mobileLabelSmall" color="foreground">Total Member</Text>
+              <Box flexDirection="row" alignItems="center" gap="xs">
+                <Users size={12} color={theme.colors.textSecondary} strokeWidth={2} />
+                <Text variant="mobileMetadataPrimary" color="textSecondary">{PROJECT_DATA.memberCount} people working on this project</Text>
+              </Box>
+            </Box>
+          </Box>
+
+          {/* Request to Join Button */}
+          <Pressable
+            style={{ width: '100%', backgroundColor: theme.colors.secondaryGreen, borderRadius: 12, height: 52, alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}
+            onPress={() => router.push('/prototype/m-project-invitation-expired-by-email/join-tasktag-signup' as any)}
+          >
+            <Text variant="webLabelEmphasized" color="white">Request to Join</Text>
+          </Pressable>
+
+          <Text variant="webMetadataPrimary" color="textSecondary" style={{ textAlign: 'center', marginBottom: 20 }}>
+            Admin will receive your request after sign up
+          </Text>
+
+          {/* Already on TaskTag */}
+          <Box flexDirection="row" justifyContent="center" style={{ gap: 4, marginTop: 24 }}>
+            <Text variant="webSecondaryBody" color="textSecondary">Already on TaskTag?</Text>
+            <Pressable>
+              <Text variant="webSecondaryBody" style={{ color: theme.colors.secondaryGreen, fontWeight: '600' }}>Log in</Text>
+            </Pressable>
+          </Box>
+
+        </ScrollView>
+
+      </Box>
+    </Box>
+  );
+}
