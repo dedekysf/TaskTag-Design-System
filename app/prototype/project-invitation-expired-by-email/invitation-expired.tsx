@@ -1,6 +1,6 @@
 import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
-import { Clock } from 'lucide-react-native';
+import { Clock, MapPin } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { useTheme } from '@shopify/restyle';
 import React, { useState } from 'react';
@@ -9,7 +9,8 @@ import { Button } from '@/components/Button';
 import JoinTasktagSignup from './join-tasktag-signup';
 
 const PROJECT_DATA = {
-  name: 'LA Avenue 37 D',
+  name: 'Raintree Hollow Court Renovation',
+  address: '11 N Raintree Hollow Court',
   team: 'Painting Team',
   inviter: 'James Hammer',
   memberCount: 12,
@@ -75,16 +76,22 @@ export default function InvitationExpired() {
             borderRadius="16"
             padding="md"
             marginBottom="lg"
-            gap="lg"
+            gap="md"
             borderWidth={1}
             borderColor="border"
             style={{ width: '100%' as any }}
           >
             {/* Top Info Group (Grey background) */}
-            <Box backgroundColor="grey02" borderRadius="xl" padding="md" gap="sm" borderWidth={1} borderColor="grey03">
-              <Text variant="webHeading22" color="foreground">
+            <Box backgroundColor="grey02" borderRadius="xl" padding="md" borderWidth={1} borderColor="grey03">
+              <Text variant="webHeading22" color="foreground" marginBottom="xs">
                 {PROJECT_DATA.name}
               </Text>
+              <Box flexDirection="row" alignItems="center" gap="4" marginBottom="md">
+                <MapPin size={14} color={theme.colors.grey06} />
+                <Text variant="webMetadataPrimary" style={{ color: theme.colors.grey06, fontSize: 14 }}>
+                  {PROJECT_DATA.address}
+                </Text>
+              </Box>
               <Text variant="webBody" style={{ color: theme.colors.textSecondary }}>
                 {"You'll join as a "}
                 <Text variant="webBody" style={{ fontWeight: '600', color: theme.colors.textSecondary }}>Member</Text>

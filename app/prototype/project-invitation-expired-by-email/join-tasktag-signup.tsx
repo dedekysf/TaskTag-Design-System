@@ -1,18 +1,17 @@
 import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
 import { TextInput } from '@/components/TextInput';
-import { Tooltip as DSTooltip } from '@/components/Tooltip';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import { router } from 'expo-router';
-import { AlertTriangle, Building2, Check, Eye, EyeOff, X } from 'lucide-react-native';
+import { AlertTriangle, Check, Eye, EyeOff, MapPin, X } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
-import { Image, Platform, Pressable, TextInput as RNTextInput, ScrollView, View } from 'react-native';
+import { Image, Platform, Pressable, TextInput as RNTextInput, ScrollView } from 'react-native';
 
 const INVITE = {
   inviterName: 'James Hammer',
-  projectName: 'LA Avenue 37 D',
-  teamName: 'Painting Team',
+  projectName: 'Raintree Hollow Court Renovation',
+  address: '11 N Raintree Hollow Court',
   email: 'newuser@example.com',
 };
 
@@ -144,32 +143,21 @@ export default function JoinTasktagSignup({ onClose, onSuccess }: { onClose?: ()
         marginBottom="lg"
         width="100%"
       >
-        <Text variant="webLabelEmphasized" color="foreground" style={{ marginBottom: 8, fontSize: 18 }}>
+        <Text variant="webLabelEmphasized" style={{ marginBottom: 4 }}>
           {INVITE.projectName}
         </Text>
-        <Box flexDirection="row" alignItems="center" gap="xs" marginBottom="16">
-          <Building2 size={14} color={theme.colors.grey06} strokeWidth={2.5} />
+        <Box flexDirection="row" alignItems="center" gap="4" marginBottom="16">
+          <MapPin size={14} color={theme.colors.textSecondary} />
           <Text variant="webSecondaryBody" color="mutedForeground">
-            {INVITE.teamName}
+            {INVITE.address}
           </Text>
         </Box>
-        <Text variant="webSecondaryBody" color="mutedForeground">
-          {"You'll join as a "}
-          <DSTooltip
-            variant="bottom-left"
-            content={
-              <View style={{ gap: 4 }}>
-                {['View and manage project tasks', 'Collaborate with team', 'Upload files & media', 'Track project progress'].map((item, i) => (
-                  <Text key={i} style={{ color: theme.colors.white, fontSize: 12, fontFamily: 'Inter_400Regular' }}>{'• '}{item}</Text>
-                ))}
-              </View>
-            }
-          >
-            <Box borderBottomWidth={1} borderColor="foreground" style={{ borderStyle: 'dotted' }}>
-              <Text variant="webSecondaryBody" color="foreground" fontWeight="700">Member (Pending Approval)</Text>
-            </Box>
-          </DSTooltip>
-        </Text>
+        <Box flexDirection="row" alignItems="center" gap="4">
+          <Text variant="webSecondaryBody" color="mutedForeground">Your Role : </Text>
+          <Text variant="webSecondaryBody" color="foreground" fontWeight="700">
+            Member <Text variant="webMetadataPrimary" fontWeight="400">(Pending Approval)</Text>
+          </Text>
+        </Box>
       </Box>
 
       {/* Social sign-in */}
