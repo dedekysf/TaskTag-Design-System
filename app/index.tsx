@@ -254,6 +254,13 @@ export default function PrototypeIndex() {
       platforms: ['Web', 'Mobile'] as ('Web' | 'Mobile')[],
     },
     {
+      title: 'Onboarding',
+      jiraTicket: '',
+      jiraLabel: '',
+      route: '/prototype/onboarding',
+      platform: 'Web' as const,
+    },
+    {
       title: 'Join Task Non User by Email',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-334?atlOrigin=eyJpIjoiNmVmOTg1MjIwOTY5NDdhNTk4YTc4NmVkMzhlMjdmYjIiLCJwIjoiaiJ9',
       jiraLabel: 'TD-334',
@@ -384,6 +391,7 @@ export default function PrototypeIndex() {
     platforms: ['Web', 'Mobile'] as ('Web' | 'Mobile')[],
   };
   const designSystem = prototypes.find(p => p.title === 'Design System')!;
+  const onboarding = prototypes.find(p => p.title === 'Onboarding')!;
   const joinTaskNonUser = prototypes.find(p => p.title === 'Join Task Non User by Email' && p.platform === 'Web')!;
   const emailTaskApprovalWeb = prototypes.find(p => p.title === 'Email - Task Request Approved' && p.platform === 'Web')!;
   const inviteDuringCreation = prototypes.find(p => p.title === 'Invite Members During Team Creation')!;
@@ -402,6 +410,7 @@ export default function PrototypeIndex() {
   const expiredNonUsers = prototypes.filter(p => p.title === 'Team Invitation Expired by Email');
   const rest = prototypes.filter(p => 
     !PINNED_TITLES.includes(p.title) && 
+    p.title !== 'Onboarding' && 
     p.title !== 'Team Invitation Expired by Email' && 
     p.title !== 'Role Descriptions and Naming Consistency' && 
     p.title !== 'Remove Member Discoverable on Active Member' &&
@@ -418,6 +427,7 @@ export default function PrototypeIndex() {
   const rawFiltered = [
     github, 
     designSystem, 
+    onboarding,
     expiredProjectMobile,
     expiredProjectWeb,
     expiredTaskMobile,

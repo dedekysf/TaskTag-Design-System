@@ -1,0 +1,6 @@
+env: load .env.local
+env: export VERCEL_OIDC_TOKEN
+Networking has been disabled
+Starting project at D:\masrama.com\TaskTag\DS\TaskTag-Design-System
+React Compiler enabled
+Starting Metro Bundler

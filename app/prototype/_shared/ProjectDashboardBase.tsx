@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Image, Platform, Pressable, ScrollView } from 'react-native';
 import { Box, Text } from '@/components/primitives';
 import { Button } from '@/components/Button';
+import { ChatSidePanel } from '@/components/ChatSidePanel';
+import { ChatPanel } from '@/components/ChatPanel';
 import { useTheme } from '@shopify/restyle';
 import { Theme } from '@/constants/theme';
 import {
@@ -249,9 +251,13 @@ export function TableSection({
 export default function ProjectDashboardBase({
   modalVariant = 'non-user',
   viewVariant = 'default',
+  hideDefaultModal = false,
+  children,
 }: {
   modalVariant?: 'non-user' | 'tt-user';
   viewVariant?: 'default' | 'pending';
+  hideDefaultModal?: boolean;
+  children?: React.ReactNode;
 }) {
   const theme = useTheme<Theme>();
   const [activeTab, setActiveTab] = useState('tasks');
@@ -368,8 +374,9 @@ export default function ProjectDashboardBase({
 
       {/* ── Main Content ── */}
       <Box flex={1} backgroundColor="background" style={{ height: '100%' as any }}>
-
-        <Box paddingHorizontal="md" backgroundColor="card" borderBottomWidth={1} borderColor="border" style={{ paddingTop: 16, paddingBottom: 12 }}>
+        {children ? children : (
+          <>
+            <Box paddingHorizontal="md" backgroundColor="card" borderBottomWidth={1} borderColor="border" style={{ paddingTop: 16, paddingBottom: 12 }}>
           <Box flexDirection="row" alignItems="center" justifyContent="space-between">
             <Box flexDirection="row" alignItems="center" gap="8" flex={1} flexShrink={1}>
               <Pressable hitSlop={8}><ChevronLeft size={20} color={theme.colors.grey04} /></Pressable>
@@ -515,133 +522,37 @@ export default function ProjectDashboardBase({
           </Box>
 
         </ScrollView>
+          </>
+        )}
       </Box>
 
       {/* ── Chat Panel ── */}
-      <Box flex={1} backgroundColor="grey01" borderLeftWidth={1} borderColor="border" style={{ height: '100%' as any, maxWidth: 550 }}>
-        <Box flexDirection="row" alignItems="center" justifyContent="space-between" backgroundColor="card" borderBottomWidth={1} borderColor="border" style={{ height: 72, paddingHorizontal: 20 }}>
-          <Box flexDirection="row" alignItems="center" gap="12">
-            <Image source={require('@/assets/images/sample-one.jpg')} style={{ width: 44, height: 44, borderRadius: 22 }} />
-            <Text variant="webLabelEmphasized" color="foreground">Linda Smith</Text>
-          </Box>
-          <Box flexDirection="row" alignItems="center">
-            <Pressable style={{ padding: 8 }}><Maximize2 size={18} color={theme.colors.textSecondary} /></Pressable>
-            <Pressable style={{ padding: 8 }}><MoreVertical size={18} color={theme.colors.textSecondary} /></Pressable>
-            <Pressable style={{ padding: 8 }}><X size={18} color={theme.colors.textSecondary} /></Pressable>
-          </Box>
-        </Box>
-
-        <Box flex={1} justifyContent="flex-end">
-          <Box flexDirection="row" alignItems="center" style={{ paddingHorizontal: 24, paddingVertical: 20 }}>
-            <Box flex={1} height={1} backgroundColor="border" />
-            <Text style={{ fontSize: 12, color: theme.colors.grey03, marginHorizontal: 12 }}>Friday, November 20</Text>
-            <Box flex={1} height={1} backgroundColor="border" />
-          </Box>
-          <Box style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
-            <Box flexDirection="row" gap="12" alignItems="flex-start">
-              {viewVariant === 'pending' ? (
-                <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.lightMint, marginTop: 2 }}>
-                  <Text style={{ fontWeight: '700', color: theme.colors.secondaryGreen, fontSize: 14 }}>JH</Text>
-                </Box>
-              ) : (
-                <Image source={require('@/assets/images/sample-one.jpg')} style={{ width: 40, height: 40, borderRadius: 20, marginTop: 2 }} />
-              )}
-              <Box flex={1}>
-                <Box flexDirection="row" alignItems="center" gap="8" style={{ marginBottom: 8 }}>
-                  <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>
-                    {viewVariant === 'pending' ? 'James Harrington' : 'Linda Smith'}
-                  </Text>
-                  <Text style={{ fontSize: 11, color: theme.colors.grey04 }}>12:25 PM</Text>
-                </Box>
-                {viewVariant === 'pending' ? (
-                  <Box flexDirection="row" alignItems="flex-end" gap="8">
-                    <Box style={{ backgroundColor: theme.colors.lightMint, borderRadius: 12, borderTopLeftRadius: 0, padding: 8, alignSelf: 'flex-start' as any }}>
-                      <Box borderWidth={1} borderColor="border" style={{ borderRadius: 10, overflow: 'hidden' as any }}>
-                        <Box flexDirection="row" alignItems="center" gap="8" style={{ padding: 10, backgroundColor: '#f9eefa' }}>
-                          <Users size={13} color={theme.colors.darkMagenta} />
-                          <Text style={{ fontSize: 12, color: theme.colors.darkMagenta, fontWeight: '500' }}>Member Activity</Text>
-                        </Box>
-                        <Box backgroundColor="card" style={{ padding: 8 }}>
-                          <Text style={{ fontSize: 14, color: theme.colors.textSecondary, marginBottom: 10, lineHeight: 20 }}>Ask to join this project</Text>
-                          <Box flexDirection="row" alignItems="center" gap="8" style={{ backgroundColor: theme.colors.secondaryGreen, borderRadius: 6, paddingHorizontal: 8, paddingVertical: 5, alignSelf: 'flex-start' as any }}>
-                            <Folder size={12} color={theme.colors.white} />
-                            <Text style={{ fontSize: 12, color: theme.colors.white, fontWeight: '500' }} numberOfLines={1}>{PROJECT.name.length > 20 ? PROJECT.name.slice(0, 20) + '...' : PROJECT.name}</Text>
-                          </Box>
-                        </Box>
-                      </Box>
-                    </Box>
-                    <CheckCheck size={14} color={theme.colors.secondaryGreen} style={{ marginBottom: 2 }} />
-                  </Box>
-                ) : (
-                  <Box style={{ backgroundColor: theme.colors.card, borderRadius: 12, borderTopLeftRadius: 0, padding: 8, alignSelf: 'flex-start' as any }}>
-                    <Box borderWidth={1} borderColor="border" style={{ borderRadius: 10, overflow: 'hidden' as any }}>
-                      <Box flexDirection="row" alignItems="center" gap="8" style={{ padding: 10, backgroundColor: '#f9eefa' }}>
-                        <Users size={13} color={theme.colors.darkMagenta} />
-                        <Text style={{ fontSize: 12, color: theme.colors.darkMagenta, fontWeight: '500' }}>Member Activity</Text>
-                      </Box>
-                      <Box backgroundColor="card" style={{ padding: 8 }}>
-                        <Text style={{ fontSize: 14, color: theme.colors.textSecondary, marginBottom: 10, lineHeight: 20 }}>You've been added to this project</Text>
-                        <Box flexDirection="row" alignItems="center" gap="8" style={{ backgroundColor: theme.colors.secondaryGreen, borderRadius: 6, paddingHorizontal: 8, paddingVertical: 5, alignSelf: 'flex-start' as any }}>
-                          <Folder size={12} color={theme.colors.white} />
-                          <Text style={{ fontSize: 12, color: theme.colors.white, fontWeight: '500' }} numberOfLines={1}>{PROJECT.name.length > 20 ? PROJECT.name.slice(0, 20) + '...' : PROJECT.name}</Text>
-                        </Box>
-                      </Box>
-                    </Box>
-                  </Box>
-                )}
-              </Box>
-            </Box>
-          </Box>
-        </Box>
-
-        <Box style={{ paddingHorizontal: 16, paddingVertical: 16 }}>
-          <Box backgroundColor="card" borderWidth={1} borderColor="border" style={{ borderRadius: 16, paddingHorizontal: 16, paddingTop: 12, paddingBottom: 10 }}>
-            <Text style={{ fontSize: 14, color: theme.colors.grey03, paddingBottom: 20 }}>Type message here...</Text>
-            <Box flexDirection="row" alignItems="center" justifyContent="space-between">
-              <Box flexDirection="row" alignItems="center">
-                {[Plus, Hash, FileText, ImageIcon, Smile].map((Icon, i) => (
-                  <Pressable key={i} style={{ padding: 8 }}><Icon size={20} color={theme.colors.grey04} /></Pressable>
-                ))}
-              </Box>
-              <Pressable disabled style={{ width: 40, height: 40, borderRadius: 10, backgroundColor: theme.colors.grey02, alignItems: 'center', justifyContent: 'center' }}>
-                <Send size={18} color={theme.colors.grey04} />
-              </Pressable>
-            </Box>
-          </Box>
-        </Box>
-      </Box>
+      <ChatPanel view="list" />
 
       {/* ── Mini Chat Sidebar ── */}
-      <Box width={72} backgroundColor="card" borderLeftWidth={1} borderColor="border" alignItems="center" style={{ height: '100%' as any, paddingTop: 16, paddingBottom: 20 }}>
-        <Pressable style={{ padding: 8, marginBottom: 12 }}>
-          <ChevronsLeft size={20} color={theme.colors.grey04} />
-        </Pressable>
-        <Box alignItems="center" justifyContent="center" style={{ width: '100%', paddingVertical: 10, backgroundColor: theme.colors.lightMint, marginBottom: 8 }}>
-          <Image source={require('@/assets/images/sample-one.jpg')} style={{ width: 44, height: 44, borderRadius: 22 }} />
-        </Box>
-        <Image source={require('@/assets/images/sample-two.jpg')} style={{ width: 44, height: 44, borderRadius: 22, marginBottom: 8 }} />
-        <Box width={44} height={44} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.orange }}>
-          <Text style={{ fontWeight: '700', color: theme.colors.white, fontSize: 14 }}>TH</Text>
-        </Box>
-        <Box flex={1} justifyContent="flex-end">
-          <Pressable
-            style={{
-              width: 44, height: 44, borderRadius: 22,
-              backgroundColor: theme.colors.foreground,
-              alignItems: 'center', justifyContent: 'center',
-              ...Platform.select({
-                web: { boxShadow: '0 4px 16px rgba(0,0,0,0.2)' } as any,
-                default: { elevation: 6, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 8 },
-              }),
-            }}
-          >
-            <MessageSquarePlus size={20} color={theme.colors.white} />
-          </Pressable>
-        </Box>
-      </Box>
+      <ChatSidePanel
+        users={[
+          {
+            variant: 'photo',
+            src: require('@/assets/images/sample-one.jpg'),
+            isActive: true,
+          },
+          {
+            variant: 'photo',
+            src: require('@/assets/images/sample-two.jpg'),
+            isActive: false,
+          },
+          {
+            variant: 'text',
+            initials: 'TH',
+            color: 'orange',
+            isActive: false,
+          },
+        ]}
+      />
 
       {/* ── Modal: Project Onboarding 5 ── */}
-      {modalVisible && viewVariant !== 'pending' && (
+      {modalVisible && viewVariant !== 'pending' && !hideDefaultModal && (
         <Box style={{ position: 'absolute' as any, right: 550 + 72 + 16, bottom: 16, zIndex: 50 }}>
           <Box backgroundColor="card" width={440} style={{ borderRadius: 16, padding: 24, ...Platform.select({ web: { boxShadow: '0px 5px 12px rgba(0,0,0,0.1)' } as any, default: { elevation: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.1, shadowRadius: 12 } }) }}>
             <Box flexDirection="row" alignItems="center" gap="8" style={{ marginBottom: 24 }}>

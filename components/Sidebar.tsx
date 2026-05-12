@@ -67,6 +67,8 @@ export function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProps) {
     { id: 'chat-header', label: 'Chat Header' },
     { id: 'chat-input', label: 'Chat Input' },
     { id: 'chat-message', label: 'Chat Message' },
+    { id: 'chat-panel', label: 'Chat Panel' },
+    { id: 'chat-side-panel', label: 'Chat Side Panel' },
     { id: 'chat-image-grid', label: 'Image Grid' },
     { id: 'chat-image-selector', label: 'Image Selector' },
     { id: 'chat-image-viewer', label: 'Image Viewer' },
