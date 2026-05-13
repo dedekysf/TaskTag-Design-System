@@ -1,4 +1,5 @@
 import { ChatPanelComposite } from '@/components/ChatPanelComposite';
+import { ChecklistRewardWidget } from '@/components/ChecklistRewardWidget';
 import { ProjectDetail } from '@/components/ProjectDetail';
 import { ProjectCreationPanel } from '@/components/ProjectCreationPanel';
 import { ProjectList } from '@/components/ProjectList';
@@ -19,6 +20,7 @@ export function MainLayoutOnboarding({
   onCloseCreateProjectPanel,
 }: MainLayoutOnboardingProps) {
   const [showProjectDetail, setShowProjectDetail] = useState(false);
+  const [showRewardWidget, setShowRewardWidget] = useState(false);
   const [showCreateProjectPanel, setShowCreateProjectPanel] = useState(
     showCreateProjectPanelProp ?? false
   );
@@ -92,7 +94,10 @@ export function MainLayoutOnboarding({
             >
               <ProjectCreationPanel
                 onClose={handleClosePanel}
-                onSuccess={() => setShowProjectDetail(true)}
+                onSuccess={() => {
+                  setShowProjectDetail(true);
+                  setShowRewardWidget(true);
+                }}
               />
             </Box>
           </>
@@ -101,6 +106,11 @@ export function MainLayoutOnboarding({
 
       {/* ── Right: Unified Chat Panel (list → room → collapsed) ── */}
       <ChatPanelComposite defaultView="list" variant="without-member" />
+
+      {/* ── Checklist reward widget ── */}
+      {showRewardWidget && (
+        <ChecklistRewardWidget onDismiss={() => setShowRewardWidget(false)} />
+      )}
     </Box>
   );
 }

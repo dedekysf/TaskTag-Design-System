@@ -1,7 +1,7 @@
 import { WelcomeModalScreen } from '@/components/WelcomeModalScreen';
 import { Box } from '@/components/primitives';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, Platform, Pressable, StyleSheet } from 'react-native';
+import { Animated, Easing, Platform, Pressable } from 'react-native';
 import { MainLayoutOnboarding } from './_shared-layout';
 
 export default function OnboardingScreen() {
@@ -56,10 +56,6 @@ export default function OnboardingScreen() {
             opacity: modalProgress,
           }}
         >
-          <Pressable
-            onPress={() => setShowWelcomeModal(false)}
-            style={StyleSheet.absoluteFill}
-          />
           <Animated.View
             style={{
               transform: [
