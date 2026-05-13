@@ -35,8 +35,6 @@ export interface ProjectTaskSectionProps {
   onCreateTask?: (name: string, priority: TaskPriority, dueDate: Date | null) => void;
   onCompleteTask?: (taskId: string) => void;
   onUncompleteTask?: (taskId: string) => void;
-  onDeleteTask?: (taskId: string) => void;
-  onDuplicateTask?: (taskId: string) => void;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -52,8 +50,6 @@ export function ProjectTaskSection({
   onCreateTask,
   onCompleteTask,
   onUncompleteTask,
-  onDeleteTask,
-  onDuplicateTask,
 }: ProjectTaskSectionProps) {
   const theme = useTheme<Theme>();
 
@@ -77,7 +73,10 @@ export function ProjectTaskSection({
           paddingHorizontal: 16,
           paddingVertical: 14,
           backgroundColor: hovered ? theme.colors.grey01 : 'white',
-          borderRadius: isExpanded ? 0 : 8,
+          borderTopLeftRadius: 8,
+          borderTopRightRadius: 8,
+          borderBottomLeftRadius: isExpanded ? 0 : 8,
+          borderBottomRightRadius: isExpanded ? 0 : 8,
         })}
       >
         <Box flexDirection="row" alignItems="center" style={{ gap: 8 }}>
@@ -118,7 +117,7 @@ export function ProjectTaskSection({
 
       {/* Section body */}
       {isExpanded && (
-        <Box style={{ borderTopWidth: 1, borderTopColor: theme.colors.border }}>
+        <Box>
           {/* Empty state */}
           {tasks.length === 0 && (
             <Box alignItems="center" paddingVertical="24" style={{ gap: 4 }}>
@@ -139,8 +138,6 @@ export function ProjectTaskSection({
               sectionType={sectionType}
               onComplete={() => onCompleteTask?.(task.id)}
               onUncomplete={() => onUncompleteTask?.(task.id)}
-              onDelete={() => onDeleteTask?.(task.id)}
-              onDuplicate={() => onDuplicateTask?.(task.id)}
             />
           ))}
 
@@ -172,18 +169,20 @@ function InlineTaskCreate({
   const [isFocused, setIsFocused] = useState(false);
   const [taskName, setTaskName] = useState('');
   const [priority, setPriority] = useState<TaskPriority>('medium');
-  const [showTooltip, setShowTooltip] = useState(showOnboardingTooltip);
+  const [showTooltip, setShowTooltip] = useState(false);
   const tooltipOpacity = useRef(new Animated.Value(1)).current;
   const fadeStarted = useRef(false);
+  const inputRef = useRef<any>(null);
 
   const isActive = isFocused || taskName.length > 0;
 
-  // Sync showOnboardingTooltip prop → local state (when parent resets)
+  // When prop becomes true: show tooltip + focus input
   useEffect(() => {
     if (showOnboardingTooltip && !showTooltip) {
       setShowTooltip(true);
       tooltipOpacity.setValue(1);
       fadeStarted.current = false;
+      setTimeout(() => inputRef.current?.focus(), 50);
     }
   }, [showOnboardingTooltip]);
 
@@ -222,19 +221,21 @@ function InlineTaskCreate({
       description="Name your task — it'll be added to this job straight away"
       open={showTooltip}
       forceShow={showTooltip}
-      fullWidth
       animatedOpacity={tooltipOpacity}
+      offset={8}
+      style={{ alignSelf: 'stretch' }}
     >
       <Box
         flexDirection="row"
         alignItems="center"
-        backgroundColor={isActive ? 'white' : 'grey01'}
+        backgroundColor="white"
         paddingHorizontal="16"
-        paddingVertical="8"
         style={{
-          minHeight: 52,
+          paddingVertical: 12,
           borderTopWidth: 1,
           borderTopColor: theme.colors.border,
+          borderBottomLeftRadius: 8,
+          borderBottomRightRadius: 8,
           ...Platform.select({
             web: isActive ? { boxShadow: '0 2px 8px rgba(0,0,0,0.04)' } as any : {},
           }),
@@ -242,42 +243,44 @@ function InlineTaskCreate({
       >
         <Box flex={1}>
           <TextInput
-            placeholder=""
+            ref={inputRef}
+            placeholder="Enter task name..."
             placeholderTextColor={theme.colors.grey04}
             value={taskName}
             onChangeText={setTaskName}
             onFocus={() => setIsFocused(true)}
             onBlur={() => { if (!taskName) setIsFocused(false); }}
-            autoFocus={showOnboardingTooltip}
             onSubmitEditing={handleCreate}
             style={{
               fontSize: 14,
               color: theme.colors.textPrimary,
               fontFamily: 'Inter_400Regular',
-              paddingVertical: 6,
+              paddingVertical: 0,
               outline: 'none',
             } as any}
           />
-          {(isActive || showTooltip) && (
+          {isActive && (
             <Text style={{ fontSize: 10, color: theme.colors.grey04, marginTop: 2 }}>
               Press Shift + Enter for new line
             </Text>
           )}
         </Box>
 
-        {isActive && (
-          <Box flexDirection="row" alignItems="center" style={{ gap: 6 }}>
+        {taskName.length > 0 && (
+          <Box flexDirection="row" alignItems="center" style={{ gap: 16 }}>
             {/* Priority picker */}
             <Pressable
               onPress={cyclePriority}
-              style={{
-                paddingHorizontal: 8,
-                paddingVertical: 6,
-                borderRadius: 40,
+              style={({ hovered }: any) => ({
+                width: 32,
+                height: 32,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 16,
                 borderWidth: 1,
-                borderColor: PRIORITY_COLOR[priority] + '40',
-                backgroundColor: PRIORITY_COLOR[priority] + '18',
-              }}
+                borderColor: theme.colors.grey03,
+                backgroundColor: hovered ? theme.colors.grey03 : 'white',
+              })}
             >
               <PriorityIcon size={14} color={PRIORITY_COLOR[priority]} />
             </Pressable>
@@ -286,7 +289,8 @@ function InlineTaskCreate({
             <Button
               variant="outline"
               size="sm"
-              style={{ height: 32, borderRadius: 40, borderColor: 'black' }}
+              style={{ height: 32, borderRadius: 40, borderColor: theme.colors.grey03 }}
+              hoverBackgroundColor={theme.colors.grey03}
               leftIcon={<Calendar size={14} color="black" />}
             >
               <Text style={{ fontSize: 12, color: 'black' }}>Due Date</Text>
@@ -296,7 +300,8 @@ function InlineTaskCreate({
             <Button
               variant="outline"
               size="sm"
-              style={{ height: 32, borderRadius: 40, borderColor: 'black' }}
+              style={{ height: 32, borderRadius: 40, borderColor: theme.colors.grey03 }}
+              hoverBackgroundColor={theme.colors.grey03}
               leftIcon={<UserPlus size={14} color="black" />}
             >
               <Text style={{ fontSize: 12, color: 'black' }}>Assignee</Text>
@@ -310,13 +315,11 @@ function InlineTaskCreate({
               style={{
                 height: 32,
                 borderRadius: 40,
-                backgroundColor: taskName.trim()
-                  ? theme.colors.secondaryGreen
-                  : theme.colors.grey03,
+                backgroundColor: theme.colors.secondaryGreen,
                 borderWidth: 0,
               }}
             >
-              <Text style={{ fontSize: 12, color: taskName.trim() ? 'white' : theme.colors.grey05, fontWeight: '500' }}>
+              <Text style={{ fontSize: 12, color: 'white', fontWeight: '500' }}>
                 Create Task
               </Text>
             </Button>

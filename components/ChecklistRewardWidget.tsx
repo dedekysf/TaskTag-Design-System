@@ -5,108 +5,93 @@ import { Animated, Easing, Platform } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { Box, Text } from './primitives';
 
-const TICK_LENGTH = 21.5; // approximate stroke length of M5,12 L10,17 L19,7
+const TICK_LENGTH = 21.5;
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 interface ChecklistRewardWidgetProps {
   onDismiss: () => void;
+  projectName?: string;
 }
 
-export function ChecklistRewardWidget({ onDismiss }: ChecklistRewardWidgetProps) {
+export function ChecklistRewardWidget({ onDismiss, projectName }: ChecklistRewardWidgetProps) {
   const theme = useTheme<Theme>();
 
-  const slideY      = useRef(new Animated.Value(120)).current;
-  const opacity     = useRef(new Animated.Value(0)).current;
-  const tickOffset  = useRef(new Animated.Value(TICK_LENGTH)).current;
-  const circleFill  = useRef(new Animated.Value(0)).current;
-  const counterFlip = useRef(new Animated.Value(0)).current;
-  const progressBar = useRef(new Animated.Value(0)).current;
-  const counterScale = useRef(new Animated.Value(1)).current;
+  const slideY     = useRef(new Animated.Value(120)).current;
+  const opacity    = useRef(new Animated.Value(0)).current;
+  const tickOffset = useRef(new Animated.Value(TICK_LENGTH)).current;
+  const circleFill = useRef(new Animated.Value(0)).current;
+  // Subtle scale-in for the text block after the check animates
+  const textScale  = useRef(new Animated.Value(0.94)).current;
+  const textOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     // 1. Slide up + fade in
     Animated.parallel([
       Animated.timing(slideY, {
         toValue: 0,
-        duration: 320,
+        duration: 340,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }),
       Animated.timing(opacity, {
         toValue: 1,
-        duration: 200,
+        duration: 220,
         easing: Easing.out(Easing.quad),
         useNativeDriver: true,
       }),
     ]).start(() => {
-      // 2. Circle fill + tick draws
+      // 2. Circle fills + tick draws simultaneously
       Animated.parallel([
         Animated.timing(circleFill, {
           toValue: 1,
-          duration: 220,
+          duration: 240,
           easing: Easing.out(Easing.quad),
           useNativeDriver: true,
         }),
         Animated.timing(tickOffset, {
           toValue: 0,
-          duration: 400,
-          delay: 120,
+          duration: 420,
+          delay: 100,
           easing: Easing.out(Easing.cubic),
           useNativeDriver: true,
         }),
       ]).start();
 
-      // 3. Counter flips at midpoint of tick draw
+      // 3. Text fades + scales in just after circle starts filling
       Animated.sequence([
-        Animated.delay(220),
+        Animated.delay(160),
         Animated.parallel([
-          Animated.timing(counterFlip, {
+          Animated.timing(textOpacity, {
             toValue: 1,
-            duration: 180,
-            easing: Easing.out(Easing.back(1.8)),
+            duration: 280,
+            easing: Easing.out(Easing.cubic),
             useNativeDriver: true,
           }),
-          Animated.sequence([
-            Animated.timing(counterScale, {
-              toValue: 1.3,
-              duration: 90,
-              useNativeDriver: true,
-            }),
-            Animated.timing(counterScale, {
-              toValue: 1,
-              duration: 150,
-              easing: Easing.out(Easing.back(2)),
-              useNativeDriver: true,
-            }),
-          ]),
+          Animated.spring(textScale, {
+            toValue: 1,
+            damping: 16,
+            stiffness: 200,
+            useNativeDriver: true,
+          }),
         ]),
       ]).start();
 
-      // 4. Progress bar fills
-      Animated.timing(progressBar, {
-        toValue: 1,
-        duration: 500,
-        delay: 280,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: false, // width cannot use native driver
-      }).start();
-
-      // 5. Hold then slide down
+      // 4. Hold then slide down
       Animated.sequence([
         Animated.delay(8000),
         Animated.parallel([
           Animated.timing(slideY, {
             toValue: 120,
-            duration: 300,
+            duration: 320,
             easing: Easing.in(Easing.cubic),
             useNativeDriver: true,
           }),
           Animated.timing(opacity, {
             toValue: 0,
-            duration: 220,
-            delay: 80,
+            duration: 240,
+            delay: 60,
             useNativeDriver: true,
           }),
         ]),
@@ -116,8 +101,10 @@ export function ChecklistRewardWidget({ onDismiss }: ChecklistRewardWidgetProps)
   }, []);
 
   const circleOpacity = circleFill.interpolate({ inputRange: [0, 1], outputRange: [0, 1] });
-  const counterText   = counterFlip.interpolate({ inputRange: [0, 0.5, 1], outputRange: [0, 0, 1] });
-  const progressWidth = progressBar.interpolate({ inputRange: [0, 1], outputRange: ['0%', '20%'] });
+
+  const displayName = projectName
+    ? (projectName.length > 22 ? projectName.slice(0, 22) + '…' : projectName)
+    : 'Project';
 
   return (
     <Animated.View
@@ -135,43 +122,39 @@ export function ChecklistRewardWidget({ onDismiss }: ChecklistRewardWidgetProps)
     >
       <Box
         style={{
-          width: 340,
-          borderRadius: 16,
-          paddingHorizontal: 18,
-          paddingVertical: 16,
+          width: 360,
+          borderRadius: 18,
           backgroundColor: theme.colors.grey06,
+          overflow: 'hidden',
           ...Platform.select({
-            web: {
-              boxShadow: '0px 8px 32px rgba(0,0,0,0.22)',
-            } as any,
+            web: { boxShadow: '0px 10px 36px rgba(0,0,0,0.28)' } as any,
             default: {
               shadowColor: '#000',
-              shadowOffset: { width: 0, height: 8 },
-              shadowOpacity: 0.22,
-              shadowRadius: 16,
-              elevation: 12,
+              shadowOffset: { width: 0, height: 10 },
+              shadowOpacity: 0.28,
+              shadowRadius: 20,
+              elevation: 14,
             },
           }),
         }}
       >
-        {/* Top row: tick icon + label + counter */}
-        <Box flexDirection="row" alignItems="center" style={{ gap: 12, marginBottom: 12 }}>
-          {/* Animated circle + tick */}
-          <Box style={{ width: 36, height: 36 }}>
-            <Svg width={36} height={36} viewBox="0 0 36 36">
-              {/* Background circle */}
-              <Circle cx={18} cy={18} r={17} fill="rgba(255,255,255,0.08)" />
-              {/* Animated fill circle */}
+        {/* Main content row */}
+        <Box
+          flexDirection="row"
+          alignItems="center"
+          style={{ paddingHorizontal: 18, paddingTop: 18, paddingBottom: 16, gap: 14 }}
+        >
+          {/* Animated check circle */}
+          <Box style={{ width: 42, height: 42, flexShrink: 0 }}>
+            <Svg width={42} height={42} viewBox="0 0 42 42">
+              <Circle cx={21} cy={21} r={20} fill="rgba(255,255,255,0.07)" />
               <AnimatedCircle
-                cx={18}
-                cy={18}
-                r={17}
+                cx={21} cy={21} r={20}
                 fill={theme.colors.secondaryGreen}
                 opacity={circleOpacity as any}
               />
-              {/* Tick path — draws itself */}
               <AnimatedPath
-                d="M 9 18 L 15 24 L 27 12"
+                d="M 11 21 L 18 28 L 31 14"
                 stroke="#ffffff"
                 strokeWidth={2.8}
                 strokeLinecap="round"
@@ -183,76 +166,50 @@ export function ChecklistRewardWidget({ onDismiss }: ChecklistRewardWidgetProps)
             </Svg>
           </Box>
 
-          {/* Step label */}
-          <Box flex={1}>
+          {/* Two-line text block — animates in slightly after check */}
+          <Animated.View
+            style={{
+              flex: 1,
+              opacity: textOpacity,
+              transform: [{ scale: textScale }],
+            }}
+          >
+            {/* Line 1: What succeeded */}
             <Text
               style={{
-                fontSize: 15,
-                fontWeight: '600',
+                fontSize: 16,
+                fontWeight: '700',
                 color: '#ffffff',
-                lineHeight: 20,
+                lineHeight: 22,
               }}
+              numberOfLines={1}
             >
-              Project created!
+              {`"${displayName}" created`}
             </Text>
-            <Text style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', lineHeight: 17 }}>
-              Now, add your first task →
-            </Text>
-          </Box>
 
-          {/* Animated counter */}
-          <Animated.View style={{ transform: [{ scale: counterScale }] }}>
-            <Box
+            {/* Line 2: What to do next */}
+            <Text
               style={{
-                backgroundColor: 'rgba(255,255,255,0.12)',
-                borderRadius: 20,
-                paddingHorizontal: 10,
-                paddingVertical: 4,
+                fontSize: 13,
+                fontWeight: '400',
+                color: 'rgba(255,255,255,0.62)',
+                lineHeight: 19,
+                marginTop: 3,
               }}
             >
-              <Text style={{ fontSize: 13, fontWeight: '700', color: '#ffffff', lineHeight: 18 }}>
-                <AnimatedCounter value={counterFlip} />
-                <Text style={{ fontSize: 13, fontWeight: '400', color: 'rgba(255,255,255,0.55)' }}>
-                  /5
-                </Text>
-              </Text>
-            </Box>
+              Next: add your first task in this project
+            </Text>
           </Animated.View>
         </Box>
 
-        {/* Progress bar */}
+        {/* Bottom green accent strip */}
         <Box
           style={{
-            height: 5,
-            borderRadius: 10,
-            backgroundColor: 'rgba(255,255,255,0.14)',
-            overflow: 'hidden',
+            height: 3,
+            backgroundColor: theme.colors.secondaryGreen,
           }}
-        >
-          <Animated.View
-            style={{
-              height: '100%',
-              width: progressWidth,
-              borderRadius: 10,
-              backgroundColor: theme.colors.secondaryGreen,
-            }}
-          />
-        </Box>
+        />
       </Box>
     </Animated.View>
   );
-}
-
-// Small helper: renders "0" or "1" based on animated value
-function AnimatedCounter({ value }: { value: Animated.Value }) {
-  const [display, setDisplay] = React.useState('0');
-
-  useEffect(() => {
-    const id = value.addListener(({ value: v }) => {
-      setDisplay(v >= 0.5 ? '1' : '0');
-    });
-    return () => value.removeListener(id);
-  }, [value]);
-
-  return <>{display}</>;
 }

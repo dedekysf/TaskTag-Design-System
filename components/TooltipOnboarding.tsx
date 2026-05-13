@@ -1,7 +1,7 @@
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Platform, Pressable, View, ViewStyle } from 'react-native';
+import { Animated, Easing, Platform, Pressable, View, ViewStyle } from 'react-native';
 import { Box, Text } from './primitives';
 import { Button } from './Button';
 
@@ -19,23 +19,24 @@ export interface TooltipOnboardingProps {
     size?: TooltipOnboardingSize;
     tooltipStyle?: TooltipOnboardingStyle;
     content?: string | React.ReactNode;
-    
+
     // Rich content props (from Figma)
     title?: string;
     description?: string;
     step?: string;
     ctaText?: string;
     onCtaPress?: () => void;
-    
+
     children: React.ReactNode;
     forceShow?: boolean;
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
-    fullWidth?: boolean;
     disabled?: boolean;
     style?: ViewStyle;
     animatedOpacity?: any; // To support Animated.Value fading
     trigger?: 'hover' | 'press';
+    offset?: number; // Gap in px between trigger and tooltip (default 20)
+    arrowAtTriggerCenter?: boolean; // Shift balloon so left-arrow aligns with trigger center
 }
 
 const sizeConfig = {
@@ -88,27 +89,27 @@ function getArrowStyle(variant: TooltipOnboardingVariant, bgColor: string): View
     }
 }
 
-function RichTooltipContent({ 
-    title, 
-    description, 
-    step, 
-    ctaText, 
-    onCtaPress, 
-    content, 
-    size, 
-    variant, 
-    bgColor 
+function RichTooltipContent({
+    title,
+    description,
+    step,
+    ctaText,
+    onCtaPress,
+    content,
+    size,
+    variant,
+    bgColor,
 }: any) {
     const theme = useTheme<Theme>();
     const currentSize = sizeConfig[size as TooltipOnboardingSize];
 
     return (
-        <Box 
-            style={{ 
-                backgroundColor: bgColor, 
-                borderRadius: 16, 
+        <Box
+            style={{
+                backgroundColor: bgColor,
+                borderRadius: 16,
                 padding: 16,
-                width: 260,
+                width: 280,
                 ...Platform.select({
                     web: { boxShadow: '0px 5px 12.5px rgba(0,0,0,0.05)' } as any,
                     default: { elevation: 5, shadowColor: '#000', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.1, shadowRadius: 12 }
@@ -184,11 +185,12 @@ export function TooltipOnboarding({
     forceShow = false,
     open,
     onOpenChange,
-    fullWidth = false,
     disabled = false,
     style,
     animatedOpacity,
     trigger = 'hover',
+    offset,
+    arrowAtTriggerCenter = false,
 }: TooltipOnboardingProps) {
     const theme = useTheme<Theme>();
     const isControlled = open !== undefined;
@@ -203,6 +205,7 @@ export function TooltipOnboarding({
     const [layout, setLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
     const triggerRef = useRef<any>(null);
     const [portalRect, setPortalRect] = useState<{ top: number; left: number; width: number; height: number } | null>(null);
+    const enterOpacity = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
         if (Platform.OS === 'web' && (forceShow || isVisible) && triggerRef.current) {
@@ -243,6 +246,21 @@ export function TooltipOnboarding({
 
     const shouldShow = (forceShow || isVisible) && !disabled;
 
+    useEffect(() => {
+        if (shouldShow) {
+            enterOpacity.setValue(0);
+            Animated.timing(enterOpacity, {
+                toValue: 1,
+                duration: 280,
+                delay: 80,
+                easing: Easing.out(Easing.cubic),
+                useNativeDriver: true,
+            }).start();
+        } else {
+            enterOpacity.setValue(0);
+        }
+    }, [shouldShow]);
+
     const backgroundColor =
         tooltipStyle === 'success' ? theme.colors.secondaryGreen :
         tooltipStyle === 'custom' ? 'transparent' : theme.colors.black;
@@ -271,10 +289,10 @@ export function TooltipOnboarding({
     const renderTooltipContent = () => {
         if (isRich) {
             return (
-                <RichTooltipContent 
-                    title={title} description={description} 
-                    step={step} ctaText={ctaText} onCtaPress={onCtaPress} 
-                    content={content} size={size} variant={variant} bgColor={backgroundColor} 
+                <RichTooltipContent
+                    title={title} description={description}
+                    step={step} ctaText={ctaText} onCtaPress={onCtaPress}
+                    content={content} size={size} variant={variant} bgColor={backgroundColor}
                 />
             );
         }
@@ -305,34 +323,50 @@ export function TooltipOnboarding({
 
     const renderWebPortal = () => {
         if (!shouldShow || !portalRect) return null;
-        const offset = 20;
+        const gap = offset ?? 20;
         let top = 0, left = 0;
         let transform = '';
-
         switch (variant) {
-            case 'top-left': top = portalRect.top - offset; left = portalRect.left; transform = 'translateY(-100%)'; break;
-            case 'top-center': top = portalRect.top - offset; left = portalRect.left + portalRect.width / 2; transform = 'translate(-50%, -100%)'; break;
-            case 'top-right': top = portalRect.top - offset; left = portalRect.left + portalRect.width; transform = 'translate(-100%, -100%)'; break;
-            case 'bottom-left': top = portalRect.top + portalRect.height + offset; left = portalRect.left; break;
-            case 'bottom-center': top = portalRect.top + portalRect.height + offset; left = portalRect.left + portalRect.width / 2; transform = 'translateX(-50%)'; break;
-            case 'bottom-right': top = portalRect.top + portalRect.height + offset; left = portalRect.left + portalRect.width; transform = 'translateX(-100%)'; break;
-            case 'left-top': top = portalRect.top; left = portalRect.left - offset; transform = 'translateX(-100%)'; break;
-            case 'left-center': top = portalRect.top + portalRect.height / 2; left = portalRect.left - offset; transform = 'translate(-100%, -50%)'; break;
-            case 'left-bottom': top = portalRect.top + portalRect.height; left = portalRect.left - offset; transform = 'translate(-100%, -100%)'; break;
-            case 'right-top': top = portalRect.top; left = portalRect.left + portalRect.width + offset; break;
-            case 'right-center': top = portalRect.top + portalRect.height / 2; left = portalRect.left + portalRect.width + offset; transform = 'translateY(-50%)'; break;
-            case 'right-bottom': top = portalRect.top + portalRect.height; left = portalRect.left + portalRect.width + offset; transform = 'translateY(-100%)'; break;
-            default: top = portalRect.top - offset; left = portalRect.left + portalRect.width / 2; transform = 'translate(-50%, -100%)';
+            case 'top-left': top = portalRect.top - gap; left = portalRect.left; transform = 'translateY(-100%)'; break;
+            case 'top-center': top = portalRect.top - gap; left = portalRect.left + portalRect.width / 2; transform = 'translate(-50%, -100%)'; break;
+            case 'top-right': top = portalRect.top - gap; left = portalRect.left + portalRect.width; transform = 'translate(-100%, -100%)'; break;
+            case 'bottom-left': top = portalRect.top + portalRect.height + gap; left = portalRect.left; break;
+            case 'bottom-center': top = portalRect.top + portalRect.height + gap; left = portalRect.left + portalRect.width / 2; transform = 'translateX(-50%)'; break;
+            case 'bottom-right': top = portalRect.top + portalRect.height + gap; left = portalRect.left + portalRect.width; transform = 'translateX(-100%)'; break;
+            case 'left-top': top = portalRect.top; left = portalRect.left - gap; transform = 'translateX(-100%)'; break;
+            case 'left-center': top = portalRect.top + portalRect.height / 2; left = portalRect.left - gap; transform = 'translate(-100%, -50%)'; break;
+            case 'left-bottom': top = portalRect.top + portalRect.height; left = portalRect.left - gap; transform = 'translate(-100%, -100%)'; break;
+            case 'right-top': top = portalRect.top; left = portalRect.left + portalRect.width + gap; break;
+            case 'right-center': top = portalRect.top + portalRect.height / 2; left = portalRect.left + portalRect.width + gap; transform = 'translateY(-50%)'; break;
+            case 'right-bottom': top = portalRect.top + portalRect.height; left = portalRect.left + portalRect.width + gap; transform = 'translateY(-100%)'; break;
+            default: top = portalRect.top - gap; left = portalRect.left + portalRect.width / 2; transform = 'translate(-50%, -100%)';
+        }
+
+        // Shift balloon so arrow aligns with trigger center
+        if (arrowAtTriggerCenter) {
+            if (variant === 'bottom-left' || variant === 'bottom-center') {
+                // arrow left:16, center = left+12 = left+28 from element edge → shift so arrow center = trigger center
+                left = portalRect.left + portalRect.width / 2 - 28;
+                transform = '';
+            } else if (variant === 'bottom-right') {
+                // arrow right:16, center = 28px from right edge; translateX(-100%) so right edge = css left
+                // arrow center (absolute) = css_left - 28 → css_left = triggerCenter + 28
+                left = portalRect.left + portalRect.width / 2 + 28;
+                transform = 'translateX(-100%)';
+            }
         }
 
         const { createPortal } = require('react-dom');
+        const displayOpacity = animatedOpacity !== undefined
+            ? Animated.multiply(animatedOpacity as any, enterOpacity)
+            : enterOpacity;
         return createPortal(
             <Animated.View style={{
                 position: 'fixed' as any,
                 top, left, transform: transform as any,
                 zIndex: 99999,
-                opacity: animatedOpacity !== undefined ? animatedOpacity : 1,
-                ...(trigger === 'hover' ? { pointerEvents: 'none' } : {})
+                opacity: displayOpacity as any,
+                ...(trigger === 'hover' && !ctaText && !onCtaPress ? { pointerEvents: 'none' } : {})
             }}>
                 {renderTooltipContent()}
             </Animated.View>,
@@ -341,7 +375,7 @@ export function TooltipOnboarding({
     };
 
     return (
-        <View style={[{ position: 'relative', zIndex: shouldShow ? 99999 : 1, alignSelf: fullWidth ? 'stretch' : 'flex-start' }, style]}>
+        <View style={[{ position: 'relative', zIndex: shouldShow ? 99999 : 1, alignSelf: 'flex-start' }, style]}>
             <Pressable
                 ref={triggerRef}
                 onPress={handlePress}
@@ -351,7 +385,7 @@ export function TooltipOnboarding({
                 {...(Platform.OS === 'web' ? {
                     onMouseEnter: handleMouseEnter,
                     onMouseLeave: handleMouseLeave,
-                    style: { cursor: 'pointer', width: fullWidth ? '100%' : 'auto' } as any
+                    style: { cursor: 'pointer' } as any
                 } : {})}
             >
                 {children}
@@ -362,7 +396,7 @@ export function TooltipOnboarding({
             {Platform.OS !== 'web' && shouldShow && (
                 <Animated.View
                     style={[
-                        { position: 'absolute', zIndex: 99999, opacity: animatedOpacity !== undefined ? animatedOpacity : 1 },
+                        { position: 'absolute', zIndex: 99999, opacity: animatedOpacity !== undefined ? Animated.multiply(animatedOpacity as any, enterOpacity) as any : enterOpacity },
                         getTooltipPositionNative(),
                     ]}
                     pointerEvents={trigger === 'hover' ? 'none' : 'auto'}

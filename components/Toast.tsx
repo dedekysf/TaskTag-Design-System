@@ -2,7 +2,7 @@ import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import { Check, X, AlertCircle, Info, ArrowRight, ListChecks } from 'lucide-react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Animated, Easing, Platform } from 'react-native';
 
 export interface ToastProps {
@@ -35,7 +35,7 @@ export function Toast({
     if (visible) {
       translateY.setValue(80);
       opacity.setValue(0);
-      progressAnim.setValue(100);
+      progressAnim.setValue(0);
 
       // Entry animation
       Animated.parallel([
@@ -54,7 +54,7 @@ export function Toast({
 
       // Progress bar animation
       Animated.timing(progressAnim, {
-        toValue: 0,
+        toValue: 100,
         duration: duration,
         easing: Easing.linear,
         useNativeDriver: false,
@@ -90,7 +90,7 @@ export function Toast({
     checklist: { icon: ListChecks, color: theme.colors.secondaryGreen },
   };
 
-  const { icon: Icon, color } = typeConfig[type];
+  const { icon: Icon } = typeConfig[type];
   const showCaption = variant === "title-caption" || variant === "title-caption-arrow";
   const showArrow = variant === "title-arrow" || variant === "title-caption-arrow";
 
@@ -98,15 +98,16 @@ export function Toast({
     <Animated.View
       style={[
         {
-          position: 'absolute',
           bottom: 16,
-          left: 16,
-          right: 16,
+          left: 0,
+          right: 0,
+          alignItems: 'center',
           zIndex: 9999,
           opacity,
           transform: [{ translateY }],
           ...Platform.select({
-            web: { pointerEvents: 'none' } as any,
+            web: { position: 'fixed', pointerEvents: 'none' } as any,
+            default: { position: 'absolute' },
           }),
         },
         style

@@ -2,9 +2,9 @@ import { Avatar } from '@/components/Avatar';
 import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import { CalendarDays, Check, Copy, FileText, MoreHorizontal, Trash2 } from 'lucide-react-native';
-import React, { useState } from 'react';
-import { Platform, Pressable } from 'react-native';
+import { Calendar, Check, ChevronsDown, ChevronsUp, Link, ListChecks, UserPlus } from 'lucide-react-native';
+import React from 'react';
+import { Pressable } from 'react-native';
 
 // ── Shared Types ──────────────────────────────────────────────────────────────
 
@@ -58,8 +58,6 @@ export interface ProjectTaskItemProps {
   sectionType: TaskSectionType;
   onComplete: () => void;
   onUncomplete?: () => void;
-  onDelete: () => void;
-  onDuplicate: () => void;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -69,11 +67,8 @@ export function ProjectTaskItem({
   sectionType,
   onComplete,
   onUncomplete,
-  onDelete,
-  onDuplicate,
 }: ProjectTaskItemProps) {
   const theme = useTheme<Theme>();
-  const [menuOpen, setMenuOpen] = useState(false);
 
   const overdue = task.dueDate && isDueDateOverdue(task.dueDate) && !task.completed;
   const MAX_VISIBLE = 3;
@@ -86,113 +81,124 @@ export function ProjectTaskItem({
     } else {
       onComplete();
     }
-    setMenuOpen(false);
   };
 
   return (
     <Pressable
-      onPress={() => { if (menuOpen) setMenuOpen(false); }}
       style={({ hovered }: any) => ({
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 16,
-        paddingVertical: 10,
-        gap: 10,
-        backgroundColor: menuOpen ? theme.colors.grey01 : hovered ? theme.colors.grey01 : 'white',
+        paddingVertical: 8,
+        gap: 16,
+        backgroundColor: hovered ? theme.colors.grey01 : 'white',
         borderBottomWidth: 1,
         borderBottomColor: theme.colors.border,
       })}
     >
-      {/* Complete toggle */}
-      <Pressable
-        onPress={handleToggleComplete}
-        hitSlop={8}
-        style={{
-          width: 20,
-          height: 20,
-          borderRadius: 10,
-          borderWidth: 1.5,
-          borderColor: task.completed ? theme.colors.secondaryGreen : theme.colors.grey04,
-          backgroundColor: task.completed ? theme.colors.secondaryGreen : 'transparent',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
-        }}
-      >
-        {task.completed && <Check size={11} color="white" strokeWidth={2.5} />}
-      </Pressable>
+      {/* Left: Checkbox + Task Info */}
+      <Box flexDirection="row" alignItems="center" style={{ flex: 1, gap: 16, minWidth: 0 }}>
+        {/* Checkbox */}
+        <Pressable
+          onPress={handleToggleComplete}
+          hitSlop={8}
+          style={{
+            width: 20,
+            height: 20,
+            borderRadius: 10,
+            borderWidth: 1.5,
+            borderColor: task.completed ? theme.colors.secondaryGreen : theme.colors.grey04,
+            backgroundColor: task.completed ? theme.colors.secondaryGreen : 'transparent',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}
+        >
+          {task.completed && <Check size={11} color="white" strokeWidth={2.5} />}
+        </Pressable>
 
-      {/* Priority dot */}
-      <Box
-        style={{
-          width: 8,
-          height: 8,
-          borderRadius: 4,
-          backgroundColor: PRIORITY_COLOR[task.priority],
-          flexShrink: 0,
-        }}
-      />
-
-      {/* Task name */}
-      <Text
-        numberOfLines={1}
-        style={{
-          flex: 1,
-          fontSize: 14,
-          color: task.completed ? theme.colors.grey04 : theme.colors.textPrimary,
-          fontFamily: 'Inter_400Regular',
-          textDecorationLine: task.completed ? 'line-through' : 'none',
-          lineHeight: 20,
-        }}
-      >
-        {task.name}
-      </Text>
-
-      {/* Right indicators */}
-      <Box flexDirection="row" alignItems="center" style={{ gap: 6 }}>
-        {/* Checklist count badge */}
-        {task.checklistCount !== undefined && (
-          <Box
-            flexDirection="row"
-            alignItems="center"
+        {/* Task Info column */}
+        <Box style={{ flex: 1, gap: 4, minWidth: 0 }}>
+          {/* Title */}
+          <Text
+            numberOfLines={1}
             style={{
-              gap: 3,
-              backgroundColor: theme.colors.grey02,
-              borderRadius: 4,
-              paddingHorizontal: 5,
-              paddingVertical: 2,
+              fontSize: 14,
+              color: task.completed ? theme.colors.grey04 : theme.colors.textPrimary,
+              fontFamily: 'Inter_400Regular',
+              textDecorationLine: task.completed ? 'line-through' : 'none',
+              lineHeight: 20,
             }}
           >
-            <FileText size={11} color={theme.colors.grey05} />
-            <Text style={{ fontSize: 11, color: theme.colors.grey05, lineHeight: 16 }}>
-              {task.checklistCount}/{task.checklistTotal ?? task.checklistCount}
-            </Text>
-          </Box>
-        )}
+            {task.name}
+          </Text>
 
-        {/* Due date chip */}
-        {task.dueDate && (
-          <Box
-            flexDirection="row"
-            alignItems="center"
-            style={{
-              gap: 3,
-              backgroundColor: overdue ? '#FFF0F0' : theme.colors.grey02,
-              borderRadius: 4,
-              paddingHorizontal: 5,
-              paddingVertical: 2,
-            }}
-          >
-            <CalendarDays size={11} color={overdue ? theme.colors.alertRed : theme.colors.grey05} />
-            <Text style={{ fontSize: 11, color: overdue ? theme.colors.alertRed : theme.colors.grey05, lineHeight: 16 }}>
-              {formatDueDate(task.dueDate)}
-            </Text>
-          </Box>
-        )}
+          {/* Checklist badge below title */}
+          {task.checklistCount !== undefined && (
+            <Box flexDirection="row" alignItems="center" style={{ gap: 4 }}>
+              <ListChecks size={12} color={theme.colors.grey05} strokeWidth={2} />
+              <Text style={{ fontSize: 10, color: theme.colors.grey05, fontFamily: 'Inter_400Regular' }}>
+                {task.checklistCount} items
+              </Text>
+            </Box>
+          )}
+        </Box>
+      </Box>
 
-        {/* Assignee avatars — stacked, max 3 */}
-        {visibleAssignees.length > 0 && (
-          <Box flexDirection="row" alignItems="center">
+      {/* Right: Priority + Due Date + Assignee + Menu */}
+      <Box flexDirection="row" alignItems="center" style={{ gap: 8 }}>
+        {/* Priority button — circular outline */}
+        <Box
+          style={{
+            width: 32,
+            height: 32,
+            borderRadius: 16,
+            borderWidth: 1,
+            borderColor: theme.colors.grey03,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'white',
+            flexShrink: 0,
+          }}
+        >
+          {task.priority === 'high' && (
+            <ChevronsUp size={16} color={PRIORITY_COLOR.high} strokeWidth={2} />
+          )}
+          {task.priority === 'medium' && (
+            <Box style={{ flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+              <Box style={{ width: 12, height: 2, backgroundColor: PRIORITY_COLOR.medium, borderRadius: 1 }} />
+              <Box style={{ width: 12, height: 2, backgroundColor: PRIORITY_COLOR.medium, borderRadius: 1 }} />
+            </Box>
+          )}
+          {task.priority === 'low' && (
+            <ChevronsDown size={16} color={PRIORITY_COLOR.low} strokeWidth={2} />
+          )}
+        </Box>
+
+        {/* Due date — pill outline, always visible */}
+        <Box
+          flexDirection="row"
+          alignItems="center"
+          style={{
+            height: 32,
+            borderRadius: 16,
+            borderWidth: 1,
+            borderColor: overdue ? theme.colors.alertRed : theme.colors.grey03,
+            paddingHorizontal: 12,
+            gap: 4,
+            backgroundColor: overdue ? '#FFF0F0' : 'white',
+            flexShrink: 0,
+          }}
+        >
+          <Calendar size={12} color={overdue ? theme.colors.alertRed : theme.colors.grey05} strokeWidth={2} />
+          <Text style={{ fontSize: 12, color: overdue ? theme.colors.alertRed : theme.colors.textPrimary, fontFamily: 'Inter_400Regular' }}>
+            {task.dueDate ? formatDueDate(task.dueDate) : 'Due Date'}
+          </Text>
+        </Box>
+
+        {/* Assignee — stacked avatars or pill button */}
+        {visibleAssignees.length > 0 ? (
+          <Box flexDirection="row" alignItems="center" style={{ flexShrink: 0 }}>
             {visibleAssignees.map((a, i) => (
               <Box key={i} style={{ marginLeft: i > 0 ? -6 : 0, zIndex: MAX_VISIBLE - i }}>
                 <Avatar size="xs" type="text" initials={a.initials} color={a.color} />
@@ -218,125 +224,44 @@ export function ProjectTaskItem({
               </Box>
             )}
           </Box>
+        ) : (
+          <Box
+            flexDirection="row"
+            alignItems="center"
+            style={{
+              height: 32,
+              borderRadius: 16,
+              borderWidth: 1,
+              borderColor: theme.colors.grey03,
+              paddingHorizontal: 12,
+              gap: 4,
+              backgroundColor: 'white',
+              flexShrink: 0,
+            }}
+          >
+            <UserPlus size={12} color={theme.colors.grey05} strokeWidth={2} />
+            <Text style={{ fontSize: 12, color: theme.colors.textPrimary, fontFamily: 'Inter_400Regular' }}>
+              Assignee
+            </Text>
+          </Box>
         )}
 
-        {/* Context menu */}
-        <Box style={{ position: 'relative' }}>
-          <Pressable
-            onPress={() => setMenuOpen(!menuOpen)}
-            hitSlop={8}
-            style={({ hovered }: any) => ({
-              width: 28,
-              height: 28,
-              borderRadius: 6,
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: menuOpen || hovered ? theme.colors.grey02 : 'transparent',
-            })}
-          >
-            <MoreHorizontal size={16} color={theme.colors.grey05} />
-          </Pressable>
+        {/* Copy link */}
+        <Pressable
+          hitSlop={8}
+          style={({ hovered }: any) => ({
+            width: 28,
+            height: 28,
+            borderRadius: 6,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: hovered ? theme.colors.grey02 : 'transparent',
+          })}
+        >
+          <Link size={16} color={theme.colors.grey05} />
+        </Pressable>
 
-          {menuOpen && (
-            <>
-              {/* Backdrop to close menu */}
-              <Pressable
-                onPress={() => setMenuOpen(false)}
-                style={{
-                  position: Platform.OS === 'web' ? 'fixed' as any : 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  zIndex: 9998,
-                }}
-              />
-              <Box
-                style={{
-                  position: 'absolute',
-                  right: 0,
-                  top: 32,
-                  zIndex: 9999,
-                  backgroundColor: 'white',
-                  borderRadius: 10,
-                  borderWidth: 1,
-                  borderColor: theme.colors.border,
-                  width: 180,
-                  overflow: 'hidden',
-                  ...Platform.select({
-                    web: { boxShadow: '0px 4px 16px rgba(0,0,0,0.12)' } as any,
-                    default: {
-                      shadowColor: '#000',
-                      shadowOffset: { width: 0, height: 4 },
-                      shadowOpacity: 0.12,
-                      shadowRadius: 8,
-                      elevation: 8,
-                    },
-                  }),
-                }}
-              >
-                <MenuAction
-                  label={task.completed ? 'Mark as Current' : 'Mark as Complete'}
-                  icon={Check}
-                  onPress={handleToggleComplete}
-                />
-                <MenuAction
-                  label="Duplicate"
-                  icon={Copy}
-                  onPress={() => { onDuplicate(); setMenuOpen(false); }}
-                />
-                <Box style={{ height: 1, backgroundColor: theme.colors.border }} />
-                <MenuAction
-                  label="Delete"
-                  icon={Trash2}
-                  onPress={() => { onDelete(); setMenuOpen(false); }}
-                  danger
-                />
-              </Box>
-            </>
-          )}
-        </Box>
       </Box>
-    </Pressable>
-  );
-}
-
-// ── Menu Action ───────────────────────────────────────────────────────────────
-
-function MenuAction({
-  label,
-  icon: Icon,
-  onPress,
-  danger = false,
-}: {
-  label: string;
-  icon: any;
-  onPress: () => void;
-  danger?: boolean;
-}) {
-  const theme = useTheme<Theme>();
-  return (
-    <Pressable
-      onPress={onPress}
-      style={({ hovered }: any) => ({
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 10,
-        paddingHorizontal: 14,
-        paddingVertical: 11,
-        backgroundColor: hovered ? theme.colors.grey01 : 'transparent',
-      })}
-    >
-      <Icon size={15} color={danger ? theme.colors.alertRed : theme.colors.textPrimary} />
-      <Text
-        style={{
-          fontSize: 13,
-          color: danger ? theme.colors.alertRed : theme.colors.textPrimary,
-          fontFamily: 'Inter_400Regular',
-        }}
-      >
-        {label}
-      </Text>
     </Pressable>
   );
 }

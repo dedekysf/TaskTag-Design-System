@@ -1,5 +1,5 @@
 import { ChatPanelComposite } from '@/components/ChatPanelComposite';
-import { ChecklistRewardWidget } from '@/components/ChecklistRewardWidget';
+import { ProjectCreatedModal } from '@/components/ProjectCreatedModal';
 import { ProjectDetail } from '@/components/ProjectDetail';
 import { ProjectCreationPanel } from '@/components/ProjectCreationPanel';
 import { ProjectList } from '@/components/ProjectList';
@@ -21,6 +21,8 @@ export function MainLayoutOnboarding({
 }: MainLayoutOnboardingProps) {
   const [showProjectDetail, setShowProjectDetail] = useState(false);
   const [showRewardWidget, setShowRewardWidget] = useState(false);
+  const [createdProjectName, setCreatedProjectName] = useState('');
+  const [showTaskTooltip, setShowTaskTooltip] = useState(false);
   const [renderPanel, setRenderPanel] = useState(
     showCreateProjectPanelProp ?? false
   );
@@ -89,7 +91,7 @@ export function MainLayoutOnboarding({
       <Box flex={1} backgroundColor="background" style={{ height: '100%' as any, position: 'relative' }}>
         {children ?? (
           showProjectDetail
-            ? <ProjectDetail />
+            ? <ProjectDetail showOnboardingTooltip={showTaskTooltip} />
             : <ProjectList onCreateProject={openPanel} />
         )}
 
@@ -133,7 +135,8 @@ export function MainLayoutOnboarding({
             >
               <ProjectCreationPanel
                 onClose={handleClosePanel}
-                onSuccess={() => {
+                onSuccess={(name) => {
+                  setCreatedProjectName(name);
                   setShowProjectDetail(true);
                   setShowRewardWidget(true);
                 }}
@@ -148,7 +151,13 @@ export function MainLayoutOnboarding({
 
       {/* ── Checklist reward widget ── */}
       {showRewardWidget && (
-        <ChecklistRewardWidget onDismiss={() => setShowRewardWidget(false)} />
+        <ProjectCreatedModal
+          projectName={createdProjectName}
+          onDismiss={() => {
+            setShowRewardWidget(false);
+            setShowTaskTooltip(true);
+          }}
+        />
       )}
     </Box>
   );

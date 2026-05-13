@@ -37,6 +37,8 @@ export interface ButtonProps extends Omit<PressableProps, 'style'> {
   buttonVariant?: keyof Theme['buttonVariants'];
   /** Optional tooltip text to show on hover */
   tooltip?: string;
+  /** Override hover background color */
+  hoverBackgroundColor?: string;
   /** Custom style */
   style?: ViewStyle;
 }
@@ -102,6 +104,7 @@ export function Button({
   isIconOnly = false,
   buttonVariant,
   tooltip,
+  hoverBackgroundColor,
   style,
   ...rest
 }: ButtonProps) {
@@ -147,9 +150,10 @@ export function Button({
     }
 
     const getHoverBackgroundColor = () => {
+      if (hoverBackgroundColor) return hoverBackgroundColor;
       if (color === 'primary') return theme.colors.lightMint;
       if (color === 'secondary') return 'rgba(0, 0, 0, 0.08)';
-      if (color === 'destructive') return theme.colors.lightPink; // mapped from theme
+      if (color === 'destructive') return theme.colors.lightPink;
       if (color === 'blue') return theme.colors.lightSky;
       return theme.colors.grey02;
     };

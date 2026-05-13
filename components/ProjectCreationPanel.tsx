@@ -162,7 +162,7 @@ interface ColorPickerModalProps {
   selectedColorId?: string;
 }
 
-function ColorPickerModal({ isOpen, onClose, onSelectColor, selectedColorId }: ColorPickerModalProps) {
+function ColorPickerModal({ isOpen, onClose, onSelectColor }: ColorPickerModalProps) {
   const theme = useTheme<Theme>();
 
   const colors = [
@@ -323,7 +323,7 @@ function IconPickerModal({ isOpen, onClose, onSelectIcon, selectedIconId }: Icon
 
 // ─── Main Panel ───────────────────────────────────────────────────────────────
 
-export function ProjectCreationPanel({ onClose, onSuccess }: { onClose?: () => void; onSuccess?: () => void }) {
+export function ProjectCreationPanel({ onClose, onSuccess }: { onClose?: () => void; onSuccess?: (name: string) => void }) {
   const theme = useTheme<Theme>();
 
   const [projectName, setProjectName] = useState('');
@@ -384,7 +384,7 @@ export function ProjectCreationPanel({ onClose, onSuccess }: { onClose?: () => v
       return;
     }
     onClose?.();
-    onSuccess?.();
+    onSuccess?.(projectName.trim());
   };
 
   const SelectedIconComponent = selectedIcon.component;
@@ -462,8 +462,8 @@ export function ProjectCreationPanel({ onClose, onSuccess }: { onClose?: () => v
                 description="e.g. Smith House, Office Renovation"
                 open={showNameTooltip}
                 forceShow={showNameTooltip}
-                fullWidth
                 animatedOpacity={tooltipOpacity}
+                style={{ alignSelf: 'stretch' }}
               >
                 <TextInput
                   value={projectName}
