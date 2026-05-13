@@ -237,7 +237,7 @@ function ProjectRow({ avatarSource }: { avatarSource: ImageSourcePropType }) {
   );
 }
 
-export function ProjectChecklist() {
+export function ProjectList() {
   const avatarSource = require('@/assets/images/sample-three.jpg');
   const theme = useTheme<Theme>();
 
@@ -309,3 +309,5 @@ export function ProjectChecklist() {
     </Box>
   );
 }
+
+export { ProjectList as ProjectChecklist };

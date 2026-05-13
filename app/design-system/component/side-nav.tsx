@@ -142,7 +142,7 @@ function SideNav({ defaultExpanded = true }: { defaultExpanded?: boolean }) {
           </View>
           {isExpanded && (
             <Text style={{ fontSize: 13, fontWeight: '500', color: theme.colors.foreground }}>
-              My Account
+              My Profile
             </Text>
           )}
         </Pressable>

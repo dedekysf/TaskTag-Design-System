@@ -364,7 +364,7 @@ export default function TeamDashboardBase({
                   <Box width={40} height={40} borderRadius="full" alignItems="center" justifyContent="center" backgroundColor="pastelOrange">
                     <Text variant="labelMedium" style={{ color: '#FFFFFF', fontWeight: '700' }}>OH</Text>
                   </Box>
-                  <Text variant="labelMedium" style={{ color: theme.colors.secondaryGreen }}>My Account</Text>
+                  <Text variant="labelMedium" style={{ color: theme.colors.secondaryGreen }}>My Profile</Text>
                 </Box>
               )}
             </Box>

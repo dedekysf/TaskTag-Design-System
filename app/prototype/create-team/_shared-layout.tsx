@@ -1,6 +1,6 @@
 /**
  * Shared layout components for the create-team prototype flow.
- * Used by both index.tsx (My Account) and team-detail.tsx.
+ * Used by both index.tsx (My Profile) and team-detail.tsx.
  */
 
 import { Box, Text } from '@/components/primitives';
@@ -38,9 +38,18 @@ export interface AppSidebarProps {
   collapsed: boolean;
   /** Callback to toggle collapsed state */
   onToggleCollapsed: () => void;
+  /** Active top-level nav item key */
+  activeItemKey?: string;
+  /** Whether the profile row should be highlighted */
+  profileActive?: boolean;
 }
 
-export function AppSidebar({ collapsed, onToggleCollapsed }: AppSidebarProps) {
+export function AppSidebar({
+  collapsed,
+  onToggleCollapsed,
+  activeItemKey,
+  profileActive = true,
+}: AppSidebarProps) {
   const theme = useTheme<Theme>();
 
   return (
@@ -86,8 +95,10 @@ export function AppSidebar({ collapsed, onToggleCollapsed }: AppSidebarProps) {
         <Box flex={1} justifyContent="space-between">
           {/* Top nav items */}
           <Box gap="8">
-            {NAV_ITEMS.map(({ key, label, Icon, active }) =>
-              collapsed ? (
+            {NAV_ITEMS.map(({ key, label, Icon, active }) => {
+              const isActive = active || activeItemKey === key;
+
+              return collapsed ? (
                 <Box key={key} alignItems="center" justifyContent="center" style={{ height: 54 }}>
                   <Box
                     alignItems="center"
@@ -96,10 +107,10 @@ export function AppSidebar({ collapsed, onToggleCollapsed }: AppSidebarProps) {
                       width: 44,
                       height: 44,
                       borderRadius: 10,
-                      backgroundColor: active ? theme.colors.lightMint : theme.colors.card,
+                      backgroundColor: isActive ? theme.colors.lightMint : theme.colors.card,
                     }}
                   >
-                    <Icon size={22} color={active ? theme.colors.secondaryGreen : theme.colors.textSecondary} />
+                    <Icon size={22} color={isActive ? theme.colors.secondaryGreen : theme.colors.textSecondary} />
                   </Box>
                 </Box>
               ) : (
@@ -113,19 +124,19 @@ export function AppSidebar({ collapsed, onToggleCollapsed }: AppSidebarProps) {
                     borderRadius: 8,
                     paddingHorizontal: 16,
                     paddingVertical: 15,
-                    backgroundColor: active ? theme.colors.lightMint : 'transparent',
+                    backgroundColor: isActive ? theme.colors.lightMint : 'transparent',
                   }}
                 >
-                  <Icon size={24} color={active ? theme.colors.secondaryGreen : theme.colors.textSecondary} />
+                  <Icon size={24} color={isActive ? theme.colors.secondaryGreen : theme.colors.textSecondary} />
                   <Text
                     variant="labelMedium"
-                    style={{ color: active ? theme.colors.secondaryGreen : theme.colors.textSecondary }}
+                    style={{ color: isActive ? theme.colors.secondaryGreen : theme.colors.textSecondary }}
                   >
                     {label}
                   </Text>
                 </Box>
-              )
-            )}
+              );
+            })}
           </Box>
 
           {/* Bottom nav */}
@@ -216,7 +227,7 @@ export function AppSidebar({ collapsed, onToggleCollapsed }: AppSidebarProps) {
               </Box>
             )}
 
-            {/* My Account */}
+            {/* My Profile */}
             {collapsed ? (
               <Box alignItems="center" justifyContent="center" style={{ height: 54 }}>
                 <Box
@@ -242,7 +253,7 @@ export function AppSidebar({ collapsed, onToggleCollapsed }: AppSidebarProps) {
                   borderRadius: 8,
                   paddingHorizontal: 8,
                   paddingVertical: 15,
-                  backgroundColor: theme.colors.lightMint,
+                  backgroundColor: profileActive ? theme.colors.lightMint : 'transparent',
                 }}
               >
                 <Box
@@ -257,8 +268,11 @@ export function AppSidebar({ collapsed, onToggleCollapsed }: AppSidebarProps) {
                     LS
                   </Text>
                 </Box>
-                <Text variant="labelMedium" style={{ color: theme.colors.secondaryGreen }}>
-                  My Account
+                <Text
+                  variant="labelMedium"
+                  style={{ color: profileActive ? theme.colors.secondaryGreen : theme.colors.textSecondary }}
+                >
+                  My Profile
                 </Text>
               </Box>
             )}
@@ -329,8 +343,7 @@ export function AppChatPanel() {
               Tasktag Helpdesk
             </Text>
             <Text variant="webMetadataPrimary" color="grey04" numberOfLines={1}>
-              Hi there! Welcome to TaskTag! We're here to assist you with any questions or support requests you might
-              have.
+              {"Hi there! Welcome to TaskTag! We're here to assist you with any questions or support requests you might have."}
             </Text>
           </Box>
           <Text variant="webMetadataPrimary" color="grey04">

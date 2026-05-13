@@ -1,8 +1,8 @@
 import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import React from 'react';
-import { Image, Platform, Pressable, ViewStyle } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Easing, Image, Platform, Pressable, ViewStyle } from 'react-native';
 
 export interface WelcomeModalScreenProps {
   name?: string;
@@ -18,6 +18,45 @@ const GRID_SIZE = 32;
 const GRID_COLUMNS = Array.from({ length: 17 }, (_, index) => index);
 const GRID_ROWS = Array.from({ length: 10 }, (_, index) => index);
 
+// ─── Bounce spring config ─────────────────────────────────────────────────────
+// Simulates a spring: enters from below with overshoot, settles naturally.
+
+function useBounceIn(delay = 0) {
+  const translateY = useRef(new Animated.Value(32)).current;
+  const opacity    = useRef(new Animated.Value(0)).current;
+  const scale      = useRef(new Animated.Value(0.92)).current;
+
+  useEffect(() => {
+    Animated.sequence([
+      Animated.delay(delay),
+      Animated.parallel([
+        Animated.spring(translateY, {
+          toValue: 0,
+          damping: 14,
+          stiffness: 180,
+          mass: 0.9,
+          useNativeDriver: true,
+        }),
+        Animated.spring(scale, {
+          toValue: 1,
+          damping: 14,
+          stiffness: 180,
+          mass: 0.9,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 220,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: true,
+        }),
+      ]),
+    ]).start();
+  }, [delay, opacity, scale, translateY]);
+
+  return { translateY, opacity, scale };
+}
+
 export function WelcomeModalScreen({
   name = 'Oscar',
   title = "We're glad you're here",
@@ -27,6 +66,10 @@ export function WelcomeModalScreen({
   style,
 }: WelcomeModalScreenProps) {
   const theme = useTheme<Theme>();
+
+  // Staggered bounce: illustration first, then text section
+  const illus  = useBounceIn(60);
+  const content = useBounceIn(180);
 
   return (
     <Box
@@ -58,6 +101,7 @@ export function WelcomeModalScreen({
         style,
       ]}
     >
+      {/* ── Background grid ── */}
       <Box
         pointerEvents="none"
         style={{
@@ -122,33 +166,43 @@ export function WelcomeModalScreen({
         />
       </Box>
 
-      <Box
-        width="100%"
-        alignItems="center"
+      {/* ── Illustration — bounces in first ── */}
+      <Animated.View
         style={{
+          width: '100%',
+          alignItems: 'center',
           height: 200,
           position: 'relative',
           zIndex: 1,
+          opacity: illus.opacity,
+          transform: [
+            { translateY: illus.translateY },
+            { scale: illus.scale },
+          ],
         }}
       >
         <Image
           source={ILLUSTRATION}
           resizeMode="contain"
-          style={{
-            width: 210,
-            height: 200,
-          }}
+          style={{ width: 210, height: 200 }}
         />
-      </Box>
+      </Animated.View>
 
-      <Box
-        alignItems="center"
+      {/* ── Text + button — bounces in second ── */}
+      <Animated.View
         style={{
           width: '100%',
+          alignItems: 'center',
           paddingTop: 24,
           zIndex: 1,
+          opacity: content.opacity,
+          transform: [
+            { translateY: content.translateY },
+            { scale: content.scale },
+          ],
         }}
       >
+        {/* Badge */}
         <Box
           alignItems="center"
           justifyContent="center"
@@ -169,7 +223,7 @@ export function WelcomeModalScreen({
               textAlign: 'center',
             }}
           >
-            {'\uD83C\uDF89'} You're in, {name}
+            {`\uD83C\uDF89 You're in, ${name}`}
           </Text>
         </Box>
 
@@ -225,7 +279,7 @@ export function WelcomeModalScreen({
             {buttonLabel}
           </Text>
         </Pressable>
-      </Box>
+      </Animated.View>
     </Box>
   );
 }

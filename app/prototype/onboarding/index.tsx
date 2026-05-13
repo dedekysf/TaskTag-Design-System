@@ -1,12 +1,12 @@
-import { ProjectChecklist } from '@/components/ProjectChecklist';
-import { Box } from '@/components/primitives';
 import { WelcomeModalScreen } from '@/components/WelcomeModalScreen';
+import { Box } from '@/components/primitives';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Platform, Pressable, StyleSheet } from 'react-native';
-import ProjectDashboardBase from '../_shared/ProjectDashboardBase';
+import { MainLayoutOnboarding } from './_shared-layout';
 
 export default function OnboardingScreen() {
   const [showWelcomeModal, setShowWelcomeModal] = useState(true);
+  const [showCreateProjectPanel, setShowCreateProjectPanel] = useState(false);
   const modalProgress = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -33,10 +33,13 @@ export default function OnboardingScreen() {
 
   return (
     <Box flex={1} style={{ position: 'relative' }}>
-      <ProjectDashboardBase hideDefaultModal profileVariant="photo">
-        <ProjectChecklist />
-      </ProjectDashboardBase>
+      {/* Main layout: SideNav | ProjectList | ChatPanelList | ChatPanelMini */}
+      <MainLayoutOnboarding 
+        showCreateProjectPanel={showCreateProjectPanel}
+        onCloseCreateProjectPanel={() => setShowCreateProjectPanel(false)}
+      />
 
+      {/* Welcome modal overlay */}
       {showWelcomeModal && (
         <Animated.View
           style={{
@@ -68,7 +71,10 @@ export default function OnboardingScreen() {
             <Pressable onPress={(event) => event.stopPropagation()}>
               <WelcomeModalScreen
                 name="Oscar"
-                onGetStarted={() => setShowWelcomeModal(false)}
+                onGetStarted={() => {
+                  setShowWelcomeModal(false);
+                  setShowCreateProjectPanel(true);
+                }}
                 style={{
                   maxHeight: Platform.OS === 'web' ? 'calc(100vh - 48px)' as any : undefined,
                 }}

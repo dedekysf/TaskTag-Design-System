@@ -72,7 +72,7 @@ export function Textarea({
             : theme.colors.border;
 
     return (
-        <View style={{ width: '100%', marginBottom: 16 }}>
+        <View style={{ width: '100%' }}>
             {label && (
                 <Text
                     variant="labelMedium"

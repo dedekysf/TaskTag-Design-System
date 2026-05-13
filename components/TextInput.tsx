@@ -1,7 +1,7 @@
 
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
-import { LucideIcon, X } from 'lucide-react-native';
+import { AlertTriangle, LucideIcon, X } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { TextInput as RNTextInput, TextInputProps as RNTextInputProps, TouchableOpacity, View } from 'react-native';
 import { Text } from './primitives';
@@ -100,7 +100,7 @@ export function TextInput({
     const shouldShowClearButton = showClearButton && currentValue.length > 0 && !disabled;
 
     return (
-        <View style={{ width: '100%', marginBottom: 16 }}>
+        <View style={{ width: '100%' }}>
             {label && (
                 <Text
                     variant="labelMedium"
@@ -173,15 +173,18 @@ export function TextInput({
             </View>
 
             {errorMessage && (
-                <Text
-                    variant="label"
-                    style={{
-                        marginTop: 4,
-                        color: theme.colors.alertRed,
-                    }}
-                >
-                    {errorMessage}
-                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 4 }}>
+                    <AlertTriangle size={12} color={theme.colors.alertRed} />
+                    <Text
+                        variant="label"
+                        style={{
+                            color: theme.colors.alertRed,
+                            fontSize: 12
+                        }}
+                    >
+                        {errorMessage}
+                    </Text>
+                </View>
             )}
         </View>
     );

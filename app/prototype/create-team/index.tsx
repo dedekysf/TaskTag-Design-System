@@ -456,7 +456,7 @@ export default function TeamList() {
           borderColor="border"
           style={{ height: 74, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 24 }}
         >
-          <Text style={{ fontSize: 22, fontWeight: '600', color: theme.colors.foreground, lineHeight: 32 }}>My Account</Text>
+          <Text style={{ fontSize: 22, fontWeight: '600', color: theme.colors.foreground, lineHeight: 32 }}>My Profile</Text>
           <Box flexDirection="row" alignItems="center" gap="12">
             <Pressable
               style={({ pressed, hovered }: any) => ({
