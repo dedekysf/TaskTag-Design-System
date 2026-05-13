@@ -5,7 +5,7 @@ import { Pressable, View, ViewStyle } from 'react-native';
 import { Text } from './primitives';
 import { ChevronDown, LucideIcon } from 'lucide-react-native';
 
-export type FormSelectSize = 'sm' | 'md';
+export type FormSelectSize = 'sm' | 'md' | 'lg';
 
 export interface FormSelectProps {
   /** Input size: sm or md */
@@ -28,6 +28,8 @@ export interface FormSelectProps {
   leftIcon?: React.ReactNode;
   /** Whether to show the chevron icon on the right */
   showChevron?: boolean;
+  /** Custom style to override container */
+  style?: ViewStyle;
 }
 
 export function FormSelect({
@@ -41,6 +43,7 @@ export function FormSelect({
   onPress,
   leftIcon,
   showChevron = true,
+  style,
 }: FormSelectProps) {
   const theme = useTheme<Theme>();
   const [isFocused, setIsFocused] = useState(false);
@@ -58,16 +61,17 @@ export function FormSelect({
       paddingVertical: 8,
       paddingHorizontal: 12,
       fontSize: 16,
+      height: 40,
+    },
+    lg: {
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      fontSize: 16,
       height: 48,
     },
   };
 
-  const correctedSizeConfig = {
-    ...sizeConfig,
-    md: { ...sizeConfig.md, height: 40 },
-  };
-
-  const currentSize = correctedSizeConfig[size];
+  const currentSize = sizeConfig[size];
 
   const borderColor = isError
     ? theme.colors.alertRed
@@ -108,6 +112,7 @@ export function FormSelect({
             opacity: pressed && !disabled ? 0.7 : 1,
             cursor: disabled ? 'not-allowed' : 'pointer',
           } as ViewStyle,
+          style,
         ]}
       >
         {leftIcon && (

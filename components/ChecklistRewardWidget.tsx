@@ -95,7 +95,7 @@ export function ChecklistRewardWidget({ onDismiss }: ChecklistRewardWidgetProps)
 
       // 5. Hold then slide down
       Animated.sequence([
-        Animated.delay(2200),
+        Animated.delay(8000),
         Animated.parallel([
           Animated.timing(slideY, {
             toValue: 120,
@@ -193,10 +193,10 @@ export function ChecklistRewardWidget({ onDismiss }: ChecklistRewardWidgetProps)
                 lineHeight: 20,
               }}
             >
-              Project Creation
+              Project created!
             </Text>
             <Text style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', lineHeight: 17 }}>
-              Step 1 complete
+              Now, add your first task →
             </Text>
           </Box>
 

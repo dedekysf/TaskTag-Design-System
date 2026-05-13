@@ -8,7 +8,7 @@ import { TooltipOnboarding } from '@/components/TooltipOnboarding';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Platform, Pressable, ScrollView } from 'react-native';
+import { Animated, Platform, Pressable, ScrollView, Modal } from 'react-native';
 
 import {
   Activity,
@@ -67,8 +67,6 @@ function TeamListModal({ isOpen, onClose, onSelectTeam }: TeamListModalProps) {
   const [searchQuery, setSearchQuery] = useState('');
 
   const teams = [
-    { id: '1', name: 'TaskTag Project', color: '#18A87D' },
-    { id: '2', name: 'Scott 1', color: '#FF4444' },
     { id: '3', name: 'Personal Projects', color: '#FF4444' },
   ];
 
@@ -76,23 +74,17 @@ function TeamListModal({ isOpen, onClose, onSelectTeam }: TeamListModalProps) {
     team.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  if (!isOpen) return null;
-
   return (
-    <Box
-      style={{
-        position: Platform.OS === 'web' ? 'fixed' as any : 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 9999,
-        padding: 16,
-      }}
-    >
+    <Modal visible={isOpen} transparent animationType="fade">
+      <Box
+        style={{
+          flex: 1,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 16,
+        }}
+      >
       <Pressable style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} onPress={onClose} />
       <Box
         backgroundColor="white"
@@ -157,7 +149,8 @@ function TeamListModal({ isOpen, onClose, onSelectTeam }: TeamListModalProps) {
         </Box>
       </Box>
     </Box>
-  );
+  </Modal>
+);
 }
 
 // ─── Color Picker Modal ───────────────────────────────────────────────────────
@@ -184,23 +177,17 @@ function ColorPickerModal({ isOpen, onClose, onSelectColor, selectedColorId }: C
     { id: '9', name: 'Dark Magenta', value: '#A820D8' },
   ];
 
-  if (!isOpen) return null;
-
   return (
-    <Box
-      style={{
-        position: Platform.OS === 'web' ? 'fixed' as any : 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 9999,
-        padding: 16,
-      }}
-    >
+    <Modal visible={isOpen} transparent animationType="fade">
+      <Box
+        style={{
+          flex: 1,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 16,
+        }}
+      >
       <Pressable style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} onPress={onClose} />
       <Box
         backgroundColor="white"
@@ -245,7 +232,8 @@ function ColorPickerModal({ isOpen, onClose, onSelectColor, selectedColorId }: C
         ))}
       </Box>
     </Box>
-  );
+  </Modal>
+);
 }
 
 // ─── Icon Picker Modal ────────────────────────────────────────────────────────
@@ -275,30 +263,25 @@ function IconPickerModal({ isOpen, onClose, onSelectIcon, selectedIconId }: Icon
     { id: '34', component: Warehouse }, { id: '35', component: Droplets }, { id: '36', component: Zap }
   ];
 
-  if (!isOpen) return null;
-
   return (
-    <Box
-      style={{
-        position: Platform.OS === 'web' ? 'fixed' as any : 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 9999,
-        padding: 16,
-      }}
-    >
+    <Modal visible={isOpen} transparent animationType="fade">
+      <Box
+        style={{
+          flex: 1,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 16,
+        }}
+      >
       <Pressable style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} onPress={onClose} />
       <Box
         backgroundColor="white"
         style={{
           borderRadius: 16,
           padding: 16,
-          width: 304,
+          width: 312, // 16*2 padding + 6*40 icons + 5*8 gaps = 312
+          alignSelf: 'center',
           ...Platform.select({
             web: { boxShadow: '0px 5px 25px 0px rgba(0, 0, 0, 0.1)' } as any,
           }),
@@ -321,7 +304,7 @@ function IconPickerModal({ isOpen, onClose, onSelectIcon, selectedIconId }: Icon
                   justifyContent: 'center',
                   borderRadius: 8,
                   backgroundColor: selectedIconId === icon.id
-                    ? theme.colors.grey02
+                    ? theme.colors.grey03
                     : hovered
                     ? theme.colors.grey01
                     : 'transparent',
@@ -334,7 +317,8 @@ function IconPickerModal({ isOpen, onClose, onSelectIcon, selectedIconId }: Icon
         </Box>
       </Box>
     </Box>
-  );
+  </Modal>
+);
 }
 
 // ─── Main Panel ───────────────────────────────────────────────────────────────
@@ -360,7 +344,19 @@ export function ProjectCreationPanel({ onClose, onSuccess }: { onClose?: () => v
 
   const [nameError, setNameError] = useState('');
   const [showNameTooltip, setShowNameTooltip] = useState(true);
-  const tooltipOpacity = useRef(new Animated.Value(1)).current;
+  const tooltipOpacity = useRef(new Animated.Value(0)).current;
+
+  // Fade in tooltip initially
+  useEffect(() => {
+    if (showNameTooltip && projectName.length === 0) {
+      Animated.timing(tooltipOpacity, {
+        toValue: 1,
+        duration: 300,
+        delay: 300, // delay a bit so it appears smoothly after modal
+        useNativeDriver: true,
+      }).start();
+    }
+  }, []);
 
   // Clear error when user types
   useEffect(() => {
@@ -369,17 +365,14 @@ export function ProjectCreationPanel({ onClose, onSuccess }: { onClose?: () => v
     }
   }, [projectName, nameError]);
 
-  // Fade out tooltip after typing
+  // Fade out tooltip immediately over 2 seconds when typing
   useEffect(() => {
     if (projectName.length > 0 && showNameTooltip) {
-      const timer = setTimeout(() => {
-        Animated.timing(tooltipOpacity, {
-          toValue: 0,
-          duration: 2000, // 2 seconds fade out
-          useNativeDriver: true,
-        }).start(() => setShowNameTooltip(false));
-      }, 2000);
-      return () => clearTimeout(timer);
+      Animated.timing(tooltipOpacity, {
+        toValue: 0,
+        duration: 2000, // fade out over 2 seconds
+        useNativeDriver: true,
+      }).start(() => setShowNameTooltip(false));
     }
   }, [projectName, showNameTooltip, tooltipOpacity]);
 
@@ -418,7 +411,7 @@ export function ProjectCreationPanel({ onClose, onSuccess }: { onClose?: () => v
           flexDirection="row"
           alignItems="center"
           justifyContent="space-between"
-          style={{ paddingHorizontal: 24, paddingVertical: 21 }}
+          style={{ paddingHorizontal: 24, paddingTop: 21, paddingBottom: 12 }}
         >
           <Text style={{ fontSize: 22, fontWeight: '600', color: theme.colors.foreground, lineHeight: 32 }}>
             Create Project
@@ -437,10 +430,10 @@ export function ProjectCreationPanel({ onClose, onSuccess }: { onClose?: () => v
               flexDirection: 'row',
               alignItems: 'center',
               gap: 16,
-              paddingVertical: 12,
+              paddingVertical: 14,
               borderBottomWidth: 1,
               borderColor: theme.colors.grey02,
-              marginBottom: 24,
+              marginBottom: 32,
             }}
           >
             <Copy size={24} color={theme.colors.foreground} />
@@ -474,7 +467,7 @@ export function ProjectCreationPanel({ onClose, onSuccess }: { onClose?: () => v
                   value={projectName}
                   onChangeText={setProjectName}
                   placeholder="Enter project name"
-                  size="md"
+                  size="lg"
                   autoFocus
                   maxLength={255}
                   showCounter={true}
@@ -493,7 +486,8 @@ export function ProjectCreationPanel({ onClose, onSuccess }: { onClose?: () => v
                 value={description}
                 onChangeText={setDescription}
                 placeholder="Enter project description"
-                size="md"
+                size="lg"
+                rows={1}
               />
             </Box>
 
@@ -507,7 +501,7 @@ export function ProjectCreationPanel({ onClose, onSuccess }: { onClose?: () => v
                 value={address}
                 onChangeText={setAddress}
                 placeholder="Enter address"
-                size="md"
+                size="lg"
               />
             </Box>
 
@@ -524,9 +518,14 @@ export function ProjectCreationPanel({ onClose, onSuccess }: { onClose?: () => v
                   </Text>
                 </Box>
                 <FormSelect
+                  size="lg"
                   value={selectedTeam.name}
                   onPress={() => setIsTeamModalOpen(true)}
                   showChevron={false}
+                  style={{
+                    backgroundColor: theme.colors.grey02,
+                    borderColor: theme.colors.grey03,
+                  }}
                 />
               </Box>
 
@@ -540,8 +539,8 @@ export function ProjectCreationPanel({ onClose, onSuccess }: { onClose?: () => v
                   size="md"
                   onPress={() => setIsColorModalOpen(true)}
                   style={{
-                    backgroundColor: theme.colors.grey01,
-                    borderColor: theme.colors.grey02,
+                    backgroundColor: theme.colors.grey02,
+                    borderColor: theme.colors.grey03,
                     height: 48,
                   }}
                 >
@@ -559,8 +558,8 @@ export function ProjectCreationPanel({ onClose, onSuccess }: { onClose?: () => v
                   size="md"
                   onPress={() => setIsIconModalOpen(true)}
                   style={{
-                    backgroundColor: theme.colors.grey01,
-                    borderColor: theme.colors.grey02,
+                    backgroundColor: theme.colors.grey02,
+                    borderColor: theme.colors.grey03,
                     height: 48,
                   }}
                 >
@@ -596,8 +595,9 @@ export function ProjectCreationPanel({ onClose, onSuccess }: { onClose?: () => v
                   size="lg"
                   onPress={() => {}}
                   style={{
-                    backgroundColor: theme.colors.grey01,
+                    backgroundColor: theme.colors.grey02,
                     justifyContent: 'flex-start',
+                    height: 48,
                   }}
                   leftIcon={<Plus size={16} color={theme.colors.secondaryGreen} strokeWidth={2} />}
                 >
@@ -627,7 +627,7 @@ export function ProjectCreationPanel({ onClose, onSuccess }: { onClose?: () => v
         <Button variant="outline" color="secondary" size="lg" style={{ flex: 1, height: 48 }} onPress={onClose}>
           Cancel
         </Button>
-        <Button variant="fill" size="lg" style={{ flex: 1, height: 48 }} onPress={handleCreateProject}>
+        <Button variant="fill" color="secondary" size="lg" style={{ flex: 1, height: 48 }} onPress={handleCreateProject}>
           Create Project
         </Button>
       </Box>

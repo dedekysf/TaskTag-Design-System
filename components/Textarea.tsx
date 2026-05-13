@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { TextInput as RNTextInput, TextInputProps as RNTextInputProps, View } from 'react-native';
 import { Text } from './primitives';
 
-export type TextareaSize = 'sm' | 'md';
+export type TextareaSize = 'sm' | 'md' | 'lg';
 
 export interface TextareaProps extends Omit<RNTextInputProps, 'style'> {
     /** Textarea size: sm or md */
@@ -59,11 +59,16 @@ export function Textarea({
             padding: 8,
             fontSize: 16,
         },
+        lg: {
+            padding: 12,
+            fontSize: 16,
+        },
     };
 
     const currentSize = sizeConfig[size];
     const lineHeight = 20; // Approx
-    const minHeight = rows * lineHeight + (currentSize.padding * 2);
+    const calculatedMinHeight = rows * lineHeight + (currentSize.padding * 2);
+    const minHeight = size === 'lg' && rows === 1 ? 48 : calculatedMinHeight;
 
     const borderColor = isError
         ? theme.colors.alertRed
@@ -99,7 +104,7 @@ export function Textarea({
                     value={currentValue}
                     onChangeText={handleChangeText}
                     placeholder={placeholder}
-                    placeholderTextColor={theme.colors.mutedForeground}
+                    placeholderTextColor={theme.colors.grey04}
                     editable={!disabled}
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}

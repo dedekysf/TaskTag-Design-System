@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { TextInput as RNTextInput, TextInputProps as RNTextInputProps, TouchableOpacity, View } from 'react-native';
 import { Text } from './primitives';
 
-export type TextInputSize = 'sm' | 'md';
+export type TextInputSize = 'sm' | 'md' | 'lg';
 
 export interface TextInputProps extends Omit<RNTextInputProps, 'style'> {
     /** Input size: sm or md */
@@ -78,18 +78,19 @@ export function TextInput({
             paddingVertical: 8,
             paddingHorizontal: 12,
             fontSize: 16,
-            height: 48, // Adjusted to match source variable md which is usually 48 or 40. Source logic used var(--size-md) which is 40px in my theme. Wait source says height: var(--size-md) for md.
+            height: 40,
             iconSize: 18,
+        },
+        lg: {
+            paddingVertical: 12,
+            paddingHorizontal: 16,
+            fontSize: 16,
+            height: 48,
+            iconSize: 20,
         },
     };
 
-    // Correction: theme.ts defines sm:32, md:40. So height should be 40 for md.
-    const correctedSizeConfig = {
-        ...sizeConfig,
-        md: { ...sizeConfig.md, height: 40 }
-    }
-
-    const currentSize = correctedSizeConfig[size];
+    const currentSize = sizeConfig[size];
 
     const borderColor = isError
         ? theme.colors.alertRed

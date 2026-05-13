@@ -127,6 +127,7 @@ export function Button({
       paddingHorizontal: isIconOnly ? 0 : sizeStyle.paddingHorizontal,
       minHeight: sizeStyle.minHeight,
       minWidth: isIconOnly ? sizeStyle.iconSize : 0,
+      gap: 8,
       // Force square if icon only
       ...(isIconOnly ? { width: sizeStyle.iconSize, height: sizeStyle.iconSize } : {}),
     };

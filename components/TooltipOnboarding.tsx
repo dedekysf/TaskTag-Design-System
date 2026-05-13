@@ -3,6 +3,7 @@ import { useTheme } from '@shopify/restyle';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Platform, Pressable, View, ViewStyle } from 'react-native';
 import { Box, Text } from './primitives';
+import { Button } from './Button';
 
 export type TooltipOnboardingVariant = 
     | 'top-left' | 'top-center' | 'top-right' 
@@ -38,19 +39,31 @@ export interface TooltipOnboardingProps {
 }
 
 const sizeConfig = {
-    sm: { paddingVertical: 8, paddingHorizontal: 12, fontSize: 12 },
-    md: { paddingVertical: 12, paddingHorizontal: 16, fontSize: 14 },
+    sm: { paddingVertical: 12, paddingHorizontal: 12, fontSize: 12 },
+    md: { paddingVertical: 16, paddingHorizontal: 16, fontSize: 14 },
     lg: { paddingVertical: 16, paddingHorizontal: 20, fontSize: 16 },
 };
 
 function getArrowStyle(variant: TooltipOnboardingVariant, bgColor: string): ViewStyle {
-    const size = 12;
+    const size = 24;
     const offset = -(size / 2);
+    let radiusStyle: ViewStyle = {};
+    if (variant.startsWith('top')) {
+        radiusStyle = { borderBottomRightRadius: 4 }; // points DOWN
+    } else if (variant.startsWith('bottom')) {
+        radiusStyle = { borderTopLeftRadius: 4 }; // points UP
+    } else if (variant.startsWith('left')) {
+        radiusStyle = { borderTopRightRadius: 4 }; // points RIGHT
+    } else if (variant.startsWith('right')) {
+        radiusStyle = { borderBottomLeftRadius: 4 }; // points LEFT
+    }
+
     const baseStyle: ViewStyle = {
         position: 'absolute',
         width: size,
         height: size,
         backgroundColor: bgColor,
+        ...radiusStyle,
         transform: [{ rotate: '45deg' }],
     };
 
@@ -135,24 +148,19 @@ function RichTooltipContent({
                                 )}
                             </Box>
                             {ctaText && (
-                                <Pressable
+                                <Button
+                                    variant="fill"
+                                    color="secondary"
+                                    size="sm"
                                     onPress={onCtaPress}
-                                    style={({ hovered }: any) => ({
-                                        backgroundColor: theme.colors.black,
-                                        paddingHorizontal: 16,
-                                        paddingVertical: 4,
+                                    style={{
                                         borderRadius: 50,
-                                        opacity: hovered ? 0.8 : 1,
-                                        ...Platform.select({
-                                            web: { boxShadow: '2px 2px 6px rgba(0,0,0,0.12)' } as any,
-                                            default: { elevation: 2 }
-                                        })
-                                    })}
+                                        height: 32,
+                                        minHeight: 0,
+                                    }}
                                 >
-                                    <Text style={{ color: theme.colors.white, fontSize: 16, fontWeight: '500', lineHeight: 24 }}>
-                                        {ctaText}
-                                    </Text>
-                                </Pressable>
+                                    {ctaText}
+                                </Button>
                             )}
                         </Box>
                     )}
@@ -226,7 +234,7 @@ export function TooltipOnboarding({
         tooltipStyle === 'custom' ? 'transparent' : theme.colors.black;
 
     const getTooltipPositionNative = (): ViewStyle => {
-        const offset = 8;
+        const offset = 20;
         switch (variant) {
             case 'top-left': return { bottom: layout.height + offset, left: 0 };
             case 'top-center': return { bottom: layout.height + offset, left: '50%', transform: [{ translateX: '-50%' as any }] };
@@ -262,7 +270,7 @@ export function TooltipOnboarding({
         return (
             <View style={{
                 backgroundColor,
-                borderRadius: tooltipStyle === 'custom' ? 0 : 8,
+                borderRadius: tooltipStyle === 'custom' ? 0 : 16,
                 paddingVertical: tooltipStyle === 'custom' ? 0 : currentSize.paddingVertical,
                 paddingHorizontal: tooltipStyle === 'custom' ? 0 : currentSize.paddingHorizontal,
                 maxWidth: 200,
@@ -283,7 +291,7 @@ export function TooltipOnboarding({
 
     const renderWebPortal = () => {
         if (!shouldShow || !portalRect) return null;
-        const offset = 8;
+        const offset = 20;
         let top = 0, left = 0;
         let transform = '';
 

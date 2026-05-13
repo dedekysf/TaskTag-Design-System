@@ -1,1 +1,1 @@
-export { default } from './prototype/onboarding';
+export { default } from './prototype/index';
