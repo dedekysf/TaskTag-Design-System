@@ -4,7 +4,7 @@ import ProjectDashboardBase from '../_shared/ProjectDashboardBase';
 
 export default function OnboardingScreen() {
   return (
-    <ProjectDashboardBase hideDefaultModal>
+    <ProjectDashboardBase hideDefaultModal profileVariant="photo">
       <ProjectChecklist />
     </ProjectDashboardBase>
   );
