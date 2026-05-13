@@ -944,7 +944,7 @@ function ChecklistItemRow({
           borderRadius: 10,
           borderWidth: 1.5,
           borderColor: item.checked ? theme.colors.secondaryGreen : theme.colors.grey04,
-          backgroundColor: item.checked ? theme.colors.secondaryGreen : 'transparent',
+          backgroundColor: item.checked ? theme.colors.secondaryGreen : 'white',
           alignItems: 'center',
           justifyContent: 'center',
           flexShrink: 0,
@@ -1249,12 +1249,12 @@ function ChecklistTemplatePanel({
                         gap: 6,
                         paddingLeft: 4,
                         paddingRight: 8,
-                        paddingTop: 4,
-                        paddingBottom: 4,
+                        paddingTop: 2,
+                        paddingBottom: 2,
                         borderRadius: 20,
                         borderWidth: 1,
                         borderColor: theme.colors.grey03,
-                        backgroundColor: 'white',
+                        backgroundColor: theme.colors.grey02,
                       }}
                     >
                       <Box
@@ -1264,7 +1264,7 @@ function ChecklistTemplatePanel({
                           borderRadius: 9,
                           borderWidth: selected ? 0 : 1.5,
                           borderColor: theme.colors.grey04,
-                          backgroundColor: selected ? theme.colors.secondaryGreen : 'transparent',
+                          backgroundColor: selected ? theme.colors.secondaryGreen : 'white',
                           alignItems: 'center',
                           justifyContent: 'center',
                         }}
