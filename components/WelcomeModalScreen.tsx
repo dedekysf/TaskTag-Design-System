@@ -1,0 +1,231 @@
+import { Box, Text } from '@/components/primitives';
+import { Theme } from '@/constants/theme';
+import { useTheme } from '@shopify/restyle';
+import React from 'react';
+import { Image, Platform, Pressable, ViewStyle } from 'react-native';
+
+export interface WelcomeModalScreenProps {
+  name?: string;
+  title?: string;
+  description?: string;
+  buttonLabel?: string;
+  onGetStarted?: () => void;
+  style?: ViewStyle;
+}
+
+const ILLUSTRATION = require('@/assets/images/il_hot_air_ballon.png');
+const GRID_SIZE = 32;
+const GRID_COLUMNS = Array.from({ length: 17 }, (_, index) => index);
+const GRID_ROWS = Array.from({ length: 10 }, (_, index) => index);
+
+export function WelcomeModalScreen({
+  name = 'Oscar',
+  title = "We're glad you're here",
+  description = "Let's set up your first job, it only takes a few minutes.",
+  buttonLabel = 'Get Started',
+  onGetStarted,
+  style,
+}: WelcomeModalScreenProps) {
+  const theme = useTheme<Theme>();
+
+  return (
+    <Box
+      backgroundColor="card"
+      alignItems="center"
+      style={[
+        {
+          width: 500,
+          maxWidth: '100%',
+          borderRadius: 24,
+          padding: 40,
+          overflow: 'hidden',
+          position: 'relative',
+          borderWidth: 1,
+          borderColor: 'rgba(232, 232, 232, 0.72)',
+          ...Platform.select({
+            web: {
+              boxShadow: '0 16px 36px rgba(10, 22, 41, 0.18)',
+            } as any,
+            default: {
+              elevation: 10,
+              shadowColor: '#0A1629',
+              shadowOffset: { width: 0, height: 16 },
+              shadowOpacity: 0.18,
+              shadowRadius: 36,
+            },
+          }),
+        },
+        style,
+      ]}
+    >
+      <Box
+        pointerEvents="none"
+        style={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          left: 0,
+          height: 284,
+          backgroundColor: '#EAFBF6',
+          overflow: 'hidden',
+          ...Platform.select({
+            web: {
+              backgroundImage:
+                'linear-gradient(to bottom, rgba(234,251,246,0.92) 0%, rgba(234,251,246,0.88) 62%, rgba(255,255,255,0.98) 100%)',
+            } as any,
+          }),
+        }}
+      >
+        {GRID_COLUMNS.map((line) => (
+          <Box
+            key={`v-${line}`}
+            style={{
+              position: 'absolute',
+              top: 0,
+              bottom: 0,
+              left: line * GRID_SIZE,
+              width: 1,
+              backgroundColor: 'rgba(24, 168, 125, 0.2)',
+            }}
+          />
+        ))}
+        {GRID_ROWS.map((line) => (
+          <Box
+            key={`h-${line}`}
+            style={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              top: line * GRID_SIZE,
+              height: 1,
+              backgroundColor: 'rgba(24, 168, 125, 0.2)',
+            }}
+          />
+        ))}
+        <Box
+          style={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
+            ...Platform.select({
+              web: {
+                backgroundImage:
+                  'linear-gradient(to bottom, rgba(234,251,246,0) 0%, rgba(234,251,246,0.08) 58%, rgba(255,255,255,0.96) 100%)',
+              } as any,
+              default: {
+                backgroundColor: 'rgba(255, 255, 255, 0.18)',
+              },
+            }),
+          }}
+        />
+      </Box>
+
+      <Box
+        width="100%"
+        alignItems="center"
+        style={{
+          height: 200,
+          position: 'relative',
+          zIndex: 1,
+        }}
+      >
+        <Image
+          source={ILLUSTRATION}
+          resizeMode="contain"
+          style={{
+            width: 210,
+            height: 200,
+          }}
+        />
+      </Box>
+
+      <Box
+        alignItems="center"
+        style={{
+          width: '100%',
+          paddingTop: 24,
+          zIndex: 1,
+        }}
+      >
+        <Box
+          alignItems="center"
+          justifyContent="center"
+          style={{
+            minHeight: 40,
+            paddingHorizontal: 18,
+            borderRadius: 999,
+            backgroundColor: '#E7E7E7',
+            marginBottom: 28,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 16,
+              lineHeight: 22,
+              fontWeight: '700',
+              color: theme.colors.secondaryGreen,
+              textAlign: 'center',
+            }}
+          >
+            {'\uD83C\uDF89'} You're in, {name}
+          </Text>
+        </Box>
+
+        <Text
+          style={{
+            fontSize: 28,
+            lineHeight: 36,
+            fontWeight: '700',
+            color: theme.colors.foreground,
+            textAlign: 'center',
+            marginBottom: 10,
+          }}
+        >
+          {title}
+        </Text>
+
+        <Text
+          style={{
+            fontSize: 16,
+            lineHeight: 24,
+            fontWeight: '400',
+            color: theme.colors.grey05,
+            textAlign: 'center',
+            marginBottom: 26,
+          }}
+        >
+          {description}
+        </Text>
+
+        <Pressable
+          accessibilityRole="button"
+          onPress={onGetStarted}
+          style={({ pressed, hovered }: any) => ({
+            width: '100%',
+            minHeight: 64,
+            borderRadius: 12,
+            backgroundColor: theme.colors.black,
+            alignItems: 'center',
+            justifyContent: 'center',
+            opacity: pressed ? 0.82 : hovered ? 0.9 : 1,
+            cursor: 'pointer' as any,
+          })}
+        >
+          <Text
+            style={{
+              fontSize: 20,
+              lineHeight: 26,
+              fontWeight: '700',
+              color: theme.colors.white,
+              textAlign: 'center',
+            }}
+          >
+            {buttonLabel}
+          </Text>
+        </Pressable>
+      </Box>
+    </Box>
+  );
+}

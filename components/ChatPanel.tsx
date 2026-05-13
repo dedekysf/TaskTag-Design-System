@@ -1,42 +1,49 @@
 /**
  * ChatPanel Component
  *
- * The right-side chat panel of the web app shell. Supports three views:
+ * A unified chat interface with three interrelated states:
  *
- *   'list'     — Full chat list showing conversations with avatars, preview & timestamp.
- *                Header: "Chat" + Search / MoreVertical / ChevronsRight icons.
- *                Body: list of chat preview rows.
- *                Footer: floating "New Message" pill button.
+ * 1. 'list' - Full chat list view (550px)
+ *    - Shows scrollable list of chats
+ *    - Can collapse to 'collapsed' view
+ *    - Click item to transition to 'room' view
  *
- *   'collapsed' — Collapsed icon-only sidebar showing user avatar circles +
- *                 a ChevronsLeft expand button + new-chat FAB at bottom.
- *                 (This replaces the separate ChatSidePanel when inside the chat panel area.)
+ * 2. 'room' - Active chat room view (550px total)
+ *    - Shows message thread with an 80px avatar rail inside the total width
+ *    - Click close to transition back to previous view
  *
- *   'room'     — Active chat room with a header (avatar + name + Maximize / MoreVertical / X),
- *                scrollable message area, and a chat input footer.
+ * 3. 'collapsed' - Collapsed mini view (80px)
+ *    - Shows stacked avatar circles
+ *    - Click avatar to open chat room
+ *    - Click expand to go back to list view
+ *
+ * The component manages all state transitions internally.
  */
 
 import { Box, Text } from '@/components/primitives';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import {
-  ChevronsLeft,
-  ChevronsRight,
-  FileText,
-  Hash,
-  Image as ImageIcon,
-  Maximize2,
-  MessageSquarePlus,
-  MoreVertical,
-  Plus,
-  Search,
-  Send,
-  Smile,
-  Users,
-  X,
+    ChevronsLeft,
+    ChevronsRight,
+    FileText,
+    Hash,
+    Image as ImageIcon,
+    Maximize2,
+    MessageSquarePlus,
+    MoreVertical,
+    Plus,
+    Search,
+    Send,
+    Smile,
+    X
 } from 'lucide-react-native';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { Image, ImageSourcePropType, Platform, Pressable, ScrollView } from 'react-native';
+
+const CHAT_PANEL_WIDTH = 550;
+const CHAT_PANEL_COLLAPSED_WIDTH = 80;
+const CHAT_ROOM_CONTENT_WIDTH = CHAT_PANEL_WIDTH - CHAT_PANEL_COLLAPSED_WIDTH;
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -46,13 +53,9 @@ export type ChatAvatarVariant = 'photo' | 'text';
 
 export interface ChatPanelUser {
   variant: ChatAvatarVariant;
-  /** Required when variant === 'photo' */
   src?: ImageSourcePropType;
-  /** Required when variant === 'text' */
   initials?: string;
-  /** Theme color key — used when variant === 'text' */
   color?: keyof Theme['colors'];
-  /** Whether this slot is highlighted (active chat) */
   isActive?: boolean;
 }
 
@@ -69,24 +72,26 @@ export interface ChatRoomMessage {
   sender: ChatPanelUser;
   senderName: string;
   time: string;
-  /** Rendered message content — pass any JSX bubble */
   children: ReactNode;
 }
 
 export interface ChatPanelProps {
+  /** Controlled view state, kept for existing design-system examples */
   view?: ChatPanelView;
-  /** Used in 'list' view */
+  /** Initial view state */
+  initialView?: ChatPanelView;
+  /** Chat list items */
   listItems?: ChatListItem[];
-  /** Used in 'room' view — contact displayed in header */
+  /** Active chat room contact */
   roomContact?: ChatPanelUser & { name: string };
-  /** Messages to show in 'room' view */
+  /** Messages in active room */
   roomMessages?: ChatRoomMessage[];
-  /** Dates separator label in 'room' view */
+  /** Date separator in room */
   dateSeparator?: string;
-  /** Context label below date separator in 'room' view (e.g. project name) */
-  contextLabel?: string;
-  /** Users shown in collapsed icon-column next to room */
+  /** Users shown in collapsed mini sidebar when viewing room */
   collapsedUsers?: ChatPanelUser[];
+  /** Callback when transitioning between views */
+  onViewChange?: (view: ChatPanelView) => void;
   onCollapse?: () => void;
   onExpand?: () => void;
   onClose?: () => void;
@@ -183,7 +188,7 @@ function CollapsedColumn({
 
   return (
     <Box
-      width={72}
+      width={CHAT_PANEL_COLLAPSED_WIDTH}
       backgroundColor="card"
       borderLeftWidth={1}
       borderColor="border"
@@ -250,40 +255,133 @@ function CollapsedColumn({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
+// ─── Main Component ───────────────────────────────────────────────────────────
+
 export function ChatPanel({
-  view = 'list',
+  view,
+  initialView = 'list',
   listItems = DEFAULT_LIST_ITEMS,
   roomContact = DEFAULT_ROOM_CONTACT,
   roomMessages = [],
   dateSeparator = 'Friday, November 20',
   collapsedUsers = DEFAULT_COLLAPSED_USERS,
+  onViewChange,
   onCollapse,
   onExpand,
   onClose,
   onNewMessage,
 }: ChatPanelProps) {
   const theme = useTheme<Theme>();
+  const [internalView, setInternalView] = useState<ChatPanelView>(view ?? initialView);
+  const currentView = view ?? internalView;
+
+  const handleViewChange = (newView: ChatPanelView) => {
+    if (view === undefined) {
+      setInternalView(newView);
+    }
+
+    onViewChange?.(newView);
+
+    if (newView === 'collapsed') {
+      onCollapse?.();
+    }
+    if (currentView === 'collapsed' && newView === 'list') {
+      onExpand?.();
+    }
+    if (currentView === 'room' && newView === 'list') {
+      onClose?.();
+    }
+  };
 
   // ── Collapsed view ──────────────────────────────────────────────────────────
-  if (view === 'collapsed') {
+  if (currentView === 'collapsed') {
     return (
-      <CollapsedColumn
-        users={collapsedUsers}
-        onExpand={onExpand}
-        onNewMessage={onNewMessage}
-      />
+      <Box
+        width={CHAT_PANEL_COLLAPSED_WIDTH}
+        backgroundColor="card"
+        borderLeftWidth={1}
+        borderColor="border"
+        alignItems="center"
+        style={{ height: '100%' as any, paddingTop: 16, paddingBottom: 20 }}
+      >
+        {/* Expand button */}
+        <Pressable
+          style={{ padding: 8, marginBottom: 12 }}
+          onPress={() => handleViewChange('list')}
+          hitSlop={8}
+        >
+          <ChevronsLeft size={20} color={theme.colors.grey04} />
+        </Pressable>
+
+        {/* Avatar slots */}
+        {collapsedUsers.map((user, i) =>
+          user.isActive ? (
+            <Box
+              key={i}
+              alignItems="center"
+              justifyContent="center"
+              style={{
+                width: '100%',
+                paddingVertical: 10,
+                backgroundColor: theme.colors.lightMint,
+                marginBottom: 8,
+              }}
+            >
+              <ChatAvatar user={user} size={44} />
+            </Box>
+          ) : (
+            <Pressable
+              key={i}
+              onPress={() => handleViewChange('room')}
+            >
+              <Box style={{ marginBottom: 8 }}>
+                <ChatAvatar user={user} size={44} />
+              </Box>
+            </Pressable>
+          )
+        )}
+
+        {/* New chat FAB */}
+        <Box flex={1} justifyContent="flex-end">
+          <Pressable
+            onPress={() => {
+              onNewMessage?.();
+              handleViewChange('list');
+            }}
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 22,
+              backgroundColor: theme.colors.foreground,
+              alignItems: 'center',
+              justifyContent: 'center',
+              ...Platform.select({
+                web: { boxShadow: '0 4px 16px rgba(0,0,0,0.2)' } as any,
+                default: {
+                  elevation: 6,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.2,
+                  shadowRadius: 8,
+                },
+              }),
+            }}
+          >
+            <MessageSquarePlus size={20} color={theme.colors.white} />
+          </Pressable>
+        </Box>
+      </Box>
     );
   }
 
   // ── Chat List view ──────────────────────────────────────────────────────────
-  if (view === 'list') {
+  if (currentView === 'list') {
     return (
       <Box
-        flex={1}
         backgroundColor="background"
         borderLeftWidth={1}
         borderColor="border"
-        style={{ height: '100%' as any, maxWidth: 550, position: 'relative' as any }}
+        style={{ height: '100%' as any, width: CHAT_PANEL_WIDTH, position: 'relative' as any }}
       >
         {/* Header */}
         <Box
@@ -305,7 +403,7 @@ export function ChatPanel({
             <Pressable style={{ padding: 4 }}>
               <MoreVertical size={24} color={theme.colors.foreground} />
             </Pressable>
-            <Pressable style={{ padding: 4 }} onPress={onCollapse}>
+            <Pressable style={{ padding: 4 }} onPress={() => handleViewChange('collapsed')}>
               <ChevronsRight size={24} color={theme.colors.foreground} />
             </Pressable>
           </Box>
@@ -315,7 +413,12 @@ export function ChatPanel({
         <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
           <Box style={{ paddingHorizontal: 6, paddingVertical: 0 }}>
             {listItems.map((item) => (
-              <ChatListRow key={item.id} item={item} />
+              <Pressable
+                key={item.id}
+                onPress={() => handleViewChange('room')}
+              >
+                <ChatListRow item={item} />
+              </Pressable>
             ))}
           </Box>
         </ScrollView>
@@ -360,134 +463,163 @@ export function ChatPanel({
     );
   }
 
-  // ── Chat Room view ──────────────────────────────────────────────────────────
-  return (
-    <Box
-      flex={1}
-      backgroundColor="grey01"
-      borderLeftWidth={1}
-      borderColor="border"
-      style={{ height: '100%' as any, maxWidth: 550 }}
-    >
-      {/* Room header */}
+  // ── Chat Room view ─────────────────────────────────────────────────────────
+  if (currentView === 'room') {
+    const roomContent = (
       <Box
-        flexDirection="row"
-        alignItems="center"
-        justifyContent="space-between"
-        backgroundColor="card"
-        borderBottomWidth={1}
+        backgroundColor="grey01"
+        borderLeftWidth={1}
         borderColor="border"
-        style={{ height: 72, paddingHorizontal: 20 }}
+        style={{ height: '100%' as any, width: CHAT_ROOM_CONTENT_WIDTH }}
       >
-        <Box flexDirection="row" alignItems="center" style={{ gap: 12 }}>
-          <ChatAvatar user={roomContact} size={44} />
-          <Text variant="webLabelEmphasized" color="foreground">
-            {roomContact.name}
-          </Text>
-        </Box>
-        <Box flexDirection="row" alignItems="center">
-          <Pressable style={{ padding: 8 }}>
-            <Maximize2 size={18} color={theme.colors.textSecondary} />
-          </Pressable>
-          <Pressable style={{ padding: 8 }}>
-            <MoreVertical size={18} color={theme.colors.textSecondary} />
-          </Pressable>
-          <Pressable style={{ padding: 8 }} onPress={onClose}>
-            <X size={18} color={theme.colors.textSecondary} />
-          </Pressable>
-        </Box>
-      </Box>
-
-      {/* Message area */}
-      <Box flex={1} justifyContent="flex-end">
-        {/* Date separator */}
+        {/* Room header */}
         <Box
           flexDirection="row"
           alignItems="center"
-          style={{ paddingHorizontal: 24, paddingVertical: 20 }}
-        >
-          <Box flex={1} height={1} backgroundColor="border" />
-          <Text
-            style={{ fontSize: 12, color: theme.colors.grey03, marginHorizontal: 12 }}
-          >
-            {dateSeparator}
-          </Text>
-          <Box flex={1} height={1} backgroundColor="border" />
-        </Box>
-
-        {/* Messages */}
-        {roomMessages.map((msg) => (
-          <Box
-            key={msg.id}
-            style={{ paddingHorizontal: 16, paddingBottom: 16 }}
-          >
-            <Box flexDirection="row" gap="12" alignItems="flex-start">
-              <ChatAvatar user={msg.sender} size={40} />
-              <Box flex={1}>
-                <Box
-                  flexDirection="row"
-                  alignItems="center"
-                  style={{ gap: 8, marginBottom: 8 }}
-                >
-                  <Text
-                    style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}
-                  >
-                    {msg.senderName}
-                  </Text>
-                  <Text style={{ fontSize: 11, color: theme.colors.grey04 }}>
-                    {msg.time}
-                  </Text>
-                </Box>
-                {msg.children}
-              </Box>
-            </Box>
-          </Box>
-        ))}
-      </Box>
-
-      {/* Chat input footer */}
-      <Box style={{ paddingHorizontal: 16, paddingVertical: 16 }}>
-        <Box
+          justifyContent="space-between"
           backgroundColor="card"
-          borderWidth={1}
+          borderBottomWidth={1}
           borderColor="border"
-          style={{ borderRadius: 16, paddingHorizontal: 16, paddingTop: 12, paddingBottom: 10 }}
+          style={{ height: 72, paddingHorizontal: 20 }}
         >
-          <Text
-            style={{ fontSize: 14, color: theme.colors.grey03, paddingBottom: 20 }}
-          >
-            Type message here...
-          </Text>
-          <Box
-            flexDirection="row"
-            alignItems="center"
-            justifyContent="space-between"
-          >
-            <Box flexDirection="row" alignItems="center">
-              {[Plus, Hash, FileText, ImageIcon, Smile].map((Icon, i) => (
-                <Pressable key={i} style={{ padding: 8 }}>
-                  <Icon size={20} color={theme.colors.grey04} />
-                </Pressable>
-              ))}
-            </Box>
-            <Pressable
-              disabled
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 10,
-                backgroundColor: theme.colors.grey02,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Send size={18} color={theme.colors.grey04} />
+          <Box flexDirection="row" alignItems="center" style={{ gap: 12 }}>
+            <ChatAvatar user={roomContact} size={44} />
+            <Text variant="webLabelEmphasized" color="foreground">
+              {roomContact.name}
+            </Text>
+          </Box>
+          <Box flexDirection="row" alignItems="center">
+            <Pressable style={{ padding: 8 }}>
+              <Maximize2 size={18} color={theme.colors.textSecondary} />
+            </Pressable>
+            <Pressable style={{ padding: 8 }}>
+              <MoreVertical size={18} color={theme.colors.textSecondary} />
+            </Pressable>
+            <Pressable style={{ padding: 8 }} onPress={() => handleViewChange('list')}>
+              <X size={18} color={theme.colors.textSecondary} />
             </Pressable>
           </Box>
         </Box>
+
+        {/* Message area */}
+        <ScrollView
+          style={{ flex: 1 }}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'flex-end',
+            paddingHorizontal: 24,
+            paddingVertical: 20,
+          }}
+        >
+          {roomMessages.length > 0 && (
+            <>
+              <Box
+                flexDirection="row"
+                alignItems="center"
+                style={{ marginBottom: 20 }}
+              >
+                <Box flex={1} height={1} backgroundColor="border" />
+                <Text
+                  style={{ fontSize: 12, color: theme.colors.grey03, marginHorizontal: 12 }}
+                >
+                  {dateSeparator}
+                </Text>
+                <Box flex={1} height={1} backgroundColor="border" />
+              </Box>
+
+              {roomMessages.map((msg) => (
+                <Box
+                  key={msg.id}
+                  style={{ marginBottom: 16 }}
+                >
+                  <Box flexDirection="row" gap="12" alignItems="flex-start">
+                    <ChatAvatar user={msg.sender} size={40} />
+                    <Box flex={1}>
+                      <Box
+                        flexDirection="row"
+                        alignItems="center"
+                        style={{ gap: 8, marginBottom: 8 }}
+                      >
+                        <Text
+                          style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}
+                        >
+                          {msg.senderName}
+                        </Text>
+                        <Text style={{ fontSize: 11, color: theme.colors.grey04 }}>
+                          {msg.time}
+                        </Text>
+                      </Box>
+                      {msg.children}
+                    </Box>
+                  </Box>
+                </Box>
+              ))}
+            </>
+          )}
+        </ScrollView>
+
+        {/* Chat input footer */}
+        <Box style={{ paddingHorizontal: 16, paddingVertical: 16 }}>
+          <Box
+            backgroundColor="card"
+            borderWidth={1}
+            borderColor="border"
+            style={{ borderRadius: 16, paddingHorizontal: 16, paddingTop: 12, paddingBottom: 10 }}
+          >
+            <Text
+              style={{ fontSize: 14, color: theme.colors.grey03, paddingBottom: 20 }}
+            >
+              Type message here...
+            </Text>
+            <Box
+              flexDirection="row"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <Box flexDirection="row" alignItems="center">
+                {[Plus, Hash, FileText, ImageIcon, Smile].map((Icon, i) => (
+                  <Pressable key={i} style={{ padding: 8 }}>
+                    <Icon size={20} color={theme.colors.grey04} />
+                  </Pressable>
+                ))}
+              </Box>
+              <Pressable
+                disabled
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 10,
+                  backgroundColor: theme.colors.grey02,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Send size={18} color={theme.colors.grey04} />
+              </Pressable>
+            </Box>
+          </Box>
+        </Box>
       </Box>
-    </Box>
-  );
+    );
+
+    return (
+      <Box
+        flexDirection="row"
+        style={{ height: '100%' as any, width: CHAT_PANEL_WIDTH }}
+      >
+        {roomContent}
+        <CollapsedColumn
+          users={collapsedUsers}
+          onExpand={() => handleViewChange('list')}
+          onNewMessage={() => {
+            onNewMessage?.();
+            handleViewChange('list');
+          }}
+        />
+      </Box>
+    );
+  }
 }
 
 // ─── Default data ─────────────────────────────────────────────────────────────
@@ -495,23 +627,36 @@ export function ChatPanel({
 export const DEFAULT_LIST_ITEMS: ChatListItem[] = [
   {
     id: '1',
+    user: { variant: 'photo', src: require('@/assets/images/sample-one.jpg') },
+    name: 'Dedek Yusuf',
+    preview: 'Dedek: Media',
+    timestamp: 'Yesterday',
+  },
+  {
+    id: '2',
+    user: { variant: 'text', initials: 'DY', color: 'orange' },
+    name: 'dedek yusuf15',
+    preview: 'Member Activity',
+    timestamp: '05/12/2026',
+  },
+  {
+    id: '3',
     user: { variant: 'text', initials: 'TH', color: 'orange' },
     name: 'Tasktag Helpdesk',
-    preview:
-      "Hi there! Welcome to TaskTag! We're here to assist you with any questions or support requests you might have. Feel free to reach out anytime. We're just a message away!",
-    timestamp: 'Monday',
+    preview: 'Tasktag: just responding to the test message',
+    timestamp: '05/05/2026',
   },
 ];
 
 export const DEFAULT_ROOM_CONTACT: ChatPanelUser & { name: string } = {
   variant: 'text',
-  initials: 'AS',
-  color: 'secondaryGreen',
-  name: 'Alex Smith',
+  initials: 'DY',
+  color: 'orange',
+  name: 'dedek yusuf15',
 };
 
 export const DEFAULT_COLLAPSED_USERS: ChatPanelUser[] = [
-  { variant: 'text', initials: 'AZ', color: 'purple', isActive: false },
-  { variant: 'text', initials: 'GB', color: 'darkMagenta', isActive: false },
+  { variant: 'photo', src: require('@/assets/images/sample-one.jpg'), isActive: false },
+  { variant: 'text', initials: 'DY', color: 'orange', isActive: true },
   { variant: 'text', initials: 'TH', color: 'orange', isActive: false },
 ];

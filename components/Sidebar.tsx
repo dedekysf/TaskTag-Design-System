@@ -79,6 +79,7 @@ export function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProps) {
     { id: 'confirmation-modal', label: 'Confirmation Modal' },
     { id: 'modal', label: 'Modal' },
     { id: 'upgrade-modal', label: 'Upgrade Modal' },
+    { id: 'welcome-modal-screen', label: 'Welcome Modal Screen' },
   ];
 
   const dataItems = [

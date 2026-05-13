@@ -37,6 +37,7 @@ import ChatImageViewerContent from '@/app/design-system/chat/chat-image-viewer';
 import BottomSheetContent from '@/app/design-system/overlay/bottom-sheet';
 import ConfirmationModalContent from '@/app/design-system/overlay/confirmation-modal';
 import UpgradeModalContent from '@/app/design-system/overlay/upgrade-modal';
+import WelcomeModalScreenContent from '@/app/design-system/overlay/welcome-modal-screen';
 // Data Display
 import ActivityItemContent from '@/app/design-system/data/activity-item';
 import DataTableContent from '@/app/design-system/data/data-table';
@@ -164,6 +165,8 @@ export default function DesignSystemDynamicRoute() {
       return <ModalContent />;
     case 'upgrade-modal':
       return <UpgradeModalContent />;
+    case 'welcome-modal-screen':
+      return <WelcomeModalScreenContent />;
     // Data Display
     case 'activity-item':
       return <ActivityItemContent />;
