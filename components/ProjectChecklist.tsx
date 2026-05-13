@@ -237,7 +237,7 @@ function ProjectRow({ avatarSource }: { avatarSource: ImageSourcePropType }) {
   );
 }
 
-export function ProjectList() {
+export function ProjectList({ onCreateProject }: { onCreateProject?: () => void } = {}) {
   const avatarSource = require('@/assets/images/sample-three.jpg');
   const theme = useTheme<Theme>();
 
@@ -275,6 +275,7 @@ export function ProjectList() {
               </Pressable>
               <Pressable
                 accessibilityRole="button"
+                onPress={onCreateProject}
                 style={({ hovered }: any) => ({
                   backgroundColor: theme.colors.black,
                   paddingHorizontal: 22,

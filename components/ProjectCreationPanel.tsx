@@ -339,7 +339,7 @@ function IconPickerModal({ isOpen, onClose, onSelectIcon, selectedIconId }: Icon
 
 // ─── Main Panel ───────────────────────────────────────────────────────────────
 
-export function ProjectCreationPanel({ onClose }: { onClose?: () => void }) {
+export function ProjectCreationPanel({ onClose, onSuccess }: { onClose?: () => void; onSuccess?: () => void }) {
   const theme = useTheme<Theme>();
 
   const [projectName, setProjectName] = useState('');
@@ -388,8 +388,8 @@ export function ProjectCreationPanel({ onClose }: { onClose?: () => void }) {
       setNameError('Add a project name to continue');
       return;
     }
-    // Proceed with creation
     onClose?.();
+    onSuccess?.();
   };
 
   const SelectedIconComponent = selectedIcon.component;

@@ -1,36 +1,37 @@
-/**
- * Shared layout for the onboarding prototype flow.
- *
- * Layout:
- *   [SideNav] | [ProjectList (flex)] | [ChatPanelComposite]
- *
- * ChatPanelComposite flow (from CHAT_PANELS_REFERENCE.md):
- *   collapsed (mini 80px) ↔ list (550px) ↔ room (550px + mini strip 80px)
- */
-
 import { ChatPanelComposite } from '@/components/ChatPanelComposite';
 import { ProjectDetail } from '@/components/ProjectDetail';
+import { ProjectCreationPanel } from '@/components/ProjectCreationPanel';
+import { ProjectList } from '@/components/ProjectList';
 import { SideNav } from '@/components/SideNav';
 import { Box } from '@/components/primitives';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Platform, Pressable } from 'react-native';
 
-// ── MainLayoutOnboarding ──────────────────────────────────────────────────────
-
 export interface MainLayoutOnboardingProps {
-  /** Optional override for the center content (defaults to ProjectList) */
   children?: React.ReactNode;
   showCreateProjectPanel?: boolean;
   onCloseCreateProjectPanel?: () => void;
 }
 
-import { ProjectCreationPanel } from '@/components/ProjectCreationPanel';
-
-export function MainLayoutOnboarding({ 
-  children, 
-  showCreateProjectPanel, 
-  onCloseCreateProjectPanel 
+export function MainLayoutOnboarding({
+  children,
+  showCreateProjectPanel: showCreateProjectPanelProp,
+  onCloseCreateProjectPanel,
 }: MainLayoutOnboardingProps) {
+  const [showProjectDetail, setShowProjectDetail] = useState(false);
+  const [showCreateProjectPanel, setShowCreateProjectPanel] = useState(
+    showCreateProjectPanelProp ?? false
+  );
+
+  useEffect(() => {
+    if (showCreateProjectPanelProp) setShowCreateProjectPanel(true);
+  }, [showCreateProjectPanelProp]);
+
+  const handleClosePanel = () => {
+    setShowCreateProjectPanel(false);
+    onCloseCreateProjectPanel?.();
+  };
+
   return (
     <Box
       flex={1}
@@ -46,14 +47,17 @@ export function MainLayoutOnboarding({
         accountName="My Account"
       />
 
-      {/* ── Center: Project List (or custom children) ── */}
+      {/* ── Center: ProjectList → ProjectDetail after create ── */}
       <Box flex={1} backgroundColor="background" style={{ height: '100%' as any, position: 'relative' }}>
-        {children ?? <ProjectDetail />}
-        
+        {children ?? (
+          showProjectDetail
+            ? <ProjectDetail />
+            : <ProjectList onCreateProject={() => setShowCreateProjectPanel(true)} />
+        )}
+
         {/* Project Creation Overlay Panel */}
         {showCreateProjectPanel && (
           <>
-            {/* Dark Overlay behind the drawer */}
             <Pressable
               style={{
                 position: Platform.OS === 'web' ? 'fixed' as any : 'absolute',
@@ -64,9 +68,8 @@ export function MainLayoutOnboarding({
                 backgroundColor: 'rgba(0, 0, 0, 0.4)',
                 zIndex: 40,
               }}
-              onPress={onCloseCreateProjectPanel}
+              onPress={handleClosePanel}
             />
-            {/* Drawer */}
             <Box
               style={{
                 position: 'absolute' as any,
@@ -87,15 +90,16 @@ export function MainLayoutOnboarding({
                 }),
               }}
             >
-              <ProjectCreationPanel onClose={onCloseCreateProjectPanel} />
+              <ProjectCreationPanel
+                onClose={handleClosePanel}
+                onSuccess={() => setShowProjectDetail(true)}
+              />
             </Box>
           </>
         )}
       </Box>
 
       {/* ── Right: Unified Chat Panel (list → room → collapsed) ── */}
-      {/* variant="without-member": only Tasktag Helpdesk (no project members yet) */}
-      {/* Switch to variant="with-member" once user joins a project with members  */}
       <ChatPanelComposite defaultView="list" variant="without-member" />
     </Box>
   );
