@@ -206,13 +206,27 @@ export function TooltipOnboarding({
 
     useEffect(() => {
         if (Platform.OS === 'web' && (forceShow || isVisible) && triggerRef.current) {
-            const el = triggerRef.current as any;
-            const node = el._nativeTag ? null : el;
-            const domEl = node ?? (el.getDOMNode ? el.getDOMNode() : null);
-            if (domEl && domEl.getBoundingClientRect) {
-                const rect = domEl.getBoundingClientRect();
-                setPortalRect({ top: rect.top, left: rect.left, width: rect.width, height: rect.height });
-            }
+            let animationFrameId: number;
+
+            const updateRect = () => {
+                const el = triggerRef.current as any;
+                const node = el?._nativeTag ? null : el;
+                const domEl = node ?? (el?.getDOMNode ? el.getDOMNode() : null);
+                if (domEl && domEl.getBoundingClientRect) {
+                    const rect = domEl.getBoundingClientRect();
+                    setPortalRect(prev => {
+                        if (!prev || prev.top !== rect.top || prev.left !== rect.left || prev.width !== rect.width || prev.height !== rect.height) {
+                            return { top: rect.top, left: rect.left, width: rect.width, height: rect.height };
+                        }
+                        return prev;
+                    });
+                }
+                animationFrameId = requestAnimationFrame(updateRect);
+            };
+
+            updateRect();
+
+            return () => cancelAnimationFrame(animationFrameId);
         }
     }, [forceShow, isVisible]);
 

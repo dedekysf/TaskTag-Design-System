@@ -174,6 +174,7 @@ function InlineTaskCreate({
   const [priority, setPriority] = useState<TaskPriority>('medium');
   const [showTooltip, setShowTooltip] = useState(showOnboardingTooltip);
   const tooltipOpacity = useRef(new Animated.Value(1)).current;
+  const fadeStarted = useRef(false);
 
   const isActive = isFocused || taskName.length > 0;
 
@@ -182,22 +183,21 @@ function InlineTaskCreate({
     if (showOnboardingTooltip && !showTooltip) {
       setShowTooltip(true);
       tooltipOpacity.setValue(1);
+      fadeStarted.current = false;
     }
   }, [showOnboardingTooltip]);
 
-  // Fade tooltip after 2s of typing
+  // Fade tooltip immediately over 4s when typing (only once)
   useEffect(() => {
-    if (taskName.length > 0 && showTooltip) {
-      const timer = setTimeout(() => {
-        Animated.timing(tooltipOpacity, {
-          toValue: 0,
-          duration: 600,
-          useNativeDriver: true,
-        }).start(() => setShowTooltip(false));
-      }, 2000);
-      return () => clearTimeout(timer);
+    if (taskName.length > 0 && showTooltip && !fadeStarted.current) {
+      fadeStarted.current = true;
+      Animated.timing(tooltipOpacity, {
+        toValue: 0,
+        duration: 3000, // fade out over 3 seconds
+        useNativeDriver: true,
+      }).start(() => setShowTooltip(false));
     }
-  }, [taskName, showTooltip, tooltipOpacity]);
+  }, [taskName.length, showTooltip, tooltipOpacity]);
 
   const cyclePriority = () => {
     const idx = PRIORITY_CYCLE.indexOf(priority);

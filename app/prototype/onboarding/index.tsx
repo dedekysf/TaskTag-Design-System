@@ -68,8 +68,15 @@ export default function OnboardingScreen() {
               <WelcomeModalScreen
                 name="Oscar"
                 onGetStarted={() => {
-                  setShowWelcomeModal(false);
-                  setShowCreateProjectPanel(true);
+                  Animated.timing(modalProgress, {
+                    toValue: 0,
+                    duration: 300,
+                    easing: Easing.in(Easing.cubic),
+                    useNativeDriver: true,
+                  }).start(() => {
+                    setShowWelcomeModal(false);
+                    setShowCreateProjectPanel(true);
+                  });
                 }}
                 style={{
                   maxHeight: Platform.OS === 'web' ? 'calc(100vh - 48px)' as any : undefined,

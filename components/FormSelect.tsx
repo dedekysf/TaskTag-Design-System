@@ -30,6 +30,8 @@ export interface FormSelectProps {
   showChevron?: boolean;
   /** Custom style to override container */
   style?: ViewStyle;
+  /** Text alignment */
+  textAlign?: 'left' | 'center' | 'right';
 }
 
 export function FormSelect({
@@ -44,6 +46,7 @@ export function FormSelect({
   leftIcon,
   showChevron = true,
   style,
+  textAlign = 'left',
 }: FormSelectProps) {
   const theme = useTheme<Theme>();
   const [isFocused, setIsFocused] = useState(false);
@@ -111,6 +114,7 @@ export function FormSelect({
             paddingHorizontal: currentSize.paddingHorizontal,
             opacity: pressed && !disabled ? 0.7 : 1,
             cursor: disabled ? 'not-allowed' : 'pointer',
+            justifyContent: textAlign === 'center' ? 'center' : 'flex-start',
           } as ViewStyle,
           style,
         ]}
@@ -123,10 +127,11 @@ export function FormSelect({
 
         <Text
           style={{
-            flex: 1,
+            flex: textAlign === 'center' ? undefined : 1,
             fontSize: currentSize.fontSize,
             color: !value ? theme.colors.grey04 : disabled ? theme.colors.grey04 : theme.colors.textPrimary,
             fontFamily: 'Inter_400Regular',
+            textAlign,
           }}
           numberOfLines={1}
         >

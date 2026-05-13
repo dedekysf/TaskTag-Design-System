@@ -345,6 +345,7 @@ export function ProjectCreationPanel({ onClose, onSuccess }: { onClose?: () => v
   const [nameError, setNameError] = useState('');
   const [showNameTooltip, setShowNameTooltip] = useState(true);
   const tooltipOpacity = useRef(new Animated.Value(0)).current;
+  const fadeStarted = useRef(false);
 
   // Fade in tooltip initially
   useEffect(() => {
@@ -365,16 +366,17 @@ export function ProjectCreationPanel({ onClose, onSuccess }: { onClose?: () => v
     }
   }, [projectName, nameError]);
 
-  // Fade out tooltip immediately over 2 seconds when typing
+  // Fade out tooltip immediately over 4 seconds when typing (triggered only once)
   useEffect(() => {
-    if (projectName.length > 0 && showNameTooltip) {
+    if (projectName.length > 0 && showNameTooltip && !fadeStarted.current) {
+      fadeStarted.current = true;
       Animated.timing(tooltipOpacity, {
         toValue: 0,
-        duration: 2000, // fade out over 2 seconds
+        duration: 3000, // fade out over 3 seconds
         useNativeDriver: true,
       }).start(() => setShowNameTooltip(false));
     }
-  }, [projectName, showNameTooltip, tooltipOpacity]);
+  }, [projectName.length, showNameTooltip, tooltipOpacity]);
 
   const handleCreateProject = () => {
     if (projectName.trim() === '') {
@@ -522,6 +524,8 @@ export function ProjectCreationPanel({ onClose, onSuccess }: { onClose?: () => v
                   value={selectedTeam.name}
                   onPress={() => setIsTeamModalOpen(true)}
                   showChevron={false}
+                  leftIcon={<Building size={20} color={theme.colors.secondaryGreen} />}
+                  textAlign="center"
                   style={{
                     backgroundColor: theme.colors.grey02,
                     borderColor: theme.colors.grey03,

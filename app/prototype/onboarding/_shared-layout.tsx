@@ -5,8 +5,8 @@ import { ProjectCreationPanel } from '@/components/ProjectCreationPanel';
 import { ProjectList } from '@/components/ProjectList';
 import { SideNav } from '@/components/SideNav';
 import { Box } from '@/components/primitives';
-import React, { useEffect, useState } from 'react';
-import { Platform, Pressable } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, Easing, Platform, Pressable } from 'react-native';
 
 export interface MainLayoutOnboardingProps {
   children?: React.ReactNode;
@@ -21,18 +21,54 @@ export function MainLayoutOnboarding({
 }: MainLayoutOnboardingProps) {
   const [showProjectDetail, setShowProjectDetail] = useState(false);
   const [showRewardWidget, setShowRewardWidget] = useState(false);
-  const [showCreateProjectPanel, setShowCreateProjectPanel] = useState(
+  const [renderPanel, setRenderPanel] = useState(
     showCreateProjectPanelProp ?? false
   );
+  const panelAnimation = useRef(new Animated.Value(showCreateProjectPanelProp ? 1 : 0)).current;
 
   useEffect(() => {
-    if (showCreateProjectPanelProp) setShowCreateProjectPanel(true);
+    if (showCreateProjectPanelProp) {
+      setRenderPanel(true);
+      Animated.timing(panelAnimation, {
+        toValue: 1,
+        duration: 300,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }).start();
+    }
   }, [showCreateProjectPanelProp]);
 
-  const handleClosePanel = () => {
-    setShowCreateProjectPanel(false);
-    onCloseCreateProjectPanel?.();
+  const openPanel = () => {
+    setRenderPanel(true);
+    Animated.timing(panelAnimation, {
+      toValue: 1,
+      duration: 300,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start();
   };
+
+  const handleClosePanel = () => {
+    Animated.timing(panelAnimation, {
+      toValue: 0,
+      duration: 250,
+      easing: Easing.in(Easing.cubic),
+      useNativeDriver: true,
+    }).start(() => {
+      setRenderPanel(false);
+      onCloseCreateProjectPanel?.();
+    });
+  };
+
+  const overlayOpacity = panelAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 1],
+  });
+
+  const panelTranslateX = panelAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [580, 0],
+  });
 
   return (
     <Box
@@ -54,13 +90,13 @@ export function MainLayoutOnboarding({
         {children ?? (
           showProjectDetail
             ? <ProjectDetail />
-            : <ProjectList onCreateProject={() => setShowCreateProjectPanel(true)} />
+            : <ProjectList onCreateProject={openPanel} />
         )}
 
         {/* Project Creation Overlay Panel */}
-        {showCreateProjectPanel && (
+        {renderPanel && (
           <>
-            <Pressable
+            <Animated.View
               style={{
                 position: Platform.OS === 'web' ? 'fixed' as any : 'absolute',
                 top: 0,
@@ -69,10 +105,12 @@ export function MainLayoutOnboarding({
                 bottom: 0,
                 backgroundColor: 'rgba(0, 0, 0, 0.4)',
                 zIndex: 40,
+                opacity: overlayOpacity,
               }}
-              onPress={handleClosePanel}
-            />
-            <Box
+            >
+              <Pressable style={{ flex: 1 }} onPress={handleClosePanel} />
+            </Animated.View>
+            <Animated.View
               style={{
                 position: 'absolute' as any,
                 top: 0,
@@ -80,6 +118,7 @@ export function MainLayoutOnboarding({
                 bottom: 0,
                 zIndex: 50,
                 width: 580,
+                transform: [{ translateX: panelTranslateX }],
                 ...Platform.select({
                   web: { boxShadow: '-10px 0px 40px rgba(0, 0, 0, 0.08)' } as any,
                   default: {
@@ -99,7 +138,7 @@ export function MainLayoutOnboarding({
                   setShowRewardWidget(true);
                 }}
               />
-            </Box>
+            </Animated.View>
           </>
         )}
       </Box>
