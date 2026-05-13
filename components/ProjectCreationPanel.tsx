@@ -8,7 +8,7 @@ import { TooltipOnboarding } from '@/components/TooltipOnboarding';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Platform, Pressable, ScrollView, View } from 'react-native';
+import { Animated, Platform, Pressable, ScrollView } from 'react-native';
 
 import {
   Activity,
@@ -460,21 +460,16 @@ export function ProjectCreationPanel({ onClose, onSuccess }: { onClose?: () => v
                   Required
                 </Text>
               </Box>
-              <Box style={{ position: 'relative', zIndex: 10 }}>
-                <TooltipOnboarding
-                  variant="left-center"
-                  tooltipStyle="success"
-                  title="Name your first job"
-                  description="e.g. Smith House, Office Renovation"
-                  open={showNameTooltip}
-                  forceShow={showNameTooltip}
-                  fullWidth
-                  animatedOpacity={tooltipOpacity}
-                >
-                  {/* Dummy target for Tooltip to anchor properly if needed, but since it's full width and absolute it will just lay over. Wait, Tooltip needs a trigger. */}
-                  <View style={{ width: '100%', height: '100%', position: 'absolute' }} pointerEvents="none" />
-                </TooltipOnboarding>
-
+              <TooltipOnboarding
+                variant="left-center"
+                tooltipStyle="success"
+                title="Name your first job"
+                description="e.g. Smith House, Office Renovation"
+                open={showNameTooltip}
+                forceShow={showNameTooltip}
+                fullWidth
+                animatedOpacity={tooltipOpacity}
+              >
                 <TextInput
                   value={projectName}
                   onChangeText={setProjectName}
@@ -486,7 +481,7 @@ export function ProjectCreationPanel({ onClose, onSuccess }: { onClose?: () => v
                   errorMessage={nameError}
                   showClearButton={false}
                 />
-              </Box>
+              </TooltipOnboarding>
             </Box>
 
             {/* Description */}
