@@ -545,6 +545,18 @@ function AssignTaskConfirm({
   const theme = useTheme<Theme>();
   const slideAnim = useRef(new Animated.Value(60)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const [query, setQuery] = useState('');
+  const [selectedIds, setSelectedIds] = useState<string[]>([contact.id]);
+
+  const MEMBERS = [
+    { id: 'savannah', name: 'Savannah Nguyen', email: 'savannahnguyen@gmail.com', avatarType: 'photo' as const },
+    { id: contact.id, name: contact.name, email: 'alexsmith@gmail.com', avatarType: 'contact' as const },
+  ];
+
+  const toggle = (id: string) =>
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+
+  const selectedMembers = MEMBERS.filter(m => selectedIds.includes(m.id));
 
   useEffect(() => {
     Animated.parallel([
@@ -588,8 +600,8 @@ function AssignTaskConfirm({
           }),
         }}
       >
-        {/* Header — matches picker search row padding */}
-        <Box flexDirection="row" alignItems="center" style={{ paddingHorizontal: 16, paddingVertical: 18, gap: 8 }}>
+        {/* Header */}
+        <Box flexDirection="row" alignItems="center" style={{ paddingHorizontal: 16, paddingVertical: 14, gap: 8 }}>
           <Box flex={1} style={{ gap: 2 }}>
             <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.foreground }}>
               Assign to Task
@@ -603,82 +615,103 @@ function AssignTaskConfirm({
           </Pressable>
         </Box>
 
+        {/* Search row — matches AssignTaskPicker */}
+        <Box flexDirection="row" alignItems="center" style={{ paddingHorizontal: 16, paddingBottom: 14, gap: 8 }}>
+          <Box
+            flex={1}
+            flexDirection="row"
+            alignItems="center"
+            backgroundColor="grey02"
+            style={{ height: 32, borderRadius: 8, paddingHorizontal: 8, gap: 6 }}
+          >
+            <Box
+              width={24}
+              height={24}
+              borderRadius="6"
+              alignItems="center"
+              justifyContent="center"
+              style={{ backgroundColor: theme.colors.secondaryGreen }}
+            >
+              <Users size={14} color={theme.colors.white} />
+            </Box>
+            <TextInput
+              value={query}
+              onChangeText={setQuery}
+              placeholder="Search members"
+              placeholderTextColor={theme.colors.grey05}
+              style={[
+                { flex: 1, color: theme.colors.foreground, fontSize: 14, height: 32, padding: 0 },
+                Platform.OS === 'web' && ({ outlineStyle: 'none' } as any),
+              ]}
+            />
+          </Box>
+        </Box>
+
+        {/* Divider below search */}
         <Box height={1} backgroundColor="border" />
 
         <ScrollView style={{ maxHeight: 425 }} showsVerticalScrollIndicator={false}>
-          <Box style={{ paddingHorizontal: 16, paddingTop: 10, paddingBottom: 14, gap: 18 }}>
+          <Box style={{ paddingHorizontal: 16, paddingTop: 14, paddingBottom: 14, gap: 18 }}>
 
-            {/* Search members */}
-            <Box
-              flexDirection="row"
-              alignItems="center"
-              backgroundColor="grey02"
-              style={{ height: 32, borderRadius: 8, paddingHorizontal: 8, gap: 6 }}
-            >
-              <Box
-                width={24}
-                height={24}
-                borderRadius="6"
-                alignItems="center"
-                justifyContent="center"
-                style={{ backgroundColor: theme.colors.secondaryGreen }}
-              >
-                <Users size={14} color={theme.colors.white} />
-              </Box>
-              <Text style={{ fontSize: 14, color: theme.colors.grey05 }}>Search members</Text>
-            </Box>
-
-            {/* Selected Member */}
-            <Box style={{ gap: 10 }}>
-              <Box flexDirection="row" alignItems="center" style={{ gap: 8 }}>
-                <Text style={{ fontSize: 14, fontWeight: '700', color: theme.colors.foreground }}>
-                  Selected Member
-                </Text>
-                <Box
-                  width={20}
-                  height={20}
-                  borderRadius="full"
-                  alignItems="center"
-                  justifyContent="center"
-                  style={{ backgroundColor: theme.colors.grey02 }}
-                >
-                  <Text style={{ fontSize: 11, fontWeight: '600', color: theme.colors.grey05 }}>1</Text>
-                </Box>
-              </Box>
-
-              <Box flexDirection="row" style={{ gap: 12 }}>
-                <Box alignItems="center" style={{ gap: 4 }}>
-                  <Image
-                    source={require('@/assets/images/sample-three.jpg')}
-                    style={{ width: 44, height: 44, borderRadius: 22 }}
-                  />
-                  <Text style={{ fontSize: 11, color: theme.colors.foreground, maxWidth: 52 }} numberOfLines={1}>
-                    Savanna...
+            {/* Selected Members */}
+            {selectedMembers.length > 0 && (
+              <Box style={{ gap: 10 }}>
+                <Box flexDirection="row" alignItems="center" style={{ gap: 8 }}>
+                  <Text style={{ fontSize: 14, fontWeight: '700', color: theme.colors.foreground }}>
+                    Selected Member
                   </Text>
-                </Box>
-                <Box alignItems="center" style={{ gap: 4 }}>
-                  <Box style={{ position: 'relative' as any }}>
-                    <ChatAvatar user={contact.user} size={44} />
-                    <Box
-                      width={16}
-                      height={16}
-                      borderRadius="full"
-                      alignItems="center"
-                      justifyContent="center"
-                      style={{ position: 'absolute' as any, top: -2, right: -2, backgroundColor: theme.colors.foreground }}
-                    >
-                      <X size={9} color={theme.colors.white} strokeWidth={2.5} />
-                    </Box>
+                  <Box
+                    width={20}
+                    height={20}
+                    borderRadius="full"
+                    alignItems="center"
+                    justifyContent="center"
+                    style={{ backgroundColor: theme.colors.grey02, borderWidth: 1, borderColor: theme.colors.grey03 }}
+                  >
+                    <Text style={{ fontSize: 11, fontWeight: '600', color: theme.colors.foreground }}>{selectedMembers.length}</Text>
                   </Box>
-                  <Text style={{ fontSize: 11, color: theme.colors.foreground }} numberOfLines={1}>
-                    {contact.name}
-                  </Text>
+                </Box>
+
+                <Box flexDirection="row" style={{ gap: 12 }}>
+                  {selectedMembers.map(m => (
+                    <Box key={m.id} alignItems="center" style={{ gap: 4 }}>
+                      <Box style={{ position: 'relative' as any }}>
+                        {m.avatarType === 'photo' ? (
+                          <Image
+                            source={require('@/assets/images/sample-three.jpg')}
+                            style={{ width: 44, height: 44, borderRadius: 22 }}
+                          />
+                        ) : (
+                          <ChatAvatar user={contact.user} size={44} />
+                        )}
+                        <Pressable
+                          onPress={() => toggle(m.id)}
+                          style={{
+                            position: 'absolute' as any,
+                            top: -2,
+                            right: -2,
+                            width: 16,
+                            height: 16,
+                            borderRadius: 8,
+                            backgroundColor: theme.colors.grey05,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <X size={9} color={theme.colors.foreground} strokeWidth={2.5} />
+                        </Pressable>
+                      </Box>
+                      <Text style={{ fontSize: 11, color: theme.colors.foreground, maxWidth: 52 }} numberOfLines={1}>
+                        {m.name.split(' ')[0]}
+                      </Text>
+                    </Box>
+                  ))}
                 </Box>
               </Box>
-            </Box>
+            )}
 
             {/* Chat Members */}
-            <Box style={{ gap: 10 }}>
+            <Box style={{ gap: 8 }}>
               <Box style={{ gap: 2 }}>
                 <Box flexDirection="row" alignItems="center" style={{ gap: 8 }}>
                   <Text style={{ fontSize: 14, fontWeight: '700', color: theme.colors.foreground }}>
@@ -690,60 +723,58 @@ function AssignTaskConfirm({
                     borderRadius="full"
                     alignItems="center"
                     justifyContent="center"
-                    style={{ backgroundColor: theme.colors.grey02 }}
+                    style={{ backgroundColor: theme.colors.grey02, borderWidth: 1, borderColor: theme.colors.grey03 }}
                   >
-                    <Text style={{ fontSize: 11, fontWeight: '600', color: theme.colors.grey05 }}>2</Text>
+                    <Text style={{ fontSize: 11, fontWeight: '600', color: theme.colors.foreground }}>{MEMBERS.length}</Text>
                   </Box>
                 </Box>
-                <Text style={{ fontSize: 13, color: theme.colors.grey04 }}>Choose the member first</Text>
+                <Text style={{ fontSize: 13, color: theme.colors.grey05, marginTop: 2 }}>Choose the member first</Text>
               </Box>
 
-              <Box flexDirection="row" alignItems="center" style={{ gap: 10, paddingVertical: 6 }}>
-                <Image
-                  source={require('@/assets/images/sample-three.jpg')}
-                  style={{ width: 36, height: 36, borderRadius: 18, flexShrink: 0 }}
-                />
-                <Box flex={1}>
-                  <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground, lineHeight: 19 }}>
-                    Savannah Nguyen
-                  </Text>
-                  <Text style={{ fontSize: 12, color: theme.colors.grey04 }}>
-                    savannahnguyen@gmail.com
-                  </Text>
-                </Box>
-                <Box
-                  width={26}
-                  height={26}
-                  borderRadius="full"
-                  alignItems="center"
-                  justifyContent="center"
-                  style={{ backgroundColor: theme.colors.secondaryGreen }}
-                >
-                  <Check size={13} color={theme.colors.white} strokeWidth={2.5} />
-                </Box>
-              </Box>
-
-              <Box flexDirection="row" alignItems="center" style={{ gap: 10, paddingVertical: 6 }}>
-                <ChatAvatar user={contact.user} size={36} />
-                <Box flex={1}>
-                  <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground, lineHeight: 19 }}>
-                    {contact.name}
-                  </Text>
-                  <Text style={{ fontSize: 12, color: theme.colors.grey04 }}>
-                    alexsmith@gmail.com
-                  </Text>
-                </Box>
-                <Box
-                  width={26}
-                  height={26}
-                  borderRadius="full"
-                  alignItems="center"
-                  justifyContent="center"
-                  style={{ backgroundColor: theme.colors.secondaryGreen }}
-                >
-                  <Check size={13} color={theme.colors.white} strokeWidth={2.5} />
-                </Box>
-              </Box>
+              {MEMBERS.map(m => {
+                const isSelected = selectedIds.includes(m.id);
+                return (
+                  <Pressable
+                    key={m.id}
+                    onPress={() => toggle(m.id)}
+                    style={({ hovered }: any) => ({
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      gap: 10,
+                      paddingVertical: 8,
+                      borderRadius: 8,
+                      backgroundColor: hovered ? theme.colors.grey01 : 'transparent',
+                    })}
+                  >
+                    {m.avatarType === 'photo' ? (
+                      <Image
+                        source={require('@/assets/images/sample-three.jpg')}
+                        style={{ width: 36, height: 36, borderRadius: 18, flexShrink: 0 }}
+                      />
+                    ) : (
+                      <ChatAvatar user={contact.user} size={36} />
+                    )}
+                    <Box flex={1}>
+                      <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground, lineHeight: 19 }}>
+                        {m.name}
+                      </Text>
+                      <Text style={{ fontSize: 12, color: theme.colors.grey05 }}>
+                        {m.email}
+                      </Text>
+                    </Box>
+                    <Box
+                      width={26}
+                      height={26}
+                      borderRadius="full"
+                      alignItems="center"
+                      justifyContent="center"
+                      style={{ backgroundColor: isSelected ? theme.colors.secondaryGreen : theme.colors.grey02 }}
+                    >
+                      <Check size={13} color={isSelected ? theme.colors.white : theme.colors.grey04} strokeWidth={2.5} />
+                    </Box>
+                  </Pressable>
+                );
+              })}
             </Box>
           </Box>
         </ScrollView>
