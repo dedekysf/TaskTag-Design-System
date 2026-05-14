@@ -865,6 +865,8 @@ function RoomView({
   const [assignTaskView, setAssignTaskView] = useState<'none' | 'picker' | 'confirm' | 'assigned'>('none');
   const [pickerExiting, setPickerExiting] = useState(false);
   const [showAssignedToast, setShowAssignedToast] = useState(false);
+  const [showStartConvTooltip, setShowStartConvTooltip] = useState(false);
+  const [chatMessage, setChatMessage] = useState('');
   const tooltipFadeAnim = useRef(new Animated.Value(1)).current;
 
   const handleAssignPress = () => {
@@ -1134,7 +1136,7 @@ function RoomView({
           caption="Fix the sink has been assigned"
           variant="title-caption"
           type="success"
-          onDismiss={() => setShowAssignedToast(false)}
+          onDismiss={() => { setShowAssignedToast(false); setShowStartConvTooltip(true); }}
         />
       )}
 
@@ -1146,9 +1148,20 @@ function RoomView({
           borderColor="border"
           style={{ borderRadius: 16, paddingHorizontal: 16, paddingTop: 12, paddingBottom: 10 }}
         >
-          <Text style={{ fontSize: 14, color: theme.colors.grey03, paddingBottom: 20 }}>
-            Type message here...
-          </Text>
+          <TextInput
+            value={chatMessage}
+            onChangeText={(text) => {
+              setChatMessage(text);
+              if (text.length > 0) setShowStartConvTooltip(false);
+            }}
+            placeholder="Type message here..."
+            placeholderTextColor={theme.colors.grey03}
+            multiline
+            style={[
+              { fontSize: 14, color: theme.colors.foreground, paddingBottom: 16, minHeight: 20 },
+              Platform.OS === 'web' && ({ outlineStyle: 'none' } as any),
+            ]}
+          />
           <Box flexDirection="row" alignItems="center" justifyContent="space-between">
             <Box flexDirection="row" alignItems="center">
               {[Plus, Hash, FileText, ImageIcon, Smile].map((Icon, i) => (
@@ -1157,16 +1170,28 @@ function RoomView({
                 </Pressable>
               ))}
             </Box>
-            <Pressable
-              disabled
-              style={{
-                width: 40, height: 40, borderRadius: 10,
-                backgroundColor: theme.colors.grey02,
-                alignItems: 'center', justifyContent: 'center',
-              }}
+            <TooltipOnboarding
+              variant="left-center"
+              tooltipStyle="success"
+              title="Start a Conversation"
+              description="You can add files, media, and tasks anytime from here."
+              open={showStartConvTooltip}
+              forceShow={showStartConvTooltip}
+              offset={20}
             >
-              <Send size={18} color={theme.colors.grey04} />
-            </Pressable>
+              <Pressable
+                disabled={!chatMessage.trim()}
+                onPress={() => setChatMessage('')}
+                style={({ pressed }: any) => ({
+                  width: 40, height: 40, borderRadius: 10,
+                  backgroundColor: chatMessage.trim() ? theme.colors.foreground : theme.colors.grey02,
+                  alignItems: 'center', justifyContent: 'center',
+                  opacity: pressed ? 0.8 : 1,
+                })}
+              >
+                <Send size={18} color={chatMessage.trim() ? theme.colors.white : theme.colors.grey04} />
+              </Pressable>
+            </TooltipOnboarding>
           </Box>
         </Box>
       </Box>
