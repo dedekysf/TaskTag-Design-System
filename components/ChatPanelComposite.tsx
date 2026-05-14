@@ -724,6 +724,7 @@ function RoomView({
             <Box flexDirection="row" gap="12" alignItems="flex-start">
               <ChatAvatar user={contact.user} size={40} />
               <Box flex={1}>
+                {/* Header Row outside the white card background */}
                 <Box flexDirection="row" alignItems="center" style={{ gap: 8, marginBottom: 8 }}>
                   <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>
                     {contact.name}
@@ -732,6 +733,8 @@ function RoomView({
                     12:25 PM
                   </Text>
                 </Box>
+
+                {/* White background box wrapping the card contents */}
                 <Box
                   backgroundColor="card"
                   borderWidth={1}
@@ -740,6 +743,7 @@ function RoomView({
                     borderRadius: 12,
                     paddingHorizontal: 16,
                     paddingVertical: 16,
+                    alignSelf: 'stretch',
                   }}
                 >
                   <Box
@@ -752,7 +756,7 @@ function RoomView({
                       marginBottom: 12,
                     }}
                   >
-                    <Text style={{ fontSize: 12, fontWeight: '700', color: theme.colors.darkGreen, lineHeight: 16 }}>
+                    <Text style={{ fontSize: 12, fontWeight: '700', color: theme.colors.textPrimary, lineHeight: 16 }}>
                       MEMBER JOINED
                     </Text>
                   </Box>
@@ -760,7 +764,7 @@ function RoomView({
                     {contact.name} joined the project
                   </Text>
                   <Text style={{ fontSize: 14, color: theme.colors.textSecondary, lineHeight: 20, marginBottom: 16 }}>
-                    Alex is now part of LA Avenue 34 G and ready to collaborate.
+                    Alex is now part of <Text style={{ fontWeight: '700', color: theme.colors.foreground }}>LA Avenue 34 G</Text> and ready to collaborate.
                   </Text>
                   <Pressable
                     onPress={() => setAssignTaskView('picker')}
