@@ -976,13 +976,13 @@ function RoomView({
                   </Text>
                 </Box>
                 <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.foreground, lineHeight: 24, marginBottom: 4 }}>
-                  {contact.name} joined the project
+                  {assignTaskView === 'assigned' ? `${contact.name} has been assigned a task` : `${contact.name} joined the project`}
                 </Text>
                 {assignTaskView === 'assigned' ? (
                   <>
                     <Text style={{ fontSize: 14, color: theme.colors.textSecondary, lineHeight: 20, marginBottom: 16 }}>
                       Alex is now working on{' '}
-                      <Text style={{ fontWeight: '500', color: theme.colors.foreground }}>Fix the sink</Text>
+                      <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.foreground }}>Fix the sink</Text>
                     </Text>
                     <Box flexDirection="row" style={{ gap: 10 }}>
                       <Pressable
