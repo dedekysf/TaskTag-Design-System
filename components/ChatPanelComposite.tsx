@@ -985,7 +985,7 @@ function RoomView({
                 ) : (
                   <>
                     <Text style={{ fontSize: 14, color: theme.colors.textSecondary, lineHeight: 20, marginBottom: 16 }}>
-                      Alex is now part of <Text style={{ fontWeight: '500', color: theme.colors.foreground }}>LA Avenue 34 G</Text> and ready to collaborate.
+                      Alex is now part of <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.foreground }}>LA Avenue 34 G</Text> and ready to collaborate.
                     </Text>
                     <TooltipOnboarding
                       variant="left-center"
