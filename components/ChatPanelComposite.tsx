@@ -350,9 +350,13 @@ const PICKER_ITEMS: PickerItem[] = [
 function AssignTaskPicker({
   onCancel,
   onSelectTask,
+  exiting = false,
+  onExitComplete,
 }: {
   onCancel: () => void;
   onSelectTask: () => void;
+  exiting?: boolean;
+  onExitComplete?: () => void;
 }) {
   const theme = useTheme<Theme>();
   const [query, setQuery] = useState('');
@@ -376,22 +380,17 @@ function AssignTaskPicker({
     ]).start();
   }, []);
 
-  const handleSelectTask = () => {
-    Animated.parallel([
-      Animated.timing(slideAnim, {
-        toValue: 60,
-        duration: 200,
-        easing: Easing.in(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 160,
-        easing: Easing.in(Easing.cubic),
-        useNativeDriver: true,
-      }),
-    ]).start(() => onSelectTask());
-  };
+  useEffect(() => {
+    if (!exiting) return;
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 180,
+      easing: Easing.in(Easing.cubic),
+      useNativeDriver: true,
+    }).start(() => onExitComplete?.());
+  }, [exiting]);
+
+  const handleSelectTask = () => onSelectTask();
 
   const filtered: PickerItem[] = query.trim()
     ? (() => {
@@ -864,6 +863,7 @@ function RoomView({
 }) {
   const theme = useTheme<Theme>();
   const [assignTaskView, setAssignTaskView] = useState<'none' | 'picker' | 'confirm' | 'assigned'>('none');
+  const [pickerExiting, setPickerExiting] = useState(false);
   const [showAssignedToast, setShowAssignedToast] = useState(false);
   const tooltipFadeAnim = useRef(new Animated.Value(1)).current;
 
@@ -1104,10 +1104,15 @@ function RoomView({
         ))}
       </ScrollView>
 
-      {assignTaskView === 'picker' && (
+      {(assignTaskView === 'picker' || pickerExiting) && (
         <AssignTaskPicker
           onCancel={() => setAssignTaskView('none')}
-          onSelectTask={() => setAssignTaskView('confirm')}
+          onSelectTask={() => {
+            setPickerExiting(true);
+            setAssignTaskView('confirm');
+          }}
+          exiting={pickerExiting}
+          onExitComplete={() => setPickerExiting(false)}
         />
       )}
 
