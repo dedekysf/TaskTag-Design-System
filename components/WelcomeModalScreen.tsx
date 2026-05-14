@@ -210,7 +210,7 @@ export function WelcomeModalScreen({
             fontWeight: '600',
             color: theme.colors.secondaryGreen,
             textAlign: 'center',
-            marginBottom: 4,
+            marginBottom: 8,
           }}
         >
           {`You're in, ${name}`}
