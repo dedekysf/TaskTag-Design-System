@@ -1911,17 +1911,19 @@ function InviteModal({
           <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ paddingHorizontal: 24, paddingVertical: 16 }}>
             <Text style={{ fontSize: 18, fontWeight: '500', color: theme.colors.foreground, lineHeight: 24 }}>{title}</Text>
             <Box flexDirection="row" alignItems="center" gap="8">
-              <View style={{ position: 'relative' as any, zIndex: 10002 }}>
-                <InviteTooltip label={copied ? 'Link copied!' : 'Copy link to invite'} variant={copied ? 'success' : 'default'} forceOpen={copied}>
-                  <Pressable
-                    onPress={handleCopyLink}
-                    style={({ hovered, pressed }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, backgroundColor: hovered ? theme.colors.grey01 : pressed ? theme.colors.grey02 : 'transparent', cursor: 'pointer' as any })}
-                  >
-                    <Link size={14} color={theme.colors.blue} />
-                    <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.blue }}>Copy Link</Text>
-                  </Pressable>
-                </InviteTooltip>
-              </View>
+              {!isAssigneeMode && (
+                <View style={{ position: 'relative' as any, zIndex: 10002 }}>
+                  <InviteTooltip label={copied ? 'Link copied!' : 'Copy link to invite'} variant={copied ? 'success' : 'default'} forceOpen={copied}>
+                    <Pressable
+                      onPress={handleCopyLink}
+                      style={({ hovered, pressed }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, backgroundColor: hovered ? theme.colors.grey01 : pressed ? theme.colors.grey02 : 'transparent', cursor: 'pointer' as any })}
+                    >
+                      <Link size={14} color={theme.colors.blue} />
+                      <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.blue }}>Copy Link</Text>
+                    </Pressable>
+                  </InviteTooltip>
+                </View>
+              )}
               <Pressable
                 onPress={onClose}
                 style={({ hovered, pressed }: any) => ({ width: 32, height: 32, borderRadius: 8, alignItems: 'center', justifyContent: 'center', backgroundColor: hovered ? theme.colors.grey01 : pressed ? theme.colors.grey02 : 'transparent', cursor: 'pointer' as any })}
@@ -2015,7 +2017,7 @@ function InviteModal({
         </Pressable>
       </Pressable>
 
-      {showLinkCopiedToast && (
+      {!isAssigneeMode && showLinkCopiedToast && (
         <Toast
           visible={showLinkCopiedToast}
           title="Link copied"

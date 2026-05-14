@@ -37,6 +37,7 @@ export interface TooltipOnboardingProps {
     trigger?: 'hover' | 'press';
     offset?: number; // Gap in px between trigger and tooltip (default 20)
     arrowAtTriggerCenter?: boolean; // Shift balloon so left-arrow aligns with trigger center
+    triggerAnchorHeight?: number; // Use a fixed trigger height for vertical centering when child has helper/error text
 }
 
 const sizeConfig = {
@@ -109,7 +110,7 @@ function RichTooltipContent({
                 backgroundColor: bgColor,
                 borderRadius: 16,
                 padding: 16,
-                width: 280,
+                width: 312,
                 ...Platform.select({
                     web: { boxShadow: '0px 5px 12.5px rgba(0,0,0,0.05)' } as any,
                     default: { elevation: 5, shadowColor: '#000', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.1, shadowRadius: 12 }
@@ -191,6 +192,7 @@ export function TooltipOnboarding({
     trigger = 'hover',
     offset,
     arrowAtTriggerCenter = false,
+    triggerAnchorHeight,
 }: TooltipOnboardingProps) {
     const theme = useTheme<Theme>();
     const isControlled = open !== undefined;
@@ -267,6 +269,7 @@ export function TooltipOnboarding({
 
     const getTooltipPositionNative = (): ViewStyle => {
         const offset = 20;
+        const anchorHeight = triggerAnchorHeight ?? layout.height;
         switch (variant) {
             case 'top-left': return { bottom: layout.height + offset, left: 0 };
             case 'top-center': return { bottom: layout.height + offset, left: '50%', transform: [{ translateX: '-50%' as any }] };
@@ -275,10 +278,10 @@ export function TooltipOnboarding({
             case 'bottom-center': return { top: layout.height + offset, left: '50%', transform: [{ translateX: '-50%' as any }] };
             case 'bottom-right': return { top: layout.height + offset, right: 0 };
             case 'left-top': return { right: layout.width + offset, top: 0 };
-            case 'left-center': return { right: layout.width + offset, top: '50%', transform: [{ translateY: '-50%' as any }] };
+            case 'left-center': return { right: layout.width + offset, top: anchorHeight / 2, transform: [{ translateY: '-50%' as any }] };
             case 'left-bottom': return { right: layout.width + offset, bottom: 0 };
             case 'right-top': return { left: layout.width + offset, top: 0 };
-            case 'right-center': return { left: layout.width + offset, top: '50%', transform: [{ translateY: '-50%' as any }] };
+            case 'right-center': return { left: layout.width + offset, top: anchorHeight / 2, transform: [{ translateY: '-50%' as any }] };
             case 'right-bottom': return { left: layout.width + offset, bottom: 0 };
             default: return { bottom: layout.height + offset, left: '50%', transform: [{ translateX: '-50%' as any }] };
         }
@@ -324,6 +327,7 @@ export function TooltipOnboarding({
     const renderWebPortal = () => {
         if (!shouldShow || !portalRect) return null;
         const gap = offset ?? 20;
+        const anchorHeight = triggerAnchorHeight ?? portalRect.height;
         let top = 0, left = 0;
         let transform = '';
         switch (variant) {
@@ -334,10 +338,10 @@ export function TooltipOnboarding({
             case 'bottom-center': top = portalRect.top + portalRect.height + gap; left = portalRect.left + portalRect.width / 2; transform = 'translateX(-50%)'; break;
             case 'bottom-right': top = portalRect.top + portalRect.height + gap; left = portalRect.left + portalRect.width; transform = 'translateX(-100%)'; break;
             case 'left-top': top = portalRect.top; left = portalRect.left - gap; transform = 'translateX(-100%)'; break;
-            case 'left-center': top = portalRect.top + portalRect.height / 2; left = portalRect.left - gap; transform = 'translate(-100%, -50%)'; break;
+            case 'left-center': top = portalRect.top + anchorHeight / 2; left = portalRect.left - gap; transform = 'translate(-100%, -50%)'; break;
             case 'left-bottom': top = portalRect.top + portalRect.height; left = portalRect.left - gap; transform = 'translate(-100%, -100%)'; break;
             case 'right-top': top = portalRect.top; left = portalRect.left + portalRect.width + gap; break;
-            case 'right-center': top = portalRect.top + portalRect.height / 2; left = portalRect.left + portalRect.width + gap; transform = 'translateY(-50%)'; break;
+            case 'right-center': top = portalRect.top + anchorHeight / 2; left = portalRect.left + portalRect.width + gap; transform = 'translateY(-50%)'; break;
             case 'right-bottom': top = portalRect.top + portalRect.height; left = portalRect.left + portalRect.width + gap; transform = 'translateY(-100%)'; break;
             default: top = portalRect.top - gap; left = portalRect.left + portalRect.width / 2; transform = 'translate(-50%, -100%)';
         }

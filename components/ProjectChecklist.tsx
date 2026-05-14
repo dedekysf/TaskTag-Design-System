@@ -255,7 +255,7 @@ export function ProjectList({ onCreateProject }: { onCreateProject?: () => void 
           gap: 0,
         }}
       >
-        <OnboardingChecklist />
+        <OnboardingChecklist onCreateProject={onCreateProject} />
 
         <Box style={{ marginTop: 68 }}>
           <Text style={{ fontSize: 24, fontWeight: '700', color: theme.colors.foreground, lineHeight: 32, marginBottom: 22 }}>

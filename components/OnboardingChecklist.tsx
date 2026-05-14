@@ -139,10 +139,11 @@ function getChecklistSizes(width: number): ChecklistSizes {
   };
 }
 
-function StepCard({ step, sizes }: { step: OnboardingStep; sizes: ChecklistSizes }) {
+function StepCard({ step, sizes, onCreateProject }: { step: OnboardingStep; sizes: ChecklistSizes; onCreateProject?: () => void }) {
   const theme = useTheme<Theme>();
   const isPrimary = step.state === 'primary';
   const isDisabled = step.state === 'disabled';
+  const isCreateProject = step.action === 'Create Project';
 
   return (
     <Box
@@ -212,6 +213,7 @@ function StepCard({ step, sizes }: { step: OnboardingStep; sizes: ChecklistSizes
         <Pressable
           accessibilityRole="button"
           disabled={isDisabled}
+          onPress={isCreateProject ? onCreateProject : undefined}
           style={{
             flexBasis: sizes.columns === 1 ? '100%' : '44%',
             flexGrow: 1,
@@ -281,7 +283,7 @@ function BackgroundRings() {
   );
 }
 
-export function OnboardingChecklist() {
+export function OnboardingChecklist({ onCreateProject }: { onCreateProject?: () => void } = {}) {
   const theme = useTheme<Theme>();
   const [containerWidth, setContainerWidth] = useState(1180);
   const sizes = useMemo(() => getChecklistSizes(containerWidth), [containerWidth]);
@@ -341,7 +343,7 @@ export function OnboardingChecklist() {
         }}
       >
         {STEPS.map((step) => (
-          <StepCard key={step.title} step={step} sizes={sizes} />
+          <StepCard key={step.title} step={step} sizes={sizes} onCreateProject={onCreateProject} />
         ))}
       </Box>
     </Box>

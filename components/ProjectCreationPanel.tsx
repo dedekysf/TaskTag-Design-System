@@ -464,6 +464,7 @@ export function ProjectCreationPanel({ onClose, onSuccess }: { onClose?: () => v
                 forceShow={showNameTooltip}
                 animatedOpacity={tooltipOpacity}
                 style={{ alignSelf: 'stretch' }}
+                triggerAnchorHeight={48}
               >
                 <TextInput
                   value={projectName}
