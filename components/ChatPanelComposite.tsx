@@ -1131,7 +1131,7 @@ function RoomView({
         <Toast
           visible={showAssignedToast}
           title="Member Assigned"
-          caption="Alex Smith has been assigned to Fix the sink."
+          caption="Fix the sink has been assigned"
           variant="title-caption"
           type="success"
           onDismiss={() => setShowAssignedToast(false)}
