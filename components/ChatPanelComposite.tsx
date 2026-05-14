@@ -867,6 +867,8 @@ function RoomView({
   const [showAssignedToast, setShowAssignedToast] = useState(false);
   const [showStartConvTooltip, setShowStartConvTooltip] = useState(false);
   const [chatMessage, setChatMessage] = useState('');
+  const [sentMessages, setSentMessages] = useState<Array<{ id: string; text: string; time: string }>>([]);
+  const [showTagNudge, setShowTagNudge] = useState(false);
   const tooltipFadeAnim = useRef(new Animated.Value(1)).current;
 
   const handleAssignPress = () => {
@@ -1104,7 +1106,56 @@ function RoomView({
             </Box>
           </Box>
         ))}
+
+        {/* Sent messages */}
+        {sentMessages.map(msg => (
+          <Box key={msg.id} style={{ marginTop: 16 }}>
+            <Box flexDirection="row" alignItems="center" style={{ gap: 10, marginBottom: 6 }}>
+              <Image
+                source={require('@/assets/images/sample-three.jpg')}
+                style={{ width: 40, height: 40, borderRadius: 20, flexShrink: 0 }}
+              />
+              <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>Savanah Nguyen</Text>
+              <Text style={{ fontSize: 11, color: theme.colors.grey04 }}>{msg.time}</Text>
+            </Box>
+            <Box flexDirection="row" alignItems="center" style={{ paddingLeft: 50, gap: 8 }}>
+              <Box style={{ borderRadius: 8, paddingHorizontal: 12, paddingVertical: 10, backgroundColor: '#EAFBF6', alignSelf: 'flex-start', maxWidth: 280 }}>
+                <Text style={{ fontSize: 14, color: theme.colors.foreground, lineHeight: 20 }}>{msg.text}</Text>
+              </Box>
+              <Check size={14} color={theme.colors.grey04} strokeWidth={2} />
+            </Box>
+          </Box>
+        ))}
       </ScrollView>
+
+      {/* Tag this message nudge */}
+      {showTagNudge && (
+        <Box
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 12,
+            marginHorizontal: 16,
+            marginBottom: 8,
+            borderRadius: 12,
+            backgroundColor: '#0F172A',
+            paddingHorizontal: 16,
+            paddingVertical: 14,
+          }}
+        >
+          <Box style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: theme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Hash size={22} color={theme.colors.white} strokeWidth={2} />
+          </Box>
+          <Box style={{ flex: 1 }}>
+            <Text style={{ fontSize: 15, fontWeight: '700', color: theme.colors.white, lineHeight: 20, marginBottom: 2 }}>
+              Tag this message
+            </Text>
+            <Text style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', lineHeight: 18 }}>
+              Tap # below to tag this message so {contact.name} knows exactly which site this is about
+            </Text>
+          </Box>
+        </Box>
+      )}
 
       {(assignTaskView === 'picker' || pickerExiting) && (
         <AssignTaskPicker
@@ -1164,11 +1215,20 @@ function RoomView({
           />
           <Box flexDirection="row" alignItems="center" justifyContent="space-between">
             <Box flexDirection="row" alignItems="center">
-              {[Plus, Hash, FileText, ImageIcon, Smile].map((Icon, i) => (
-                <Pressable key={i} style={{ padding: 8 }}>
-                  <Icon size={20} color={theme.colors.grey04} />
-                </Pressable>
-              ))}
+              {[Plus, Hash, FileText, ImageIcon, Smile].map((Icon, i) => {
+                const isHash = Icon === Hash;
+                return (
+                  <Pressable key={i} style={{ padding: 6 }}>
+                    {isHash && showTagNudge ? (
+                      <Box style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: theme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center' }}>
+                        <Icon size={18} color={theme.colors.white} />
+                      </Box>
+                    ) : (
+                      <Icon size={20} color={theme.colors.grey04} />
+                    )}
+                  </Pressable>
+                );
+              })}
             </Box>
             <TooltipOnboarding
               variant="left-center"
@@ -1181,7 +1241,15 @@ function RoomView({
             >
               <Pressable
                 disabled={!chatMessage.trim()}
-                onPress={() => setChatMessage('')}
+                onPress={() => {
+                  if (!chatMessage.trim()) return;
+                  const now = new Date();
+                  const time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+                  setSentMessages(prev => [...prev, { id: Date.now().toString(), text: chatMessage.trim(), time }]);
+                  setChatMessage('');
+                  setShowTagNudge(true);
+                  setShowStartConvTooltip(false);
+                }}
                 style={({ pressed }: any) => ({
                   width: 40, height: 40, borderRadius: 10,
                   backgroundColor: chatMessage.trim() ? theme.colors.foreground : theme.colors.grey02,
