@@ -332,13 +332,20 @@ function ListView({
 
 // ─── Chat Room View (550px) ───────────────────────────────────────────────────
 
-const OWNER_AVATAR: ChatUser = { variant: 'photo', src: require('@/assets/images/sample-three.jpg') };
+// TODO (backend): replace with authenticated user from auth context (e.g. useAuth().currentUser)
+const CURRENT_USER = {
+  name: 'Oscar Eduardo',
+  avatarSrc: require('@/assets/images/sample-three.jpg') as ImageSourcePropType,
+};
+
+const OWNER_AVATAR: ChatUser = { variant: 'photo', src: CURRENT_USER.avatarSrc };
 const ALEX_AVATAR: ChatUser = { variant: 'text', initials: 'AS', color: 'darkGreen' };
 
 type PickerItem =
   | { type: 'project'; label: string; assignees?: ChatUser[] }
   | { type: 'task'; label: string; assignees: ChatUser[] };
 
+// TODO (backend): replace with API — GET /projects/:id/tasks, include assignees per task
 const PICKER_ITEMS: PickerItem[] = [
   { type: 'project', label: 'LA Avenue 34 G' },
   { type: 'task', label: 'Fix the sink', assignees: [OWNER_AVATAR] },
@@ -349,15 +356,12 @@ const PICKER_ITEMS: PickerItem[] = [
   { type: 'task', label: 'Mark All the Tasks as Done', assignees: [OWNER_AVATAR] },
 ];
 
-const PICKER_ITEMS_AFTER_ASSIGN: PickerItem[] = [
-  { type: 'project', label: 'LA Avenue 34 G', assignees: [OWNER_AVATAR, ALEX_AVATAR] },
-  { type: 'task', label: 'Fix the sink', assignees: [OWNER_AVATAR, ALEX_AVATAR] },
-  { type: 'project', label: 'Welcome to Tasktag! 🎉' },
-  { type: 'task', label: 'Create Your First Task', assignees: [OWNER_AVATAR] },
-  { type: 'task', label: 'Invite Contacts', assignees: [OWNER_AVATAR] },
-  { type: 'task', label: 'Set a Due Date', assignees: [OWNER_AVATAR] },
-  { type: 'task', label: 'Mark All the Tasks as Done', assignees: [OWNER_AVATAR] },
-];
+// TODO (backend): will be derived from API — assignees updated automatically once assignment is persisted.
+const PICKER_ITEMS_AFTER_ASSIGN: PickerItem[] = PICKER_ITEMS.map(item =>
+  (item.label === 'LA Avenue 34 G' || item.label === 'Fix the sink')
+    ? { ...item, assignees: [OWNER_AVATAR, ALEX_AVATAR] }
+    : item
+);
 
 // TODO (backend): replace with API — GET /projects/:id/tasks, include assignees per task
 const TAG_PICKER_ITEMS: PickerItem[] = [
@@ -387,7 +391,7 @@ function AssignTaskPicker({
   items = PICKER_ITEMS,
 }: {
   onCancel: () => void;
-  onSelectTask: () => void;
+  onSelectTask: (task: string) => void;
   exiting?: boolean;
   onExitComplete?: () => void;
   items?: PickerItem[];
@@ -423,8 +427,6 @@ function AssignTaskPicker({
       useNativeDriver: true,
     }).start(() => onExitComplete?.());
   }, [exiting]);
-
-  const handleSelectTask = () => onSelectTask();
 
   const filtered: PickerItem[] = query.trim()
     ? (() => {
@@ -544,7 +546,7 @@ function AssignTaskPicker({
                 )}
               </Box>
             ) : (
-              <Pressable key={idx} onPress={handleSelectTask} style={{ paddingVertical: 11 }}>
+              <Pressable key={idx} onPress={() => onSelectTask(item.label)} style={{ paddingVertical: 11 }}>
                 {({ pressed }: any) => (
                   <Box
                     flexDirection="row"
@@ -579,10 +581,12 @@ function AssignTaskPicker({
 
 function AssignTaskConfirm({
   contact,
+  taskName,
   onCancel,
   onConfirm,
 }: {
   contact: ChatListItem;
+  taskName: string;
   onCancel: () => void;
   onConfirm: () => void;
 }) {
@@ -592,6 +596,7 @@ function AssignTaskConfirm({
   const [query, setQuery] = useState('');
   const [selectedIds, setSelectedIds] = useState<string[]>([contact.id]);
 
+  // TODO (backend): fetch project members from API — GET /projects/:id/members
   const MEMBERS = [
     { id: 'savannah', name: 'Savannah Nguyen', email: 'savannahnguyen@gmail.com', avatarType: 'photo' as const },
     { id: contact.id, name: contact.name, email: 'alexsmith@gmail.com', avatarType: 'contact' as const },
@@ -651,7 +656,7 @@ function AssignTaskConfirm({
               Assign to Task
             </Text>
             <Text style={{ fontSize: 13, fontWeight: '500', color: theme.colors.secondaryGreen }}>
-              #Fix the sink
+              #{taskName}
             </Text>
           </Box>
           <Pressable onPress={onCancel} hitSlop={8}>
@@ -777,6 +782,7 @@ function AssignTaskConfirm({
 
               {MEMBERS.map(m => {
                 const isSelected = selectedIds.includes(m.id);
+                // TODO (backend): use currentUser.id — the project owner cannot be removed
                 const isDisabled = m.id === 'savannah';
                 return (
                   <Pressable
@@ -1014,6 +1020,7 @@ function RoomView({
   const [wasAssigned, setWasAssigned] = useState(false);
   const [pickerExiting, setPickerExiting] = useState(false);
   const [showAssignedToast, setShowAssignedToast] = useState(false);
+  const [selectedTask, setSelectedTask] = useState('');
 
   // ── Chat input ────────────────────────────────────────────────────────────
   const [isInputFocused, setIsInputFocused] = useState(false);
@@ -1130,6 +1137,7 @@ function RoomView({
     });
   };
 
+  // TODO (backend): fetch conversation history — GET /conversations/:id/messages
   const messages = [
     {
       id: '1',
@@ -1263,7 +1271,7 @@ function RoomView({
                   <>
                     <Text style={{ fontSize: 14, color: theme.colors.textSecondary, lineHeight: 20, marginBottom: 16 }}>
                       Alex is now working on{' '}
-                      <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.foreground }}>Fix the sink</Text>
+                      <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.foreground }}>{selectedTask}</Text>
                     </Text>
                     <Box flexDirection="row" style={{ gap: 10 }}>
                       <Pressable
@@ -1361,10 +1369,10 @@ function RoomView({
           <Box key={msg.id} style={{ marginTop: 16 }}>
             <Box flexDirection="row" alignItems="center" style={{ gap: 10, marginBottom: 6 }}>
               <Image
-                source={require('@/assets/images/sample-three.jpg')}
+                source={CURRENT_USER.avatarSrc}
                 style={{ width: 40, height: 40, borderRadius: 20, flexShrink: 0 }}
               />
-              <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>Oscar Eduardo</Text>
+              <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>{CURRENT_USER.name}</Text>
               <Text style={{ fontSize: 11, color: theme.colors.grey04 }}>{msg.time}</Text>
             </Box>
             <Box flexDirection="row" alignItems="flex-end" style={{ paddingLeft: 50, gap: 4 }}>
@@ -1531,7 +1539,8 @@ function RoomView({
       {(assignTaskView === 'picker' || pickerExiting) && (
         <AssignTaskPicker
           onCancel={() => setAssignTaskView('none')}
-          onSelectTask={() => {
+          onSelectTask={(task) => {
+            setSelectedTask(task);
             setPickerExiting(true);
             setAssignTaskView('confirm');
           }}
@@ -1544,6 +1553,7 @@ function RoomView({
       {assignTaskView === 'confirm' && (
         <AssignTaskConfirm
           contact={contact}
+          taskName={selectedTask}
           onCancel={() => setAssignTaskView('picker')}
           onConfirm={() => {
             setWasAssigned(true);
@@ -1557,7 +1567,7 @@ function RoomView({
         <Toast
           visible={showAssignedToast}
           title="Member Assigned"
-          caption="Fix the sink has been assigned"
+          caption={`${selectedTask} has been assigned`}
           variant="title-caption"
           type="success"
           onDismiss={() => { setShowAssignedToast(false); setShowStartConvTooltip(true); }}
@@ -1904,9 +1914,7 @@ export function ChatPanelComposite({
   );
 }
 
-// ─── Default data ─────────────────────────────────────────────────────────────
-
-// ─── Preset list items ───────────────────────────────────────────────────────
+// ─── Preset list items ────────────────────────────────────────────────────────
 
 /** variant='without-member' — only Tasktag Helpdesk */
 export const LIST_ITEMS_WITHOUT_MEMBER: ChatListItem[] = [
