@@ -13,7 +13,6 @@ import {
 } from 'lucide-react-native';
 import React from 'react';
 import { ImageSourcePropType, Platform, Pressable, ScrollView } from 'react-native';
-import { OnboardingChecklist } from './OnboardingChecklist';
 
 const FILTERS = ['Active Projects', 'Owner', 'Team', 'Member'];
 
@@ -255,9 +254,7 @@ export function ProjectList({ onCreateProject }: { onCreateProject?: () => void 
           gap: 0,
         }}
       >
-        <OnboardingChecklist onCreateProject={onCreateProject} />
-
-        <Box style={{ marginTop: 68 }}>
+        <Box style={{ marginTop: 0 }}>
           <Text style={{ fontSize: 24, fontWeight: '700', color: theme.colors.foreground, lineHeight: 32, marginBottom: 22 }}>
             Recent
           </Text>

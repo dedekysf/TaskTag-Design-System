@@ -26,6 +26,7 @@ import { Toast } from '@/components/Toast';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import {
+  Camera,
   ChevronLeft,
   ChevronsLeft,
   ChevronsRight,
@@ -332,9 +333,10 @@ function ListView({
 // ─── Chat Room View (550px) ───────────────────────────────────────────────────
 
 const OWNER_AVATAR: ChatUser = { variant: 'photo', src: require('@/assets/images/sample-three.jpg') };
+const ALEX_AVATAR: ChatUser = { variant: 'text', initials: 'AS', color: 'darkGreen' };
 
 type PickerItem =
-  | { type: 'project'; label: string }
+  | { type: 'project'; label: string; assignees?: ChatUser[] }
   | { type: 'task'; label: string; assignees: ChatUser[] };
 
 const PICKER_ITEMS: PickerItem[] = [
@@ -347,16 +349,48 @@ const PICKER_ITEMS: PickerItem[] = [
   { type: 'task', label: 'Mark All the Tasks as Done', assignees: [OWNER_AVATAR] },
 ];
 
+const PICKER_ITEMS_AFTER_ASSIGN: PickerItem[] = [
+  { type: 'project', label: 'LA Avenue 34 G', assignees: [OWNER_AVATAR, ALEX_AVATAR] },
+  { type: 'task', label: 'Fix the sink', assignees: [OWNER_AVATAR, ALEX_AVATAR] },
+  { type: 'project', label: 'Welcome to Tasktag! 🎉' },
+  { type: 'task', label: 'Create Your First Task', assignees: [OWNER_AVATAR] },
+  { type: 'task', label: 'Invite Contacts', assignees: [OWNER_AVATAR] },
+  { type: 'task', label: 'Set a Due Date', assignees: [OWNER_AVATAR] },
+  { type: 'task', label: 'Mark All the Tasks as Done', assignees: [OWNER_AVATAR] },
+];
+
+// TODO (backend): replace with API — GET /projects/:id/tasks, include assignees per task
+const TAG_PICKER_ITEMS: PickerItem[] = [
+  { type: 'project', label: 'LA Avenue 34 G' },
+  { type: 'task',    label: 'Fix the sink',              assignees: [OWNER_AVATAR] },
+  { type: 'project', label: 'Welcome to Tasktag! 🎉' },
+  { type: 'task',    label: 'Create Your First Task',    assignees: [OWNER_AVATAR] },
+  { type: 'task',    label: 'Invite Contacts',           assignees: [OWNER_AVATAR] },
+  { type: 'task',    label: 'Set a Due Date',            assignees: [OWNER_AVATAR] },
+  { type: 'task',    label: 'Mark All the Tasks as Done',assignees: [OWNER_AVATAR] },
+  { type: 'task',    label: 'Archive the Projects',      assignees: [OWNER_AVATAR] },
+];
+
+// Reflects the state after Alex Smith is assigned to "Fix the sink" in the same session.
+// TODO (backend): this will be handled automatically once assignees come from the API.
+const TAG_PICKER_ITEMS_AFTER_ASSIGN: PickerItem[] = TAG_PICKER_ITEMS.map(item =>
+  item.type === 'task' && item.label === 'Fix the sink'
+    ? { ...item, assignees: [OWNER_AVATAR, ALEX_AVATAR] }
+    : item
+);
+
 function AssignTaskPicker({
   onCancel,
   onSelectTask,
   exiting = false,
   onExitComplete,
+  items = PICKER_ITEMS,
 }: {
   onCancel: () => void;
   onSelectTask: () => void;
   exiting?: boolean;
   onExitComplete?: () => void;
+  items?: PickerItem[];
 }) {
   const theme = useTheme<Theme>();
   const [query, setQuery] = useState('');
@@ -396,7 +430,7 @@ function AssignTaskPicker({
     ? (() => {
         const result: PickerItem[] = [];
         let pendingProject: PickerItem | null = null;
-        for (const item of PICKER_ITEMS) {
+        for (const item of items) {
           if (item.type === 'project') {
             pendingProject = item;
           } else if (item.label.toLowerCase().includes(query.toLowerCase())) {
@@ -406,7 +440,7 @@ function AssignTaskPicker({
         }
         return result;
       })()
-    : PICKER_ITEMS;
+    : items;
 
   return (
     <Animated.View
@@ -483,20 +517,31 @@ function AssignTaskPicker({
           </Text>
           {filtered.map((item, idx) =>
             item.type === 'project' ? (
-              <Box key={idx} flexDirection="row" alignItems="center" style={{ paddingVertical: 10, gap: 8 }}>
-                <Box
-                  width={24}
-                  height={24}
-                  borderRadius="6"
-                  alignItems="center"
-                  justifyContent="center"
-                  style={{ backgroundColor: theme.colors.secondaryGreen }}
-                >
-                  <Folder size={14} color={theme.colors.white} />
+              <Box key={idx} flexDirection="row" alignItems="center" justifyContent="space-between" style={{ paddingVertical: 10, gap: 8 }}>
+                <Box flexDirection="row" alignItems="center" style={{ gap: 8 }}>
+                  <Box
+                    width={24}
+                    height={24}
+                    borderRadius="6"
+                    alignItems="center"
+                    justifyContent="center"
+                    style={{ backgroundColor: theme.colors.secondaryGreen }}
+                  >
+                    <Folder size={14} color={theme.colors.white} />
+                  </Box>
+                  <Text style={{ fontSize: 15, fontWeight: '700', color: theme.colors.foreground, lineHeight: 20 }}>
+                    {item.label}
+                  </Text>
                 </Box>
-                <Text style={{ fontSize: 15, fontWeight: '700', color: theme.colors.foreground, lineHeight: 20 }}>
-                  {item.label}
-                </Text>
+                {item.assignees && item.assignees.length > 0 && (
+                  <Box flexDirection="row" alignItems="center" style={{ marginRight: 2 }}>
+                    {item.assignees.map((user, i) => (
+                      <Box key={i} style={{ marginLeft: i === 0 ? 0 : -8 }}>
+                        <ChatAvatar user={user} size={28} />
+                      </Box>
+                    ))}
+                  </Box>
+                )}
               </Box>
             ) : (
               <Pressable key={idx} onPress={handleSelectTask} style={{ paddingVertical: 11 }}>
@@ -846,6 +891,104 @@ function AssignTaskConfirm({
   );
 }
 
+function TagPicker({
+  onCancel,
+  onSelectTask,
+  items = TAG_PICKER_ITEMS,
+}: {
+  onCancel: () => void;
+  onSelectTask: (project: string, task: string) => void;
+  items?: PickerItem[];
+}) {
+  const theme = useTheme<Theme>();
+  const [query, setQuery] = useState('');
+  const slideAnim = useRef(new Animated.Value(60)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(slideAnim, { toValue: 0, duration: 300, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(fadeAnim, { toValue: 1, duration: 220, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+    ]).start();
+  }, []);
+
+  type TagItem = PickerItem & { parentProject?: string };
+  const buildFiltered = (source: PickerItem[]): TagItem[] => {
+    let cur = '';
+    return source.map(item => {
+      if (item.type === 'project') { cur = item.label; return item; }
+      return { ...item, parentProject: cur };
+    });
+  };
+
+  const filtered: TagItem[] = buildFiltered(
+    query.trim()
+      ? (() => {
+          const result: PickerItem[] = [];
+          let pending: PickerItem | null = null;
+          for (const item of items) {
+            if (item.type === 'project') { pending = item; }
+            else if (item.label.toLowerCase().includes(query.toLowerCase())) {
+              if (pending) { result.push(pending); pending = null; }
+              result.push(item);
+            }
+          }
+          return result;
+        })()
+      : items
+  );
+
+  return (
+    <Animated.View style={{ position: 'absolute' as any, left: 16, right: 16, bottom: 96, zIndex: 25, opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
+      <Box backgroundColor="card" borderWidth={1} borderColor="border" style={{ borderRadius: 16, overflow: 'hidden', ...Platform.select({ web: { boxShadow: '0 12px 30px rgba(0,0,0,0.14)' } as any, default: { elevation: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 12 }, shadowOpacity: 0.14, shadowRadius: 20 } }) }}>
+        <Box flexDirection="row" alignItems="center" style={{ paddingHorizontal: 16, paddingVertical: 18, gap: 8 }}>
+          <Box flex={1} flexDirection="row" alignItems="center" backgroundColor="grey02" style={{ borderRadius: 8, paddingHorizontal: 8, paddingVertical: 8, gap: 6 }}>
+            <Box width={24} height={24} borderRadius="6" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.secondaryGreen }}>
+              <Hash size={16} color={theme.colors.white} />
+            </Box>
+            <TextInput value={query} onChangeText={setQuery} placeholder="Search Tag" placeholderTextColor={theme.colors.grey05} style={[{ flex: 1, color: theme.colors.foreground, fontSize: 16, padding: 0 }, Platform.OS === 'web' && ({ outlineStyle: 'none' } as any)]} />
+          </Box>
+          <Pressable onPress={onCancel} style={{ paddingVertical: 4 }}>
+            <Text style={{ fontSize: 16, fontWeight: '500', color: theme.colors.secondaryGreen }}>Cancel</Text>
+          </Pressable>
+        </Box>
+        <Box height={1} backgroundColor="border" />
+        <ScrollView style={{ maxHeight: 425 }} showsVerticalScrollIndicator={false}>
+          <Box style={{ paddingHorizontal: 16, paddingTop: 10, paddingBottom: 14 }}>
+            <Text style={{ fontSize: 14, color: theme.colors.grey05, lineHeight: 20, marginBottom: 10 }}>All Projects &amp; Tasks</Text>
+            {filtered.map((item, idx) =>
+              item.type === 'project' ? (
+                <Box key={idx} flexDirection="row" alignItems="center" style={{ paddingVertical: 10, gap: 8 }}>
+                  <Box width={24} height={24} borderRadius="6" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.foreground }}>
+                    <Text style={{ fontSize: 9, fontWeight: '800', color: theme.colors.white, letterSpacing: -0.5 }}>tt</Text>
+                  </Box>
+                  <Text style={{ fontSize: 15, fontWeight: '700', color: theme.colors.foreground, lineHeight: 20 }}>{item.label}</Text>
+                </Box>
+              ) : (
+                <Pressable key={idx} onPress={() => onSelectTask((item as TagItem).parentProject ?? '', item.label)} style={{ paddingVertical: 11 }}>
+                  {({ pressed }: any) => (
+                    <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ opacity: pressed ? 0.7 : 1 }}>
+                      <Box flexDirection="row" alignItems="center" style={{ gap: 12 }}>
+                        <Hash size={18} color={theme.colors.secondaryGreen} />
+                        <Text style={{ fontSize: 15, color: theme.colors.foreground, lineHeight: 20 }}>{item.label}</Text>
+                      </Box>
+                      <Box flexDirection="row" alignItems="center" style={{ marginRight: 2 }}>
+                        {item.assignees.map((user, i) => (
+                          <Box key={i} style={{ marginLeft: i === 0 ? 0 : -8 }}><ChatAvatar user={user} size={28} /></Box>
+                        ))}
+                      </Box>
+                    </Box>
+                  )}
+                </Pressable>
+              )
+            )}
+          </Box>
+        </ScrollView>
+      </Box>
+    </Animated.View>
+  );
+}
+
 function RoomView({
   contact,
   onBack,
@@ -862,14 +1005,105 @@ function RoomView({
   onAssignTooltipDismiss?: () => void;
 }) {
   const theme = useTheme<Theme>();
+
+  // ── Assign-task flow ──────────────────────────────────────────────────────
+  // none → picker → confirm → assigned
   const [assignTaskView, setAssignTaskView] = useState<'none' | 'picker' | 'confirm' | 'assigned'>('none');
+  // Tracks whether Alex has been assigned this session; used to show his avatar in TagPicker.
+  // TODO (backend): derive from task assignees API instead of local state.
+  const [wasAssigned, setWasAssigned] = useState(false);
   const [pickerExiting, setPickerExiting] = useState(false);
   const [showAssignedToast, setShowAssignedToast] = useState(false);
-  const [showStartConvTooltip, setShowStartConvTooltip] = useState(false);
+
+  // ── Chat input ────────────────────────────────────────────────────────────
+  const [isInputFocused, setIsInputFocused] = useState(false);
   const [chatMessage, setChatMessage] = useState('');
-  const [sentMessages, setSentMessages] = useState<Array<{ id: string; text: string; time: string }>>([]);
+  const [sentMessages, setSentMessages] = useState<Array<{ id: string; text: string; time: string; taggedProject?: string; taggedTask?: string }>>([]);
+  const textInputRef = useRef<any>(null);
+  const scrollViewRef = useRef<any>(null);
+
+  // ── Onboarding tooltips ───────────────────────────────────────────────────
+  // "Start a Conversation" tooltip — appears after assign toast, fades when user types
+  const [showStartConvTooltip, setShowStartConvTooltip] = useState(false);
+  const startConvFadeAnim = useRef(new Animated.Value(1)).current;
+  const fadeTimerRef = useRef<any>(null);
+
+  // "Tag this message" nudge — appears after first message is sent
   const [showTagNudge, setShowTagNudge] = useState(false);
+  const nudgeEnterAnim = useRef(new Animated.Value(0)).current;
+  const [showFirstMsgSuccess, setShowFirstMsgSuccess] = useState(false);
+  const firstMsgFadeAnim = useRef(new Animated.Value(1)).current;
+
+  // Tag-it onboarding flow:
+  //   none     — not started
+  //   tooltip1 — Step 1/3 "Tag It" balloon visible above # button
+  //   picker   — Step 2/3 tag picker open, "Project vs Task" balloon visible
+  //   tagged   — Step 3/3 tag applied, "Smart Tags" balloon visible until user types
+  const [tagFlow, setTagFlow] = useState<'none' | 'tooltip1' | 'picker' | 'tagged'>('none');
+  const [taggedProject, setTaggedProject] = useState('');
+  const [taggedTask, setTaggedTask] = useState('');
+  const tagFadeAnim = useRef(new Animated.Value(1)).current;
+
+  // "Put someone on it" assign tooltip (controlled by parent via showAssignTooltip prop)
   const tooltipFadeAnim = useRef(new Animated.Value(1)).current;
+
+  // "Smart Tags" tooltip — shown when tagFlow reaches 'tagged', fades on typing
+  const [showSmartTagsTooltip, setShowSmartTagsTooltip] = useState(false);
+  const smartTagsFadeAnim = useRef(new Animated.Value(1)).current;
+  const smartTagsFadeTimerRef = useRef<any>(null);
+
+  // "First tag complete!" — shown after first tagged message is sent, fades after 3s
+  const [showFirstTagSuccess, setShowFirstTagSuccess] = useState(false);
+  const firstTagFadeAnim = useRef(new Animated.Value(1)).current;
+  const [firstTagMessageIdx, setFirstTagMessageIdx] = useState(-1);
+
+  // "Get a site photo" nudge — appears after "First tag complete!" fades
+  const [showPhotoNudge, setShowPhotoNudge] = useState(false);
+  const photoNudgeAnim = useRef(new Animated.Value(0)).current;
+
+  // "Everything's connected" tooltip — appears when user taps a chip in a sent message
+  const [showChipTooltip, setShowChipTooltip] = useState(false);
+  const chipTooltipFadeAnim = useRef(new Animated.Value(1)).current;
+
+
+  useEffect(() => {
+    const t = setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 200);
+    return () => clearTimeout(t);
+  }, [sentMessages.length, showTagNudge, showPhotoNudge]);
+
+  useEffect(() => {
+    if (showTagNudge) {
+      nudgeEnterAnim.setValue(0);
+      Animated.timing(nudgeEnterAnim, {
+        toValue: 1,
+        duration: 400,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [showTagNudge]);
+
+  useEffect(() => {
+    if (showStartConvTooltip) {
+      startConvFadeAnim.setValue(1);
+      const t = setTimeout(() => textInputRef.current?.focus(), 50);
+      return () => clearTimeout(t);
+    }
+  }, [showStartConvTooltip]);
+
+  useEffect(() => {
+    if (tagFlow === 'tagged') {
+      setShowSmartTagsTooltip(true);
+      smartTagsFadeAnim.setValue(1);
+      const t = setTimeout(() => textInputRef.current?.focus(), 50);
+      return () => clearTimeout(t);
+    } else {
+      if (smartTagsFadeTimerRef.current) {
+        clearTimeout(smartTagsFadeTimerRef.current);
+        smartTagsFadeTimerRef.current = null;
+      }
+    }
+  }, [tagFlow]);
 
   const handleAssignPress = () => {
     Animated.timing(tooltipFadeAnim, {
@@ -881,6 +1115,18 @@ function RoomView({
       onAssignTooltipDismiss?.();
       tooltipFadeAnim.setValue(1);
       setAssignTaskView('picker');
+    });
+  };
+
+  const handleHashClick = () => {
+    Animated.timing(nudgeEnterAnim, {
+      toValue: 0,
+      duration: 280,
+      easing: Easing.in(Easing.cubic),
+      useNativeDriver: true,
+    }).start(() => {
+      setShowTagNudge(false);
+      setTagFlow('tooltip1');
     });
   };
 
@@ -936,12 +1182,14 @@ function RoomView({
 
       {/* Message area */}
       <ScrollView
+        ref={scrollViewRef}
         style={{ flex: 1 }}
         showsVerticalScrollIndicator={false}
+        onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
         contentContainerStyle={{
           flexGrow: 1,
           justifyContent: 'flex-end',
-          paddingHorizontal: 24,
+          paddingHorizontal: 16,
           paddingTop: 20,
           paddingBottom: 0,
         }}
@@ -1031,6 +1279,7 @@ function RoomView({
                         <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.white }}>View Alex's task</Text>
                       </Pressable>
                       <Pressable
+                        onPress={() => setAssignTaskView('picker')}
                         style={({ hovered }: any) => ({
                           flex: 1,
                           borderRadius: 8,
@@ -1096,7 +1345,7 @@ function RoomView({
                 </Box>
                 <Box
                   backgroundColor="card"
-                  style={{ borderRadius: 8, paddingHorizontal: 12, paddingVertical: 10, alignSelf: 'flex-start' }}
+                  style={{ borderRadius: 8, borderTopLeftRadius: 0, paddingHorizontal: 12, paddingVertical: 10, alignSelf: 'flex-start' }}
                 >
                   <Text style={{ fontSize: 14, color: theme.colors.foreground, lineHeight: 20 }}>
                     {msg.text}
@@ -1108,54 +1357,176 @@ function RoomView({
         ))}
 
         {/* Sent messages */}
-        {sentMessages.map(msg => (
+        {sentMessages.map((msg, idx) => (
           <Box key={msg.id} style={{ marginTop: 16 }}>
             <Box flexDirection="row" alignItems="center" style={{ gap: 10, marginBottom: 6 }}>
               <Image
                 source={require('@/assets/images/sample-three.jpg')}
                 style={{ width: 40, height: 40, borderRadius: 20, flexShrink: 0 }}
               />
-              <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>Savanah Nguyen</Text>
+              <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>Oscar Eduardo</Text>
               <Text style={{ fontSize: 11, color: theme.colors.grey04 }}>{msg.time}</Text>
             </Box>
-            <Box flexDirection="row" alignItems="center" style={{ paddingLeft: 50, gap: 8 }}>
-              <Box style={{ borderRadius: 8, paddingHorizontal: 12, paddingVertical: 10, backgroundColor: '#EAFBF6', alignSelf: 'flex-start', maxWidth: 280 }}>
+            <Box flexDirection="row" alignItems="flex-end" style={{ paddingLeft: 50, gap: 4 }}>
+              <Box style={{ borderRadius: 8, borderTopLeftRadius: 0, paddingHorizontal: 12, paddingVertical: 10, backgroundColor: '#EAFBF6', alignSelf: 'flex-start', maxWidth: 320 }}>
                 <Text style={{ fontSize: 14, color: theme.colors.foreground, lineHeight: 20 }}>{msg.text}</Text>
+                {msg.taggedProject && msg.taggedTask && (
+                  <Box style={{ marginTop: 8, gap: 8 }}>
+                    <TooltipOnboarding
+                      variant="left-center"
+                      tooltipStyle="success"
+                      title="Everything's connected"
+                      description="Tapping a chip takes you straight to the project — every task, message and photo tagged to it is there waiting."
+                      ctaText="Got it"
+                      onCtaPress={() => {
+                        Animated.timing(chipTooltipFadeAnim, {
+                          toValue: 0,
+                          duration: 300,
+                          easing: Easing.out(Easing.cubic),
+                          useNativeDriver: true,
+                        }).start(() => {
+                          setShowChipTooltip(false);
+                          chipTooltipFadeAnim.setValue(1);
+                        });
+                      }}
+                      open={showChipTooltip}
+                      forceShow={showChipTooltip}
+                      animatedOpacity={chipTooltipFadeAnim}
+                      offset={25}
+                    >
+                      <Pressable onPress={() => setShowChipTooltip(true)} style={{ alignSelf: 'flex-start' }}>
+                        <Box flexDirection="row" alignItems="center" style={{ gap: 4, backgroundColor: theme.colors.secondaryGreen, borderRadius: 4, paddingHorizontal: 8, paddingVertical: 4 }}>
+                          <Folder size={14} color={theme.colors.white} />
+                          <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.white }}>{msg.taggedProject}</Text>
+                        </Box>
+                      </Pressable>
+                    </TooltipOnboarding>
+                    <Pressable onPress={() => setShowChipTooltip(true)} style={{ alignSelf: 'flex-start' }}>
+                      <Box flexDirection="row" alignItems="center" style={{ gap: 4, backgroundColor: theme.colors.foreground, borderRadius: 4, paddingHorizontal: 8, paddingVertical: 4 }}>
+                        <Hash size={14} color={theme.colors.white} />
+                        <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.white }}>{msg.taggedTask}</Text>
+                      </Box>
+                    </Pressable>
+                  </Box>
+                )}
               </Box>
               <Check size={14} color={theme.colors.grey04} strokeWidth={2} />
             </Box>
+            {idx === 0 && showFirstMsgSuccess && (
+              <Animated.View style={{ opacity: firstMsgFadeAnim, paddingLeft: 50, marginTop: 8 }}>
+                <Text style={{ fontSize: 14, fontWeight: '700', color: theme.colors.foreground }}>
+                  {'First message sent! 🎉'}
+                </Text>
+              </Animated.View>
+            )}
+            {idx === firstTagMessageIdx && showFirstTagSuccess && (
+              <Animated.View style={{ opacity: firstTagFadeAnim, paddingLeft: 50, marginTop: 8 }}>
+                <Text style={{ fontSize: 14, fontWeight: '700', color: theme.colors.foreground }}>
+                  {'First tag complete! 🎉'}
+                </Text>
+              </Animated.View>
+            )}
           </Box>
         ))}
-      </ScrollView>
 
-      {/* Tag this message nudge */}
-      {showTagNudge && (
-        <Box
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 12,
-            marginHorizontal: 16,
-            marginBottom: 8,
-            borderRadius: 12,
-            backgroundColor: '#0F172A',
-            paddingHorizontal: 16,
-            paddingVertical: 14,
-          }}
-        >
-          <Box style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: theme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Hash size={22} color={theme.colors.white} strokeWidth={2} />
-          </Box>
-          <Box style={{ flex: 1 }}>
-            <Text style={{ fontSize: 15, fontWeight: '700', color: theme.colors.white, lineHeight: 20, marginBottom: 2 }}>
-              Tag this message
-            </Text>
-            <Text style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', lineHeight: 18 }}>
-              Tap # below to tag this message so {contact.name} knows exactly which site this is about
-            </Text>
-          </Box>
-        </Box>
-      )}
+        {/* Tag this message nudge */}
+        {showTagNudge && (
+          <Animated.View
+            style={{
+              opacity: nudgeEnterAnim,
+              transform: [{ translateY: nudgeEnterAnim.interpolate({ inputRange: [0, 1], outputRange: [10, 0] }) }],
+            }}
+          >
+            <Box
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 12,
+                marginTop: 16,
+                marginBottom: 8,
+                borderRadius: 12,
+                backgroundColor: '#0F172A',
+                paddingHorizontal: 16,
+                paddingVertical: 16,
+              }}
+            >
+              <Box style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(3,91,96,0.5)', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Hash size={24} color={theme.colors.secondaryGreen} strokeWidth={2} />
+              </Box>
+              <Box style={{ flex: 1 }}>
+                <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.white, lineHeight: 22, marginBottom: 4 }}>
+                  Tag this message
+                </Text>
+                <Text style={{ fontSize: 12, color: 'rgba(255,255,255,0.65)', lineHeight: 17 }}>
+                  Tap # below to tag this message so {contact.name} knows exactly which site this is about
+                </Text>
+              </Box>
+            </Box>
+          </Animated.View>
+        )}
+
+        {/* "Get a site photo" nudge */}
+        {showPhotoNudge && (
+          <Animated.View
+            style={{
+              opacity: photoNudgeAnim,
+              transform: [{ translateY: photoNudgeAnim.interpolate({ inputRange: [0, 1], outputRange: [10, 0] }) }],
+            }}
+          >
+            <Box
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 12,
+                marginTop: 16,
+                marginBottom: 8,
+                borderRadius: 12,
+                backgroundColor: '#0F172A',
+                paddingHorizontal: 16,
+                paddingVertical: 16,
+              }}
+            >
+              <Box style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(3,91,96,0.5)', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Camera size={24} color={theme.colors.secondaryGreen} />
+              </Box>
+              <Box style={{ flex: 1 }}>
+                <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.white, lineHeight: 22, marginBottom: 4 }}>
+                  Get a site photo
+                </Text>
+                <Text style={{ fontSize: 12, color: 'rgba(255,255,255,0.65)', lineHeight: 17 }}>
+                  Ask your crew to send one — it'll be saved to this job automatically
+                </Text>
+              </Box>
+              <Pressable
+                onPress={() => {
+                  Animated.timing(photoNudgeAnim, {
+                    toValue: 0,
+                    duration: 220,
+                    easing: Easing.in(Easing.cubic),
+                    useNativeDriver: true,
+                  }).start(() => {
+                    setShowPhotoNudge(false);
+                    setChatMessage("Can you send a site photo? It'll be saved to the job automatically.");
+                    setTimeout(() => textInputRef.current?.focus(), 50);
+                  });
+                }}
+                style={({ hovered }: any) => ({
+                  backgroundColor: hovered ? '#0d9e6e' : theme.colors.secondaryGreen,
+                  paddingHorizontal: 12,
+                  paddingVertical: 8,
+                  borderRadius: 8,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  cursor: 'pointer' as any,
+                })}
+              >
+                <Text style={{ fontSize: 13, fontWeight: '700', color: theme.colors.white }}>Send</Text>
+              </Pressable>
+            </Box>
+          </Animated.View>
+        )}
+      </ScrollView>
 
       {(assignTaskView === 'picker' || pickerExiting) && (
         <AssignTaskPicker
@@ -1166,6 +1537,7 @@ function RoomView({
           }}
           exiting={pickerExiting}
           onExitComplete={() => setPickerExiting(false)}
+          items={wasAssigned ? PICKER_ITEMS_AFTER_ASSIGN : PICKER_ITEMS}
         />
       )}
 
@@ -1174,6 +1546,7 @@ function RoomView({
           contact={contact}
           onCancel={() => setAssignTaskView('picker')}
           onConfirm={() => {
+            setWasAssigned(true);
             setAssignTaskView('assigned');
             setShowAssignedToast(true);
           }}
@@ -1191,19 +1564,133 @@ function RoomView({
         />
       )}
 
+      {/* Tag picker (Step 2/3) */}
+      {tagFlow === 'picker' && (
+        <TagPicker
+          onCancel={() => setTagFlow('tooltip1')}
+          onSelectTask={(project, task) => {
+            setTaggedProject(project);
+            setTaggedTask(task);
+            setTagFlow('tagged');
+          }}
+          items={wasAssigned ? TAG_PICKER_ITEMS_AFTER_ASSIGN : TAG_PICKER_ITEMS}
+        />
+      )}
+
+      {/* Left-side tooltip trigger — Step 2/3: Project vs Task (points at first project item) */}
+      {tagFlow === 'picker' && (
+        <Box style={{ position: 'absolute' as any, left: 16, bottom: 438, width: 1, height: 40, zIndex: 5 }}>
+          <TooltipOnboarding
+            variant="left-center"
+            tooltipStyle="success"
+            title="Project vs Task"
+            description="Projects are shown in Bold Text, while Tasks use the '#' icon."
+            step="Step 2/3"
+            open
+            forceShow
+            offset={20}
+          >
+            <Box pointerEvents="none" style={{ width: 1, height: 40 }} />
+          </TooltipOnboarding>
+        </Box>
+      )}
+
+      {/* Left-side tooltip trigger — Step 3/3: Smart Tags (points at pills in input) */}
+      {(tagFlow === 'tagged' && showSmartTagsTooltip) && (
+        <Box style={{ position: 'absolute' as any, left: 16, bottom: 160, width: 1, height: 60, zIndex: 5 }}>
+          <TooltipOnboarding
+            variant="left-center"
+            tooltipStyle="success"
+            title="Smart Tags"
+            description="Tagged messages stay linked to the job — find them anytime from the project."
+            step="Step 3/3"
+            open
+            forceShow
+            offset={20}
+            animatedOpacity={smartTagsFadeAnim}
+          >
+            <Box pointerEvents="none" style={{ width: 1, height: 60 }} />
+          </TooltipOnboarding>
+        </Box>
+      )}
+
       {/* Chat input */}
       <Box style={{ paddingHorizontal: 16, paddingVertical: 16 }}>
         <Box
           backgroundColor="card"
           borderWidth={1}
-          borderColor="border"
-          style={{ borderRadius: 16, paddingHorizontal: 16, paddingTop: 12, paddingBottom: 10 }}
+          style={{
+            borderRadius: 16,
+            paddingHorizontal: 16,
+            paddingTop: 12,
+            paddingBottom: 10,
+            position: 'relative' as any,
+            borderColor: isInputFocused ? theme.colors.foreground : theme.colors.border,
+          }}
         >
+          {/* Invisible trigger at left edge of TextInput — balloon appears outside-left of panel, arrow points right toward input */}
+          <Box style={{ position: 'absolute' as any, left: 0, top: 12, width: 1, height: 36, zIndex: 10 }}>
+            <TooltipOnboarding
+              variant="left-center"
+              tooltipStyle="success"
+              title="Start a Conversation"
+              description="You can add files, media, and tasks anytime from here."
+              open={showStartConvTooltip}
+              forceShow={showStartConvTooltip}
+              offset={20}
+              animatedOpacity={startConvFadeAnim}
+            >
+              <Box pointerEvents="none" style={{ width: 1, height: 36 }} />
+            </TooltipOnboarding>
+          </Box>
+          {/* Tag pills */}
+          {tagFlow === 'tagged' && taggedProject && taggedTask && (
+            <Box style={{ backgroundColor: theme.colors.white, borderWidth: 1, borderColor: theme.colors.grey03, borderRadius: 8, padding: 8, gap: 4, alignSelf: 'flex-start', marginBottom: 8 }}>
+              <Box flexDirection="row" alignItems="center" style={{ gap: 4, backgroundColor: theme.colors.secondaryGreen, borderRadius: 4, paddingHorizontal: 8, paddingVertical: 4, alignSelf: 'flex-start' }}>
+                <Folder size={14} color={theme.colors.white} />
+                <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.white }}>{taggedProject}</Text>
+              </Box>
+              <Box flexDirection="row" alignItems="center" style={{ gap: 4, backgroundColor: theme.colors.foreground, borderRadius: 4, paddingHorizontal: 8, paddingVertical: 4, alignSelf: 'flex-start' }}>
+                <Hash size={14} color={theme.colors.white} />
+                <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.white }}>{taggedTask}</Text>
+              </Box>
+            </Box>
+          )}
           <TextInput
+            ref={textInputRef}
             value={chatMessage}
+            onFocus={() => setIsInputFocused(true)}
+            onBlur={() => setIsInputFocused(false)}
             onChangeText={(text) => {
               setChatMessage(text);
-              if (text.length > 0) setShowStartConvTooltip(false);
+              if (text.length > 0 && showStartConvTooltip && !fadeTimerRef.current) {
+                fadeTimerRef.current = setTimeout(() => {
+                  Animated.timing(startConvFadeAnim, {
+                    toValue: 0,
+                    duration: 300,
+                    easing: Easing.out(Easing.cubic),
+                    useNativeDriver: true,
+                  }).start(() => {
+                    setShowStartConvTooltip(false);
+                    startConvFadeAnim.setValue(1);
+                    fadeTimerRef.current = null;
+                  });
+                }, 2000);
+              }
+              if (text.length > 0 && tagFlow === 'tagged' && showSmartTagsTooltip && !smartTagsFadeTimerRef.current) {
+                smartTagsFadeTimerRef.current = setTimeout(() => {
+                  Animated.timing(smartTagsFadeAnim, {
+                    toValue: 0,
+                    duration: 300,
+                    easing: Easing.out(Easing.cubic),
+                    useNativeDriver: true,
+                  }).start(() => {
+                    setShowSmartTagsTooltip(false);
+                    smartTagsFadeAnim.setValue(1);
+                    smartTagsFadeTimerRef.current = null;
+                  });
+                }, 2000);
+              }
             }}
             placeholder="Type message here..."
             placeholderTextColor={theme.colors.grey03}
@@ -1214,52 +1701,125 @@ function RoomView({
             ]}
           />
           <Box flexDirection="row" alignItems="center" justifyContent="space-between">
-            <Box flexDirection="row" alignItems="center">
-              {[Plus, Hash, FileText, ImageIcon, Smile].map((Icon, i) => {
-                const isHash = Icon === Hash;
-                return (
-                  <Pressable key={i} style={{ padding: 6 }}>
-                    {isHash && showTagNudge ? (
-                      <Box style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: theme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center' }}>
-                        <Icon size={18} color={theme.colors.white} />
-                      </Box>
-                    ) : (
-                      <Icon size={20} color={theme.colors.grey04} />
-                    )}
-                  </Pressable>
-                );
-              })}
-            </Box>
-            <TooltipOnboarding
-              variant="left-center"
-              tooltipStyle="success"
-              title="Start a Conversation"
-              description="You can add files, media, and tasks anytime from here."
-              open={showStartConvTooltip}
-              forceShow={showStartConvTooltip}
-              offset={20}
-            >
-              <Pressable
-                disabled={!chatMessage.trim()}
-                onPress={() => {
-                  if (!chatMessage.trim()) return;
-                  const now = new Date();
-                  const time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-                  setSentMessages(prev => [...prev, { id: Date.now().toString(), text: chatMessage.trim(), time }]);
-                  setChatMessage('');
-                  setShowTagNudge(true);
-                  setShowStartConvTooltip(false);
-                }}
-                style={({ pressed }: any) => ({
-                  width: 40, height: 40, borderRadius: 10,
-                  backgroundColor: chatMessage.trim() ? theme.colors.foreground : theme.colors.grey02,
-                  alignItems: 'center', justifyContent: 'center',
-                  opacity: pressed ? 0.8 : 1,
-                })}
-              >
-                <Send size={18} color={chatMessage.trim() ? theme.colors.white : theme.colors.grey04} />
+            <Box flexDirection="row" alignItems="center" style={{ gap: 16 }}>
+              {/* Plus */}
+              <Pressable style={({ hovered }: any) => ({ width: 32, height: 32, borderRadius: 8, alignItems: 'center', justifyContent: 'center', backgroundColor: hovered ? theme.colors.grey02 : 'transparent' })}>
+                <Plus size={20} color={theme.colors.grey06} />
               </Pressable>
-            </TooltipOnboarding>
+
+              {/* # — Tag It tooltip (Step 1/3) */}
+              <TooltipOnboarding
+                variant="top-left"
+                tooltipStyle="success"
+                title="Tag It"
+                description="Tag a job or task to link any message so nothing gets lost."
+                step="Step 1/3"
+                ctaText="Try it!"
+                onCtaPress={() => { tagFadeAnim.setValue(1); setTagFlow('picker'); }}
+                open={tagFlow === 'tooltip1'}
+                forceShow={tagFlow === 'tooltip1'}
+                animatedOpacity={tagFadeAnim}
+                arrowAtTriggerCenter
+              >
+                <Pressable
+                  onPress={showTagNudge ? handleHashClick : undefined}
+                  style={({ hovered }: any) => ({
+                    width: 32, height: 32, borderRadius: 8,
+                    alignItems: 'center', justifyContent: 'center',
+                    backgroundColor: !showTagNudge && hovered ? theme.colors.grey02 : 'transparent',
+                  })}
+                >
+                  {showTagNudge ? (
+                    <Animated.View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: theme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center', opacity: nudgeEnterAnim, transform: [{ scale: nudgeEnterAnim.interpolate({ inputRange: [0, 1], outputRange: [0.7, 1] }) }] }}>
+                      <Hash size={20} color={theme.colors.white} />
+                    </Animated.View>
+                  ) : (
+                    <Hash size={20} color={theme.colors.grey06} />
+                  )}
+                </Pressable>
+              </TooltipOnboarding>
+
+              {/* FileText, ImageIcon, Smile */}
+              {[FileText, ImageIcon, Smile].map((Icon, i) => (
+                <Pressable key={i} style={({ hovered }: any) => ({ width: 32, height: 32, borderRadius: 8, alignItems: 'center', justifyContent: 'center', backgroundColor: hovered ? theme.colors.grey02 : 'transparent' })}>
+                  <Icon size={20} color={theme.colors.grey06} />
+                </Pressable>
+              ))}
+            </Box>
+            <Pressable
+              disabled={!chatMessage.trim()}
+              onPress={() => {
+                if (!chatMessage.trim()) return;
+                if (fadeTimerRef.current) { clearTimeout(fadeTimerRef.current); fadeTimerRef.current = null; }
+                startConvFadeAnim.setValue(1);
+                const isFirstMsg = sentMessages.length === 0;
+                const isTagged = tagFlow === 'tagged';
+                const now = new Date();
+                const time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+                setSentMessages(prev => [...prev, {
+                  id: Date.now().toString(),
+                  text: chatMessage.trim(),
+                  time,
+                  ...(isTagged ? { taggedProject, taggedTask } : {}),
+                }]);
+                setChatMessage('');
+                setShowStartConvTooltip(false);
+                if (isTagged) {
+                  setFirstTagMessageIdx(sentMessages.length);
+                  setTagFlow('none');
+                  setTaggedProject('');
+                  setTaggedTask('');
+                  if (smartTagsFadeTimerRef.current) { clearTimeout(smartTagsFadeTimerRef.current); smartTagsFadeTimerRef.current = null; }
+                  setShowSmartTagsTooltip(false);
+                  smartTagsFadeAnim.setValue(1);
+                  firstTagFadeAnim.setValue(1);
+                  setShowFirstTagSuccess(true);
+                  setTimeout(() => {
+                    Animated.timing(firstTagFadeAnim, {
+                      toValue: 0,
+                      duration: 300,
+                      easing: Easing.out(Easing.cubic),
+                      useNativeDriver: true,
+                    }).start(() => {
+                      setShowFirstTagSuccess(false);
+                      firstTagFadeAnim.setValue(1);
+                      setShowPhotoNudge(true);
+                      photoNudgeAnim.setValue(0);
+                      Animated.timing(photoNudgeAnim, {
+                        toValue: 1,
+                        duration: 400,
+                        easing: Easing.out(Easing.cubic),
+                        useNativeDriver: true,
+                      }).start();
+                    });
+                  }, 2000);
+                }
+                if (isFirstMsg) {
+                  firstMsgFadeAnim.setValue(1);
+                  setShowFirstMsgSuccess(true);
+                  setTimeout(() => {
+                    Animated.timing(firstMsgFadeAnim, {
+                      toValue: 0,
+                      duration: 300,
+                      easing: Easing.out(Easing.cubic),
+                      useNativeDriver: true,
+                    }).start(() => {
+                      setShowFirstMsgSuccess(false);
+                      firstMsgFadeAnim.setValue(1);
+                      setShowTagNudge(true);
+                    });
+                  }, 2000);
+                }
+              }}
+              style={({ pressed }: any) => ({
+                width: 32, height: 32, borderRadius: 8,
+                backgroundColor: chatMessage.trim() ? theme.colors.foreground : theme.colors.grey02,
+                alignItems: 'center', justifyContent: 'center',
+                opacity: pressed ? 0.8 : 1,
+              })}
+            >
+              <Send size={20} color={chatMessage.trim() ? theme.colors.white : theme.colors.grey04} />
+            </Pressable>
           </Box>
         </Box>
       </Box>

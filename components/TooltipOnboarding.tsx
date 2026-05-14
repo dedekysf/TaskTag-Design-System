@@ -26,6 +26,7 @@ export interface TooltipOnboardingProps {
     step?: string;
     ctaText?: string;
     onCtaPress?: () => void;
+    avatar?: React.ReactNode;
 
     children: React.ReactNode;
     forceShow?: boolean;
@@ -100,6 +101,7 @@ function RichTooltipContent({
     size,
     variant,
     bgColor,
+    avatar,
 }: any) {
     const theme = useTheme<Theme>();
     const currentSize = sizeConfig[size as TooltipOnboardingSize];
@@ -127,17 +129,20 @@ function RichTooltipContent({
                 ) : content
             ) : (
                 <Box style={{ gap: 16 }}>
-                    <Box style={{ gap: 6 }}>
-                        {title && (
-                            <Text style={{ color: theme.colors.white, fontSize: 16, fontWeight: '600', lineHeight: 21 }}>
-                                {title}
-                            </Text>
-                        )}
-                        {description && (
-                            <Text style={{ color: theme.colors.white, fontSize: 14, fontWeight: '400', lineHeight: 16, letterSpacing: 0.28 }}>
-                                {description}
-                            </Text>
-                        )}
+                    <Box flexDirection="row" alignItems="flex-start" style={{ gap: 10 }}>
+                        {avatar && <Box style={{ flexShrink: 0 }}>{avatar}</Box>}
+                        <Box style={{ flex: 1, gap: 6 }}>
+                            {title && (
+                                <Text style={{ color: theme.colors.white, fontSize: 16, fontWeight: '600', lineHeight: 21 }}>
+                                    {title}
+                                </Text>
+                            )}
+                            {description && (
+                                <Text style={{ color: theme.colors.white, fontSize: 14, fontWeight: '400', lineHeight: 16, letterSpacing: 0.28 }}>
+                                    {description}
+                                </Text>
+                            )}
+                        </Box>
                     </Box>
 
                     {(step || ctaText) && (
@@ -182,6 +187,7 @@ export function TooltipOnboarding({
     step,
     ctaText,
     onCtaPress,
+    avatar,
     children,
     forceShow = false,
     open,
@@ -296,6 +302,7 @@ export function TooltipOnboarding({
                     title={title} description={description}
                     step={step} ctaText={ctaText} onCtaPress={onCtaPress}
                     content={content} size={size} variant={variant} bgColor={backgroundColor}
+                    avatar={avatar}
                 />
             );
         }
@@ -348,7 +355,11 @@ export function TooltipOnboarding({
 
         // Shift balloon so arrow aligns with trigger center
         if (arrowAtTriggerCenter) {
-            if (variant === 'bottom-left' || variant === 'bottom-center') {
+            if (variant === 'top-left') {
+                // arrow left:16, center = 28px from balloon left; shift so arrow center = trigger center
+                left = portalRect.left + portalRect.width / 2 - 28;
+                transform = 'translateY(-100%)';
+            } else if (variant === 'bottom-left' || variant === 'bottom-center') {
                 // arrow left:16, center = left+12 = left+28 from element edge → shift so arrow center = trigger center
                 left = portalRect.left + portalRect.width / 2 - 28;
                 transform = '';
