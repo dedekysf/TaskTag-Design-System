@@ -475,9 +475,9 @@ export function ProjectDetail({
                     key={tab.id}
                     variant="bottom-left"
                     tooltipStyle="success"
-                    title="Start with a ready to go list"
+                    title="Scope the full job"
                     description="Got a full job scope? Add everything at once in the Checklist tab — then turn each item into a task with one tap."
-                    step="Step 1/3"
+                    step="Step 1/2"
                     ctaText="Show me"
                     onCtaPress={() => {
                       setShowChecklistTooltip(false);
