@@ -21,6 +21,8 @@
  */
 
 import { Box, Text } from '@/components/primitives';
+import { TooltipOnboarding } from '@/components/TooltipOnboarding';
+import { Toast } from '@/components/Toast';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import {
@@ -28,7 +30,6 @@ import {
   ChevronsLeft,
   ChevronsRight,
   Check,
-  Circle,
   FileText,
   Folder,
   Hash,
@@ -43,8 +44,10 @@ import {
   Users,
   X,
 } from 'lucide-react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
+  Animated,
+  Easing,
   Image,
   ImageSourcePropType,
   Platform,
@@ -96,6 +99,8 @@ export interface ChatPanelCompositeProps {
   openContactId?: string;
   openContactSignal?: number;
   showMemberJoinedCard?: boolean;
+  showAssignTooltip?: boolean;
+  onAssignTooltipDismiss?: () => void;
 }
 
 // ─── Avatar ───────────────────────────────────────────────────────────────────
@@ -326,6 +331,22 @@ function ListView({
 
 // ─── Chat Room View (550px) ───────────────────────────────────────────────────
 
+const OWNER_AVATAR: ChatUser = { variant: 'photo', src: require('@/assets/images/sample-three.jpg') };
+
+type PickerItem =
+  | { type: 'project'; label: string }
+  | { type: 'task'; label: string; assignees: ChatUser[] };
+
+const PICKER_ITEMS: PickerItem[] = [
+  { type: 'project', label: 'LA Avenue 34 G' },
+  { type: 'task', label: 'Fix the sink', assignees: [OWNER_AVATAR] },
+  { type: 'project', label: 'Welcome to Tasktag! 🎉' },
+  { type: 'task', label: 'Create Your First Task', assignees: [OWNER_AVATAR] },
+  { type: 'task', label: 'Invite Contacts', assignees: [OWNER_AVATAR] },
+  { type: 'task', label: 'Set a Due Date', assignees: [OWNER_AVATAR] },
+  { type: 'task', label: 'Mark All the Tasks as Done', assignees: [OWNER_AVATAR] },
+];
+
 function AssignTaskPicker({
   onCancel,
   onSelectTask,
@@ -334,68 +355,77 @@ function AssignTaskPicker({
   onSelectTask: () => void;
 }) {
   const theme = useTheme<Theme>();
-  const disabledCursor = Platform.OS === 'web' ? ({ cursor: 'not-allowed' } as any) : null;
+  const [query, setQuery] = useState('');
+  const slideAnim = useRef(new Animated.Value(60)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  const renderProject = (label: string) => (
-    <Pressable accessibilityState={{ disabled: true }} style={[{ paddingVertical: 10 }, disabledCursor]}>
-      <Box flexDirection="row" alignItems="center" style={{ gap: 8 }}>
-        <Box
-          width={20}
-          height={20}
-          borderRadius="4"
-          alignItems="center"
-          justifyContent="center"
-          style={{ backgroundColor: theme.colors.black }}
-        >
-          <Folder size={14} color={theme.colors.brandGreen} />
-        </Box>
-        <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.grey05, lineHeight: 20 }}>
-          {label}
-        </Text>
-      </Box>
-    </Pressable>
-  );
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 300,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 220,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
-  const renderTask = (label: string, assignees?: ChatUser[]) => (
-    <Pressable onPress={onSelectTask} style={{ paddingVertical: 11 }}>
-      {({ pressed }: any) => (
-        <Box
-          flexDirection="row"
-          alignItems="center"
-          justifyContent="space-between"
-          style={{ opacity: pressed ? 0.7 : 1 }}
-        >
-          <Box flexDirection="row" alignItems="center" style={{ gap: 12 }}>
-            <Hash size={18} color={theme.colors.secondaryGreen} />
-            <Text style={{ fontSize: 15, color: theme.colors.foreground, lineHeight: 20 }}>
-              {label}
-            </Text>
-          </Box>
-          {assignees && (
-            <Box flexDirection="row" alignItems="center" style={{ marginRight: 2 }}>
-              {assignees.map((user, index) => (
-                <Box key={index} style={{ marginLeft: index === 0 ? 0 : -10 }}>
-                  <ChatAvatar user={user} size={28} />
-                </Box>
-              ))}
-            </Box>
-          )}
-        </Box>
-      )}
-    </Pressable>
-  );
+  const handleSelectTask = () => {
+    Animated.parallel([
+      Animated.timing(slideAnim, {
+        toValue: 60,
+        duration: 200,
+        easing: Easing.in(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 160,
+        easing: Easing.in(Easing.cubic),
+        useNativeDriver: true,
+      }),
+    ]).start(() => onSelectTask());
+  };
+
+  const filtered: PickerItem[] = query.trim()
+    ? (() => {
+        const result: PickerItem[] = [];
+        let pendingProject: PickerItem | null = null;
+        for (const item of PICKER_ITEMS) {
+          if (item.type === 'project') {
+            pendingProject = item;
+          } else if (item.label.toLowerCase().includes(query.toLowerCase())) {
+            if (pendingProject) { result.push(pendingProject); pendingProject = null; }
+            result.push(item);
+          }
+        }
+        return result;
+      })()
+    : PICKER_ITEMS;
 
   return (
-    <Box
-      backgroundColor="card"
-      borderWidth={1}
-      borderColor="border"
+    <Animated.View
       style={{
         position: 'absolute' as any,
         left: 16,
         right: 16,
         bottom: 96,
         zIndex: 20,
+        opacity: fadeAnim,
+        transform: [{ translateY: slideAnim }],
+      }}
+    >
+    <Box
+      backgroundColor="card"
+      borderWidth={1}
+      borderColor="border"
+      style={{
         borderRadius: 16,
         overflow: 'hidden',
         ...Platform.select({
@@ -410,6 +440,7 @@ function AssignTaskPicker({
         }),
       }}
     >
+      {/* Search row */}
       <Box flexDirection="row" alignItems="center" style={{ paddingHorizontal: 16, paddingVertical: 18, gap: 8 }}>
         <Box
           flex={1}
@@ -429,48 +460,76 @@ function AssignTaskPicker({
             <Hash size={16} color={theme.colors.white} />
           </Box>
           <TextInput
-            placeholder="Search Tag"
+            value={query}
+            onChangeText={setQuery}
+            placeholder="Search Task"
             placeholderTextColor={theme.colors.grey05}
             style={[
-              {
-                flex: 1,
-                color: theme.colors.foreground,
-                fontSize: 16,
-                height: 32,
-                padding: 0,
-              },
+              { flex: 1, color: theme.colors.foreground, fontSize: 16, height: 32, padding: 0 },
               Platform.OS === 'web' && ({ outlineStyle: 'none' } as any),
             ]}
           />
         </Box>
         <Pressable onPress={onCancel} style={{ paddingVertical: 4 }}>
-          <Text style={{ fontSize: 16, fontWeight: '500', color: theme.colors.secondaryGreen }}>
-            Cancel
-          </Text>
+          <Text style={{ fontSize: 16, fontWeight: '500', color: theme.colors.secondaryGreen }}>Cancel</Text>
         </Pressable>
       </Box>
 
       <Box height={1} backgroundColor="border" />
 
-      <ScrollView style={{ maxHeight: 425 }} showsVerticalScrollIndicator>
+      <ScrollView style={{ maxHeight: 425 }} showsVerticalScrollIndicator={false}>
         <Box style={{ paddingHorizontal: 16, paddingTop: 10, paddingBottom: 14 }}>
           <Text style={{ fontSize: 14, color: theme.colors.grey05, lineHeight: 20, marginBottom: 10 }}>
-            All Projects & Tasks
+            All Projects &amp; Tasks
           </Text>
-          {renderProject('Project A')}
-          {renderTask('Test 1', [{ variant: 'text', initials: 'AS', color: 'darkGreen' }])}
-          {renderTask('Task abcd', [
-            { variant: 'text', initials: 'AS', color: 'darkGreen' },
-            { variant: 'text', initials: 'DY', color: 'orange' },
-          ])}
-          {renderProject('Welcome to Tasktag!')}
-          {renderTask('Create Your First Task', [{ variant: 'text', initials: 'JS', color: 'orange' }])}
-          {renderTask('Invite Contacts', [{ variant: 'text', initials: 'JS', color: 'orange' }])}
-          {renderTask('Set a Due Date', [{ variant: 'text', initials: 'JS', color: 'orange' }])}
-          {renderTask('Mark All the Tasks as Done', [{ variant: 'text', initials: 'JS', color: 'orange' }])}
+          {filtered.map((item, idx) =>
+            item.type === 'project' ? (
+              <Box key={idx} flexDirection="row" alignItems="center" style={{ paddingVertical: 10, gap: 8 }}>
+                <Box
+                  width={24}
+                  height={24}
+                  borderRadius="6"
+                  alignItems="center"
+                  justifyContent="center"
+                  style={{ backgroundColor: theme.colors.secondaryGreen }}
+                >
+                  <Folder size={14} color={theme.colors.white} />
+                </Box>
+                <Text style={{ fontSize: 15, fontWeight: '700', color: theme.colors.foreground, lineHeight: 20 }}>
+                  {item.label}
+                </Text>
+              </Box>
+            ) : (
+              <Pressable key={idx} onPress={handleSelectTask} style={{ paddingVertical: 11 }}>
+                {({ pressed }: any) => (
+                  <Box
+                    flexDirection="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    style={{ opacity: pressed ? 0.7 : 1 }}
+                  >
+                    <Box flexDirection="row" alignItems="center" style={{ gap: 12 }}>
+                      <Hash size={18} color={theme.colors.secondaryGreen} />
+                      <Text style={{ fontSize: 15, color: theme.colors.foreground, lineHeight: 20 }}>
+                        {item.label}
+                      </Text>
+                    </Box>
+                    <Box flexDirection="row" alignItems="center" style={{ marginRight: 2 }}>
+                      {item.assignees.map((user, i) => (
+                        <Box key={i} style={{ marginLeft: i === 0 ? 0 : -8 }}>
+                          <ChatAvatar user={user} size={28} />
+                        </Box>
+                      ))}
+                    </Box>
+                  </Box>
+                )}
+              </Pressable>
+            )
+          )}
         </Box>
       </ScrollView>
     </Box>
+    </Animated.View>
   );
 }
 
@@ -484,154 +543,247 @@ function AssignTaskConfirm({
   onConfirm: () => void;
 }) {
   const theme = useTheme<Theme>();
+  const slideAnim = useRef(new Animated.Value(60)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 300,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 220,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
   return (
-    <Box
-      backgroundColor="card"
-      borderWidth={1}
-      borderColor="border"
+    <Animated.View
       style={{
         position: 'absolute' as any,
-        left: 20,
-        right: 12,
-        bottom: 74,
-        zIndex: 20,
-        borderRadius: 16,
-        padding: 16,
-        ...Platform.select({
-          web: { boxShadow: '0 12px 30px rgba(0,0,0,0.14)' } as any,
-          default: {
-            elevation: 10,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 12 },
-            shadowOpacity: 0.14,
-            shadowRadius: 20,
-          },
-        }),
+        left: 16,
+        right: 16,
+        bottom: 96,
+        zIndex: 30,
+        opacity: fadeAnim,
+        transform: [{ translateY: slideAnim }],
       }}
     >
-      <Text style={{ fontSize: 16, color: theme.colors.foreground, lineHeight: 20, marginBottom: 8 }}>
-        Assign to Task
-      </Text>
-
       <Box
-        alignSelf="flex-start"
-        flexDirection="row"
-        alignItems="center"
-        style={{ backgroundColor: theme.colors.secondaryGreen, borderRadius: 4, paddingHorizontal: 6, paddingVertical: 4, gap: 4, marginBottom: 8 }}
+        backgroundColor="card"
+        borderWidth={1}
+        borderColor="border"
+        style={{
+          borderRadius: 16,
+          overflow: 'hidden',
+          ...Platform.select({
+            web: { boxShadow: '0 12px 30px rgba(0,0,0,0.14)' } as any,
+            default: { elevation: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 12 }, shadowOpacity: 0.14, shadowRadius: 20 },
+          }),
+        }}
       >
-        <Folder size={14} color={theme.colors.white} />
-        <Text style={{ fontSize: 14, fontWeight: '700', color: theme.colors.white, lineHeight: 16 }}>
-          Project A
-        </Text>
-      </Box>
+        {/* Header — matches picker search row padding */}
+        <Box flexDirection="row" alignItems="center" style={{ paddingHorizontal: 16, paddingVertical: 18, gap: 8 }}>
+          <Box flex={1} style={{ gap: 2 }}>
+            <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.foreground }}>
+              Assign to Task
+            </Text>
+            <Text style={{ fontSize: 13, fontWeight: '500', color: theme.colors.secondaryGreen }}>
+              #Fix the sink
+            </Text>
+          </Box>
+          <Pressable onPress={onCancel} hitSlop={8}>
+            <X size={20} color={theme.colors.foreground} />
+          </Pressable>
+        </Box>
 
-      <Box
-        alignSelf="flex-start"
-        flexDirection="row"
-        alignItems="center"
-        style={{ backgroundColor: theme.colors.black, borderRadius: 4, paddingHorizontal: 6, paddingVertical: 4, gap: 4, marginBottom: 20 }}
-      >
-        <Hash size={14} color={theme.colors.white} />
-        <Text style={{ fontSize: 14, fontWeight: '700', color: theme.colors.white, lineHeight: 16 }}>
-          Test 1
-        </Text>
-      </Box>
+        <Box height={1} backgroundColor="border" />
 
-      <Box style={{ marginBottom: 12 }}>
-        <ChatAvatar user={contact.user} size={52} />
-        <Text style={{ fontSize: 14, color: theme.colors.foreground, lineHeight: 20, marginTop: 8 }}>
-          {contact.name}
-        </Text>
-      </Box>
+        <ScrollView style={{ maxHeight: 425 }} showsVerticalScrollIndicator={false}>
+          <Box style={{ paddingHorizontal: 16, paddingTop: 10, paddingBottom: 14, gap: 18 }}>
 
-      <Box
-        flexDirection="row"
-        alignItems="center"
-        backgroundColor="grey02"
-        style={{ height: 40, borderRadius: 8, paddingHorizontal: 12, gap: 8, marginBottom: 24 }}
-      >
-        <Users size={20} color={theme.colors.secondaryGreen} />
-        <Text style={{ fontSize: 16, color: theme.colors.grey05 }}>
-          Search Chat Members
-        </Text>
-      </Box>
+            {/* Search members */}
+            <Box
+              flexDirection="row"
+              alignItems="center"
+              backgroundColor="grey02"
+              style={{ height: 32, borderRadius: 8, paddingHorizontal: 8, gap: 6 }}
+            >
+              <Box
+                width={24}
+                height={24}
+                borderRadius="6"
+                alignItems="center"
+                justifyContent="center"
+                style={{ backgroundColor: theme.colors.secondaryGreen }}
+              >
+                <Users size={14} color={theme.colors.white} />
+              </Box>
+              <Text style={{ fontSize: 14, color: theme.colors.grey05 }}>Search members</Text>
+            </Box>
 
-      <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.foreground, lineHeight: 20, marginBottom: 12 }}>
-        Chat Members (2)
-      </Text>
+            {/* Selected Member */}
+            <Box style={{ gap: 10 }}>
+              <Box flexDirection="row" alignItems="center" style={{ gap: 8 }}>
+                <Text style={{ fontSize: 14, fontWeight: '700', color: theme.colors.foreground }}>
+                  Selected Member
+                </Text>
+                <Box
+                  width={20}
+                  height={20}
+                  borderRadius="full"
+                  alignItems="center"
+                  justifyContent="center"
+                  style={{ backgroundColor: theme.colors.grey02 }}
+                >
+                  <Text style={{ fontSize: 11, fontWeight: '600', color: theme.colors.grey05 }}>1</Text>
+                </Box>
+              </Box>
 
-      <Box style={{ gap: 16, marginBottom: 44 }}>
-        <Box flexDirection="row" alignItems="center" style={{ gap: 10 }}>
-          <Box
-            width={20}
-            height={20}
-            borderRadius="full"
-            alignItems="center"
-            justifyContent="center"
-            style={{ backgroundColor: theme.colors.secondaryGreen, opacity: 0.55 }}
+              <Box flexDirection="row" style={{ gap: 12 }}>
+                <Box alignItems="center" style={{ gap: 4 }}>
+                  <Image
+                    source={require('@/assets/images/sample-three.jpg')}
+                    style={{ width: 44, height: 44, borderRadius: 22 }}
+                  />
+                  <Text style={{ fontSize: 11, color: theme.colors.foreground, maxWidth: 52 }} numberOfLines={1}>
+                    Savanna...
+                  </Text>
+                </Box>
+                <Box alignItems="center" style={{ gap: 4 }}>
+                  <Box style={{ position: 'relative' as any }}>
+                    <ChatAvatar user={contact.user} size={44} />
+                    <Box
+                      width={16}
+                      height={16}
+                      borderRadius="full"
+                      alignItems="center"
+                      justifyContent="center"
+                      style={{ position: 'absolute' as any, top: -2, right: -2, backgroundColor: theme.colors.foreground }}
+                    >
+                      <X size={9} color={theme.colors.white} strokeWidth={2.5} />
+                    </Box>
+                  </Box>
+                  <Text style={{ fontSize: 11, color: theme.colors.foreground }} numberOfLines={1}>
+                    {contact.name}
+                  </Text>
+                </Box>
+              </Box>
+            </Box>
+
+            {/* Chat Members */}
+            <Box style={{ gap: 10 }}>
+              <Box style={{ gap: 2 }}>
+                <Box flexDirection="row" alignItems="center" style={{ gap: 8 }}>
+                  <Text style={{ fontSize: 14, fontWeight: '700', color: theme.colors.foreground }}>
+                    Chat Members
+                  </Text>
+                  <Box
+                    width={20}
+                    height={20}
+                    borderRadius="full"
+                    alignItems="center"
+                    justifyContent="center"
+                    style={{ backgroundColor: theme.colors.grey02 }}
+                  >
+                    <Text style={{ fontSize: 11, fontWeight: '600', color: theme.colors.grey05 }}>2</Text>
+                  </Box>
+                </Box>
+                <Text style={{ fontSize: 13, color: theme.colors.grey04 }}>Choose the member first</Text>
+              </Box>
+
+              <Box flexDirection="row" alignItems="center" style={{ gap: 10, paddingVertical: 6 }}>
+                <Image
+                  source={require('@/assets/images/sample-three.jpg')}
+                  style={{ width: 36, height: 36, borderRadius: 18, flexShrink: 0 }}
+                />
+                <Box flex={1}>
+                  <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground, lineHeight: 19 }}>
+                    Savannah Nguyen
+                  </Text>
+                  <Text style={{ fontSize: 12, color: theme.colors.grey04 }}>
+                    savannahnguyen@gmail.com
+                  </Text>
+                </Box>
+                <Box
+                  width={26}
+                  height={26}
+                  borderRadius="full"
+                  alignItems="center"
+                  justifyContent="center"
+                  style={{ backgroundColor: theme.colors.secondaryGreen }}
+                >
+                  <Check size={13} color={theme.colors.white} strokeWidth={2.5} />
+                </Box>
+              </Box>
+
+              <Box flexDirection="row" alignItems="center" style={{ gap: 10, paddingVertical: 6 }}>
+                <ChatAvatar user={contact.user} size={36} />
+                <Box flex={1}>
+                  <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground, lineHeight: 19 }}>
+                    {contact.name}
+                  </Text>
+                  <Text style={{ fontSize: 12, color: theme.colors.grey04 }}>
+                    alexsmith@gmail.com
+                  </Text>
+                </Box>
+                <Box
+                  width={26}
+                  height={26}
+                  borderRadius="full"
+                  alignItems="center"
+                  justifyContent="center"
+                  style={{ backgroundColor: theme.colors.secondaryGreen }}
+                >
+                  <Check size={13} color={theme.colors.white} strokeWidth={2.5} />
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+        </ScrollView>
+
+        {/* Footer */}
+        <Box
+          flexDirection="row"
+          style={{ gap: 8, paddingHorizontal: 16, paddingVertical: 14, borderTopWidth: 1, borderTopColor: theme.colors.border } as any}
+        >
+          <Pressable
+            onPress={onCancel}
+            style={({ hovered }: any) => ({
+              flex: 1,
+              height: 44,
+              borderRadius: 10,
+              borderWidth: 1.5,
+              borderColor: theme.colors.foreground,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: hovered ? theme.colors.grey01 : 'transparent',
+            })}
           >
-            <Check size={14} color={theme.colors.white} />
-          </Box>
-          <ChatAvatar user={contact.user} size={24} />
-          <Box flex={1}>
-            <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.foreground, lineHeight: 20 }}>
-              {contact.name}
-            </Text>
-            <Text style={{ fontSize: 15, color: theme.colors.grey05, lineHeight: 20 }}>
-              alexsmith@gmail.com
-            </Text>
-          </Box>
-        </Box>
-
-        <Box flexDirection="row" alignItems="center" style={{ gap: 10 }}>
-          <Circle size={20} color={theme.colors.grey04} />
-          <ChatAvatar user={{ variant: 'text', initials: 'JS', color: 'orange' }} size={24} />
-          <Box flex={1}>
-            <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.foreground, lineHeight: 20 }}>
-              Johan Smith
-            </Text>
-            <Text style={{ fontSize: 15, color: theme.colors.grey05, lineHeight: 20 }}>
-              juriteta@denipl.com
-            </Text>
-          </Box>
+            <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>Cancel</Text>
+          </Pressable>
+          <Pressable
+            onPress={onConfirm}
+            style={({ hovered }: any) => ({
+              flex: 1,
+              height: 44,
+              borderRadius: 10,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: hovered ? '#1E293B' : theme.colors.black,
+            })}
+          >
+            <Text style={{ fontSize: 14, fontWeight: '700', color: theme.colors.white }}>Confirm</Text>
+          </Pressable>
         </Box>
       </Box>
-
-      <Box flexDirection="row" alignItems="center" style={{ gap: 16 }}>
-        <Pressable
-          onPress={onCancel}
-          style={{
-            flex: 1,
-            height: 32,
-            borderRadius: 8,
-            borderWidth: 1,
-            borderColor: theme.colors.black,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.foreground }}>
-            cancel
-          </Text>
-        </Pressable>
-        <Pressable
-          onPress={onConfirm}
-          style={{
-            flex: 1,
-            height: 32,
-            borderRadius: 8,
-            backgroundColor: theme.colors.black,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Text style={{ fontSize: 14, fontWeight: '700', color: theme.colors.white }}>
-            Confirm
-          </Text>
-        </Pressable>
-      </Box>
-    </Box>
+    </Animated.View>
   );
 }
 
@@ -640,14 +792,33 @@ function RoomView({
   onBack,
   onClose,
   showMemberJoinedCard = false,
+  showAssignTooltip = false,
+  onAssignTooltipDismiss,
 }: {
   contact: ChatListItem;
   onBack: () => void;
   onClose: () => void;
   showMemberJoinedCard?: boolean;
+  showAssignTooltip?: boolean;
+  onAssignTooltipDismiss?: () => void;
 }) {
   const theme = useTheme<Theme>();
-  const [assignTaskView, setAssignTaskView] = useState<'none' | 'picker' | 'confirm'>('none');
+  const [assignTaskView, setAssignTaskView] = useState<'none' | 'picker' | 'confirm' | 'assigned'>('none');
+  const [showAssignedToast, setShowAssignedToast] = useState(false);
+  const tooltipFadeAnim = useRef(new Animated.Value(1)).current;
+
+  const handleAssignPress = () => {
+    Animated.timing(tooltipFadeAnim, {
+      toValue: 0,
+      duration: 180,
+      easing: Easing.in(Easing.cubic),
+      useNativeDriver: true,
+    }).start(() => {
+      onAssignTooltipDismiss?.();
+      tooltipFadeAnim.setValue(1);
+      setAssignTaskView('picker');
+    });
+  };
 
   const messages = [
     {
@@ -776,23 +947,73 @@ function RoomView({
                 <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.foreground, lineHeight: 24, marginBottom: 4 }}>
                   {contact.name} joined the project
                 </Text>
-                <Text style={{ fontSize: 14, color: theme.colors.textSecondary, lineHeight: 20, marginBottom: 16 }}>
-                  Alex is now part of <Text style={{ fontWeight: '700', color: theme.colors.foreground }}>LA Avenue 34 G</Text> and ready to collaborate.
-                </Text>
-                <Pressable
-                  onPress={() => setAssignTaskView('picker')}
-                  style={{
-                    alignSelf: 'flex-start',
-                    backgroundColor: theme.colors.black,
-                    borderRadius: 8,
-                    paddingHorizontal: 24,
-                    paddingVertical: 16,
-                  }}
-                >
-                  <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.white, lineHeight: 20 }}>
-                    Assign a task
-                  </Text>
-                </Pressable>
+                {assignTaskView === 'assigned' ? (
+                  <>
+                    <Text style={{ fontSize: 14, color: theme.colors.textSecondary, lineHeight: 20, marginBottom: 16 }}>
+                      Alex is now working on{' '}
+                      <Text style={{ fontWeight: '500', color: theme.colors.foreground }}>Fix the sink</Text>
+                    </Text>
+                    <Box flexDirection="row" style={{ gap: 10 }}>
+                      <Pressable
+                        style={({ hovered }: any) => ({
+                          flex: 1,
+                          backgroundColor: hovered ? '#1E293B' : theme.colors.black,
+                          borderRadius: 8,
+                          paddingHorizontal: 16,
+                          paddingVertical: 14,
+                          alignItems: 'center',
+                        })}
+                      >
+                        <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.white }}>View Alex's task</Text>
+                      </Pressable>
+                      <Pressable
+                        style={({ hovered }: any) => ({
+                          flex: 1,
+                          borderRadius: 8,
+                          borderWidth: 1.5,
+                          borderColor: theme.colors.foreground,
+                          paddingHorizontal: 16,
+                          paddingVertical: 14,
+                          alignItems: 'center',
+                          backgroundColor: hovered ? theme.colors.grey01 : 'transparent',
+                        })}
+                      >
+                        <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>Assign more</Text>
+                      </Pressable>
+                    </Box>
+                  </>
+                ) : (
+                  <>
+                    <Text style={{ fontSize: 14, color: theme.colors.textSecondary, lineHeight: 20, marginBottom: 16 }}>
+                      Alex is now part of <Text style={{ fontWeight: '500', color: theme.colors.foreground }}>LA Avenue 34 G</Text> and ready to collaborate.
+                    </Text>
+                    <TooltipOnboarding
+                      variant="left-center"
+                      tooltipStyle="success"
+                      title="Put someone on it"
+                      description="Click the assign button to assign tasks to your project members."
+                      open={showAssignTooltip}
+                      forceShow={showAssignTooltip}
+                      offset={20}
+                      animatedOpacity={tooltipFadeAnim}
+                    >
+                      <Pressable
+                        onPress={handleAssignPress}
+                        style={{
+                          alignSelf: 'flex-start',
+                          backgroundColor: theme.colors.black,
+                          borderRadius: 8,
+                          paddingHorizontal: 24,
+                          paddingVertical: 16,
+                        }}
+                      >
+                        <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.white, lineHeight: 20 }}>
+                          Assign a task
+                        </Text>
+                      </Pressable>
+                    </TooltipOnboarding>
+                  </>
+                )}
               </Box>
             </Box>
           </Box>
@@ -834,7 +1055,21 @@ function RoomView({
         <AssignTaskConfirm
           contact={contact}
           onCancel={() => setAssignTaskView('picker')}
-          onConfirm={() => setAssignTaskView('none')}
+          onConfirm={() => {
+            setAssignTaskView('assigned');
+            setShowAssignedToast(true);
+          }}
+        />
+      )}
+
+      {showAssignedToast && (
+        <Toast
+          visible={showAssignedToast}
+          title="Member Assigned"
+          caption="Alex Smith has been assigned to Fix the sink."
+          variant="title-caption"
+          type="success"
+          onDismiss={() => setShowAssignedToast(false)}
         />
       )}
 
@@ -884,6 +1119,8 @@ export function ChatPanelComposite({
   openContactId,
   openContactSignal = 0,
   showMemberJoinedCard = false,
+  showAssignTooltip = false,
+  onAssignTooltipDismiss,
 }: ChatPanelCompositeProps) {
   // Resolve list items: explicit prop > variant preset
   const resolvedItems = listItems ?? (
@@ -923,8 +1160,10 @@ export function ChatPanelComposite({
         <RoomView
           contact={activeContact}
           onBack={() => setView('list')}
-          onClose={() => setView('list')}  // X → back to list, not collapse
-          showMemberJoinedCard={activeContact.id === 'alex-smith'}
+          onClose={() => setView('list')}
+          showMemberJoinedCard={showMemberJoinedCard || activeContact.id === 'alex-smith'}
+          showAssignTooltip={showAssignTooltip}
+          onAssignTooltipDismiss={onAssignTooltipDismiss}
         />
         <MiniStrip
           users={resolvedMiniUsers}

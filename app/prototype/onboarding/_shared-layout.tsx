@@ -25,6 +25,7 @@ export function MainLayoutOnboarding({
   const [showTaskTooltip, setShowTaskTooltip] = useState(false);
   const [showMemberJoinedChat, setShowMemberJoinedChat] = useState(false);
   const [openMemberChatSignal, setOpenMemberChatSignal] = useState(0);
+  const [showAssignTooltip, setShowAssignTooltip] = useState(false);
   const [renderPanel, setRenderPanel] = useState(
     showCreateProjectPanelProp ?? false
   );
@@ -99,6 +100,7 @@ export function MainLayoutOnboarding({
                 onInviteSentToastDismiss={() => {
                   setShowMemberJoinedChat(true);
                   setOpenMemberChatSignal(value => value + 1);
+                  setShowAssignTooltip(true);
                 }}
               />
             )
@@ -163,6 +165,8 @@ export function MainLayoutOnboarding({
         openContactId="alex-smith"
         openContactSignal={openMemberChatSignal}
         showMemberJoinedCard={showMemberJoinedChat}
+        showAssignTooltip={showAssignTooltip}
+        onAssignTooltipDismiss={() => setShowAssignTooltip(false)}
       />
 
       {/* ── Checklist reward widget ── */}
