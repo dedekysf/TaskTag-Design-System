@@ -223,7 +223,7 @@ export function WelcomeModalScreen({
             fontWeight: '700',
             color: theme.colors.foreground,
             textAlign: 'center',
-            marginBottom: 8,
+            marginBottom: 4,
           }}
         >
           {title}
