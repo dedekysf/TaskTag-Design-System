@@ -707,7 +707,8 @@ function RoomView({
           flexGrow: 1,
           justifyContent: 'flex-end',
           paddingHorizontal: 24,
-          paddingVertical: 20,
+          paddingTop: 20,
+          paddingBottom: 0,
         }}
       >
         {/* Date separator */}
@@ -720,67 +721,78 @@ function RoomView({
         </Box>
 
         {showMemberJoinedCard ? (
-          <Box style={{ marginBottom: 16 }}>
-            <Box flexDirection="row" gap="12" alignItems="flex-start">
+          <Box style={{ marginBottom: 0 }}>
+            {/* Header row vertically centering Avatar and Sender Name + Time */}
+            <Box flexDirection="row" alignItems="center" style={{ gap: 12, marginBottom: 2 }}>
               <ChatAvatar user={contact.user} size={40} />
-              <Box flex={1}>
-                {/* Header Row outside the white card background */}
-                <Box flexDirection="row" alignItems="center" style={{ gap: 8, marginBottom: 8 }}>
-                  <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>
-                    {contact.name}
-                  </Text>
-                  <Text style={{ fontSize: 11, color: theme.colors.grey04 }}>
-                    12:25 PM
-                  </Text>
-                </Box>
+              <Box flexDirection="row" alignItems="center" style={{ gap: 8 }}>
+                <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>
+                  {contact.name}
+                </Text>
+                <Text style={{ fontSize: 11, color: theme.colors.grey04 }}>
+                  12:25 PM
+                </Text>
+              </Box>
+            </Box>
 
-                {/* White background box wrapping the card contents */}
+            {/* Outer white background wrapping the card contents */}
+            <Box
+              backgroundColor="card"
+              style={{
+                borderTopLeftRadius: 0,
+                borderTopRightRadius: 16,
+                borderBottomRightRadius: 16,
+                borderBottomLeftRadius: 16,
+                padding: 12,
+                marginLeft: 52, // Align with text column (avatar width 40 + gap 12)
+                alignSelf: 'stretch',
+              }}
+            >
+              {/* Inner bordered card */}
+              <Box
+                borderWidth={1}
+                borderColor="border"
+                style={{
+                  borderRadius: 12,
+                  paddingHorizontal: 16,
+                  paddingVertical: 16,
+                  backgroundColor: theme.colors.white,
+                }}
+              >
                 <Box
-                  backgroundColor="card"
-                  borderWidth={1}
-                  borderColor="border"
                   style={{
-                    borderRadius: 12,
-                    paddingHorizontal: 16,
-                    paddingVertical: 16,
-                    alignSelf: 'stretch',
+                    alignSelf: 'flex-start',
+                    backgroundColor: theme.colors.lightMint,
+                    borderRadius: 16,
+                    paddingHorizontal: 12,
+                    paddingVertical: 6,
+                    marginBottom: 16,
                   }}
                 >
-                  <Box
-                    style={{
-                      alignSelf: 'flex-start',
-                      backgroundColor: theme.colors.lightMint,
-                      borderRadius: 16,
-                      paddingHorizontal: 12,
-                      paddingVertical: 6,
-                      marginBottom: 12,
-                    }}
-                  >
-                    <Text style={{ fontSize: 12, fontWeight: '700', color: theme.colors.textPrimary, lineHeight: 16 }}>
-                      MEMBER JOINED
-                    </Text>
-                  </Box>
-                  <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.foreground, lineHeight: 24, marginBottom: 4 }}>
-                    {contact.name} joined the project
+                  <Text style={{ fontSize: 12, fontWeight: '700', color: theme.colors.textPrimary, lineHeight: 16 }}>
+                    MEMBER JOINED
                   </Text>
-                  <Text style={{ fontSize: 14, color: theme.colors.textSecondary, lineHeight: 20, marginBottom: 16 }}>
-                    Alex is now part of <Text style={{ fontWeight: '700', color: theme.colors.foreground }}>LA Avenue 34 G</Text> and ready to collaborate.
-                  </Text>
-                  <Pressable
-                    onPress={() => setAssignTaskView('picker')}
-                    style={{
-                      alignSelf: 'flex-start',
-                      backgroundColor: theme.colors.black,
-                      borderRadius: 8,
-                      paddingHorizontal: 20,
-                      paddingVertical: 12,
-                    }}
-                  >
-                    <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.white, lineHeight: 20 }}>
-                      Assign a task
-                    </Text>
-                  </Pressable>
                 </Box>
+                <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.foreground, lineHeight: 24, marginBottom: 4 }}>
+                  {contact.name} joined the project
+                </Text>
+                <Text style={{ fontSize: 14, color: theme.colors.textSecondary, lineHeight: 20, marginBottom: 16 }}>
+                  Alex is now part of <Text style={{ fontWeight: '700', color: theme.colors.foreground }}>LA Avenue 34 G</Text> and ready to collaborate.
+                </Text>
+                <Pressable
+                  onPress={() => setAssignTaskView('picker')}
+                  style={{
+                    alignSelf: 'flex-start',
+                    backgroundColor: theme.colors.black,
+                    borderRadius: 8,
+                    paddingHorizontal: 24,
+                    paddingVertical: 16,
+                  }}
+                >
+                  <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.white, lineHeight: 20 }}>
+                    Assign a task
+                  </Text>
+                </Pressable>
               </Box>
             </Box>
           </Box>
@@ -912,7 +924,7 @@ export function ChatPanelComposite({
           contact={activeContact}
           onBack={() => setView('list')}
           onClose={() => setView('list')}  // X → back to list, not collapse
-          showMemberJoinedCard={showMemberJoinedCard && activeContact.id === 'alex-smith'}
+          showMemberJoinedCard={activeContact.id === 'alex-smith'}
         />
         <MiniStrip
           users={resolvedMiniUsers}
@@ -941,6 +953,13 @@ export function ChatPanelComposite({
 
 /** variant='without-member' — only Tasktag Helpdesk */
 export const LIST_ITEMS_WITHOUT_MEMBER: ChatListItem[] = [
+  {
+    id: 'alex-smith',
+    user: { variant: 'text', initials: 'AS', color: 'darkGreen' },
+    name: 'Alex Smith',
+    preview: 'Hey! Can you check the task list for the renovation project?',
+    timestamp: 'Yesterday',
+  },
   {
     id: '1',
     user: { variant: 'text', initials: 'TH', color: 'orange' },
