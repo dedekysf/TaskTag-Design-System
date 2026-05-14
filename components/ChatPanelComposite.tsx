@@ -44,7 +44,7 @@ import {
   Users,
   X,
 } from 'lucide-react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   Animated,
   Easing,
@@ -1129,7 +1129,7 @@ export function ChatPanelComposite({
   const [view, setView] = useState<ChatView>(defaultView);
   const [activeContact, setActiveContact] = useState<ChatListItem | null>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!openContactId || openContactSignal === 0) return;
     const contact = resolvedItems.find((item) => item.id === openContactId);
     if (!contact) return;
