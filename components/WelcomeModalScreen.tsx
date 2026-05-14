@@ -193,7 +193,7 @@ export function WelcomeModalScreen({
         style={{
           width: '100%',
           alignItems: 'center',
-          paddingTop: 24,
+          paddingTop: 20,
           zIndex: 1,
           opacity: content.opacity,
           transform: [
@@ -202,30 +202,19 @@ export function WelcomeModalScreen({
           ],
         }}
       >
-        {/* Badge */}
-        <Box
-          alignItems="center"
-          justifyContent="center"
+        {/* "You're in" line */}
+        <Text
           style={{
-            minHeight: 40,
-            paddingHorizontal: 18,
-            borderRadius: 999,
-            backgroundColor: '#E7E7E7',
-            marginBottom: 28,
+            fontSize: 20,
+            lineHeight: 28,
+            fontWeight: '600',
+            color: theme.colors.secondaryGreen,
+            textAlign: 'center',
+            marginBottom: 10,
           }}
         >
-          <Text
-            style={{
-              fontSize: 16,
-              lineHeight: 22,
-              fontWeight: '700',
-              color: theme.colors.secondaryGreen,
-              textAlign: 'center',
-            }}
-          >
-            {`\uD83C\uDF89 You're in, ${name}`}
-          </Text>
-        </Box>
+          {`You're in, ${name}`}
+        </Text>
 
         <Text
           style={{
@@ -234,7 +223,7 @@ export function WelcomeModalScreen({
             fontWeight: '700',
             color: theme.colors.foreground,
             textAlign: 'center',
-            marginBottom: 10,
+            marginBottom: 8,
           }}
         >
           {title}
@@ -247,7 +236,7 @@ export function WelcomeModalScreen({
             fontWeight: '400',
             color: theme.colors.grey05,
             textAlign: 'center',
-            marginBottom: 26,
+            marginBottom: 28,
           }}
         >
           {description}
