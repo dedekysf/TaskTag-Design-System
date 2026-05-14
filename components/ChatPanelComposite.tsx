@@ -447,7 +447,7 @@ function AssignTaskPicker({
           flexDirection="row"
           alignItems="center"
           backgroundColor="grey02"
-          style={{ height: 32, borderRadius: 8, paddingHorizontal: 8, gap: 6 }}
+          style={{ borderRadius: 8, paddingHorizontal: 8, paddingVertical: 8, gap: 6 }}
         >
           <Box
             width={24}
@@ -465,7 +465,7 @@ function AssignTaskPicker({
             placeholder="Search Task"
             placeholderTextColor={theme.colors.grey05}
             style={[
-              { flex: 1, color: theme.colors.foreground, fontSize: 16, height: 32, padding: 0 },
+              { flex: 1, color: theme.colors.foreground, fontSize: 16, padding: 0 },
               Platform.OS === 'web' && ({ outlineStyle: 'none' } as any),
             ]}
           />
@@ -622,7 +622,7 @@ function AssignTaskConfirm({
             flexDirection="row"
             alignItems="center"
             backgroundColor="grey02"
-            style={{ height: 32, borderRadius: 8, paddingHorizontal: 8, gap: 6 }}
+            style={{ borderRadius: 8, paddingHorizontal: 8, paddingVertical: 8, gap: 6 }}
           >
             <Box
               width={24}
@@ -640,7 +640,7 @@ function AssignTaskConfirm({
               placeholder="Search members"
               placeholderTextColor={theme.colors.grey05}
               style={[
-                { flex: 1, color: theme.colors.foreground, fontSize: 14, height: 32, padding: 0 },
+                { flex: 1, color: theme.colors.foreground, fontSize: 14, padding: 0 },
                 Platform.OS === 'web' && ({ outlineStyle: 'none' } as any),
               ]}
             />
@@ -693,7 +693,7 @@ function AssignTaskConfirm({
                             width: 16,
                             height: 16,
                             borderRadius: 8,
-                            backgroundColor: theme.colors.grey05,
+                            backgroundColor: theme.colors.grey02,
                             alignItems: 'center',
                             justifyContent: 'center',
                           }}
@@ -733,45 +733,74 @@ function AssignTaskConfirm({
 
               {MEMBERS.map(m => {
                 const isSelected = selectedIds.includes(m.id);
+                const isDisabled = m.id === 'savannah';
                 return (
                   <Pressable
                     key={m.id}
-                    onPress={() => toggle(m.id)}
+                    onPress={() => !isDisabled && toggle(m.id)}
                     style={({ hovered }: any) => ({
                       flexDirection: 'row',
                       alignItems: 'center',
                       gap: 10,
                       paddingVertical: 8,
                       borderRadius: 8,
-                      backgroundColor: hovered ? theme.colors.grey01 : 'transparent',
+                      backgroundColor: !isDisabled && hovered ? theme.colors.grey01 : 'transparent',
                     })}
                   >
-                    {m.avatarType === 'photo' ? (
-                      <Image
-                        source={require('@/assets/images/sample-three.jpg')}
-                        style={{ width: 36, height: 36, borderRadius: 18, flexShrink: 0 }}
-                      />
-                    ) : (
-                      <ChatAvatar user={contact.user} size={36} />
+                    {({ hovered }: any) => (
+                      <>
+                        {m.avatarType === 'photo' ? (
+                          <Image
+                            source={require('@/assets/images/sample-three.jpg')}
+                            style={{ width: 36, height: 36, borderRadius: 18, flexShrink: 0 }}
+                          />
+                        ) : (
+                          <ChatAvatar user={contact.user} size={36} />
+                        )}
+                        <Box flex={1}>
+                          <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground, lineHeight: 19 }}>
+                            {m.name}
+                          </Text>
+                          <Text style={{ fontSize: 12, color: theme.colors.grey05 }}>
+                            {m.email}
+                          </Text>
+                        </Box>
+                        {isDisabled ? (
+                          <Box
+                            width={26}
+                            height={26}
+                            borderRadius="full"
+                            alignItems="center"
+                            justifyContent="center"
+                            style={{ backgroundColor: theme.colors.grey03 }}
+                          >
+                            <Check size={13} color={theme.colors.grey05} strokeWidth={2.5} />
+                          </Box>
+                        ) : isSelected ? (
+                          <Box
+                            width={26}
+                            height={26}
+                            borderRadius="full"
+                            alignItems="center"
+                            justifyContent="center"
+                            style={{ backgroundColor: theme.colors.secondaryGreen }}
+                          >
+                            <Check size={13} color={theme.colors.white} strokeWidth={2.5} />
+                          </Box>
+                        ) : (
+                          <Box
+                            width={26}
+                            height={26}
+                            borderRadius="full"
+                            alignItems="center"
+                            justifyContent="center"
+                            style={{ borderWidth: 1.5, borderColor: theme.colors.grey03, backgroundColor: 'transparent' }}
+                          >
+                            {hovered && <Check size={13} color={theme.colors.grey05} strokeWidth={2.5} />}
+                          </Box>
+                        )}
+                      </>
                     )}
-                    <Box flex={1}>
-                      <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground, lineHeight: 19 }}>
-                        {m.name}
-                      </Text>
-                      <Text style={{ fontSize: 12, color: theme.colors.grey05 }}>
-                        {m.email}
-                      </Text>
-                    </Box>
-                    <Box
-                      width={26}
-                      height={26}
-                      borderRadius="full"
-                      alignItems="center"
-                      justifyContent="center"
-                      style={{ backgroundColor: isSelected ? theme.colors.secondaryGreen : theme.colors.grey02 }}
-                    >
-                      <Check size={13} color={isSelected ? theme.colors.white : theme.colors.grey04} strokeWidth={2.5} />
-                    </Box>
                   </Pressable>
                 );
               })}
