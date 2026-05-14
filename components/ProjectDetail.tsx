@@ -532,6 +532,61 @@ export function ProjectDetail({
         </Box>
       </Box>
 
+      {/* ── Nudge banner (below tab bar, all tabs) ── */}
+      {showInviteNudge && (
+        <Box
+          style={{
+            flexShrink: 0,
+            marginHorizontal: 24,
+            marginTop: 16,
+            marginBottom: 4,
+            borderRadius: 8,
+            backgroundColor: '#0F172A',
+            flexDirection: 'row',
+            alignItems: 'center',
+            padding: 16,
+            gap: 16,
+          }}
+        >
+          <Box
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 20,
+              backgroundColor: 'rgba(52,211,153,0.15)',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
+            <UserPlus size={24} color={theme.colors.secondaryGreen} strokeWidth={1.8} />
+          </Box>
+
+          <Box style={{ flex: 1 }}>
+            <Text style={{ fontSize: 22, fontWeight: '700', color: 'white', lineHeight: 28, marginBottom: 4 }}>
+              Got crew for this job
+            </Text>
+            <Text style={{ fontSize: 16, fontWeight: '400', color: theme.colors.grey04, lineHeight: 22 }}>
+              These tasks need someone — invite your crew to assign the work
+            </Text>
+          </Box>
+
+          <Button
+            variant="fill"
+            size="lg"
+            style={{ backgroundColor: theme.colors.secondaryGreen, borderWidth: 0, flexShrink: 0, minWidth: 160 }}
+            hoverBackgroundColor="#16a34a"
+            onPress={() => {
+              setInviteModalMode('member');
+              setShowInviteModal(true);
+              setShowInviteNudge(false);
+            }}
+          >
+            Add People
+          </Button>
+        </Box>
+      )}
+
       {/* ── Tab content (animated) ── */}
       <Animated.View style={{ flex: 1, opacity: tabFadeAnim, minHeight: 0 }}>
 
@@ -892,62 +947,6 @@ export function ProjectDetail({
                 )}
               </ScrollView>
 
-              {/* Invite nudge */}
-              {showInviteNudge && (
-                <Box
-                  style={{
-                    flexShrink: 0,
-                    marginHorizontal: 24,
-                    marginBottom: 24,
-                    borderRadius: 8,
-                    backgroundColor: '#0F172A',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    padding: 16,
-                    gap: 16,
-                  }}
-                >
-                  {/* Icon circle */}
-                  <Box
-                    style={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: 20,
-                      backgroundColor: 'rgba(52,211,153,0.15)',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                    }}
-                  >
-                    <UserPlus size={24} color={theme.colors.secondaryGreen} strokeWidth={1.8} />
-                  </Box>
-
-                  {/* Text */}
-                  <Box style={{ flex: 1 }}>
-                    <Text style={{ fontSize: 22, fontWeight: '700', color: 'white', lineHeight: 28, marginBottom: 4 }}>
-                      Got crew for this job
-                    </Text>
-                    <Text style={{ fontSize: 16, fontWeight: '400', color: theme.colors.grey04, lineHeight: 22 }}>
-                      These tasks need someone — invite your team to assign the work
-                    </Text>
-                  </Box>
-
-                  {/* Invite button */}
-                  <Button
-                    variant="fill"
-                    size="lg"
-                    style={{ backgroundColor: theme.colors.secondaryGreen, borderWidth: 0, flexShrink: 0, minWidth: 160 }}
-                    hoverBackgroundColor="#16a34a"
-                    onPress={() => {
-                      setInviteModalMode('member');
-                      setShowInviteModal(true);
-                      setShowInviteNudge(false);
-                    }}
-                  >
-                    Invite
-                  </Button>
-                </Box>
-              )}
             </Box>
           )}
         </>
