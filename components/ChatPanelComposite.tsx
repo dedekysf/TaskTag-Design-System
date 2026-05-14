@@ -1193,13 +1193,6 @@ export function ChatPanelComposite({
 /** variant='without-member' — only Tasktag Helpdesk */
 export const LIST_ITEMS_WITHOUT_MEMBER: ChatListItem[] = [
   {
-    id: 'alex-smith',
-    user: { variant: 'text', initials: 'AS', color: 'darkGreen' },
-    name: 'Alex Smith',
-    preview: 'Hey! Can you check the task list for the renovation project?',
-    timestamp: 'Yesterday',
-  },
-  {
     id: '1',
     user: { variant: 'text', initials: 'TH', color: 'orange' },
     name: 'Tasktag Helpdesk',
