@@ -458,9 +458,9 @@ function AssignTaskPicker({
             All Projects & Tasks
           </Text>
           {renderProject('Project A')}
-          {renderTask('Test 1', [{ variant: 'text', initials: 'AS', color: 'secondaryGreen' }])}
+          {renderTask('Test 1', [{ variant: 'text', initials: 'AS', color: 'darkGreen' }])}
           {renderTask('Task abcd', [
-            { variant: 'text', initials: 'AS', color: 'secondaryGreen' },
+            { variant: 'text', initials: 'AS', color: 'darkGreen' },
             { variant: 'text', initials: 'DY', color: 'orange' },
           ])}
           {renderProject('Welcome to Tasktag!')}
@@ -722,42 +722,61 @@ function RoomView({
         {showMemberJoinedCard ? (
           <Box style={{ marginBottom: 16 }}>
             <Box flexDirection="row" gap="12" alignItems="flex-start">
-              <ChatAvatar user={contact.user} size={56} />
+              <ChatAvatar user={contact.user} size={40} />
               <Box flex={1}>
-                <Box
-                  style={{
-                    alignSelf: 'flex-start',
-                    backgroundColor: theme.colors.grey02,
-                    borderRadius: 16,
-                    paddingHorizontal: 12,
-                    paddingVertical: 6,
-                    marginBottom: 10,
-                  }}
-                >
-                  <Text style={{ fontSize: 12, fontWeight: '700', color: theme.colors.foreground, lineHeight: 16 }}>
-                    MEMBER JOINED
+                <Box flexDirection="row" alignItems="center" style={{ gap: 8, marginBottom: 8 }}>
+                  <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>
+                    {contact.name}
+                  </Text>
+                  <Text style={{ fontSize: 11, color: theme.colors.grey04 }}>
+                    12:25 PM
                   </Text>
                 </Box>
-                <Text style={{ fontSize: 20, fontWeight: '700', color: theme.colors.foreground, lineHeight: 28, marginBottom: 8 }}>
-                  {contact.name} joined the project
-                </Text>
-                <Text style={{ fontSize: 16, color: theme.colors.textSecondary, lineHeight: 24, marginBottom: 24 }}>
-                  {contact.name} is now part of Riverside Painting and ready to collaborate.
-                </Text>
-                <Pressable
-                  onPress={() => setAssignTaskView('picker')}
+                <Box
+                  backgroundColor="card"
+                  borderWidth={1}
+                  borderColor="border"
                   style={{
-                    alignSelf: 'flex-start',
-                    backgroundColor: theme.colors.black,
-                    borderRadius: 8,
-                    paddingHorizontal: 24,
-                    paddingVertical: 14,
+                    borderRadius: 12,
+                    paddingHorizontal: 16,
+                    paddingVertical: 16,
                   }}
                 >
-                  <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.white, lineHeight: 20 }}>
-                    Assign task
+                  <Box
+                    style={{
+                      alignSelf: 'flex-start',
+                      backgroundColor: theme.colors.lightMint,
+                      borderRadius: 16,
+                      paddingHorizontal: 12,
+                      paddingVertical: 6,
+                      marginBottom: 12,
+                    }}
+                  >
+                    <Text style={{ fontSize: 12, fontWeight: '700', color: theme.colors.darkGreen, lineHeight: 16 }}>
+                      MEMBER JOINED
+                    </Text>
+                  </Box>
+                  <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.foreground, lineHeight: 24, marginBottom: 4 }}>
+                    {contact.name} joined the project
                   </Text>
-                </Pressable>
+                  <Text style={{ fontSize: 14, color: theme.colors.textSecondary, lineHeight: 20, marginBottom: 16 }}>
+                    Alex is now part of LA Avenue 34 G and ready to collaborate.
+                  </Text>
+                  <Pressable
+                    onPress={() => setAssignTaskView('picker')}
+                    style={{
+                      alignSelf: 'flex-start',
+                      backgroundColor: theme.colors.black,
+                      borderRadius: 8,
+                      paddingHorizontal: 20,
+                      paddingVertical: 12,
+                    }}
+                  >
+                    <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.white, lineHeight: 20 }}>
+                      Assign a task
+                    </Text>
+                  </Pressable>
+                </Box>
               </Box>
             </Box>
           </Box>
@@ -931,7 +950,7 @@ export const LIST_ITEMS_WITHOUT_MEMBER: ChatListItem[] = [
 export const LIST_ITEMS_WITH_MEMBER: ChatListItem[] = [
   {
     id: 'alex-smith',
-    user: { variant: 'text', initials: 'AS', color: 'secondaryGreen' },
+    user: { variant: 'text', initials: 'AS', color: 'darkGreen' },
     name: 'Alex Smith',
     preview: 'Hey! Can you check the task list for the renovation project?',
     timestamp: 'Yesterday',

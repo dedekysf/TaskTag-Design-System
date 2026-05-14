@@ -253,6 +253,6 @@ export function ChatPanelRoom({
 export const DEFAULT_ROOM_CONTACT: ChatUser & { name: string } = {
   variant: 'text',
   initials: 'AS',
-  color: 'secondaryGreen',
+  color: 'darkGreen',
   name: 'Alex Smith',
 };
