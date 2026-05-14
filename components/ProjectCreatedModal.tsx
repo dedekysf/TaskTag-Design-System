@@ -6,7 +6,7 @@ import { Animated, Easing, Platform, Pressable } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 
 const BIG_TICK_LEN = 51; // M 18 36 L 30 48 L 54 24 → √288 + √1152 ≈ 17 + 34
-const HOLD_MS = 5000;
+const HOLD_MS = 3000;
 const CHECK_DRAW_DELAY_MS = 40;
 const CHECK_DRAW_MS = 220;
 
