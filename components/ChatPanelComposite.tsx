@@ -27,7 +27,10 @@ import {
   ChevronLeft,
   ChevronsLeft,
   ChevronsRight,
+  Check,
+  Circle,
   FileText,
+  Folder,
   Hash,
   Image as ImageIcon,
   Maximize2,
@@ -37,15 +40,17 @@ import {
   Search,
   Send,
   Smile,
+  Users,
   X,
 } from 'lucide-react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   ImageSourcePropType,
   Platform,
   Pressable,
   ScrollView,
+  TextInput,
 } from 'react-native';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -88,6 +93,9 @@ export interface ChatPanelCompositeProps {
   listItems?: ChatListItem[];
   /** Mini avatar list — if omitted, auto-derived from resolved listItems */
   miniUsers?: ChatUser[];
+  openContactId?: string;
+  openContactSignal?: number;
+  showMemberJoinedCard?: boolean;
 }
 
 // ─── Avatar ───────────────────────────────────────────────────────────────────
@@ -318,16 +326,328 @@ function ListView({
 
 // ─── Chat Room View (550px) ───────────────────────────────────────────────────
 
+function AssignTaskPicker({
+  onCancel,
+  onSelectTask,
+}: {
+  onCancel: () => void;
+  onSelectTask: () => void;
+}) {
+  const theme = useTheme<Theme>();
+  const disabledCursor = Platform.OS === 'web' ? ({ cursor: 'not-allowed' } as any) : null;
+
+  const renderProject = (label: string) => (
+    <Pressable accessibilityState={{ disabled: true }} style={[{ paddingVertical: 10 }, disabledCursor]}>
+      <Box flexDirection="row" alignItems="center" style={{ gap: 8 }}>
+        <Box
+          width={20}
+          height={20}
+          borderRadius="4"
+          alignItems="center"
+          justifyContent="center"
+          style={{ backgroundColor: theme.colors.black }}
+        >
+          <Folder size={14} color={theme.colors.brandGreen} />
+        </Box>
+        <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.grey05, lineHeight: 20 }}>
+          {label}
+        </Text>
+      </Box>
+    </Pressable>
+  );
+
+  const renderTask = (label: string, assignees?: ChatUser[]) => (
+    <Pressable onPress={onSelectTask} style={{ paddingVertical: 11 }}>
+      {({ pressed }: any) => (
+        <Box
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="space-between"
+          style={{ opacity: pressed ? 0.7 : 1 }}
+        >
+          <Box flexDirection="row" alignItems="center" style={{ gap: 12 }}>
+            <Hash size={18} color={theme.colors.secondaryGreen} />
+            <Text style={{ fontSize: 15, color: theme.colors.foreground, lineHeight: 20 }}>
+              {label}
+            </Text>
+          </Box>
+          {assignees && (
+            <Box flexDirection="row" alignItems="center" style={{ marginRight: 2 }}>
+              {assignees.map((user, index) => (
+                <Box key={index} style={{ marginLeft: index === 0 ? 0 : -10 }}>
+                  <ChatAvatar user={user} size={28} />
+                </Box>
+              ))}
+            </Box>
+          )}
+        </Box>
+      )}
+    </Pressable>
+  );
+
+  return (
+    <Box
+      backgroundColor="card"
+      borderWidth={1}
+      borderColor="border"
+      style={{
+        position: 'absolute' as any,
+        left: 16,
+        right: 16,
+        bottom: 96,
+        zIndex: 20,
+        borderRadius: 16,
+        overflow: 'hidden',
+        ...Platform.select({
+          web: { boxShadow: '0 12px 30px rgba(0,0,0,0.14)' } as any,
+          default: {
+            elevation: 10,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 12 },
+            shadowOpacity: 0.14,
+            shadowRadius: 20,
+          },
+        }),
+      }}
+    >
+      <Box flexDirection="row" alignItems="center" style={{ paddingHorizontal: 16, paddingVertical: 18, gap: 8 }}>
+        <Box
+          flex={1}
+          flexDirection="row"
+          alignItems="center"
+          backgroundColor="grey02"
+          style={{ height: 32, borderRadius: 8, paddingHorizontal: 8, gap: 6 }}
+        >
+          <Box
+            width={24}
+            height={24}
+            borderRadius="6"
+            alignItems="center"
+            justifyContent="center"
+            style={{ backgroundColor: theme.colors.secondaryGreen }}
+          >
+            <Hash size={16} color={theme.colors.white} />
+          </Box>
+          <TextInput
+            placeholder="Search Tag"
+            placeholderTextColor={theme.colors.grey05}
+            style={[
+              {
+                flex: 1,
+                color: theme.colors.foreground,
+                fontSize: 16,
+                height: 32,
+                padding: 0,
+              },
+              Platform.OS === 'web' && ({ outlineStyle: 'none' } as any),
+            ]}
+          />
+        </Box>
+        <Pressable onPress={onCancel} style={{ paddingVertical: 4 }}>
+          <Text style={{ fontSize: 16, fontWeight: '500', color: theme.colors.secondaryGreen }}>
+            Cancel
+          </Text>
+        </Pressable>
+      </Box>
+
+      <Box height={1} backgroundColor="border" />
+
+      <ScrollView style={{ maxHeight: 425 }} showsVerticalScrollIndicator>
+        <Box style={{ paddingHorizontal: 16, paddingTop: 10, paddingBottom: 14 }}>
+          <Text style={{ fontSize: 14, color: theme.colors.grey05, lineHeight: 20, marginBottom: 10 }}>
+            All Projects & Tasks
+          </Text>
+          {renderProject('Project A')}
+          {renderTask('Test 1', [{ variant: 'text', initials: 'AS', color: 'secondaryGreen' }])}
+          {renderTask('Task abcd', [
+            { variant: 'text', initials: 'AS', color: 'secondaryGreen' },
+            { variant: 'text', initials: 'DY', color: 'orange' },
+          ])}
+          {renderProject('Welcome to Tasktag!')}
+          {renderTask('Create Your First Task', [{ variant: 'text', initials: 'JS', color: 'orange' }])}
+          {renderTask('Invite Contacts', [{ variant: 'text', initials: 'JS', color: 'orange' }])}
+          {renderTask('Set a Due Date', [{ variant: 'text', initials: 'JS', color: 'orange' }])}
+          {renderTask('Mark All the Tasks as Done', [{ variant: 'text', initials: 'JS', color: 'orange' }])}
+        </Box>
+      </ScrollView>
+    </Box>
+  );
+}
+
+function AssignTaskConfirm({
+  contact,
+  onCancel,
+  onConfirm,
+}: {
+  contact: ChatListItem;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  const theme = useTheme<Theme>();
+
+  return (
+    <Box
+      backgroundColor="card"
+      borderWidth={1}
+      borderColor="border"
+      style={{
+        position: 'absolute' as any,
+        left: 20,
+        right: 12,
+        bottom: 74,
+        zIndex: 20,
+        borderRadius: 16,
+        padding: 16,
+        ...Platform.select({
+          web: { boxShadow: '0 12px 30px rgba(0,0,0,0.14)' } as any,
+          default: {
+            elevation: 10,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 12 },
+            shadowOpacity: 0.14,
+            shadowRadius: 20,
+          },
+        }),
+      }}
+    >
+      <Text style={{ fontSize: 16, color: theme.colors.foreground, lineHeight: 20, marginBottom: 8 }}>
+        Assign to Task
+      </Text>
+
+      <Box
+        alignSelf="flex-start"
+        flexDirection="row"
+        alignItems="center"
+        style={{ backgroundColor: theme.colors.secondaryGreen, borderRadius: 4, paddingHorizontal: 6, paddingVertical: 4, gap: 4, marginBottom: 8 }}
+      >
+        <Folder size={14} color={theme.colors.white} />
+        <Text style={{ fontSize: 14, fontWeight: '700', color: theme.colors.white, lineHeight: 16 }}>
+          Project A
+        </Text>
+      </Box>
+
+      <Box
+        alignSelf="flex-start"
+        flexDirection="row"
+        alignItems="center"
+        style={{ backgroundColor: theme.colors.black, borderRadius: 4, paddingHorizontal: 6, paddingVertical: 4, gap: 4, marginBottom: 20 }}
+      >
+        <Hash size={14} color={theme.colors.white} />
+        <Text style={{ fontSize: 14, fontWeight: '700', color: theme.colors.white, lineHeight: 16 }}>
+          Test 1
+        </Text>
+      </Box>
+
+      <Box style={{ marginBottom: 12 }}>
+        <ChatAvatar user={contact.user} size={52} />
+        <Text style={{ fontSize: 14, color: theme.colors.foreground, lineHeight: 20, marginTop: 8 }}>
+          {contact.name}
+        </Text>
+      </Box>
+
+      <Box
+        flexDirection="row"
+        alignItems="center"
+        backgroundColor="grey02"
+        style={{ height: 40, borderRadius: 8, paddingHorizontal: 12, gap: 8, marginBottom: 24 }}
+      >
+        <Users size={20} color={theme.colors.secondaryGreen} />
+        <Text style={{ fontSize: 16, color: theme.colors.grey05 }}>
+          Search Chat Members
+        </Text>
+      </Box>
+
+      <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.foreground, lineHeight: 20, marginBottom: 12 }}>
+        Chat Members (2)
+      </Text>
+
+      <Box style={{ gap: 16, marginBottom: 44 }}>
+        <Box flexDirection="row" alignItems="center" style={{ gap: 10 }}>
+          <Box
+            width={20}
+            height={20}
+            borderRadius="full"
+            alignItems="center"
+            justifyContent="center"
+            style={{ backgroundColor: theme.colors.secondaryGreen, opacity: 0.55 }}
+          >
+            <Check size={14} color={theme.colors.white} />
+          </Box>
+          <ChatAvatar user={contact.user} size={24} />
+          <Box flex={1}>
+            <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.foreground, lineHeight: 20 }}>
+              {contact.name}
+            </Text>
+            <Text style={{ fontSize: 15, color: theme.colors.grey05, lineHeight: 20 }}>
+              alexsmith@gmail.com
+            </Text>
+          </Box>
+        </Box>
+
+        <Box flexDirection="row" alignItems="center" style={{ gap: 10 }}>
+          <Circle size={20} color={theme.colors.grey04} />
+          <ChatAvatar user={{ variant: 'text', initials: 'JS', color: 'orange' }} size={24} />
+          <Box flex={1}>
+            <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.foreground, lineHeight: 20 }}>
+              Johan Smith
+            </Text>
+            <Text style={{ fontSize: 15, color: theme.colors.grey05, lineHeight: 20 }}>
+              juriteta@denipl.com
+            </Text>
+          </Box>
+        </Box>
+      </Box>
+
+      <Box flexDirection="row" alignItems="center" style={{ gap: 16 }}>
+        <Pressable
+          onPress={onCancel}
+          style={{
+            flex: 1,
+            height: 32,
+            borderRadius: 8,
+            borderWidth: 1,
+            borderColor: theme.colors.black,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.foreground }}>
+            cancel
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={onConfirm}
+          style={{
+            flex: 1,
+            height: 32,
+            borderRadius: 8,
+            backgroundColor: theme.colors.black,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Text style={{ fontSize: 14, fontWeight: '700', color: theme.colors.white }}>
+            Confirm
+          </Text>
+        </Pressable>
+      </Box>
+    </Box>
+  );
+}
+
 function RoomView({
   contact,
   onBack,
   onClose,
+  showMemberJoinedCard = false,
 }: {
   contact: ChatListItem;
   onBack: () => void;
   onClose: () => void;
+  showMemberJoinedCard?: boolean;
 }) {
   const theme = useTheme<Theme>();
+  const [assignTaskView, setAssignTaskView] = useState<'none' | 'picker' | 'confirm'>('none');
 
   const messages = [
     {
@@ -399,7 +719,49 @@ function RoomView({
           <Box flex={1} height={1} backgroundColor="border" />
         </Box>
 
-        {messages.map((msg) => (
+        {showMemberJoinedCard ? (
+          <Box style={{ marginBottom: 16 }}>
+            <Box flexDirection="row" gap="12" alignItems="flex-start">
+              <ChatAvatar user={contact.user} size={56} />
+              <Box flex={1}>
+                <Box
+                  style={{
+                    alignSelf: 'flex-start',
+                    backgroundColor: theme.colors.grey02,
+                    borderRadius: 16,
+                    paddingHorizontal: 12,
+                    paddingVertical: 6,
+                    marginBottom: 10,
+                  }}
+                >
+                  <Text style={{ fontSize: 12, fontWeight: '700', color: theme.colors.foreground, lineHeight: 16 }}>
+                    MEMBER JOINED
+                  </Text>
+                </Box>
+                <Text style={{ fontSize: 20, fontWeight: '700', color: theme.colors.foreground, lineHeight: 28, marginBottom: 8 }}>
+                  {contact.name} joined the project
+                </Text>
+                <Text style={{ fontSize: 16, color: theme.colors.textSecondary, lineHeight: 24, marginBottom: 24 }}>
+                  {contact.name} is now part of Riverside Painting and ready to collaborate.
+                </Text>
+                <Pressable
+                  onPress={() => setAssignTaskView('picker')}
+                  style={{
+                    alignSelf: 'flex-start',
+                    backgroundColor: theme.colors.black,
+                    borderRadius: 8,
+                    paddingHorizontal: 24,
+                    paddingVertical: 14,
+                  }}
+                >
+                  <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.white, lineHeight: 20 }}>
+                    Assign task
+                  </Text>
+                </Pressable>
+              </Box>
+            </Box>
+          </Box>
+        ) : messages.map((msg) => (
           <Box key={msg.id} style={{ marginBottom: 16 }}>
             <Box flexDirection="row" gap="12" alignItems="flex-start">
               <ChatAvatar user={msg.sender} size={40} />
@@ -425,6 +787,21 @@ function RoomView({
           </Box>
         ))}
       </ScrollView>
+
+      {assignTaskView === 'picker' && (
+        <AssignTaskPicker
+          onCancel={() => setAssignTaskView('none')}
+          onSelectTask={() => setAssignTaskView('confirm')}
+        />
+      )}
+
+      {assignTaskView === 'confirm' && (
+        <AssignTaskConfirm
+          contact={contact}
+          onCancel={() => setAssignTaskView('picker')}
+          onConfirm={() => setAssignTaskView('none')}
+        />
+      )}
 
       {/* Chat input */}
       <Box style={{ paddingHorizontal: 16, paddingVertical: 16 }}>
@@ -469,6 +846,9 @@ export function ChatPanelComposite({
   variant = 'without-member',
   listItems,
   miniUsers,
+  openContactId,
+  openContactSignal = 0,
+  showMemberJoinedCard = false,
 }: ChatPanelCompositeProps) {
   // Resolve list items: explicit prop > variant preset
   const resolvedItems = listItems ?? (
@@ -476,6 +856,14 @@ export function ChatPanelComposite({
   );
   const [view, setView] = useState<ChatView>(defaultView);
   const [activeContact, setActiveContact] = useState<ChatListItem | null>(null);
+
+  useEffect(() => {
+    if (!openContactId || openContactSignal === 0) return;
+    const contact = resolvedItems.find((item) => item.id === openContactId);
+    if (!contact) return;
+    setActiveContact(contact);
+    setView('room');
+  }, [openContactId, openContactSignal, resolvedItems]);
 
   // Derive mini avatars from resolvedItems so they always stay in sync
   const resolvedMiniUsers: ChatUser[] = miniUsers ?? resolvedItems.map((item) => ({
@@ -501,6 +889,7 @@ export function ChatPanelComposite({
           contact={activeContact}
           onBack={() => setView('list')}
           onClose={() => setView('list')}  // X → back to list, not collapse
+          showMemberJoinedCard={showMemberJoinedCard && activeContact.id === 'alex-smith'}
         />
         <MiniStrip
           users={resolvedMiniUsers}
@@ -541,7 +930,7 @@ export const LIST_ITEMS_WITHOUT_MEMBER: ChatListItem[] = [
 /** variant='with-member' — Alex Smith first, Tasktag Helpdesk last */
 export const LIST_ITEMS_WITH_MEMBER: ChatListItem[] = [
   {
-    id: '2',
+    id: 'alex-smith',
     user: { variant: 'text', initials: 'AS', color: 'secondaryGreen' },
     name: 'Alex Smith',
     preview: 'Hey! Can you check the task list for the renovation project?',

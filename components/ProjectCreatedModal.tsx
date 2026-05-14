@@ -7,9 +7,10 @@ import Svg, { Circle, Path } from 'react-native-svg';
 
 const BIG_TICK_LEN = 51; // M 18 36 L 30 48 L 54 24 → √288 + √1152 ≈ 17 + 34
 const HOLD_MS = 5000;
+const CHECK_DRAW_DELAY_MS = 40;
+const CHECK_DRAW_MS = 220;
 
 const AnimatedPath   = Animated.createAnimatedComponent(Path);
-const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 export interface ProjectCreatedModalProps {
   projectName?: string;
@@ -25,17 +26,15 @@ export function ProjectCreatedModal({ projectName, onDismiss }: ProjectCreatedMo
   const cardOpacity     = useRef(new Animated.Value(0)).current;
 
   // ── Check circle ──────────────────────────────────────────────────────────
-  const circleFill  = useRef(new Animated.Value(0)).current;
   const tickOffset  = useRef(new Animated.Value(BIG_TICK_LEN)).current;
 
   // ── Next step row ─────────────────────────────────────────────────────────
   const nextOpacity = useRef(new Animated.Value(0)).current;
   const nextY       = useRef(new Animated.Value(10)).current;
-
-  // ── Pulse ring ────────────────────────────────────────────────────────────
   const pulseScale   = useRef(new Animated.Value(1)).current;
   const pulseOpacity = useRef(new Animated.Value(0.6)).current;
 
+  // ── Pulse ring ────────────────────────────────────────────────────────────
   // ── Progress countdown bar ─────────────────────────────────────────────────
   const progress = useRef(new Animated.Value(1)).current;
 
@@ -47,11 +46,13 @@ export function ProjectCreatedModal({ projectName, onDismiss }: ProjectCreatedMo
     ]);
 
     enter.start(() => {
-      // Check circle
-      Animated.parallel([
-        Animated.timing(circleFill, { toValue: 1, duration: 280, easing: Easing.out(Easing.quad), useNativeDriver: true }),
-        Animated.timing(tickOffset, { toValue: 0, duration: 440, delay: 100, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
-      ]).start();
+      Animated.timing(tickOffset, {
+        toValue: 0,
+        duration: CHECK_DRAW_MS,
+        delay: CHECK_DRAW_DELAY_MS,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }).start();
 
       // Next step appears
       Animated.sequence([
@@ -94,7 +95,6 @@ export function ProjectCreatedModal({ projectName, onDismiss }: ProjectCreatedMo
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const circleOpacity = circleFill.interpolate({ inputRange: [0, 1], outputRange: [0, 1] });
   const progressPct   = progress.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] });
 
   const displayName = projectName
@@ -153,12 +153,7 @@ export function ProjectCreatedModal({ projectName, onDismiss }: ProjectCreatedMo
             <Box alignItems="center" style={{ gap: 20 }}>
               <Box style={{ width: 72, height: 72 }}>
                 <Svg width={72} height={72} viewBox="0 0 72 72">
-                  <Circle cx={36} cy={36} r={35} fill={`${theme.colors.secondaryGreen}18`} />
-                  <AnimatedCircle
-                    cx={36} cy={36} r={35}
-                    fill={theme.colors.secondaryGreen}
-                    opacity={circleOpacity as any}
-                  />
+                  <Circle cx={36} cy={36} r={35} fill={theme.colors.secondaryGreen} />
                   <AnimatedPath
                     d="M 18 36 L 30 48 L 54 24"
                     stroke="white"
@@ -248,7 +243,7 @@ export function ProjectCreatedModal({ projectName, onDismiss }: ProjectCreatedMo
                 <Text
                   style={{
                     fontSize: 18,
-                    fontWeight: '600',
+                    fontWeight: '700',
                     color: theme.colors.textPrimary,
                     lineHeight: 24,
                   }}

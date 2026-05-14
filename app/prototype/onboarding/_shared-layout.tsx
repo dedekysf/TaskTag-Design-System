@@ -23,6 +23,8 @@ export function MainLayoutOnboarding({
   const [showRewardWidget, setShowRewardWidget] = useState(false);
   const [createdProjectName, setCreatedProjectName] = useState('');
   const [showTaskTooltip, setShowTaskTooltip] = useState(false);
+  const [showMemberJoinedChat, setShowMemberJoinedChat] = useState(false);
+  const [openMemberChatSignal, setOpenMemberChatSignal] = useState(0);
   const [renderPanel, setRenderPanel] = useState(
     showCreateProjectPanelProp ?? false
   );
@@ -91,7 +93,15 @@ export function MainLayoutOnboarding({
       <Box flex={1} backgroundColor="background" style={{ height: '100%' as any, position: 'relative' }}>
         {children ?? (
           showProjectDetail
-            ? <ProjectDetail showOnboardingTooltip={showTaskTooltip} />
+            ? (
+              <ProjectDetail
+                showOnboardingTooltip={showTaskTooltip}
+                onInviteSentToastDismiss={() => {
+                  setShowMemberJoinedChat(true);
+                  setOpenMemberChatSignal(value => value + 1);
+                }}
+              />
+            )
             : <ProjectList onCreateProject={openPanel} />
         )}
 
@@ -147,7 +157,13 @@ export function MainLayoutOnboarding({
       </Box>
 
       {/* ── Right: Unified Chat Panel (list → room → collapsed) ── */}
-      <ChatPanelComposite defaultView="list" variant="without-member" />
+      <ChatPanelComposite
+        defaultView="list"
+        variant={showMemberJoinedChat ? 'with-member' : 'without-member'}
+        openContactId="alex-smith"
+        openContactSignal={openMemberChatSignal}
+        showMemberJoinedCard={showMemberJoinedChat}
+      />
 
       {/* ── Checklist reward widget ── */}
       {showRewardWidget && (

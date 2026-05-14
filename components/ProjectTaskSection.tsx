@@ -33,6 +33,7 @@ export interface ProjectTaskSectionProps {
   showInlineCreate?: boolean;
   showOnboardingTooltip?: boolean;
   onCreateTask?: (name: string, priority: TaskPriority, dueDate: Date | null) => void;
+  onOpenAssigneeModal?: () => void;
   onCompleteTask?: (taskId: string) => void;
   onUncompleteTask?: (taskId: string) => void;
 }
@@ -48,6 +49,7 @@ export function ProjectTaskSection({
   showInlineCreate = false,
   showOnboardingTooltip = false,
   onCreateTask,
+  onOpenAssigneeModal,
   onCompleteTask,
   onUncompleteTask,
 }: ProjectTaskSectionProps) {
@@ -145,6 +147,7 @@ export function ProjectTaskSection({
           {showInlineCreate && (
             <InlineTaskCreate
               onCreateTask={onCreateTask}
+              onOpenAssigneeModal={onOpenAssigneeModal}
               showOnboardingTooltip={showOnboardingTooltip}
             />
           )}
@@ -160,9 +163,11 @@ const PRIORITY_CYCLE: TaskPriority[] = ['medium', 'high', 'low'];
 
 function InlineTaskCreate({
   onCreateTask,
+  onOpenAssigneeModal,
   showOnboardingTooltip = false,
 }: {
   onCreateTask?: (name: string, priority: TaskPriority, dueDate: Date | null) => void;
+  onOpenAssigneeModal?: () => void;
   showOnboardingTooltip?: boolean;
 }) {
   const theme = useTheme<Theme>();
@@ -300,6 +305,7 @@ function InlineTaskCreate({
             <Button
               variant="outline"
               size="sm"
+              onPress={onOpenAssigneeModal}
               style={{ height: 32, borderRadius: 40, borderColor: theme.colors.grey03 }}
               hoverBackgroundColor={theme.colors.grey03}
               leftIcon={<UserPlus size={14} color="black" />}
