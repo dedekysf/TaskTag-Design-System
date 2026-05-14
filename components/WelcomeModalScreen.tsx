@@ -193,7 +193,7 @@ export function WelcomeModalScreen({
         style={{
           width: '100%',
           alignItems: 'center',
-          paddingTop: 20,
+          paddingTop: 16,
           zIndex: 1,
           opacity: content.opacity,
           transform: [
@@ -236,7 +236,7 @@ export function WelcomeModalScreen({
             fontWeight: '400',
             color: theme.colors.grey05,
             textAlign: 'center',
-            marginBottom: 28,
+            marginBottom: 16,
           }}
         >
           {description}
