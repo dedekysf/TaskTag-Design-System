@@ -1166,7 +1166,8 @@ export function ProjectDetail({
         <Toast
           visible={showConvertToast}
           title="Converted to task"
-          variant="title-arrow"
+          caption="Check your Tasks tab to assign them"
+          variant="title-caption-arrow"
           type="success"
           onDismiss={() => { setShowConvertToast(false); setShowInviteNudge(true); }}
         />
