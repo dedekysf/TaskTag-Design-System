@@ -475,7 +475,7 @@ export function ProjectDetail({
                     key={tab.id}
                     variant="bottom-left"
                     tooltipStyle="success"
-                    title="Scope the full job"
+                    title="Start with a ready to go list"
                     description="Got a full job scope? Add everything at once in the Checklist tab — then turn each item into a task with one tap."
                     step="Step 1/3"
                     ctaText="Show me"
