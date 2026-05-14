@@ -716,7 +716,7 @@ export function ProjectDetail({
                 <TooltipOnboarding
                   variant="bottom-right"
                   tooltipStyle="success"
-                  title="Start with a ready-made list"
+                  title="Start with a ready to go list"
                   description="Pick a template that matches your job type — the items are done for you."
                   step="Step 2/3"
                   open={showChecklistActionTooltip}
