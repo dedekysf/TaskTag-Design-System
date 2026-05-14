@@ -782,7 +782,7 @@ function AssignTaskConfirm({
         {/* Footer */}
         <Box
           flexDirection="row"
-          style={{ gap: 8, paddingHorizontal: 16, paddingVertical: 14, borderTopWidth: 1, borderTopColor: theme.colors.border } as any}
+          style={{ gap: 16, paddingHorizontal: 16, paddingVertical: 14 }}
         >
           <Pressable
             onPress={onCancel}
