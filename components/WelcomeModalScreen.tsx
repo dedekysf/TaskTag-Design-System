@@ -205,12 +205,12 @@ export function WelcomeModalScreen({
         {/* "You're in" line */}
         <Text
           style={{
-            fontSize: 20,
+            fontSize: 22,
             lineHeight: 28,
             fontWeight: '600',
             color: theme.colors.secondaryGreen,
             textAlign: 'center',
-            marginBottom: 10,
+            marginBottom: 4,
           }}
         >
           {`You're in, ${name}`}
