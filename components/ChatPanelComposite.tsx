@@ -21,23 +21,23 @@
  */
 
 import { Box, Text } from '@/components/primitives';
-import { TooltipOnboarding } from '@/components/TooltipOnboarding';
 import { Toast } from '@/components/Toast';
+import { TooltipOnboarding } from '@/components/TooltipOnboarding';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import {
   Camera,
+  Check,
   ChevronLeft,
   ChevronsLeft,
   ChevronsRight,
-  Check,
   FileText,
   Folder,
   Hash,
   Image as ImageIcon,
   Maximize2,
-  MoreVertical,
   MessageSquarePlus,
+  MoreVertical,
   Plus,
   Search,
   Send,
@@ -366,13 +366,13 @@ const PICKER_ITEMS_AFTER_ASSIGN: PickerItem[] = PICKER_ITEMS.map(item =>
 // TODO (backend): replace with API — GET /projects/:id/tasks, include assignees per task
 const TAG_PICKER_ITEMS: PickerItem[] = [
   { type: 'project', label: 'LA Avenue 34 G' },
-  { type: 'task',    label: 'Fix the sink',              assignees: [OWNER_AVATAR] },
+  { type: 'task', label: 'Fix the sink', assignees: [OWNER_AVATAR] },
   { type: 'project', label: 'Welcome to Tasktag! 🎉' },
-  { type: 'task',    label: 'Create Your First Task',    assignees: [OWNER_AVATAR] },
-  { type: 'task',    label: 'Invite Contacts',           assignees: [OWNER_AVATAR] },
-  { type: 'task',    label: 'Set a Due Date',            assignees: [OWNER_AVATAR] },
-  { type: 'task',    label: 'Mark All the Tasks as Done',assignees: [OWNER_AVATAR] },
-  { type: 'task',    label: 'Archive the Projects',      assignees: [OWNER_AVATAR] },
+  { type: 'task', label: 'Create Your First Task', assignees: [OWNER_AVATAR] },
+  { type: 'task', label: 'Invite Contacts', assignees: [OWNER_AVATAR] },
+  { type: 'task', label: 'Set a Due Date', assignees: [OWNER_AVATAR] },
+  { type: 'task', label: 'Mark All the Tasks as Done', assignees: [OWNER_AVATAR] },
+  { type: 'task', label: 'Archive the Projects', assignees: [OWNER_AVATAR] },
 ];
 
 // Reflects the state after Alex Smith is assigned to "Fix the sink" in the same session.
@@ -430,18 +430,18 @@ function AssignTaskPicker({
 
   const filtered: PickerItem[] = query.trim()
     ? (() => {
-        const result: PickerItem[] = [];
-        let pendingProject: PickerItem | null = null;
-        for (const item of items) {
-          if (item.type === 'project') {
-            pendingProject = item;
-          } else if (item.label.toLowerCase().includes(query.toLowerCase())) {
-            if (pendingProject) { result.push(pendingProject); pendingProject = null; }
-            result.push(item);
-          }
+      const result: PickerItem[] = [];
+      let pendingProject: PickerItem | null = null;
+      for (const item of items) {
+        if (item.type === 'project') {
+          pendingProject = item;
+        } else if (item.label.toLowerCase().includes(query.toLowerCase())) {
+          if (pendingProject) { result.push(pendingProject); pendingProject = null; }
+          result.push(item);
         }
-        return result;
-      })()
+      }
+      return result;
+    })()
     : items;
 
   return (
@@ -456,110 +456,86 @@ function AssignTaskPicker({
         transform: [{ translateY: slideAnim }],
       }}
     >
-    <Box
-      backgroundColor="card"
-      borderWidth={1}
-      borderColor="border"
-      style={{
-        borderRadius: 16,
-        overflow: 'hidden',
-        ...Platform.select({
-          web: { boxShadow: '0 12px 30px rgba(0,0,0,0.14)' } as any,
-          default: {
-            elevation: 10,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 12 },
-            shadowOpacity: 0.14,
-            shadowRadius: 20,
-          },
-        }),
-      }}
-    >
-      {/* Search row */}
-      <Box flexDirection="row" alignItems="center" style={{ paddingHorizontal: 16, paddingVertical: 18, gap: 8 }}>
-        <Box
-          flex={1}
-          flexDirection="row"
-          alignItems="center"
-          backgroundColor="grey02"
-          style={{ borderRadius: 8, paddingHorizontal: 8, paddingVertical: 8, gap: 6 }}
-        >
+      <Box
+        backgroundColor="card"
+        borderWidth={1}
+        borderColor="border"
+        style={{
+          borderRadius: 16,
+          overflow: 'hidden',
+          ...Platform.select({
+            web: { boxShadow: '0 12px 30px rgba(0,0,0,0.14)' } as any,
+            default: {
+              elevation: 10,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 12 },
+              shadowOpacity: 0.14,
+              shadowRadius: 20,
+            },
+          }),
+        }}
+      >
+        {/* Search row */}
+        <Box flexDirection="row" alignItems="center" style={{ paddingHorizontal: 16, paddingVertical: 18, gap: 8 }}>
           <Box
-            width={24}
-            height={24}
-            borderRadius="6"
+            flex={1}
+            flexDirection="row"
             alignItems="center"
-            justifyContent="center"
-            style={{ backgroundColor: theme.colors.secondaryGreen }}
+            backgroundColor="grey02"
+            style={{ borderRadius: 8, paddingHorizontal: 8, paddingVertical: 8, gap: 6 }}
           >
-            <Hash size={16} color={theme.colors.white} />
+            <Box
+              width={24}
+              height={24}
+              borderRadius="6"
+              alignItems="center"
+              justifyContent="center"
+              style={{ backgroundColor: theme.colors.secondaryGreen }}
+            >
+              <Hash size={16} color={theme.colors.white} />
+            </Box>
+            <TextInput
+              value={query}
+              onChangeText={setQuery}
+              placeholder="Search Task"
+              placeholderTextColor={theme.colors.grey05}
+              style={[
+                { flex: 1, color: theme.colors.foreground, fontSize: 16, padding: 0 },
+                Platform.OS === 'web' && ({ outlineStyle: 'none' } as any),
+              ]}
+            />
           </Box>
-          <TextInput
-            value={query}
-            onChangeText={setQuery}
-            placeholder="Search Task"
-            placeholderTextColor={theme.colors.grey05}
-            style={[
-              { flex: 1, color: theme.colors.foreground, fontSize: 16, padding: 0 },
-              Platform.OS === 'web' && ({ outlineStyle: 'none' } as any),
-            ]}
-          />
+          <Pressable onPress={onCancel} style={{ paddingVertical: 4 }}>
+            <Text style={{ fontSize: 16, fontWeight: '500', color: theme.colors.secondaryGreen }}>Cancel</Text>
+          </Pressable>
         </Box>
-        <Pressable onPress={onCancel} style={{ paddingVertical: 4 }}>
-          <Text style={{ fontSize: 16, fontWeight: '500', color: theme.colors.secondaryGreen }}>Cancel</Text>
-        </Pressable>
-      </Box>
 
-      <Box height={1} backgroundColor="border" />
+        <Box height={1} backgroundColor="border" />
 
-      <ScrollView style={{ maxHeight: 425 }} showsVerticalScrollIndicator={false}>
-        <Box style={{ paddingHorizontal: 16, paddingTop: 10, paddingBottom: 14 }}>
-          <Text style={{ fontSize: 14, color: theme.colors.grey05, lineHeight: 20, marginBottom: 10 }}>
-            All Projects &amp; Tasks
-          </Text>
-          {filtered.map((item, idx) =>
-            item.type === 'project' ? (
-              <Box key={idx} flexDirection="row" alignItems="center" justifyContent="space-between" style={{ paddingVertical: 10, gap: 8 }}>
-                <Box flexDirection="row" alignItems="center" style={{ gap: 8 }}>
-                  <Box
-                    width={24}
-                    height={24}
-                    borderRadius="6"
-                    alignItems="center"
-                    justifyContent="center"
-                    style={{ backgroundColor: theme.colors.secondaryGreen }}
-                  >
-                    <Folder size={14} color={theme.colors.white} />
-                  </Box>
-                  <Text style={{ fontSize: 15, fontWeight: '700', color: theme.colors.foreground, lineHeight: 20 }}>
-                    {item.label}
-                  </Text>
-                </Box>
-                {item.assignees && item.assignees.length > 0 && (
-                  <Box flexDirection="row" alignItems="center" style={{ marginRight: 2 }}>
-                    {item.assignees.map((user, i) => (
-                      <Box key={i} style={{ marginLeft: i === 0 ? 0 : -8 }}>
-                        <ChatAvatar user={user} size={28} />
-                      </Box>
-                    ))}
-                  </Box>
-                )}
-              </Box>
-            ) : (
-              <Pressable key={idx} onPress={() => onSelectTask(item.label)} style={{ paddingVertical: 11 }}>
-                {({ pressed }: any) => (
-                  <Box
-                    flexDirection="row"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    style={{ opacity: pressed ? 0.7 : 1 }}
-                  >
-                    <Box flexDirection="row" alignItems="center" style={{ gap: 12 }}>
-                      <Hash size={18} color={theme.colors.secondaryGreen} />
-                      <Text style={{ fontSize: 15, color: theme.colors.foreground, lineHeight: 20 }}>
-                        {item.label}
-                      </Text>
+        <ScrollView style={{ maxHeight: 425 }} showsVerticalScrollIndicator={false}>
+          <Box style={{ paddingHorizontal: 16, paddingTop: 10, paddingBottom: 14 }}>
+            <Text style={{ fontSize: 14, color: theme.colors.grey05, lineHeight: 20, marginBottom: 10 }}>
+              All Projects &amp; Tasks
+            </Text>
+            {filtered.map((item, idx) =>
+              item.type === 'project' ? (
+                <Box key={idx} flexDirection="row" alignItems="center" justifyContent="space-between" style={{ paddingVertical: 10, gap: 8 }}>
+                  <Box flexDirection="row" alignItems="center" style={{ gap: 8 }}>
+                    <Box
+                      width={24}
+                      height={24}
+                      borderRadius="6"
+                      alignItems="center"
+                      justifyContent="center"
+                      style={{ backgroundColor: theme.colors.secondaryGreen }}
+                    >
+                      <Folder size={14} color={theme.colors.white} />
                     </Box>
+                    <Text style={{ fontSize: 15, fontWeight: '700', color: theme.colors.foreground, lineHeight: 20 }}>
+                      {item.label}
+                    </Text>
+                  </Box>
+                  {item.assignees && item.assignees.length > 0 && (
                     <Box flexDirection="row" alignItems="center" style={{ marginRight: 2 }}>
                       {item.assignees.map((user, i) => (
                         <Box key={i} style={{ marginLeft: i === 0 ? 0 : -8 }}>
@@ -567,14 +543,38 @@ function AssignTaskPicker({
                         </Box>
                       ))}
                     </Box>
-                  </Box>
-                )}
-              </Pressable>
-            )
-          )}
-        </Box>
-      </ScrollView>
-    </Box>
+                  )}
+                </Box>
+              ) : (
+                <Pressable key={idx} onPress={() => onSelectTask(item.label)} style={{ paddingVertical: 11 }}>
+                  {({ pressed }: any) => (
+                    <Box
+                      flexDirection="row"
+                      alignItems="center"
+                      justifyContent="space-between"
+                      style={{ opacity: pressed ? 0.7 : 1 }}
+                    >
+                      <Box flexDirection="row" alignItems="center" style={{ gap: 12 }}>
+                        <Hash size={18} color={theme.colors.secondaryGreen} />
+                        <Text style={{ fontSize: 15, color: theme.colors.foreground, lineHeight: 20 }}>
+                          {item.label}
+                        </Text>
+                      </Box>
+                      <Box flexDirection="row" alignItems="center" style={{ marginRight: 2 }}>
+                        {item.assignees.map((user, i) => (
+                          <Box key={i} style={{ marginLeft: i === 0 ? 0 : -8 }}>
+                            <ChatAvatar user={user} size={28} />
+                          </Box>
+                        ))}
+                      </Box>
+                    </Box>
+                  )}
+                </Pressable>
+              )
+            )}
+          </Box>
+        </ScrollView>
+      </Box>
     </Animated.View>
   );
 }
@@ -930,17 +930,17 @@ function TagPicker({
   const filtered: TagItem[] = buildFiltered(
     query.trim()
       ? (() => {
-          const result: PickerItem[] = [];
-          let pending: PickerItem | null = null;
-          for (const item of items) {
-            if (item.type === 'project') { pending = item; }
-            else if (item.label.toLowerCase().includes(query.toLowerCase())) {
-              if (pending) { result.push(pending); pending = null; }
-              result.push(item);
-            }
+        const result: PickerItem[] = [];
+        let pending: PickerItem | null = null;
+        for (const item of items) {
+          if (item.type === 'project') { pending = item; }
+          else if (item.label.toLowerCase().includes(query.toLowerCase())) {
+            if (pending) { result.push(pending); pending = null; }
+            result.push(item);
           }
-          return result;
-        })()
+        }
+        return result;
+      })()
       : items
   );
 
@@ -1612,7 +1612,7 @@ function RoomView({
             variant="left-center"
             tooltipStyle="success"
             title="Smart Tags"
-            description="Tagged messages stay linked to the job — find them anytime from the project."
+            description="Nice! You've linked this message to a project and task. Send it and it'll stay connected — no more hunting through chats to find it."
             step="Step 3/3"
             open
             forceShow
