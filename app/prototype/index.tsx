@@ -136,6 +136,13 @@ export default function PrototypeIndex() {
 
   const prototypes = [
     {
+      title: 'Tutorialization RD 3 from MJ',
+      jiraTicket: '',
+      jiraLabel: '',
+      route: '/prototype/tutorialization-rd3-from-mj',
+      platform: 'Mobile' as const,
+    },
+    {
       title: 'Email - Team Request Approved',
       jiraTicket: 'https://tasktag-design.atlassian.net/browse/TD-315?atlOrigin=eyJpIjoiZDg2YTRkNmY0NWYzNDljNjliY2Y5MWEyNzc5MjZjNWIiLCJwIjoiaiJ9',
       jiraLabel: 'TD-315',
@@ -408,9 +415,10 @@ export default function PrototypeIndex() {
   const expiredProjectMobile = prototypes.find(p => p.title === 'Project Invitation Expired by Email' && p.platform === 'Mobile');
   const joinTeamTTUser = prototypes.find(p => p.title === 'Join Team TT User by Link');
   const expiredNonUsers = prototypes.filter(p => p.title === 'Team Invitation Expired by Email');
-  const rest = prototypes.filter(p => 
-    !PINNED_TITLES.includes(p.title) && 
-    p.title !== 'Onboarding' && 
+  const rest = prototypes.filter(p =>
+    !PINNED_TITLES.includes(p.title) &&
+    p.title !== 'Tutorialization RD 3 from MJ' &&
+    p.title !== 'Onboarding' &&
     p.title !== 'Team Invitation Expired by Email' && 
     p.title !== 'Role Descriptions and Naming Consistency' && 
     p.title !== 'Remove Member Discoverable on Active Member' &&
@@ -424,9 +432,12 @@ export default function PrototypeIndex() {
     p.title !== 'Project Invitation Expired by Email'
   );
 
+  const tutorializationRD3 = prototypes.find(p => p.title === 'Tutorialization RD 3 from MJ')!;
+
   const rawFiltered = [
-    github, 
-    designSystem, 
+    github,
+    designSystem,
+    tutorializationRD3,
     onboarding,
     expiredProjectMobile,
     expiredProjectWeb,

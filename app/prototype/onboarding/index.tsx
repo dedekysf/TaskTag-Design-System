@@ -66,7 +66,7 @@ export default function OnboardingScreen() {
           >
             <Pressable onPress={(event) => event.stopPropagation()}>
               <WelcomeModalScreen
-                name="Oscar"
+                name="Maria Jose"
                 onGetStarted={() => {
                   Animated.timing(modalProgress, {
                     toValue: 0,

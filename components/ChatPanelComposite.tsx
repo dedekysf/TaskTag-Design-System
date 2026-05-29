@@ -81,7 +81,7 @@ export interface ChatListItem {
 
 /**
  * 'without-member' → only Tasktag Helpdesk (1 item)
- * 'with-member'    → Tasktag Helpdesk + Alex Smith (2 items)
+ * 'with-member'    → Tasktag Helpdesk + Carlos Smith (2 items)
  */
 export type ChatPanelVariant = 'without-member' | 'with-member';
 
@@ -334,12 +334,12 @@ function ListView({
 
 // TODO (backend): replace with authenticated user from auth context (e.g. useAuth().currentUser)
 const CURRENT_USER = {
-  name: 'Oscar Eduardo',
-  avatarSrc: require('@/assets/images/sample-three.jpg') as ImageSourcePropType,
+  name: 'Maria Jose',
+  avatarSrc: require('@/assets/images/mj.png') as ImageSourcePropType,
 };
 
 const OWNER_AVATAR: ChatUser = { variant: 'photo', src: CURRENT_USER.avatarSrc };
-const ALEX_AVATAR: ChatUser = { variant: 'text', initials: 'AS', color: 'darkGreen' };
+const CARLOS_AVATAR: ChatUser = { variant: 'text', initials: 'CS', color: 'darkGreen' };
 
 type PickerItem =
   | { type: 'project'; label: string; assignees?: ChatUser[] }
@@ -359,7 +359,7 @@ const PICKER_ITEMS: PickerItem[] = [
 // TODO (backend): will be derived from API — assignees updated automatically once assignment is persisted.
 const PICKER_ITEMS_AFTER_ASSIGN: PickerItem[] = PICKER_ITEMS.map(item =>
   (item.label === 'LA Avenue 34 G' || item.label === 'Fix the sink')
-    ? { ...item, assignees: [OWNER_AVATAR, ALEX_AVATAR] }
+    ? { ...item, assignees: [OWNER_AVATAR, CARLOS_AVATAR] }
     : item
 );
 
@@ -375,11 +375,11 @@ const TAG_PICKER_ITEMS: PickerItem[] = [
   { type: 'task', label: 'Archive the Projects', assignees: [OWNER_AVATAR] },
 ];
 
-// Reflects the state after Alex Smith is assigned to "Fix the sink" in the same session.
+// Reflects the state after Carlos Smith is assigned to "Fix the sink" in the same session.
 // TODO (backend): this will be handled automatically once assignees come from the API.
 const TAG_PICKER_ITEMS_AFTER_ASSIGN: PickerItem[] = TAG_PICKER_ITEMS.map(item =>
   item.type === 'task' && item.label === 'Fix the sink'
-    ? { ...item, assignees: [OWNER_AVATAR, ALEX_AVATAR] }
+    ? { ...item, assignees: [OWNER_AVATAR, CARLOS_AVATAR] }
     : item
 );
 
@@ -389,15 +389,19 @@ function AssignTaskPicker({
   exiting = false,
   onExitComplete,
   items = PICKER_ITEMS,
+  initialProjectFilter,
 }: {
   onCancel: () => void;
   onSelectTask: (task: string) => void;
   exiting?: boolean;
   onExitComplete?: () => void;
   items?: PickerItem[];
+  initialProjectFilter?: string;
 }) {
   const theme = useTheme<Theme>();
   const [query, setQuery] = useState('');
+  const [projectFilter, setProjectFilter] = useState(initialProjectFilter ?? '');
+  const isProjectFiltered = !!projectFilter;
   const slideAnim = useRef(new Animated.Value(60)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -428,21 +432,35 @@ function AssignTaskPicker({
     }).start(() => onExitComplete?.());
   }, [exiting]);
 
-  const filtered: PickerItem[] = query.trim()
+  const filtered: PickerItem[] = isProjectFiltered
     ? (() => {
-      const result: PickerItem[] = [];
-      let pendingProject: PickerItem | null = null;
-      for (const item of items) {
-        if (item.type === 'project') {
-          pendingProject = item;
-        } else if (item.label.toLowerCase().includes(query.toLowerCase())) {
-          if (pendingProject) { result.push(pendingProject); pendingProject = null; }
-          result.push(item);
+        const result: PickerItem[] = [];
+        let inMatch = false;
+        for (const item of items) {
+          if (item.type === 'project') {
+            inMatch = item.label === projectFilter;
+            if (inMatch) result.push(item);
+          } else if (inMatch) {
+            result.push(item);
+          }
         }
-      }
-      return result;
-    })()
-    : items;
+        return result;
+      })()
+    : query.trim()
+      ? (() => {
+          const result: PickerItem[] = [];
+          let pendingProject: PickerItem | null = null;
+          for (const item of items) {
+            if (item.type === 'project') {
+              pendingProject = item;
+            } else if (item.label.toLowerCase().includes(query.toLowerCase())) {
+              if (pendingProject) { result.push(pendingProject); pendingProject = null; }
+              result.push(item);
+            }
+          }
+          return result;
+        })()
+      : items;
 
   return (
     <Animated.View
@@ -494,16 +512,28 @@ function AssignTaskPicker({
             >
               <Hash size={16} color={theme.colors.white} />
             </Box>
-            <TextInput
-              value={query}
-              onChangeText={setQuery}
-              placeholder="Search Task"
-              placeholderTextColor={theme.colors.grey05}
-              style={[
-                { flex: 1, color: theme.colors.foreground, fontSize: 16, padding: 0 },
-                Platform.OS === 'web' && ({ outlineStyle: 'none' } as any),
-              ]}
-            />
+            {isProjectFiltered ? (
+              <>
+                <Text style={{ flex: 1, color: theme.colors.foreground, fontSize: 16, padding: 0 }}>
+                  {projectFilter}
+                </Text>
+                <Pressable onPress={() => setProjectFilter('')} hitSlop={8}>
+                  <X size={16} color={theme.colors.grey05} />
+                </Pressable>
+              </>
+            ) : (
+              <TextInput
+                value={query}
+                onChangeText={setQuery}
+                placeholder="Search Task"
+                placeholderTextColor={theme.colors.grey05}
+                autoFocus
+                style={[
+                  { flex: 1, color: theme.colors.foreground, fontSize: 16, padding: 0 },
+                  Platform.OS === 'web' && ({ outlineStyle: 'none' } as any),
+                ]}
+              />
+            )}
           </Box>
           <Pressable onPress={onCancel} style={{ paddingVertical: 4 }}>
             <Text style={{ fontSize: 16, fontWeight: '500', color: theme.colors.secondaryGreen }}>Cancel</Text>
@@ -598,8 +628,8 @@ function AssignTaskConfirm({
 
   // TODO (backend): fetch project members from API — GET /projects/:id/members
   const MEMBERS = [
-    { id: 'savannah', name: 'Savannah Nguyen', email: 'savannahnguyen@gmail.com', avatarType: 'photo' as const },
-    { id: contact.id, name: contact.name, email: 'alexsmith@gmail.com', avatarType: 'contact' as const },
+    { id: 'maria-jose', name: 'Maria Jose', email: 'mariajose@gmail.com', avatarType: 'photo' as const },
+    { id: contact.id, name: contact.name, email: 'carlossmith@gmail.com', avatarType: 'contact' as const },
   ];
 
   const toggle = (id: string) =>
@@ -727,7 +757,7 @@ function AssignTaskConfirm({
                       <Box style={{ position: 'relative' as any }}>
                         {m.avatarType === 'photo' ? (
                           <Image
-                            source={require('@/assets/images/sample-three.jpg')}
+                            source={require('@/assets/images/mj.png')}
                             style={{ width: 44, height: 44, borderRadius: 22 }}
                           />
                         ) : (
@@ -783,7 +813,7 @@ function AssignTaskConfirm({
               {MEMBERS.map(m => {
                 const isSelected = selectedIds.includes(m.id);
                 // TODO (backend): use currentUser.id — the project owner cannot be removed
-                const isDisabled = m.id === 'savannah';
+                const isDisabled = m.id === 'maria-jose';
                 return (
                   <Pressable
                     key={m.id}
@@ -801,7 +831,7 @@ function AssignTaskConfirm({
                       <>
                         {m.avatarType === 'photo' ? (
                           <Image
-                            source={require('@/assets/images/sample-three.jpg')}
+                            source={require('@/assets/images/mj.png')}
                             style={{ width: 36, height: 36, borderRadius: 18, flexShrink: 0 }}
                           />
                         ) : (
@@ -1015,7 +1045,7 @@ function RoomView({
   // ── Assign-task flow ──────────────────────────────────────────────────────
   // none → picker → confirm → assigned
   const [assignTaskView, setAssignTaskView] = useState<'none' | 'picker' | 'confirm' | 'assigned'>('none');
-  // Tracks whether Alex has been assigned this session; used to show his avatar in TagPicker.
+  // Tracks whether Carlos has been assigned this session; used to show his avatar in TagPicker.
   // TODO (backend): derive from task assignees API instead of local state.
   const [wasAssigned, setWasAssigned] = useState(false);
   const [pickerExiting, setPickerExiting] = useState(false);
@@ -1270,8 +1300,8 @@ function RoomView({
                 {assignTaskView === 'assigned' ? (
                   <>
                     <Text style={{ fontSize: 14, color: theme.colors.textSecondary, lineHeight: 20, marginBottom: 16 }}>
-                      Alex is now working on{' '}
-                      <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.foreground }}>{selectedTask}</Text>
+                      Carlos is now working on{' '}
+                      <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.secondaryGreen }}>{selectedTask}</Text>
                     </Text>
                     <Box flexDirection="row" style={{ gap: 10 }}>
                       <Pressable
@@ -1284,7 +1314,7 @@ function RoomView({
                           alignItems: 'center',
                         })}
                       >
-                        <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.white }}>View Alex's task</Text>
+                        <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.white }}>View task</Text>
                       </Pressable>
                       <Pressable
                         onPress={() => setAssignTaskView('picker')}
@@ -1306,7 +1336,7 @@ function RoomView({
                 ) : (
                   <>
                     <Text style={{ fontSize: 14, color: theme.colors.textSecondary, lineHeight: 20, marginBottom: 16 }}>
-                      Alex is now part of <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.foreground }}>LA Avenue 34 G</Text> and ready to collaborate.
+                      Carlos is now part of <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.secondaryGreen }}>LA Avenue 34 G</Text> and ready to collaborate.
                     </Text>
                     <TooltipOnboarding
                       variant="left-center"
@@ -1547,7 +1577,25 @@ function RoomView({
           exiting={pickerExiting}
           onExitComplete={() => setPickerExiting(false)}
           items={wasAssigned ? PICKER_ITEMS_AFTER_ASSIGN : PICKER_ITEMS}
+          initialProjectFilter="LA Avenue 34 G"
         />
+      )}
+
+      {/* "Tasks start with #" tooltip — appears when assign picker opens */}
+      {assignTaskView === 'picker' && !pickerExiting && (
+        <Box style={{ position: 'absolute' as any, left: 16, bottom: 110, width: 1, height: 42, zIndex: 25 }}>
+          <TooltipOnboarding
+            variant="left-center"
+            tooltipStyle="success"
+            title="Tasks start with #"
+            description="Tap a task to assign it to your crew"
+            open
+            forceShow
+            offset={20}
+          >
+            <Box pointerEvents="none" style={{ width: 1, height: 42 }} />
+          </TooltipOnboarding>
+        </Box>
       )}
 
       {assignTaskView === 'confirm' && (
@@ -1889,7 +1937,7 @@ export function ChatPanelComposite({
           contact={activeContact}
           onBack={() => setView('list')}
           onClose={() => setView('list')}
-          showMemberJoinedCard={showMemberJoinedCard || activeContact.id === 'alex-smith'}
+          showMemberJoinedCard={showMemberJoinedCard || activeContact.id === 'carlos-smith'}
           showAssignTooltip={showAssignTooltip}
           onAssignTooltipDismiss={onAssignTooltipDismiss}
         />
@@ -1927,12 +1975,12 @@ export const LIST_ITEMS_WITHOUT_MEMBER: ChatListItem[] = [
   },
 ];
 
-/** variant='with-member' — Alex Smith first, Tasktag Helpdesk last */
+/** variant='with-member' — Carlos Smith first, Tasktag Helpdesk last */
 export const LIST_ITEMS_WITH_MEMBER: ChatListItem[] = [
   {
-    id: 'alex-smith',
-    user: { variant: 'text', initials: 'AS', color: 'darkGreen' },
-    name: 'Alex Smith',
+    id: 'carlos-smith',
+    user: { variant: 'text', initials: 'CS', color: 'darkGreen' },
+    name: 'Carlos Smith',
     preview: 'Hey! Can you check the task list for the renovation project?',
     timestamp: 'Yesterday',
   },

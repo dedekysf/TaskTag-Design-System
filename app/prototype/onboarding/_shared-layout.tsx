@@ -86,7 +86,7 @@ export function MainLayoutOnboarding({
       <SideNav
         defaultExpanded={true}
         activeItemId="projects"
-        accountPhotoSrc={require('@/assets/images/sample-three.jpg')}
+        accountPhotoSrc={require('@/assets/images/mj.png')}
         accountName="My Account"
       />
 
@@ -162,7 +162,7 @@ export function MainLayoutOnboarding({
       <ChatPanelComposite
         defaultView="list"
         variant={showMemberJoinedChat ? 'with-member' : 'without-member'}
-        openContactId="alex-smith"
+        openContactId="carlos-smith"
         openContactSignal={openMemberChatSignal}
         showMemberJoinedCard={showMemberJoinedChat}
         showAssignTooltip={showAssignTooltip}

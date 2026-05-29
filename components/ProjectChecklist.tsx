@@ -135,7 +135,7 @@ function RecentCard({ avatarSource }: { avatarSource: ImageSourcePropType }) {
         >
           <Avatar size="xs" type="photo" src={avatarSource} />
           <Text style={{ fontSize: 16, color: theme.colors.textSecondary, lineHeight: 21 }} numberOfLines={1}>
-            Savannah Nguyen
+            Maria Jose
           </Text>
         </Box>
       </Box>
@@ -205,7 +205,7 @@ function ProjectRow({ avatarSource }: { avatarSource: ImageSourcePropType }) {
         <Avatar size="sm" type="photo" src={avatarSource} />
         <Box justifyContent="center">
           <Text style={{ fontSize: 20, color: theme.colors.foreground, lineHeight: 24 }} numberOfLines={1}>
-            Savannah Nguyen
+            Maria Jose
           </Text>
           <Text style={{ fontSize: 14, color: theme.colors.grey05, lineHeight: 18 }}>
             Owner
@@ -237,7 +237,7 @@ function ProjectRow({ avatarSource }: { avatarSource: ImageSourcePropType }) {
 }
 
 export function ProjectList({ onCreateProject }: { onCreateProject?: () => void } = {}) {
-  const avatarSource = require('@/assets/images/sample-three.jpg');
+  const avatarSource = require('@/assets/images/mj.png');
   const theme = useTheme<Theme>();
 
   return (
