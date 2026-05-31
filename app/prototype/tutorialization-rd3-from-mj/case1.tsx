@@ -2,6 +2,7 @@ import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
 import { theme as TTTheme } from '@/constants/theme';
 import { ChatsScreen } from '../_shared/mobile/ChatsScreen';
+import { OnboardingTooltip } from '../_shared/mobile/OnboardingTooltip';
 import { StatusBarRow } from '../_shared/mobile/StatusBarRow';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Image, Platform, Pressable, View } from 'react-native';
@@ -93,19 +94,19 @@ export function Case1Screen({ onComplete }: Props) {
         <View style={{ flexDirection: 'row', justifyContent: 'center', paddingHorizontal: 16, paddingTop: 4, gap: 24 } as any}>
           <View style={{ width: 72, height: 60, alignItems: 'center', justifyContent: 'center', gap: 4 } as any}>
             <MessageSquare size={24} color={TTTheme.colors.secondaryGreen} />
-            <Text style={{ color: TTTheme.colors.secondaryGreen, fontSize: 14, fontWeight: '500' }}>Chats</Text>
+            <Text variant="mobileLabelSmall" color="secondaryGreen">Chats</Text>
           </View>
           <View style={{ width: 72, height: 60, alignItems: 'center', justifyContent: 'center', gap: 4 } as any}>
             <Folder size={24} color={TTTheme.colors.textPrimary} />
-            <Text style={{ color: TTTheme.colors.textPrimary, fontSize: 14, fontWeight: '500' }}>Projects</Text>
+            <Text variant="mobileLabelSmall" color="foreground">Projects</Text>
           </View>
           <View style={{ width: 72, height: 60, alignItems: 'center', justifyContent: 'center', gap: 4 } as any}>
             <Hash size={24} color={TTTheme.colors.textPrimary} />
-            <Text style={{ color: TTTheme.colors.textPrimary, fontSize: 14, fontWeight: '500' }}>My Tasks</Text>
+            <Text variant="mobileLabelSmall" color="foreground">My Tasks</Text>
           </View>
           <View style={{ width: 72, height: 60, alignItems: 'center', justifyContent: 'center', gap: 4 } as any}>
             <Activity size={24} color={TTTheme.colors.textPrimary} />
-            <Text style={{ color: TTTheme.colors.textPrimary, fontSize: 14, fontWeight: '500' }}>Activity</Text>
+            <Text variant="mobileLabelSmall" color="foreground">Activity</Text>
           </View>
         </View>
         <HomeIndicator />
@@ -134,7 +135,6 @@ export function Case1Screen({ onComplete }: Props) {
             <View style={{
               position: 'absolute', top: 0, left: 0, right: 0, height: 248,
               backgroundColor: '#EAFBF6', overflow: 'hidden',
-              borderBottomLeftRadius: 200, borderBottomRightRadius: 200,
             } as any}>
               {Array.from({ length: 13 }, (_, i) => (
                 <View key={`v-${i}`} style={{ position: 'absolute', top: 0, bottom: 0, left: i * 32, width: 1, backgroundColor: 'rgba(24,168,125,0.2)' } as any} />
@@ -187,22 +187,15 @@ export function Case1Screen({ onComplete }: Props) {
         {/* Overlay */}
         <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)' } as any} />
         {/* Tooltip — fades in 250ms after overlay + Projects */}
-        <Animated.View style={{ position: 'absolute', bottom: 109, left: 32, width: 312, zIndex: 2, opacity: tooltipOpacity } as any}>
-          <View style={{
-            backgroundColor: TTTheme.colors.secondaryGreen,
-            borderRadius: 16, padding: 16,
-            ...Platform.select({
-              web: { boxShadow: '0px 5px 12.5px rgba(0,0,0,0.05)' } as any,
-              default: { elevation: 5, shadowColor: '#000', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.1, shadowRadius: 12 },
-            }),
-          } as any}>
-            <View style={{ position: 'absolute', bottom: -12, left: 86, width: 24, height: 24, backgroundColor: TTTheme.colors.secondaryGreen, borderBottomRightRadius: 4, transform: [{ rotate: '45deg' }] } as any} />
-            <View style={{ gap: 6 } as any}>
-              <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600', lineHeight: 21 }}>Set up your crew</Text>
-              <Text style={{ color: '#fff', fontSize: 14, fontWeight: '400', lineHeight: 16, letterSpacing: 0.28 }}>Start by creating your first job and inviting a crew member</Text>
-            </View>
-          </View>
-        </Animated.View>
+        <OnboardingTooltip
+          title="Set up your crew"
+          description="Start by creating your first job and inviting a crew member"
+          style={{ bottom: 109, left: 32, zIndex: 2 }}
+          arrowEdge="bottom"
+          arrowSide="left"
+          arrowInset={86}
+          anim={tooltipOpacity}
+        />
         {/* Floating Projects — sits at exactly the nav Projects position */}
         <Pressable
           onPress={onComplete}
@@ -214,7 +207,7 @@ export function Case1Screen({ onComplete }: Props) {
           } as any}
         >
           <Folder size={24} color={TTTheme.colors.textPrimary} />
-          <Text style={{ color: TTTheme.colors.textPrimary, fontSize: 14, fontWeight: '500' }}>Projects</Text>
+          <Text variant="mobileLabelSmall" color="foreground">Projects</Text>
         </Pressable>
       </View>
 

@@ -1,18 +1,36 @@
 import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
 import { theme as TTTheme } from '@/constants/theme';
+import { MockKeyboard } from '../_shared/mobile/MockKeyboard';
+import { SuccessModal } from '../_shared/mobile/SuccessModal';
+import { OnboardingTooltip } from '../_shared/mobile/OnboardingTooltip';
 import { ProjectDetailScreen } from '../_shared/mobile/ProjectDetailScreen';
 import { ProjectsScreen } from '../_shared/mobile/ProjectsScreen';
 import { StatusBarRow } from '../_shared/mobile/StatusBarRow';
-import { Image as ExpoImage } from 'expo-image';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Image, Pressable, TextInput, View } from 'react-native';
+import { Animated, Easing, Image, Pressable, TextInput, View } from 'react-native';
 import { Activity, ArrowUp, Building, Folder, Hash, MessageSquare } from 'lucide-react-native';
 
-// Figma asset — expires ~7 days from 2026-05-30
-const imgSuccessCheck = 'https://www.figma.com/api/mcp/asset/80a232e9-7de3-4654-99d7-14e12f67a3f5';
-
 type Phase = 'modal' | 'form' | 'success';
+
+function useBounceIn(delay = 0) {
+  const translateY = useRef(new Animated.Value(32)).current;
+  const opacity    = useRef(new Animated.Value(0)).current;
+  const scale      = useRef(new Animated.Value(0.92)).current;
+
+  useEffect(() => {
+    Animated.sequence([
+      Animated.delay(delay),
+      Animated.parallel([
+        Animated.spring(translateY, { toValue: 0, damping: 14, stiffness: 180, mass: 0.9, useNativeDriver: true }),
+        Animated.spring(scale,     { toValue: 1, damping: 14, stiffness: 180, mass: 0.9, useNativeDriver: true }),
+        Animated.timing(opacity,   { toValue: 1, duration: 220, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      ]),
+    ]).start();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return { translateY, opacity, scale };
+}
 
 function HomeIndicator() {
   return (
@@ -22,91 +40,6 @@ function HomeIndicator() {
   );
 }
 
-// pressedKey values: uppercase letter ('A'..'Z'), 'BACKSPACE', 'SPACE', 'DONE', '123'
-function MockKeyboard({ pressedKey, onKeyTap }: {
-  pressedKey: string | null;
-  onKeyTap: (key: string) => void;
-}) {
-  const letterBg  = (ch: string) => pressedKey === ch        ? '#6a6a6a' : '#434343';
-  const specialBg = (id: string) => pressedKey === id        ? '#7a7a7a' : '#5a5a5a';
-
-  return (
-    <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 291, backgroundColor: '#171717', zIndex: 42 } as any}>
-      {/* QuickType suggestions bar — 43px, fills gap so keys sit at natural position */}
-      <View style={{ height: 43, flexDirection: 'row', borderBottomWidth: 0.5, borderBottomColor: 'rgba(255,255,255,0.15)' } as any}>
-        {['Create', '"Home"', 'New'].map((word, i) => (
-          <View key={word} style={{ flex: 1, height: 43, alignItems: 'center', justifyContent: 'center', borderRightWidth: i < 2 ? 0.5 : 0, borderRightColor: 'rgba(255,255,255,0.15)' } as any}>
-            <Text style={{ color: '#fff', fontSize: 16 }}>{word}</Text>
-          </View>
-        ))}
-      </View>
-
-      {/* Rows 1 & 2: key height 43px → row = 3+3+43+3+3 = 55px × 4 + QuickType 43 + home 28 = 291 */}
-      {['QWERTYUIOP', 'ASDFGHJKL'].map((row, ri) => (
-        <View key={ri} style={{ flexDirection: 'row', justifyContent: 'center', paddingHorizontal: 3, paddingVertical: 3 } as any}>
-          {row.split('').map(char => (
-            <Pressable
-              key={char}
-              onPress={() => onKeyTap(char)}
-              style={{ flex: 1, height: 43, backgroundColor: letterBg(char), borderRadius: 5, margin: 3, alignItems: 'center', justifyContent: 'center' } as any}
-            >
-              <Text style={{ color: '#fff', fontSize: 17, fontWeight: '400' }}>{char}</Text>
-            </Pressable>
-          ))}
-        </View>
-      ))}
-
-      {/* Row 3: Shift (decorative) + ZXCVBNM + Backspace */}
-      <View style={{ flexDirection: 'row', paddingHorizontal: 3, paddingVertical: 3 } as any}>
-        <View style={{ width: 42, height: 43, backgroundColor: '#5a5a5a', borderRadius: 5, margin: 3, alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{ color: '#fff', fontSize: 17 }}>⇧</Text>
-        </View>
-        {['Z','X','C','V','B','N','M'].map(char => (
-          <Pressable
-            key={char}
-            onPress={() => onKeyTap(char)}
-            style={{ flex: 1, height: 43, backgroundColor: letterBg(char), borderRadius: 5, margin: 3, alignItems: 'center', justifyContent: 'center' } as any}
-          >
-            <Text style={{ color: '#fff', fontSize: 17, fontWeight: '400' }}>{char}</Text>
-          </Pressable>
-        ))}
-        <Pressable
-          onPress={() => onKeyTap('BACKSPACE')}
-          style={{ width: 42, height: 43, backgroundColor: specialBg('BACKSPACE'), borderRadius: 5, margin: 3, alignItems: 'center', justifyContent: 'center' } as any}
-        >
-          <Text style={{ color: '#fff', fontSize: 17 }}>⌫</Text>
-        </Pressable>
-      </View>
-
-      {/* Bottom row */}
-      <View style={{ flexDirection: 'row', paddingHorizontal: 3, paddingVertical: 3 } as any}>
-        <Pressable
-          onPress={() => onKeyTap('123')}
-          style={{ width: 44, height: 43, backgroundColor: specialBg('123'), borderRadius: 5, margin: 3, alignItems: 'center', justifyContent: 'center' } as any}
-        >
-          <Text style={{ color: '#fff', fontSize: 14 }}>123</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => onKeyTap('SPACE')}
-          style={{ flex: 1, height: 43, backgroundColor: letterBg('SPACE'), borderRadius: 5, margin: 3, alignItems: 'center', justifyContent: 'center' } as any}
-        >
-          <Text style={{ color: '#fff', fontSize: 16 }}>space</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => onKeyTap('DONE')}
-          style={{ width: 88, height: 43, backgroundColor: specialBg('DONE'), borderRadius: 5, margin: 3, alignItems: 'center', justifyContent: 'center' } as any}
-        >
-          <Text style={{ color: '#fff', fontSize: 16 }}>Done</Text>
-        </Pressable>
-      </View>
-
-      {/* Home bar — same position as HomeIndicator (flex-end, paddingBottom 9) */}
-      <View style={{ height: 28, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 9 }}>
-        <View style={{ width: 134, height: 5, backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: 5 }} />
-      </View>
-    </View>
-  );
-}
 
 function ProjectBottomSheet({
   projectName, description,
@@ -167,6 +100,7 @@ function ProjectBottomSheet({
             <View style={{ width: 24, height: 24, backgroundColor: TTTheme.colors.secondaryGreen, borderRadius: 4, alignItems: 'center', justifyContent: 'center' }}>
               <Building size={14} color="#fff" />
             </View>
+            {/* TODO(BE): GET /api/workspaces/current — workspace name */}
             <Text variant="mobileLabelSmall" color="foreground">Personal Projects</Text>
           </Box>
           <Pressable onPress={submitActive ? onSubmit : undefined}>
@@ -180,24 +114,7 @@ function ProjectBottomSheet({
   );
 }
 
-function OnboardingTooltipCard({ title, description, step: stepLabel, bottomOffset, opacity }: {
-  title: string; description: string; step: string; bottomOffset: number;
-  opacity: Animated.Value;
-}) {
-  return (
-    <Animated.View style={{ position: 'absolute', left: 31, bottom: bottomOffset, width: 313, zIndex: 43, opacity } as any}>
-      <View style={{ backgroundColor: TTTheme.colors.secondaryGreen, borderRadius: 16, padding: 16, gap: 16 } as any}>
-        <View style={{ gap: 6 } as any}>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff', lineHeight: 21 }}>{title}</Text>
-          <Text style={{ fontSize: 14, color: '#fff', letterSpacing: 0.28, lineHeight: 16 }}>{description}</Text>
-        </View>
-        <Text style={{ fontSize: 14, color: '#F7F8FA', letterSpacing: 0.28 }}>{stepLabel}</Text>
-      </View>
-      {/* Arrow — View-based (no async load), same as Case1 tooltip */}
-      <View style={{ position: 'absolute', bottom: -12, left: 20, width: 24, height: 24, backgroundColor: TTTheme.colors.secondaryGreen, borderBottomRightRadius: 4, transform: [{ rotate: '45deg' }] } as any} />
-    </Animated.View>
-  );
-}
+
 
 export function Case2Screen({
   onAddMembers,
@@ -218,30 +135,63 @@ export function Case2Screen({
   const projectNameRef = useRef('');
   const descriptionRef = useRef('');
 
+  const modalProgress   = useRef(new Animated.Value(0)).current;
+  const modalTranslateY = modalProgress.interpolate({ inputRange: [0, 1], outputRange: [18, 0] });
+  const modalScale      = modalProgress.interpolate({ inputRange: [0, 1], outputRange: [0.96, 1] });
+  const illus           = useBounceIn(60);
+  const content         = useBounceIn(180);
+
+
   const nameTooltipOpacity = useRef(new Animated.Value(0)).current;
   const descTooltipOpacity = useRef(new Animated.Value(0)).current;
+  const sheetAnim          = useRef(new Animated.Value(0)).current;
   const nameTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const descTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const keyTimerRef  = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const sheetTranslateY = sheetAnim.interpolate({ inputRange: [0, 1], outputRange: [320, 0] });
+
   useEffect(() => {
+    if (phase === 'modal') {
+      modalProgress.setValue(0);
+      Animated.timing(modalProgress, {
+        toValue: 1, duration: 280,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }).start();
+    }
     if (phase === 'form') {
+      sheetAnim.setValue(0);
       nameTooltipOpacity.setValue(0);
       descTooltipOpacity.setValue(0);
-      Animated.timing(nameTooltipOpacity, { toValue: 1, duration: 400, useNativeDriver: false }).start();
+      Animated.timing(sheetAnim, {
+        toValue: 1, duration: 320,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }).start();
+      // Tooltip appears 250ms after sheet starts sliding up
+      Animated.timing(nameTooltipOpacity, { toValue: 1, duration: 350, delay: 250, useNativeDriver: true }).start();
       const t = setTimeout(() => nameRef.current?.focus(), 150);
       return () => clearTimeout(t);
     }
   }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const handleCreateProject = () => {
+    Animated.timing(modalProgress, {
+      toValue: 0, duration: 300,
+      easing: Easing.in(Easing.cubic),
+      useNativeDriver: true,
+    }).start(() => setPhase('form'));
+  };
+
   const fadeIn = (anim: Animated.Value) => {
     anim.stopAnimation();
-    Animated.timing(anim, { toValue: 1, duration: 300, useNativeDriver: false }).start();
+    Animated.timing(anim, { toValue: 1, duration: 300, useNativeDriver: true }).start();
   };
 
   const startFadeOut = (anim: Animated.Value) => {
     return setTimeout(() => {
-      Animated.timing(anim, { toValue: 0, duration: 2000, useNativeDriver: false }).start();
+      Animated.timing(anim, { toValue: 0, duration: 2000, useNativeDriver: true }).start();
     }, 400);
   };
 
@@ -257,7 +207,7 @@ export function Case2Screen({
     fadeIn(nameTooltipOpacity);
     if (descTimerRef.current) clearTimeout(descTimerRef.current);
     descTooltipOpacity.stopAnimation();
-    Animated.timing(descTooltipOpacity, { toValue: 0, duration: 200, useNativeDriver: false }).start();
+    Animated.timing(descTooltipOpacity, { toValue: 0, duration: 200, useNativeDriver: true }).start();
   };
 
   const handleNameChange = (text: string) => {
@@ -277,7 +227,7 @@ export function Case2Screen({
     fadeIn(descTooltipOpacity);
     if (nameTimerRef.current) clearTimeout(nameTimerRef.current);
     nameTooltipOpacity.stopAnimation();
-    Animated.timing(nameTooltipOpacity, { toValue: 0, duration: 200, useNativeDriver: false }).start();
+    Animated.timing(nameTooltipOpacity, { toValue: 0, duration: 200, useNativeDriver: true }).start();
   };
 
   const handleDescChange = (text: string) => {
@@ -325,8 +275,8 @@ export function Case2Screen({
 
   // Tooltip positions: arrow tip 4px above each input field
   // Sheet starts at bottom:291; name row top ≈ 418px, desc row top ≈ 384px from screen bottom
-  const TOOLTIP_NAME_BOTTOM = 443; // 418 + 4 gap + 21 arrow = 443
-  const TOOLTIP_DESC_BOTTOM = 409; // 384 + 4 gap + 21 arrow = 409
+  const TOOLTIP_NAME_BOTTOM = 455; // +8 from prev: arrow tip still touching at 447
+  const TOOLTIP_DESC_BOTTOM = 421; // +8 from prev: same
 
   return (
     <Box flex={1} backgroundColor="white" style={{ position: 'relative' } as any}>
@@ -340,114 +290,121 @@ export function Case2Screen({
           <View style={{ flexDirection: 'row', justifyContent: 'center', paddingHorizontal: 16, paddingTop: 4, gap: 24 } as any}>
             <View style={{ width: 72, height: 60, alignItems: 'center', justifyContent: 'center', gap: 4 } as any}>
               <MessageSquare size={24} color={TTTheme.colors.textPrimary} />
-              <Text style={{ color: TTTheme.colors.textPrimary, fontSize: 14, fontWeight: '500' }}>Chats</Text>
+              <Text variant="mobileLabelSmall" color="foreground">Chats</Text>
             </View>
             <View style={{ width: 72, height: 60, alignItems: 'center', justifyContent: 'center', gap: 4 } as any}>
               <Folder size={24} color={TTTheme.colors.secondaryGreen} />
-              <Text style={{ color: TTTheme.colors.secondaryGreen, fontSize: 14, fontWeight: '500' }}>Projects</Text>
+              <Text variant="mobileLabelSmall" color="secondaryGreen">Projects</Text>
             </View>
             <View style={{ width: 72, height: 60, alignItems: 'center', justifyContent: 'center', gap: 4 } as any}>
               <Hash size={24} color={TTTheme.colors.textPrimary} />
-              <Text style={{ color: TTTheme.colors.textPrimary, fontSize: 14, fontWeight: '500' }}>My Tasks</Text>
+              <Text variant="mobileLabelSmall" color="foreground">My Tasks</Text>
             </View>
             <View style={{ width: 72, height: 60, alignItems: 'center', justifyContent: 'center', gap: 4 } as any}>
               <Activity size={24} color={TTTheme.colors.textPrimary} />
-              <Text style={{ color: TTTheme.colors.textPrimary, fontSize: 14, fontWeight: '500' }}>Activity</Text>
+              <Text variant="mobileLabelSmall" color="foreground">Activity</Text>
             </View>
           </View>
           <HomeIndicator />
         </View>
       )}
 
-      {/* ── Modal phase — "Ready to get to work?" ── */}
+      {/* ── Modal phase — outer = opacity+backdrop, inner = transform only ── */}
       {phase === 'modal' && (
-        <>
-          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 40 } as any} />
-          <Box backgroundColor="card" style={{ position: 'absolute', bottom: 40, left: 16, right: 16, borderRadius: 24, overflow: 'hidden', zIndex: 41 } as any}>
-            {/* Illustration — overflow:hidden clips circles at right/bottom edges */}
-            <View style={{ height: 230, overflow: 'hidden' } as any}>
-              {/* Circle 2 (outer): #6FB19D 13% opacity — large, clips right edge */}
-              <View style={{ position: 'absolute', width: 300, height: 300, borderRadius: 150, backgroundColor: 'rgba(111,177,157,0.13)', top: 0, right: -30 } as any} />
-              {/* Circle 1 (inner): #6FB19D 100% solid — centered behind illustration */}
-              <View style={{ position: 'absolute', width: 210, height: 210, borderRadius: 105, backgroundColor: '#6FB19D', top: 10, right: 24 } as any} />
-              {/* Image: 200px wide, right edge aligned with button (24px padding) */}
-              <Image source={require('@/assets/images/project-creation-chat.png')} style={{ position: 'absolute', width: 200, height: 190, top: 20, right: 24 } as any} resizeMode="contain" />
-            </View>
-            <Box paddingHorizontal="24" style={{ paddingTop: 16, paddingBottom: 28, gap: 40 } as any}>
-              <Box style={{ gap: 16 } as any}>
-                <Text color="foreground" style={{ fontSize: 28, fontWeight: '600', lineHeight: 32 }}>Ready to get to work?</Text>
-                <Text color="grey05" style={{ fontSize: 16, lineHeight: 21 }}>Create your first project and start managing your jobs in one place.</Text>
-              </Box>
-              <Button variant="fill" color="secondary" size="lg" onPress={() => setPhase('form')}>
-                Create Project
-              </Button>
+        <Animated.View style={{
+          position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 40,
+          opacity: modalProgress,
+        } as any}>
+          <Animated.View style={{
+            position: 'absolute', bottom: 40, left: 16, right: 16,
+            transform: [{ translateY: modalTranslateY }, { scale: modalScale }],
+          } as any}>
+            <Box backgroundColor="card" style={{ borderRadius: 24, overflow: 'hidden' } as any}>
+              {/* Illustration area — circles static, image bounces in first */}
+              <View style={{ height: 230, overflow: 'hidden' } as any}>
+                <View style={{ position: 'absolute', width: 360, height: 360, borderRadius: 180, backgroundColor: 'rgba(111,177,157,0.13)', top: -105, left: 123 } as any} />
+                <View style={{ position: 'absolute', width: 320, height: 320, borderRadius: 160, backgroundColor: '#6FB19D', top: -85, left: 161 } as any} />
+                <Animated.View style={{
+                  position: 'absolute', width: 200, height: 190, top: 20, right: 24,
+                  opacity: illus.opacity,
+                  transform: [{ translateY: illus.translateY }, { scale: illus.scale }],
+                } as any}>
+                  <Image source={require('@/assets/images/project-creation-chat.png')} style={{ width: 200, height: 190 }} resizeMode="contain" />
+                </Animated.View>
+              </View>
+              {/* Text + button — bounces in second */}
+              <Animated.View style={{
+                opacity: content.opacity,
+                transform: [{ translateY: content.translateY }, { scale: content.scale }],
+              } as any}>
+                <Box paddingHorizontal="24" style={{ paddingTop: 16, paddingBottom: 28, gap: 40 } as any}>
+                  <Box style={{ gap: 16 } as any}>
+                    <Text variant="mobileHeading28">Ready to get to work?</Text>
+                    <Text variant="mobileSecondaryBody" color="grey05" style={{ lineHeight: 21 }}>Create your first project and start managing your jobs in one place.</Text>
+                  </Box>
+                  <Button variant="fill" color="secondary" size="lg" onPress={handleCreateProject}>
+                    Create Project
+                  </Button>
+                </Box>
+              </Animated.View>
             </Box>
-          </Box>
-        </>
+          </Animated.View>
+        </Animated.View>
       )}
 
       {/* ── Form phase — project creation inputs ── */}
       {phase === 'form' && (
         <>
           <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 40 } as any} />
-          <ProjectBottomSheet
-            projectName={projectName}
-            description={description}
-            nameRef={nameRef}
-            descRef={descRef}
-            onNameFocus={handleNameFocus}
-            onNameChange={handleNameChange}
-            onDescFocus={handleDescFocus}
-            onDescChange={handleDescChange}
-            onPhysicalKeyPress={handlePhysicalKeyPress}
-            onSubmit={() => setPhase('success')}
-          />
-          <MockKeyboard pressedKey={pressedKey} onKeyTap={handleKeyTap} />
-          <OnboardingTooltipCard
+          <Animated.View style={{ transform: [{ translateY: sheetTranslateY }], zIndex: 41 } as any}>
+            <ProjectBottomSheet
+              projectName={projectName}
+              description={description}
+              nameRef={nameRef}
+              descRef={descRef}
+              onNameFocus={handleNameFocus}
+              onNameChange={handleNameChange}
+              onDescFocus={handleDescFocus}
+              onDescChange={handleDescChange}
+              onPhysicalKeyPress={handlePhysicalKeyPress}
+              onSubmit={() => setPhase('success')}
+            />
+            <MockKeyboard pressedKey={pressedKey} onKeyTap={handleKeyTap} />
+          </Animated.View>
+          <OnboardingTooltip
             title="Name your first job"
             description="e.g. Smith House, Office Renovation"
             step="Step 1/2"
-            bottomOffset={TOOLTIP_NAME_BOTTOM}
-            opacity={nameTooltipOpacity}
+            style={{ bottom: TOOLTIP_NAME_BOTTOM, left: 31, zIndex: 43 }}
+            arrowEdge="bottom"
+            arrowSide="left"
+            arrowInset={20}
+            anim={nameTooltipOpacity}
           />
-          <OnboardingTooltipCard
+          <OnboardingTooltip
             title="Add a brief description"
             description="Tell the crew what this job is about."
             step="Step 2/2"
-            bottomOffset={TOOLTIP_DESC_BOTTOM}
-            opacity={descTooltipOpacity}
+            style={{ bottom: TOOLTIP_DESC_BOTTOM, left: 31, zIndex: 43 }}
+            arrowEdge="bottom"
+            arrowSide="left"
+            arrowInset={20}
+            anim={descTooltipOpacity}
           />
         </>
       )}
 
-      {/* ── Success phase — "Project Created!" ── */}
+      {/* ── Success phase ── */}
       {phase === 'success' && (
-        <>
-          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 40 } as any} />
-          <View style={{ position: 'absolute', bottom: 40, left: 16, right: 16, height: 422, borderRadius: 24, overflow: 'hidden', backgroundColor: '#fff', zIndex: 41 } as any}>
-            <View style={{ alignItems: 'center', marginTop: 24 }}>
-              <ExpoImage source={{ uri: imgSuccessCheck }} style={{ width: 150, height: 150 }} contentFit="contain" />
-            </View>
-            <View style={{ paddingHorizontal: 24, marginTop: 4, gap: 8 } as any}>
-              <Text style={{ fontSize: 22, fontWeight: '600', color: '#000', textAlign: 'center', lineHeight: 32 }}>Project Created!</Text>
-              <Text style={{ fontSize: 16, color: TTTheme.colors.grey04, textAlign: 'center', lineHeight: 21 }}>
-                {"You've successfully set up a project! Now, let's explore your next steps."}
-              </Text>
-            </View>
-            <View style={{ position: 'absolute', bottom: 24, left: 24, right: 24, gap: 8 } as any}>
-              <Pressable onPress={onAddMembers}>
-                <View style={{ backgroundColor: '#000', borderRadius: 8, padding: 16, alignItems: 'center' }}>
-                  <Text style={{ color: '#fff', fontSize: 14, fontWeight: '500' }}>Add Members</Text>
-                </View>
-              </Pressable>
-              <Pressable onPress={onViewProjectDetails}>
-                <View style={{ borderRadius: 8, padding: 16, alignItems: 'center' }}>
-                  <Text style={{ color: TTTheme.colors.secondaryGreen, fontSize: 14, fontWeight: '500' }}>View Project Details</Text>
-                </View>
-              </Pressable>
-            </View>
-          </View>
-        </>
+        <SuccessModal
+          title="Project Created!"
+          description={"You've successfully set up a project! Now, let's explore your next steps."}
+          primaryLabel="Add Members"
+          onPrimary={onAddMembers ?? (() => {})}
+          secondaryLabel="View Project Details"
+          onSecondary={onViewProjectDetails ?? (() => {})}
+        />
       )}
 
     </Box>

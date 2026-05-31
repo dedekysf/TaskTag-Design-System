@@ -1,12 +1,13 @@
 import { Text } from '@/components/primitives';
 import { theme as TTTheme } from '@/constants/theme';
-import { Image as ExpoImage } from 'expo-image';
 import {
-  ArrowLeft,
+  Building,
+  ChevronLeft,
   ChevronRight,
   FileText,
   HardHat,
   Hash,
+  ImageIcon,
   MoreVertical,
   Plus,
   UserPlus,
@@ -14,10 +15,6 @@ import {
 } from 'lucide-react-native';
 import React from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
-
-// Figma assets — expire ~7 days from 2026-05-30
-const imgMj          = 'https://www.figma.com/api/mcp/asset/9b7a048f-1406-4261-bc24-0db61d33dc3b';
-const imgIcFileImage = 'https://www.figma.com/api/mcp/asset/ff852498-5648-44f5-90d1-47eaf07616d9';
 
 export interface ProjectDetailScreenProps {
   onInvite?: () => void;
@@ -28,10 +25,10 @@ export function ProjectDetailScreen({ onInvite }: ProjectDetailScreenProps = {})
     <>
       {/* Header */}
       <View style={{ backgroundColor: '#fff', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, height: 44, borderBottomWidth: 1, borderBottomColor: TTTheme.colors.border }}>
-        <View style={{ width: 24, height: 24, alignItems: 'center', justifyContent: 'center' }}>
-          <ArrowLeft size={20} color={TTTheme.colors.textPrimary} />
+        <View style={{ width: 24, height: 24, alignItems: 'center', justifyContent: 'center', marginRight: 8 }}>
+          <ChevronLeft size={20} color={TTTheme.colors.textPrimary} />
         </View>
-        <Text style={{ flex: 1, fontSize: 18, fontWeight: '500', color: TTTheme.colors.textPrimary, textAlign: 'center', lineHeight: 24 }}>
+        <Text variant="mobileLargeLabel" color="foreground" style={{ flex: 1 }}>
           Project Details
         </Text>
         <View style={{ width: 24, height: 24, alignItems: 'center', justifyContent: 'center' }}>
@@ -45,64 +42,66 @@ export function ProjectDetailScreen({ onInvite }: ProjectDetailScreenProps = {})
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 80 } as any}
       >
-        {/* Project card */}
+        {/* TODO(BE): GET /api/projects/:id — project.name, project.address, project.workspace, project.owner */}
         <View style={{ backgroundColor: '#7B61FF', borderRadius: 8, padding: 16, gap: 16 } as any}>
           {/* Title + address */}
           <View style={{ gap: 4 } as any}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
               <HardHat size={24} color="#fff" />
-              <Text style={{ flex: 1, fontSize: 18, fontWeight: '700', color: '#fff', lineHeight: 24 }}>
+              <Text style={{ flex: 1, fontSize: 18, fontWeight: '700', lineHeight: 24 }} color="white">
                 1520 Oliver Street
               </Text>
             </View>
-            <Text style={{ fontSize: 12, color: 'rgba(255,255,255,0.9)', lineHeight: 16, paddingLeft: 32 }}>
+            <Text variant="mobileMetadataPrimary" style={{ color: 'rgba(255,255,255,0.9)', paddingLeft: 32 }}>
               Houston, TX
             </Text>
           </View>
           {/* Tags */}
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            {/* TODO(BE): project.workspace.name */}
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <View style={{ width: 24, height: 24, backgroundColor: '#000', borderRadius: 4, alignItems: 'center', justifyContent: 'center' }}>
-                <Image source={require('@/assets/images/tasktag-logo.png')} style={{ width: 14, height: 14 }} resizeMode="contain" />
+              <View style={{ width: 24, height: 24, backgroundColor: TTTheme.colors.secondaryGreen, borderRadius: 4, alignItems: 'center', justifyContent: 'center' }}>
+                <Building size={14} color="#fff" />
               </View>
-              <Text style={{ fontSize: 12, color: '#fff' }}>Personal Projects</Text>
+              <Text variant="mobileMetadataPrimary" color="white">Personal Projects</Text>
             </View>
+            {/* TODO(BE): project.owner.name + project.owner.avatar */}
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <ExpoImage source={{ uri: imgMj }} style={{ width: 24, height: 24, borderRadius: 12 }} contentFit="cover" />
-              <Text style={{ fontSize: 12, color: '#fff' }}>Maria Jose</Text>
+              <Image source={require('@/assets/images/mj.png')} style={{ width: 24, height: 24, borderRadius: 12 }} resizeMode="cover" />
+              <Text variant="mobileMetadataPrimary" color="white">Maria Jose</Text>
             </View>
           </View>
         </View>
 
-        {/* Description */}
+        {/* TODO(BE): project.description */}
         <View style={{ backgroundColor: '#fff', borderRadius: 8, padding: 15, gap: 12 } as any}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Text style={{ fontSize: 16, fontWeight: '600', color: '#000', lineHeight: 21 }}>Description</Text>
-            <Text style={{ fontSize: 12, color: TTTheme.colors.grey04 }}>See More</Text>
+            <Text variant="mobileLabelEmphasized" color="foreground">Description</Text>
+            <Text variant="mobileMetadataPrimary" color="grey04">See More</Text>
           </View>
-          <Text style={{ fontSize: 12, color: '#303742', lineHeight: 16, letterSpacing: 0.24 }} numberOfLines={3}>
+          <Text variant="mobileMetadataPrimary" color="foreground" numberOfLines={3}>
             Fix and upgrade kitchen sink to resolve leaks, improve drainage, and ensure proper water flow functionality.
           </Text>
         </View>
 
-        {/* Members */}
+        {/* TODO(BE): GET /api/projects/:id/members — members list + count */}
         <View style={{ backgroundColor: '#fff', borderRadius: 8, padding: 15, gap: 12 } as any}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Text style={{ fontSize: 16, fontWeight: '600', color: '#000', lineHeight: 21 }}>Member (1)</Text>
-            <Text style={{ fontSize: 12, color: TTTheme.colors.grey04 }}>See All</Text>
+            <Text variant="mobileLabelEmphasized" color="foreground">Member (1)</Text>
+            <Text variant="mobileMetadataPrimary" color="grey04">See All</Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 8 }}>
-            {/* Invite */}
+            {/* TODO(BE): action — POST /api/projects/:id/invites */}
             <Pressable onPress={onInvite} style={{ width: 56, alignItems: 'center', gap: 4 } as any}>
               <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: '#F7F8FA', alignItems: 'center', justifyContent: 'center' }}>
                 <UserPlus size={24} color={TTTheme.colors.grey04} />
               </View>
-              <Text style={{ fontSize: 12, color: TTTheme.colors.grey04, textAlign: 'center' }}>Invite</Text>
+              <Text variant="mobileMetadataPrimary" color="grey04" style={{ textAlign: 'center' }}>Invite</Text>
             </Pressable>
-            {/* Maria Jose */}
+            {/* TODO(BE): member.name + member.avatar */}
             <View style={{ width: 56, alignItems: 'center', gap: 4 } as any}>
-              <ExpoImage source={{ uri: imgMj }} style={{ width: 56, height: 56, borderRadius: 28 }} contentFit="cover" />
-              <Text style={{ fontSize: 12, color: TTTheme.colors.grey04, textAlign: 'center' }} numberOfLines={1}>
+              <Image source={require('@/assets/images/mj.png')} style={{ width: 56, height: 56, borderRadius: 28 }} resizeMode="cover" />
+              <Text variant="mobileMetadataPrimary" color="grey04" style={{ textAlign: 'center' }} numberOfLines={1}>
                 Maria J...
               </Text>
             </View>
@@ -116,8 +115,8 @@ export function ProjectDetailScreen({ onInvite }: ProjectDetailScreenProps = {})
               <FileText size={20} color="#fff" />
             </View>
             <View style={{ flex: 1, gap: 4 } as any}>
-              <Text style={{ fontSize: 16, fontWeight: '600', color: '#000', lineHeight: 21 }}>Checklist</Text>
-              <Text style={{ fontSize: 12, color: '#303742', lineHeight: 16 }}>Start faster with a project template.</Text>
+              <Text variant="mobileLabelEmphasized" color="foreground">Checklist</Text>
+              <Text variant="mobileMetadataPrimary">Start faster with a project template.</Text>
             </View>
             <ChevronRight size={24} color={TTTheme.colors.textPrimary} />
           </View>
@@ -129,7 +128,7 @@ export function ProjectDetailScreen({ onInvite }: ProjectDetailScreenProps = {})
             <View style={{ width: 32, height: 32, backgroundColor: '#000', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}>
               <Hash size={20} color="#fff" />
             </View>
-            <Text style={{ flex: 1, fontSize: 16, fontWeight: '600', color: '#000', lineHeight: 21 }}>Tasks</Text>
+            <Text variant="mobileLabelEmphasized" color="foreground" style={{ flex: 1 }}>Tasks</Text>
             <ChevronRight size={24} color={TTTheme.colors.textPrimary} />
           </View>
         </View>
@@ -140,13 +139,13 @@ export function ProjectDetailScreen({ onInvite }: ProjectDetailScreenProps = {})
             <View style={{ width: 32, height: 32, backgroundColor: '#000', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}>
               <Zap size={20} color="#fff" />
             </View>
-            <Text style={{ fontSize: 16, fontWeight: '600', color: '#000', lineHeight: 21 }}>Activity Log</Text>
+            <Text variant="mobileLabelEmphasized" color="foreground">Activity Log</Text>
           </View>
           <View style={{ flex: 1, backgroundColor: '#fff', borderRadius: 8, padding: 15, gap: 12 } as any}>
             <View style={{ width: 32, height: 32, backgroundColor: '#000', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}>
-              <ExpoImage source={{ uri: imgIcFileImage }} style={{ width: 20, height: 20 }} contentFit="contain" />
+              <ImageIcon size={20} color="#fff" />
             </View>
-            <Text style={{ fontSize: 16, fontWeight: '600', color: '#000', lineHeight: 21 }}>{'Files & Media'}</Text>
+            <Text variant="mobileLabelEmphasized" color="foreground">{'Files & Media'}</Text>
           </View>
         </View>
       </ScrollView>
@@ -155,7 +154,7 @@ export function ProjectDetailScreen({ onInvite }: ProjectDetailScreenProps = {})
       <View style={{ position: 'absolute', bottom: 40, right: 17 } as any}>
         <View style={{ backgroundColor: '#000', borderRadius: 156, flexDirection: 'row', alignItems: 'center', padding: 12, gap: 8 }}>
           <Plus size={24} color="#fff" />
-          <Text style={{ fontSize: 16, fontWeight: '500', color: '#fff', lineHeight: 24 }}>New Update</Text>
+          <Text variant="button" style={{ color: '#fff' }}>New Update</Text>
         </View>
       </View>
     </>
