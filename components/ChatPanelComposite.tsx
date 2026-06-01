@@ -1092,7 +1092,7 @@ function RoomView({
 
   // "Smart Tags" tooltip — shown when tagFlow reaches 'tagged', fades on typing
   const [showSmartTagsTooltip, setShowSmartTagsTooltip] = useState(false);
-  const smartTagsFadeAnim = useRef(new Animated.Value(1)).current;
+  const smartTagsFadeAnim = useRef(new Animated.Value(0)).current;
   const smartTagsFadeTimerRef = useRef<any>(null);
 
   // "First tag complete!" — shown after first tagged message is sent, fades after 3s
@@ -1159,7 +1159,13 @@ function RoomView({
   useEffect(() => {
     if (tagFlow === 'tagged') {
       setShowSmartTagsTooltip(true);
-      smartTagsFadeAnim.setValue(1);
+      smartTagsFadeAnim.setValue(0);
+      Animated.timing(smartTagsFadeAnim, {
+        toValue: 1,
+        duration: 320,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }).start();
       const t = setTimeout(() => textInputRef.current?.focus(), 50);
       return () => clearTimeout(t);
     } else {
@@ -1664,40 +1670,36 @@ function RoomView({
         />
       )}
 
-      {/* Left-side tooltip trigger — Step 2/3: Project vs Task (points at first project item) */}
-      {tagFlow === 'picker' && (
-        <Box style={{ position: 'absolute' as any, left: 16, bottom: 438, width: 1, height: 40, zIndex: 5 }}>
-          <TooltipOnboarding
-            variant="left-center"
-            tooltipStyle="success"
-            title="Project vs Task"
-            description="Projects are shown in Bold Text, while Tasks use the '#' icon."
-            open
-            forceShow
-            offset={20}
-          >
-            <Box pointerEvents="none" style={{ width: 1, height: 40 }} />
-          </TooltipOnboarding>
-        </Box>
-      )}
+      {/* Left-side tooltip — Project vs Task (always mounted, visibility via forceShow) */}
+      <Box style={{ position: 'absolute' as any, left: 16, bottom: 438, width: 1, height: 40, zIndex: 5 }} pointerEvents="none">
+        <TooltipOnboarding
+          variant="left-center"
+          tooltipStyle="success"
+          title="Project vs Task"
+          description="Projects are shown in Bold Text, while Tasks use the '#' icon."
+          open={tagFlow === 'picker'}
+          forceShow={tagFlow === 'picker'}
+          offset={20}
+        >
+          <Box pointerEvents="none" style={{ width: 1, height: 40 }} />
+        </TooltipOnboarding>
+      </Box>
 
-      {/* Left-side tooltip trigger — Step 3/3: Smart Tags (points at pills in input) */}
-      {(tagFlow === 'tagged' && showSmartTagsTooltip) && (
-        <Box style={{ position: 'absolute' as any, left: 16, bottom: 160, width: 1, height: 60, zIndex: 5 }}>
-          <TooltipOnboarding
-            variant="left-center"
-            tooltipStyle="success"
-            title="Smart Tags"
-            description="Nice! You've linked this message to a project and task. Send it and it'll stay connected — no more hunting through chats to find it."
-            open
-            forceShow
-            offset={20}
-            animatedOpacity={smartTagsFadeAnim}
-          >
-            <Box pointerEvents="none" style={{ width: 1, height: 60 }} />
-          </TooltipOnboarding>
-        </Box>
-      )}
+      {/* Left-side tooltip — Smart Tags (always mounted, visibility via forceShow) */}
+      <Box style={{ position: 'absolute' as any, left: 16, bottom: 160, width: 1, height: 60, zIndex: 5 }} pointerEvents="none">
+        <TooltipOnboarding
+          variant="left-center"
+          tooltipStyle="success"
+          title="Smart Tags"
+          description="Nice! You've linked this message to a project and task. Send it and it'll stay connected — no more hunting through chats to find it."
+          open={tagFlow === 'tagged' && showSmartTagsTooltip}
+          forceShow={tagFlow === 'tagged' && showSmartTagsTooltip}
+          offset={20}
+          animatedOpacity={smartTagsFadeAnim}
+        >
+          <Box pointerEvents="none" style={{ width: 1, height: 60 }} />
+        </TooltipOnboarding>
+      </Box>
 
       {/* Chat input */}
       <Box style={{ paddingHorizontal: 16, paddingVertical: 16 }}>
@@ -1771,7 +1773,7 @@ function RoomView({
                     useNativeDriver: true,
                   }).start(() => {
                     setShowSmartTagsTooltip(false);
-                    smartTagsFadeAnim.setValue(1);
+                    smartTagsFadeAnim.setValue(0);
                     smartTagsFadeTimerRef.current = null;
                   });
                 }, 2000);
