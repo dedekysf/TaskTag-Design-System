@@ -235,7 +235,7 @@ function Screen2({ onAutoAdvance }: { onAutoAdvance: () => void }) {
 // ── Screen 3: Chat thread + "Put someone on it" tooltip ──────────────────────
 
 function Screen3({ onTapTooltip }: { onTapTooltip: () => void }) {
-  const tooltipAnim = useTooltipAnim();
+  const tooltipAnim = useTooltipAnim(0);
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -334,7 +334,7 @@ function TaskPickerSheet({
 
             {/* Section header */}
             <View style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 10 }}>
-              <Text variant="mobileSecondaryBody" color="grey04">All Projects & Tasks</Text>
+              <Text variant="mobileSecondaryBody" color="grey05">All Projects & Tasks</Text>
             </View>
 
             {/* TODO(BE): GET /api/tasks?projectId=&context=memberJoined — tasks within the project */}
@@ -462,16 +462,15 @@ function TaskPickerSheet({
         )}
       </Animated.View>
 
-      {/* Tooltip: arrow center at 20+22+12=54px — under "Fix" (starts at 42, center≈53px)
-          task row: 181-221, "Fix" bottom=181+12+16=209, gap 8 → tip=217, top=217+17(geometric)=234 */}
+      {/* Tooltip: arrow tip 2px below "Fix kitchen sink" text, arrow center under "Fix" */}
       {!taskSelected && (
         <OnboardingTooltip
           title="Tasks start with #"
           description="Tap a task to assign it to your crew"
-          style={{ left: 20, top: 234, zIndex: 62 }}
+          style={{ left: 20, top: 280, zIndex: 62 }}
           arrowEdge="top"
           arrowSide="left"
-          arrowInset={22}
+          arrowInset={35}
           anim={tooltipAnim}
         />
       )}

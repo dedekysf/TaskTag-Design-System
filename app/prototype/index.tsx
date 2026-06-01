@@ -136,10 +136,17 @@ export default function PrototypeIndex() {
 
   const prototypes = [
     {
-      title: 'Tutorialization RD 3 from MJ',
+      title: 'Tutorialization from MJ before member joins',
       jiraTicket: '',
       jiraLabel: '',
-      route: '/prototype/tutorialization-rd3-from-mj',
+      route: '/prototype/tutorialization-rd3-from-mj?flow=before',
+      platform: 'Mobile' as const,
+    },
+    {
+      title: 'Tutorialization from MJ after member joins',
+      jiraTicket: '',
+      jiraLabel: '',
+      route: '/prototype/tutorialization-rd3-from-mj?flow=after',
       platform: 'Mobile' as const,
     },
     {
@@ -417,7 +424,8 @@ export default function PrototypeIndex() {
   const expiredNonUsers = prototypes.filter(p => p.title === 'Team Invitation Expired by Email');
   const rest = prototypes.filter(p =>
     !PINNED_TITLES.includes(p.title) &&
-    p.title !== 'Tutorialization RD 3 from MJ' &&
+    p.title !== 'Tutorialization from MJ before member joins' &&
+    p.title !== 'Tutorialization from MJ after member joins' &&
     p.title !== 'Onboarding' &&
     p.title !== 'Team Invitation Expired by Email' && 
     p.title !== 'Role Descriptions and Naming Consistency' && 
@@ -432,12 +440,14 @@ export default function PrototypeIndex() {
     p.title !== 'Project Invitation Expired by Email'
   );
 
-  const tutorializationRD3 = prototypes.find(p => p.title === 'Tutorialization RD 3 from MJ')!;
+  const tutorializationBefore = prototypes.find(p => p.title === 'Tutorialization from MJ before member joins')!;
+  const tutorializationAfter = prototypes.find(p => p.title === 'Tutorialization from MJ after member joins')!;
 
   const rawFiltered = [
     github,
     designSystem,
-    tutorializationRD3,
+    tutorializationAfter,
+    tutorializationBefore,
     onboarding,
     expiredProjectMobile,
     expiredProjectWeb,

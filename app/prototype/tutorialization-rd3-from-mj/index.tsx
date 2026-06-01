@@ -1,19 +1,120 @@
-import { Box } from '@/components/primitives';
-import React, { useState } from 'react';
+import { Box, Text } from '@/components/primitives';
+import { theme as TTTheme } from '@/constants/theme';
+import { useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { Pressable, ScrollView } from 'react-native';
 import { Case1Screen } from './case1';
 import { Case2Screen } from './case2';
 import { Case3Screen } from './case3';
 import { Case4Screen } from './case4';
-import { Case5Screen } from './case5';
-import { Case6Screen } from './case6';
-import { Case7Screen } from './case7';
-import { Case8Screen } from './case8';
+import { Case5Screen } from './after-member-joins/case5';
+import { Case6Screen } from './after-member-joins/case6';
+import { Case7Screen } from './after-member-joins/case7';
+import { Case8Screen } from './after-member-joins/case8';
 
 type TutorialCase = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+type Flow = 'menu' | 'before' | 'after';
+
+const SHORTCUTS = [
+  {
+    key: 'before' as Flow,
+    label: 'Tutorialization from MJ before member joins',
+    description: 'Project detail → Invite → Add members (Case 1–3)',
+    startCase: 1 as TutorialCase,
+  },
+  {
+    key: 'after' as Flow,
+    label: 'Tutorialization from MJ after member joins',
+    description: 'Assign → Chat → Tag (Case 5–8)',
+    startCase: 5 as TutorialCase,
+  },
+];
 
 export default function TutorializationRD3() {
-  const [activeCase, setActiveCase] = useState<TutorialCase>(1);
+  const { flow: flowParam } = useLocalSearchParams<{ flow?: string }>();
+  const [flow, setFlow] = useState<Flow>((flowParam as Flow) ?? 'menu');
+  const [activeCase, setActiveCase] = useState<TutorialCase>(flowParam === 'after' ? 5 : 1);
   const [case3StartScreen, setCase3StartScreen] = useState<1 | 2>(1);
+  const [case4StartPhase, setCase4StartPhase] = useState<'project' | 'taskForm'>('project');
+
+  useEffect(() => {
+    if (flowParam === 'before' || flowParam === 'after') {
+      setFlow(flowParam as Flow);
+      setActiveCase(flowParam === 'after' ? 5 : 1);
+    }
+  }, [flowParam]);
+
+  if (flow === 'menu') {
+    return (
+      <ScrollView
+        style={{ flex: 1, backgroundColor: TTTheme.colors.grey02 }}
+        contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center', padding: 24 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <Box width="100%" maxWidth={640}>
+          <Text
+            variant="h2"
+            style={{ color: TTTheme.colors.textSecondary, marginBottom: 8, textAlign: 'center' }}
+          >
+            Tutorialization RD3 from MJ
+          </Text>
+
+          <Text
+            variant="webSecondaryBody"
+            style={{ color: TTTheme.colors.grey05, textAlign: 'center', marginBottom: 32 }}
+          >
+            Select a flow to preview.
+          </Text>
+
+          <Box style={{ gap: 16 }}>
+            {SHORTCUTS.map(({ key, label, description, startCase }) => (
+              <Box
+                key={key}
+                style={{
+                  backgroundColor: TTTheme.colors.card,
+                  borderRadius: 16,
+                  borderWidth: 1,
+                  borderColor: TTTheme.colors.border,
+                  padding: 24,
+                  gap: 12,
+                }}
+              >
+                <Box style={{ gap: 4 }}>
+                  <Text variant="webLargeLabel" style={{ color: TTTheme.colors.textSecondary, fontWeight: '600' }}>
+                    {label}
+                  </Text>
+                  <Text variant="webSecondaryBody" style={{ color: TTTheme.colors.grey05 }}>
+                    {description}
+                  </Text>
+                </Box>
+
+                <Pressable
+                  onPress={() => {
+                    setActiveCase(startCase);
+                    setCase3StartScreen(1);
+                    setFlow(key);
+                  }}
+                  style={({ pressed }: any) => ({
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    paddingVertical: 10,
+                    borderRadius: 10,
+                    borderWidth: 1,
+                    borderColor: TTTheme.colors.black,
+                    backgroundColor: 'transparent',
+                    opacity: pressed ? 0.75 : 1,
+                    cursor: 'pointer',
+                  })}
+                >
+                  <Text variant="webLabelEmphasized" style={{ color: TTTheme.colors.black }}>Start</Text>
+                </Pressable>
+              </Box>
+            ))}
+          </Box>
+        </Box>
+      </ScrollView>
+    );
+  }
 
   return (
     <Box flex={1}>
@@ -28,17 +129,24 @@ export default function TutorializationRD3() {
         />
       )}
 
-      {/* Case 3: Add Members - "Add Tasks Now" goes to Case 4 */}
+      {/* Case 3: Add Members */}
       {activeCase === 3 && (
         <Case3Screen
           startScreen={case3StartScreen}
-          onComplete={() => setActiveCase(4)}
+          onComplete={() => {
+            setCase4StartPhase('project');
+            setActiveCase(4);
+          }}
+          onAddTasksNow={() => {
+            setCase4StartPhase('taskForm');
+            setActiveCase(4);
+          }}
         />
       )}
 
       {/* Case 4: Task Creation */}
       {activeCase === 4 && (
-        <Case4Screen onComplete={() => setActiveCase(5)} />
+        <Case4Screen startPhase={case4StartPhase} onComplete={() => setActiveCase(5)} />
       )}
 
       {/* Case 5: Assign task after member joined */}
@@ -58,7 +166,7 @@ export default function TutorializationRD3() {
 
       {/* Case 8: Tag for the first time (Bathroom Reno variant with nudge flow) */}
       {activeCase === 8 && (
-        <Case8Screen onComplete={() => setActiveCase(1)} />
+        <Case8Screen onComplete={() => setFlow('menu')} />
       )}
     </Box>
   );

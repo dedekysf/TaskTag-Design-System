@@ -1,3 +1,4 @@
+import { Checkbox } from '@/components/Checkbox';
 import { Text } from '@/components/primitives';
 import { theme as TTTheme } from '@/constants/theme';
 import { StatusBarRow } from './StatusBarRow';
@@ -29,7 +30,7 @@ export function TaskListScreen({ taskCreated = false, onNewTask }: TaskListScree
         <StatusBarRow />
 
         {/* Project name row — acts as the back navigation */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, height: 43 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, height: 43 }}>
           <View style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={24} color={TTTheme.colors.textPrimary} />
           </View>
@@ -61,7 +62,7 @@ export function TaskListScreen({ taskCreated = false, onNewTask }: TaskListScree
         <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, gap: 4 }}>
           <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
             {/* TODO(BE): GET /api/projects/:id/tasks?status=current — count */}
-            <Text variant="mobileLabelEmphasized" color="grey06">Current</Text>
+            <Text variant="mobileLabelEmphasized" color="foreground">Current</Text>
             {taskCreated && (
               <View style={{ width: 20, height: 20, borderRadius: 10, borderWidth: 0.7, borderColor: TTTheme.colors.border, alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={{ fontSize: 10, fontWeight: '500', color: TTTheme.colors.grey06 }}>1</Text>
@@ -73,20 +74,17 @@ export function TaskListScreen({ taskCreated = false, onNewTask }: TaskListScree
 
         {taskCreated ? (
           /* Task row: "Fix kitchen sink" */
-          <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 16, gap: 12, backgroundColor: '#fff' }}>
-            {/* Checkbox (unchecked) */}
-            <View style={{ width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: TTTheme.colors.grey04 }} />
-            {/* Task content */}
-            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: TTTheme.colors.border }}>
-              <Text variant="mobileSecondaryBody" color="foreground" style={{ flex: 1 }} numberOfLines={1}>
-                {/* TODO(BE): task.name */}
-                Fix kitchen sink
-              </Text>
-              {/* Due Date badge */}
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, borderWidth: 1, borderColor: TTTheme.colors.border, borderRadius: 40, paddingHorizontal: 8, paddingVertical: 6 }}>
-                <Calendar size={12} color={TTTheme.colors.grey06} />
-                <Text style={{ fontSize: 10, fontWeight: '500', color: TTTheme.colors.grey06 }}>Due Date</Text>
-              </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, gap: 12, borderBottomWidth: 1, borderBottomColor: TTTheme.colors.border }}>
+            {/* TODO(BE): task.completed */}
+            <Checkbox variant="circular" checked={false} />
+            {/* TODO(BE): task.name */}
+            <Text variant="mobileSecondaryBody" color="foreground" style={{ flex: 1 }} numberOfLines={1}>
+              Fix kitchen sink
+            </Text>
+            {/* Due Date badge */}
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, borderWidth: 1, borderColor: TTTheme.colors.border, borderRadius: 40, paddingHorizontal: 8, paddingVertical: 4 }}>
+              <Calendar size={12} color={TTTheme.colors.grey06} />
+              <Text style={{ fontSize: 10, fontWeight: '500', color: TTTheme.colors.grey06 }}>Due Date</Text>
             </View>
           </View>
         ) : (
@@ -100,7 +98,7 @@ export function TaskListScreen({ taskCreated = false, onNewTask }: TaskListScree
 
         {/* Completed section */}
         <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, gap: 12 }}>
-          <Text variant="mobileLabelEmphasized" color="grey06" style={{ flex: 1 }}>Completed</Text>
+          <Text variant="mobileLabelEmphasized" color="foreground" style={{ flex: 1 }}>Completed</Text>
           <ChevronDown size={20} color={TTTheme.colors.textPrimary} />
         </View>
       </View>

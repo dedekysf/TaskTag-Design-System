@@ -577,8 +577,8 @@ function ComposerPanel({
         </View>
 
         <Pressable onPress={sendActive ? onSend : undefined}>
-          <View style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: sendActive ? TTTheme.colors.secondaryGreen : TTTheme.colors.grey02, alignItems: 'center', justifyContent: 'center' }}>
-            <Send size={20} color={sendActive ? '#fff' : TTTheme.colors.grey04} />
+          <View style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: sendActive ? '#000' : TTTheme.colors.grey05, alignItems: 'center', justifyContent: 'center' }}>
+            <Send size={20} color="#fff" />
           </View>
         </Pressable>
       </View>

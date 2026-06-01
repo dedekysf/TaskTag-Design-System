@@ -6,7 +6,7 @@ import { View } from 'react-native';
 import { StatusBarRow } from './StatusBarRow';
 import { SuccessModal } from './SuccessModal';
 
-export function MembersScreen({ onDone }: { onDone: () => void }) {
+export function MembersScreen({ onPrimary, onSecondary }: { onPrimary: () => void; onSecondary: () => void }) {
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
       <StatusBarRow />
@@ -92,9 +92,9 @@ export function MembersScreen({ onDone }: { onDone: () => void }) {
         title="Invite Sent!"
         description="Your invite is on its way. We'll let you know as soon as your teammate joins. In the meantime, get a head start by adding tasks so they can hit the ground running."
         primaryLabel="Add Tasks Now"
-        onPrimary={onDone}
+        onPrimary={onPrimary}
         secondaryLabel="Back to Project"
-        onSecondary={onDone}
+        onSecondary={onSecondary}
       />
     </View>
   );

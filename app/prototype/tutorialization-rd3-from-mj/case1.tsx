@@ -62,12 +62,11 @@ export function Case1Screen({ onComplete }: Props) {
       }).start();
     }
     if (step === 2) {
-      const t = setTimeout(() => setStep(3), 1000);
+      const t = setTimeout(() => setStep(3), 2000);
       return () => clearTimeout(t);
     }
     if (step === 3) {
       tooltipOpacity.setValue(0);
-      // Overlay + Projects appear immediately; tooltip fades in 500ms later
       const t = setTimeout(() => {
         Animated.timing(tooltipOpacity, { toValue: 1, duration: 400, useNativeDriver: true }).start();
       }, 250);
@@ -80,7 +79,7 @@ export function Case1Screen({ onComplete }: Props) {
       toValue: 0, duration: 300,
       easing: Easing.in(Easing.cubic),
       useNativeDriver: true,
-    }).start(() => setStep(2));
+    }).start(() => setStep(3));
   };
 
   return (

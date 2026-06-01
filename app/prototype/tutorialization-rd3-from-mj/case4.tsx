@@ -8,11 +8,11 @@ import { SuccessModal } from '../_shared/mobile/SuccessModal';
 import { TaskListScreen } from '../_shared/mobile/TaskListScreen';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Pressable, TextInput, View } from 'react-native';
-import { ArrowUp, HardHat } from 'lucide-react-native';
+import { ArrowUp, ChevronDown, HardHat } from 'lucide-react-native';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-type Phase = 'project' | 'taskForm' | 'success';
+type Phase = 'project' | 'taskForm' | 'success' | 'projectClean' | 'taskFormAgain';
 
 // ── Task creation bottom sheet ────────────────────────────────────────────────
 
@@ -94,6 +94,7 @@ function TaskCreationSheet({
               <HardHat size={14} color="#fff" />
             </View>
             <Text variant="mobileLabelSmall" color="foreground">1520 Oliver Street</Text>
+            <ChevronDown size={16} color={TTTheme.colors.textPrimary} />
           </Box>
 
           {/* Submit */}
@@ -186,9 +187,23 @@ function ProjectPhase({ onCreateTask }: { onCreateTask: () => void }) {
   );
 }
 
-// ── Phase 2: Task form (sheet + keyboard + tooltips) ─────────────────────────
+// ── Phase: Project detail without spotlight (after "Back to Project") ────────
 
-function TaskFormPhase({ onComplete }: { onComplete: () => void }) {
+function ProjectCleanPhase() {
+  return (
+    <View style={{ flex: 1 }}>
+      <StatusBarRow />
+      <ProjectDetailScreen />
+      <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 28, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 9, backgroundColor: '#fff' }}>
+        <View style={{ width: 134, height: 5, borderRadius: 5, backgroundColor: '#000' }} />
+      </View>
+    </View>
+  );
+}
+
+// ── Phase 2: Task form (sheet + keyboard + optional tooltips) ─────────────────
+
+function TaskFormPhase({ onComplete, showTooltips = true }: { onComplete: () => void; showTooltips?: boolean }) {
   const [taskName, setTaskName]       = useState('');
   const [description, setDescription] = useState('');
   const [pressedKey, setPressedKey]   = useState<string | null>(null);
@@ -331,33 +346,37 @@ function TaskFormPhase({ onComplete }: { onComplete: () => void }) {
         <MockKeyboard pressedKey={pressedKey} onKeyTap={handleKeyTap} />
       </Animated.View>
 
-      {/* Step 2/4 — Name your Task */}
-      <OnboardingTooltip
-        title="Name your Task"
-        description="e.g. Fix kitchen sink, Install new pipes"
-        step="Step 2/4"
-        style={{ bottom: TOOLTIP_NAME_BOTTOM, left: 31, zIndex: 43 }}
-        arrowEdge="bottom" arrowSide="left" arrowInset={8}
-        anim={nameTooltipOpacity}
-      />
+      {showTooltips && (
+        <>
+          {/* Step 2/4 — Name your Task */}
+          <OnboardingTooltip
+            title="Name your Task"
+            description="e.g. Fix kitchen sink, Install new pipes"
+            step="Step 2/4"
+            style={{ bottom: TOOLTIP_NAME_BOTTOM, left: 31, zIndex: 43 }}
+            arrowEdge="bottom" arrowSide="left" arrowInset={20}
+            anim={nameTooltipOpacity}
+          />
 
-      {/* Step 3/4 — Add a description */}
-      <OnboardingTooltip
-        title="Add a description"
-        description="Tell the crew what this task is about."
-        step="Step 3/4"
-        style={{ bottom: TOOLTIP_DESC_BOTTOM, left: 31, zIndex: 43 }}
-        arrowEdge="bottom" arrowSide="left" arrowInset={8}
-        anim={descTooltipOpacity}
-      />
+          {/* Step 3/4 — Add a description */}
+          <OnboardingTooltip
+            title="Add a description"
+            description="Tell the crew what this task is about."
+            step="Step 3/4"
+            style={{ bottom: TOOLTIP_DESC_BOTTOM, left: 31, zIndex: 43 }}
+            arrowEdge="bottom" arrowSide="left" arrowInset={20}
+            anim={descTooltipOpacity}
+          />
+        </>
+      )}
     </Box>
   );
 }
 
 // ── Main Case4Screen ──────────────────────────────────────────────────────────
 
-export function Case4Screen({ onComplete }: { onComplete?: () => void } = {}) {
-  const [phase, setPhase] = useState<Phase>('project');
+export function Case4Screen({ onComplete, startPhase }: { onComplete?: () => void; startPhase?: Phase } = {}) {
+  const [phase, setPhase] = useState<Phase>(startPhase ?? 'project');
 
   return (
     <Box flex={1}>
@@ -380,11 +399,22 @@ export function Case4Screen({ onComplete }: { onComplete?: () => void } = {}) {
             title="Task Created!"
             description={"You've successfully created your first task!"}
             primaryLabel="Create another Task"
-            onPrimary={onComplete ?? (() => setPhase('taskForm'))}
+            onPrimary={() => setPhase('taskFormAgain')}
             secondaryLabel="Back to Project"
-            onSecondary={onComplete ?? (() => setPhase('project'))}
+            onSecondary={() => setPhase('projectClean')}
           />
         </Box>
+      )}
+
+      {/* Back to Project — project detail without spotlight or tooltip */}
+      {phase === 'projectClean' && <ProjectCleanPhase />}
+
+      {/* Create another Task — task form on task list, no tooltips */}
+      {phase === 'taskFormAgain' && (
+        <TaskFormPhase
+          onComplete={() => setPhase('success')}
+          showTooltips={false}
+        />
       )}
     </Box>
   );

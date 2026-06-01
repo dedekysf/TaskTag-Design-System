@@ -124,7 +124,7 @@ function CarlosMessage({ taskAssigned }: { taskAssigned: boolean }) {
 }
 
 /** Outgoing message row from the current user (Maria Jose → "You") */
-function MyMessage({ text }: { text: string }) {
+function MyMessage({ text, showCelebration = true }: { text: string; showCelebration?: boolean }) {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingHorizontal: 16 }}>
       {/* TODO(BE): current user avatar */}
@@ -136,31 +136,31 @@ function MyMessage({ text }: { text: string }) {
           <Check size={12} color={TTTheme.colors.textSecondary} />
         </View>
         <Text variant="mobileBody" color="textSecondary">{text}</Text>
-        {/* First-message celebration label */}
-        <Text variant="mobileLabelSmall" color="foreground">First message sent! 🎉</Text>
+        {showCelebration && (
+          <Text variant="mobileLabelSmall" color="foreground">First message sent! 🎉</Text>
+        )}
       </View>
     </View>
   );
 }
 
-/**
- * Task nudge card — appears 1.5s after message sent.
- * Shows the assigned task as a chat attachment, nudging the owner to check.
- */
-function TaskNudgeCard() {
+function TagNudgeCard({ anim }: { anim: Animated.Value }) {
+  const translateY = anim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] });
   return (
-    <View style={{ marginHorizontal: 16 }}>
-      {/* TODO(BE): GET /api/tasks/:id — render attached task card */}
-      <View style={{ borderWidth: 1, borderColor: TTTheme.colors.border, borderRadius: 8, padding: 12, backgroundColor: '#fff', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-        <View style={{ width: 32, height: 32, backgroundColor: TTTheme.colors.textPrimary, borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}>
-          <FileText size={16} color="#fff" />
+    <Animated.View style={{ opacity: anim, transform: [{ translateY }], marginHorizontal: 16, marginBottom: 12, backgroundColor: '#000', borderRadius: 8, padding: 12, gap: 16 } as any}>
+      {/* Icon + title — 8px gap, vertically centered */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 } as any}>
+        {/* 32×32 darkGreen 50% opacity wrapper, 16×16 brand green icon */}
+        <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: 'rgba(3,91,96,0.5)', alignItems: 'center', justifyContent: 'center' }}>
+          <Hash size={16} color={TTTheme.colors.secondaryGreen} />
         </View>
-        <View style={{ flex: 1 }}>
-          <Text variant="mobileLabelSmall" color="foreground">Fix kitchen sink</Text>
-          <Text variant="mobileMetadataPrimary" color="grey04">Assigned · Carlos Smith</Text>
-        </View>
+        <Text variant="mobileLabelEmphasized" style={{ color: '#fff' }}>Tag this message</Text>
       </View>
-    </View>
+      {/* Description — left edge flush with icon */}
+      <Text variant="mobileMetadataPrimary" style={{ color: '#fff' }}>
+        Tap # below to tag this message so Carlos Smith knows exactly which site this is about
+      </Text>
+    </Animated.View>
   );
 }
 
@@ -172,6 +172,8 @@ function ChatInputFull({
   onFocus,
   onPhysicalKeyPress,
   onSend,
+  nudgeAnim,
+  onHashNudgePress,
 }: {
   value: string;
   inputRef: React.RefObject<any>;
@@ -179,11 +181,15 @@ function ChatInputFull({
   onFocus: () => void;
   onPhysicalKeyPress: (key: string) => void;
   onSend: () => void;
+  nudgeAnim?: Animated.Value;
+  onHashNudgePress?: () => void;
+  bottomOffset?: number;
 }) {
   const sendActive = value.length > 0;
+  const bottom = bottomOffset ?? 291;
 
   return (
-    <View style={{ position: 'absolute', bottom: 291, left: 0, right: 0, zIndex: 41, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: TTTheme.colors.border, borderTopLeftRadius: 16, borderTopRightRadius: 16 } as any}>
+    <View style={{ position: 'absolute', bottom, left: 0, right: 0, zIndex: 41, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: TTTheme.colors.border, borderTopLeftRadius: 16, borderTopRightRadius: 16 } as any}>
       {/* Message text */}
       <View style={{ paddingHorizontal: 16, paddingTop: 8, paddingBottom: 0 }}>
         <TextInput
@@ -204,30 +210,55 @@ function ChatInputFull({
           <View style={{ width: 40, height: 40, backgroundColor: TTTheme.colors.grey02, borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
             <Plus size={20} color={TTTheme.colors.textPrimary} />
           </View>
-          {[Hash, Camera, ImageIcon, MapPin, Mic].map((Icon, i) => (
+          {/* "#" button — interactive + animated when nudge active */}
+          <Pressable onPress={onHashNudgePress} style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' } as any}>
+            <Animated.View style={{ position: 'absolute', width: 40, height: 40, borderRadius: 20, backgroundColor: TTTheme.colors.secondaryGreen, opacity: nudgeAnim ?? 0, transform: [{ scale: nudgeAnim ? nudgeAnim.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1] }) : 1 }] } as any} />
+            <Animated.View style={{ position: 'absolute', opacity: nudgeAnim ?? 0 } as any}>
+              <Hash size={20} color="#fff" />
+            </Animated.View>
+            <Animated.View style={{ opacity: nudgeAnim ? nudgeAnim.interpolate({ inputRange: [0, 1], outputRange: [1, 0] }) : 1 } as any}>
+              <Hash size={20} color={TTTheme.colors.textPrimary} />
+            </Animated.View>
+          </Pressable>
+          {[Camera, ImageIcon, MapPin, Mic].map((Icon, i) => (
             <View key={i} style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
               <Icon size={20} color={TTTheme.colors.textPrimary} />
             </View>
           ))}
         </View>
         <Pressable onPress={sendActive ? onSend : undefined}>
-          <View style={{ width: 40, height: 40, backgroundColor: sendActive ? TTTheme.colors.secondaryGreen : TTTheme.colors.grey02, borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
-            <Send size={20} color={sendActive ? '#fff' : TTTheme.colors.grey04} />
+          <View style={{ width: 40, height: 40, backgroundColor: sendActive ? '#000' : TTTheme.colors.grey05, borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
+            <Send size={20} color="#fff" />
           </View>
         </Pressable>
       </View>
+      {/* HomeIndicator — shown when sitting above home bar (no keyboard) */}
+      {bottom === 0 && (
+        <View style={{ height: 28, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 9 }}>
+          <View style={{ width: 134, height: 5, backgroundColor: TTTheme.colors.textPrimary, borderRadius: 5 }} />
+        </View>
+      )}
     </View>
   );
 }
 
 /** Minimal input bar — used when keyboard is dismissed */
-function ChatInputMinimal() {
+function ChatInputMinimal({ onHashPress, nudgeAnim }: { onHashPress?: () => void; nudgeAnim?: Animated.Value }) {
   return (
     <View style={{ backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: TTTheme.colors.border, borderTopLeftRadius: 16, borderTopRightRadius: 16 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 16, gap: 8 }}>
         <View style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
           <Plus size={20} color={TTTheme.colors.textPrimary} />
         </View>
+        <Pressable onPress={onHashPress} style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' } as any}>
+          <Animated.View style={{ position: 'absolute', width: 40, height: 40, borderRadius: 20, backgroundColor: TTTheme.colors.secondaryGreen, opacity: nudgeAnim ?? 0, transform: [{ scale: nudgeAnim ? nudgeAnim.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1] }) : 1 }] } as any} />
+          <Animated.View style={{ position: 'absolute', opacity: nudgeAnim ?? 0 } as any}>
+            <Hash size={20} color="#fff" />
+          </Animated.View>
+          <Animated.View style={{ opacity: nudgeAnim ? nudgeAnim.interpolate({ inputRange: [0, 1], outputRange: [1, 0] }) : 1 } as any}>
+            <Hash size={20} color={TTTheme.colors.textPrimary} />
+          </Animated.View>
+        </Pressable>
         <Text variant="mobileBody" color="grey05" style={{ flex: 1 }}>Type message here...</Text>
         <View style={{ flexDirection: 'row' }}>
           <View style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
@@ -260,6 +291,9 @@ export function Case6Screen({ onComplete }: { onComplete?: () => void } = {}) {
   const sheetAnim     = useRef(new Animated.Value(0)).current;
   const sheetTranslateY = sheetAnim.interpolate({ inputRange: [0, 1], outputRange: [300, 0] });
 
+  // Nudge card + "#" highlight fade in when nudge phase starts
+  const nudgeAnim = useRef(new Animated.Value(0)).current;
+
   // Tooltip fades in after sheet settles, fades out when typing starts
   const tooltipAnim = useRef(new Animated.Value(0)).current;
 
@@ -280,17 +314,26 @@ export function Case6Screen({ onComplete }: { onComplete?: () => void } = {}) {
 
   useEffect(() => {
     if (phase === 'sent') {
-      const t = setTimeout(() => setPhase('nudge'), 1500);
+      const t = setTimeout(() => setPhase('nudge'), 2000);
       return () => clearTimeout(t);
     }
-  }, [phase]);
+    if (phase === 'nudge') {
+      nudgeAnim.setValue(0);
+      Animated.timing(nudgeAnim, { toValue: 1, duration: 350, delay: 150, useNativeDriver: true }).start();
+    } else {
+      nudgeAnim.setValue(0);
+    }
+  }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleFocus = () => {};
 
   const handleChangeText = (text: string) => {
     messageTextRef.current = text;
     setMessageText(text);
-    if (phase === 'empty') setPhase('typing');
+    if (phase === 'empty') {
+      setPhase('typing');
+      Animated.timing(tooltipAnim, { toValue: 0, duration: 2000, delay: 400, useNativeDriver: true }).start();
+    }
   };
 
   const handlePhysicalKeyPress = (key: string) => {
@@ -326,27 +369,40 @@ export function Case6Screen({ onComplete }: { onComplete?: () => void } = {}) {
   return (
     <Box flex={1} backgroundColor="white">
 
-      {/* ── Status bar ── */}
-      <StatusBarRow />
+      {/* ── Status bar + chat header — zIndex ensures they stay above scrolling messages ── */}
+      <View style={{ zIndex: 10, backgroundColor: '#fff' } as any}>
+        <StatusBarRow />
+        <ChatHeader />
+      </View>
 
-      {/* ── Chat header ── */}
-      <ChatHeader />
-
-      {/* ── Message area ── */}
-      <Box flex={1} style={{ paddingVertical: 16, gap: 16 } as any}>
+      {/* ── Message area — paddingBottom always ≥ input bar height above it ── */}
+      <Box flex={1} style={{ paddingTop: 16, paddingBottom: showKeyboard ? 416 : phase === 'nudge' ? 140 : phase === 'sent' ? 100 : 16, gap: 16, justifyContent: 'flex-end' } as any}>
         <DateSeparator label="Friday, May 22" />
-        <CarlosMessage taskAssigned={showMessages} />
+        <CarlosMessage taskAssigned />
         {showMessages && (
           <MyMessage
             text={messageTextRef.current || 'Hi Carlos! Welcome to the project,\nI have assigned one task.'}
+            showCelebration={phase === 'sent'}
           />
         )}
-        {phase === 'nudge' && <TaskNudgeCard />}
+        {phase === 'nudge' && <TagNudgeCard anim={nudgeAnim} />}
       </Box>
 
       {/* ── Input area ── */}
-      {showMessages ? (
+      {phase === 'sent' ? (
         <ChatInputMinimal />
+      ) : phase === 'nudge' ? (
+        <ChatInputFull
+          value={messageText}
+          inputRef={inputRef}
+          onChangeText={handleChangeText}
+          onFocus={handleFocus}
+          onPhysicalKeyPress={handlePhysicalKeyPress}
+          nudgeAnim={nudgeAnim}
+          onHashNudgePress={onComplete}
+          onSend={handleSend}
+          bottomOffset={0}
+        />
       ) : (
         <Animated.View style={{ transform: [{ translateY: sheetTranslateY }], zIndex: 41 } as any}>
           <ChatInputFull
@@ -366,23 +422,12 @@ export function Case6Screen({ onComplete }: { onComplete?: () => void } = {}) {
         <OnboardingTooltip
           title="Start a Conversation"
           description="You can add files, media, and tasks anytime from here."
-          style={{ bottom: 408, left: 31, zIndex: 43 }}
-          arrowEdge="bottom" arrowSide="left" arrowInset={8}
+          style={{ bottom: 423, left: 31, zIndex: 43 }}
+          arrowEdge="bottom" arrowSide="left" arrowInset={24}
           anim={tooltipAnim}
         />
       )}
 
-      {/* ── Complete button (nudge phase) ── */}
-      {phase === 'nudge' && (
-        <Pressable
-          onPress={onComplete}
-          style={{ position: 'absolute', bottom: 88, left: 16, right: 16, zIndex: 50 } as any}
-        >
-          <View style={{ backgroundColor: TTTheme.colors.textPrimary, borderRadius: 8, paddingVertical: 14, alignItems: 'center' }}>
-            <Text variant="mobileLabelSmall" style={{ color: '#fff' }}>Complete Onboarding</Text>
-          </View>
-        </Pressable>
-      )}
 
     </Box>
   );

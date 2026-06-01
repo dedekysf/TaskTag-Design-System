@@ -2,7 +2,7 @@
 import { Box, Text } from '@/components/primitives';
 import { theme as TTTheme } from '@/constants/theme';
 import { MockKeyboard } from '../../_shared/mobile/MockKeyboard';
-import { OnboardingTooltip, useTooltipAnim } from '../../_shared/mobile/OnboardingTooltip';
+import { OnboardingTooltip } from '../../_shared/mobile/OnboardingTooltip';
 import { StatusBarRow } from '../../_shared/mobile/StatusBarRow';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Pressable, TextInput, View } from 'react-native';
@@ -20,7 +20,7 @@ import {
   Send,
 } from 'lucide-react-native';
 
-// Phase progression: coach → picker → compose → success → done
+// Phase progression: coach → (2s auto nudge) → picker → compose → success → done
 type Phase = 'coach' | 'picker' | 'compose' | 'success' | 'done';
 
 // TODO(BE): GET /api/chats/:chatId/context
@@ -221,15 +221,37 @@ function CarlosReply() {
 
 // ── Input bars ────────────────────────────────────────────────────────────────
 
-function MinimalInputBar({ onHashPress }: { onHashPress: () => void }) {
+function TagNudgeCard() {
+  return (
+    <View style={{ marginHorizontal: 16, marginBottom: 12, backgroundColor: '#000', borderRadius: 16, padding: 16, flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
+      <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: TTTheme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center' }}>
+        <Hash size={20} color="#fff" />
+      </View>
+      <View style={{ flex: 1, gap: 4 } as any}>
+        <Text variant="mobileLabelEmphasized" style={{ color: '#fff' }}>Tag this message</Text>
+        <Text variant="mobileSecondaryBody" style={{ color: '#fff' }}>
+          {'Tap # below to tag this message so '}
+          {/* TODO(BE): chat.contact.name */}
+          {CHAT_CONTEXT.memberName}
+          {' knows exactly which site this is about'}
+        </Text>
+      </View>
+    </View>
+  );
+}
+
+function MinimalInputBar({ onHashPress, hashHighlighted = false }: { onHashPress: () => void; hashHighlighted?: boolean }) {
   return (
     <View style={{ backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: TTTheme.colors.border, borderTopLeftRadius: 16, borderTopRightRadius: 16 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 16, gap: 8 } as any}>
         <View style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
           <Plus size={20} color={TTTheme.colors.textPrimary} />
         </View>
-        <Pressable onPress={onHashPress} style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' } as any}>
-          <Hash size={20} color={TTTheme.colors.textPrimary} />
+        <Pressable
+          onPress={onHashPress}
+          style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: hashHighlighted ? TTTheme.colors.secondaryGreen : 'transparent', alignItems: 'center', justifyContent: 'center' } as any}
+        >
+          <Hash size={20} color={hashHighlighted ? '#fff' : TTTheme.colors.textPrimary} />
         </Pressable>
         <Text variant="mobileBody" color="grey05" style={{ flex: 1 }}>Type message here...</Text>
         <View style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
@@ -398,8 +420,8 @@ function ComposerPanel({
           ))}
         </View>
         <Pressable onPress={sendActive ? onSend : undefined}>
-          <View style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: sendActive ? TTTheme.colors.secondaryGreen : TTTheme.colors.grey02, alignItems: 'center', justifyContent: 'center' }}>
-            <Send size={20} color={sendActive ? '#fff' : TTTheme.colors.grey04} />
+          <View style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: sendActive ? '#000' : TTTheme.colors.grey05, alignItems: 'center', justifyContent: 'center' }}>
+            <Send size={20} color="#fff" />
           </View>
         </Pressable>
       </View>
@@ -420,15 +442,23 @@ export function Case7Screen({ onComplete }: { onComplete?: () => void } = {}) {
   const keyTimerRef     = useRef<ReturnType<typeof setTimeout> | null>(null);
   const successTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const coachTooltipAnim   = useTooltipAnim(250);
+  const [showNudge, setShowNudge] = useState(false);
+  const nudgeTimerRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
   const composeTooltipAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     return () => {
       if (keyTimerRef.current)    clearTimeout(keyTimerRef.current);
       if (successTimerRef.current) clearTimeout(successTimerRef.current);
+      if (nudgeTimerRef.current)   clearTimeout(nudgeTimerRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (phase !== 'coach') { setShowNudge(false); return; }
+    nudgeTimerRef.current = setTimeout(() => setShowNudge(true), 2000);
+    return () => { if (nudgeTimerRef.current) clearTimeout(nudgeTimerRef.current); };
+  }, [phase]);
 
   useEffect(() => {
     if (phase !== 'compose') return;
@@ -495,8 +525,9 @@ export function Case7Screen({ onComplete }: { onComplete?: () => void } = {}) {
     handleSend();
   };
 
-  const showMinimalInput = phase === 'coach' || phase === 'success' || phase === 'done';
-  const showMessages     = phase === 'success' || phase === 'done';
+  const showMinimalInput   = phase === 'coach' || phase === 'success' || phase === 'done';
+  const showFirstMessage   = phase === 'coach' || phase === 'success' || phase === 'done';
+  const showTaggedMessage  = phase === 'success' || phase === 'done';
 
   return (
     <Box flex={1} backgroundColor="white">
@@ -507,20 +538,21 @@ export function Case7Screen({ onComplete }: { onComplete?: () => void } = {}) {
       <View style={{ flex: 1, backgroundColor: '#fff', justifyContent: 'flex-end', paddingBottom: phase === 'compose' ? 168 : 0 }}>
         <DateSeparator label="Friday, May 22" />
         <TaskAssignedMessage onTagPress={openPicker} />
-        {showMessages && (
-          <>
-            <OutgoingMessage text="Hi Carlos! Welcome to the project, I have assigned one task." />
-            <OutgoingMessage
-              text="This is a task that I have assigned to you"
-              showTags
-            />
-          </>
+        {showFirstMessage && (
+          <OutgoingMessage text="Hi Carlos! Welcome to the project, I have assigned one task." />
         )}
+        {showTaggedMessage && (
+          <OutgoingMessage
+            text="This is a task that I have assigned to you"
+            showTags
+          />
+        )}
+        {phase === 'coach' && showNudge && <TagNudgeCard />}
         {phase === 'done' && <CarlosReply />}
       </View>
 
       {/* ── Input bar (coach / success / done phases) ── */}
-      {showMinimalInput && <MinimalInputBar onHashPress={openPicker} />}
+      {showMinimalInput && <MinimalInputBar onHashPress={openPicker} hashHighlighted={phase === 'coach' && showNudge} />}
 
       {/* ── Task picker (picker phase) ── */}
       {phase === 'picker' && (
@@ -554,21 +586,6 @@ export function Case7Screen({ onComplete }: { onComplete?: () => void } = {}) {
         </>
       )}
 
-      {/* ── Tooltip 1: "Tag It" (coach phase) ── */}
-      {phase === 'coach' && (
-        <OnboardingTooltip
-          title="Tag It"
-          description="Tag a job or task to link any message so nothing gets lost."
-          step="Step 1/3"
-          ctaText="Try it!"
-          onCtaPress={openPicker}
-          style={{ bottom: 105, left: 31, zIndex: 62 }}
-          arrowEdge="bottom"
-          arrowSide="left"
-          arrowInset={8}
-          anim={coachTooltipAnim}
-        />
-      )}
 
       {/* ── Complete button (done phase) ── */}
       {phase === 'done' && (

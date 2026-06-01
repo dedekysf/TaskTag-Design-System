@@ -38,9 +38,9 @@ function Screen1({ onInvite }: { onInvite: () => void }) {
   const tooltipAnim = useTooltipAnim();
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff' }}>
+    <View style={{ flex: 1, backgroundColor: '#fff', overflow: 'hidden' }}>
       <StatusBarRow />
-      <ProjectDetailScreen onInvite={onInvite} />
+      <ProjectDetailScreen onInvite={onInvite} scrollEnabled={false} />
 
       {/* Spotlight: box-shadow covers full screen, element shape = Members card cutout with matching radius */}
       <View
@@ -287,7 +287,6 @@ function Screen2({ onNext }: { onNext: () => void }) {
 
   const renderAvatar = (item: typeof INVITE_CONTACTS[number], size = 44) => {
     const iconSize = size === 56 ? 24 : 20;
-    const fontSize = size === 56 ? 17 : 15;
 
     if (item.type === 'mail') return (
       <View style={{ width: size, height: size, borderRadius: size / 2, backgroundColor: TTTheme.colors.grey02, alignItems: 'center', justifyContent: 'center' }}>
@@ -296,7 +295,7 @@ function Screen2({ onNext }: { onNext: () => void }) {
     );
     return (
       <View style={{ width: size, height: size, borderRadius: size / 2, backgroundColor: item.bg, alignItems: 'center', justifyContent: 'center' }}>
-        <Text style={{ fontSize, fontWeight: '700' }} color="white">{item.initials}</Text>
+        <Text variant={size === 56 ? 'mobileLargeLabel' : 'mobileLabelEmphasized'} style={{ fontWeight: '700' }} color="white">{item.initials}</Text>
       </View>
     );
   };
@@ -344,7 +343,7 @@ function Screen2({ onNext }: { onNext: () => void }) {
       {/* ── Selected Members — outside ScrollView so the X Pressable receives touches reliably ── */}
       {(selectedContact || selectedEmail) && (
         <View style={{ paddingHorizontal: 16, marginTop: 16, gap: 10 } as any}>
-          <Text variant="mobileLabelEmphasized" color="foreground" style={{ fontSize: 16 }}>Selected Members (1)</Text>
+          <Text variant="mobileLabelEmphasized" color="foreground">Selected Members (1)</Text>
           <View style={{ flexDirection: 'row', gap: 10 }}>
             <View style={{ alignItems: 'center', gap: 4 } as any}>
               <View style={{ width: 62, height: 62, alignItems: 'center', justifyContent: 'center' }}>
@@ -389,7 +388,7 @@ function Screen2({ onNext }: { onNext: () => void }) {
           )}
 
           <View style={{ paddingHorizontal: 16, marginTop: 12, gap: 3 } as any}>
-            <Text variant="mobileLabelEmphasized" color="foreground" style={{ fontSize: 16 }}>Your Contact (1)</Text>
+            <Text variant="mobileLabelEmphasized" color="foreground">Your Contact (1)</Text>
             <Text variant="mobileMetadataPrimary" color="grey05">Choose contact first to invite or add member</Text>
           </View>
 
@@ -399,7 +398,7 @@ function Screen2({ onNext }: { onNext: () => void }) {
             style={{ marginHorizontal: 16, marginTop: 12, flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 8 }}
           >
             <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: TTTheme.colors.pastelOrange, alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={{ fontSize: 15, fontWeight: '700' }} color="white">TH</Text>
+              <Text variant="mobileLabelEmphasized" style={{ fontWeight: '700' }} color="white">TH</Text>
             </View>
             <View style={{ flex: 1, gap: 2 } as any}>
               <Text variant="mobileLabelSmall" color="foreground">TaskTag Helpdesk</Text>
@@ -434,7 +433,7 @@ function Screen2({ onNext }: { onNext: () => void }) {
                   onPress={selected === directEmailRow ? handleOpenRoleSheet : undefined}
                   disabled={selected !== directEmailRow}
                   hoverBackgroundColor="transparent"
-                  style={{ justifyContent: 'flex-start', alignSelf: 'stretch', paddingHorizontal: 0 } as any}
+                  style={{ justifyContent: 'flex-start', alignSelf: 'stretch', paddingHorizontal: 0, transform: [{ scale: 1 }] } as any}
                   rightIcon={<ChevronDown size={12} color={selected === directEmailRow ? TTTheme.colors.textPrimary : TTTheme.colors.grey05} />}
                 >
                   <Text variant="mobileLabelSmall" color={selected === directEmailRow ? 'foreground' : 'grey05'}>{selected === directEmailRow ? selectedRole : 'Viewer'}</Text>
@@ -455,7 +454,7 @@ function Screen2({ onNext }: { onNext: () => void }) {
               <View style={{ flex: 1, gap: 4 } as any}>
                 <HighlightedSearchText text={item.label} query={query} />
                 {item.role && (
-                  <Button variant="ghost" color="secondary" size="xs" onPress={selected === item.key ? handleOpenRoleSheet : undefined} disabled={selected !== item.key} hoverBackgroundColor="transparent" style={{ justifyContent: 'flex-start', alignSelf: 'stretch', paddingHorizontal: 0 } as any} rightIcon={<ChevronDown size={12} color={selected === item.key ? TTTheme.colors.textPrimary : TTTheme.colors.grey05} />}>
+                  <Button variant="ghost" color="secondary" size="xs" onPress={selected === item.key ? handleOpenRoleSheet : undefined} disabled={selected !== item.key} hoverBackgroundColor="transparent" style={{ justifyContent: 'flex-start', alignSelf: 'stretch', paddingHorizontal: 0, transform: [{ scale: 1 }] } as any} rightIcon={<ChevronDown size={12} color={selected === item.key ? TTTheme.colors.textPrimary : TTTheme.colors.grey05} />}>
                     <Text variant="mobileLabelSmall" color={selected === item.key ? 'foreground' : 'grey05'}>{selected === item.key ? selectedRole : item.role}</Text>
                   </Button>
                 )}
@@ -573,7 +572,7 @@ function Screen3({ onNext, onRoleTap }: { onNext: () => void; onRoleTap: () => v
 
     return (
       <View style={{ width: size, height: size, borderRadius: size / 2, backgroundColor: item.bg, alignItems: 'center', justifyContent: 'center' }}>
-        <Text style={{ fontSize: size === 56 ? 17 : 15, fontWeight: '700' }} color="white">{item.initials}</Text>
+        <Text variant={size === 56 ? 'mobileLargeLabel' : 'mobileLabelEmphasized'} style={{ fontWeight: '700' }} color="white">{item.initials}</Text>
       </View>
     );
   };
@@ -608,7 +607,7 @@ function Screen3({ onNext, onRoleTap }: { onNext: () => void; onRoleTap: () => v
 
       {(selectedContact || selectedEmail) && (
         <View style={{ paddingHorizontal: 16, marginTop: 16, gap: 10 } as any}>
-          <Text variant="mobileLabelEmphasized" color="foreground" style={{ fontSize: 16 }}>Selected Members (1)</Text>
+          <Text variant="mobileLabelEmphasized" color="foreground">Selected Members (1)</Text>
           <View style={{ flexDirection: 'row', gap: 10 }}>
             <View style={{ alignItems: 'center', gap: 4 } as any}>
               <View style={{ width: 62, height: 62, alignItems: 'center', justifyContent: 'center' }}>
@@ -756,7 +755,7 @@ function MemberListLayout({
         </View>
         <View style={{ flex: 1, gap: 4 } as any}>
           <HighlightedSearchText text="carlossmith@gmail.com" query={searchQuery} />
-          <Button variant="ghost" color="secondary" size="xs" onPress={onRoleTap} hoverBackgroundColor="transparent" style={{ justifyContent: 'flex-start', alignSelf: 'stretch', paddingHorizontal: 0 } as any} rightIcon={<ChevronDown size={12} color={roleColor} />}>
+          <Button variant="ghost" color="secondary" size="xs" onPress={onRoleTap} hoverBackgroundColor="transparent" style={{ justifyContent: 'flex-start', alignSelf: 'stretch', paddingHorizontal: 0, transform: [{ scale: 1 }] } as any} rightIcon={<ChevronDown size={12} color={roleColor} />}>
             <Text variant="mobileLabelSmall" style={{ color: roleColor }}>{carlosRole}</Text>
           </Button>
         </View>
@@ -911,8 +910,14 @@ function Screen6({ onSendInvite }: { onSendInvite: () => void }) {
 
 // ── Screen 7: Members page ───────────────────────────────────────────────────
 
-function Screen7({ onDone }: { onDone: () => void }) {
-  return <MembersScreen onDone={onDone} />;
+function Screen7({
+  onAddTasksNow,
+  onBackToProject,
+}: {
+  onAddTasksNow: () => void;
+  onBackToProject: () => void;
+}) {
+  return <MembersScreen onPrimary={onAddTasksNow} onSecondary={onBackToProject} />;
 }
 
 // ── Main Case3Screen ─────────────────────────────────────────────────────────
@@ -920,12 +925,16 @@ function Screen7({ onDone }: { onDone: () => void }) {
 export function Case3Screen({
   startScreen = 1,
   onComplete,
+  onAddTasksNow,
 }: {
   startScreen?: 1 | 2;
-  /** Called when "Add Tasks Now" is tapped — advances to Case 4 */
   onComplete?: () => void;
+  onAddTasksNow?: () => void;
 }) {
   const [screen, setScreen] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7>(startScreen as 1 | 2 | 3 | 4 | 5 | 6 | 7);
+
+  const backToProject = onComplete ?? (() => setScreen(1));
+  const addTasksNow   = onAddTasksNow ?? backToProject;
 
   return (
     <Box flex={1} backgroundColor="white">
@@ -935,7 +944,7 @@ export function Case3Screen({
       {screen === 4 && <Screen4 onRoleTap={() => setScreen(5)} />}
       {screen === 5 && <Screen5 onSelectAdmin={() => setScreen(6)} />}
       {screen === 6 && <Screen6 onSendInvite={() => setScreen(7)} />}
-      {screen === 7 && <Screen7 onDone={onComplete ?? (() => setScreen(1))} />}
+      {screen === 7 && <Screen7 onAddTasksNow={addTasksNow} onBackToProject={backToProject} />}
     </Box>
   );
 }

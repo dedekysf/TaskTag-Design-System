@@ -80,7 +80,7 @@ export function SuccessModal({
           <Text style={{ fontSize: 22, fontWeight: '700', color: TTTheme.colors.textPrimary, textAlign: 'center' }}>
             {title}
           </Text>
-          <Text variant="mobileSecondaryBody" color="grey05" style={{ textAlign: 'center' }}>
+          <Text variant="mobileBody" color="grey05" style={{ textAlign: 'center' }}>
             {description}
           </Text>
         </View>

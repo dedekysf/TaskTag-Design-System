@@ -20,9 +20,11 @@ export interface ProjectDetailScreenProps {
   onInvite?: () => void;
   /** Forwarded to the Tasks card so the parent can measure its position and size. */
   taskCardRef?: React.Ref<View>;
+  /** Pass false to lock scrolling — prevents spotlight from drifting off its target. */
+  scrollEnabled?: boolean;
 }
 
-export function ProjectDetailScreen({ onInvite, taskCardRef }: ProjectDetailScreenProps = {}) {
+export function ProjectDetailScreen({ onInvite, taskCardRef, scrollEnabled = true }: ProjectDetailScreenProps = {}) {
   return (
     <>
       {/* Header */}
@@ -42,6 +44,7 @@ export function ProjectDetailScreen({ onInvite, taskCardRef }: ProjectDetailScre
       <ScrollView
         style={{ flex: 1, backgroundColor: TTTheme.colors.grey02 }}
         showsVerticalScrollIndicator={false}
+        scrollEnabled={scrollEnabled}
         contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 80 } as any}
       >
         {/* TODO(BE): GET /api/projects/:id — project.name, project.address, project.workspace, project.owner */}
