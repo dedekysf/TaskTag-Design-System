@@ -66,11 +66,14 @@ interface ActiveMember {
 
 interface PendingInvite {
   id: string;
+  name: string;
   email: string;
   invitedBy: string;
   dateSent: string;
   expirationDate: string;
   role: string;
+  initials: string;
+  color: string;
 }
 
 const INITIAL_ACTIVE_MEMBERS: ActiveMember[] = [
@@ -1474,6 +1477,20 @@ export function ProjectDetail({
           type="success"
           onDismiss={() => {
             setShowInviteSentToast(false);
+            setPendingInvites(prev => {
+              const newMembers: ActiveMember[] = prev.map(p => ({
+                id: `member-${p.id}`,
+                name: p.name,
+                email: p.email,
+                phone: '',
+                role: 'Editor' as const,
+                initials: p.initials,
+                color: p.color,
+                skills: [],
+              }));
+              setActiveMembers(existing => [...existing, ...newMembers]);
+              return [];
+            });
             onInviteSentToastDismiss?.();
           }}
         />
@@ -1491,14 +1508,26 @@ export function ProjectDetail({
               const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
               const expiry = new Date(now);
               expiry.setDate(expiry.getDate() + 7);
-              const newPending: PendingInvite[] = invitees.map(inv => ({
-                id: `pending-${inv.id}-${Date.now()}`,
-                email: inv.email,
-                invitedBy: activeMembers.find(m => m.role === 'Owner')?.name ?? 'Maria Jose',
-                dateSent: fmt(now),
-                expirationDate: fmt(expiry),
-                role: inv.role,
-              }));
+              const newPending: PendingInvite[] = invitees.map(inv => {
+                const known = KNOWN_MEMBER_DATA[inv.email.toLowerCase()];
+                const av = inv.avatar;
+                const initials = known?.initials
+                  ?? (av.type === 'initials' ? av.initials : inv.email.split('@')[0].slice(0, 2).toUpperCase());
+                const color = known?.color
+                  ?? (av.type === 'initials' ? av.color : '#64748b');
+                const name = known?.name ?? inv.name;
+                return {
+                  id: `pending-${inv.id}-${Date.now()}`,
+                  name,
+                  email: inv.email,
+                  invitedBy: activeMembers.find(m => m.role === 'Owner')?.name ?? 'Maria Jose',
+                  dateSent: fmt(now),
+                  expirationDate: fmt(expiry),
+                  role: inv.role,
+                  initials,
+                  color,
+                };
+              });
               setPendingInvites(prev => [...prev, ...newPending]);
               switchTab('members', () => setShowInviteSentToast(true));
             } else {
@@ -1860,10 +1889,12 @@ const ASSIGNEE_INVITE_ROLES: InviteRoleOption[] = [
   { label: 'Viewer', description: 'Can view this task without being responsible for the work.' },
 ];
 
-const INVITE_CONTACTS: InviteeContact[] = [
-  { id: 'maria-jose', name: 'Maria Jose', email: 'mariajose@gmail.com', avatar: { type: 'initials', initials: 'MJ', color: '#8b5cf6' } },
-  { id: 'carlos-smith', name: 'Carlos Smith', email: 'carlossmith@gmail.com', avatar: { type: 'initials', initials: 'CS', color: '#0ea5e9' } },
-];
+const INVITE_CONTACTS: InviteeContact[] = [];
+
+// Known member data used when an invited email matches — not shown in dropdown
+const KNOWN_MEMBER_DATA: Record<string, { name: string; initials: string; color: string }> = {
+  'carlossmith@gmail.com': { name: 'Carlos Smith', initials: 'CS', color: '#035b60' },
+};
 const INVITE_GROUPS: InviteGroup[] = [
   {
     id: 'chelsea-group', name: 'Chelsea Group', memberCount: 4,
