@@ -1094,9 +1094,11 @@ function RoomView({
   const firstTagFadeAnim = useRef(new Animated.Value(1)).current;
   const [firstTagMessageIdx, setFirstTagMessageIdx] = useState(-1);
 
-  // "Get a site photo" nudge — appears after "First tag complete!" fades
+  // "Get a site photo" nudge — appears after first message success fades
   const [showPhotoNudge, setShowPhotoNudge] = useState(false);
   const photoNudgeAnim = useRef(new Animated.Value(0)).current;
+  // Flag: tag nudge should appear after the photo-request message is sent
+  const [pendingTagNudge, setPendingTagNudge] = useState(false);
 
   // "Everything's connected" tooltip — appears when user taps a chip in a sent message
   const [showChipTooltip, setShowChipTooltip] = useState(false);
@@ -1544,6 +1546,7 @@ function RoomView({
                     useNativeDriver: true,
                   }).start(() => {
                     setShowPhotoNudge(false);
+                    setPendingTagNudge(true);
                     setChatMessage("Can you send a site photo? It'll be saved to the job automatically.");
                     setTimeout(() => textInputRef.current?.focus(), 50);
                   });
@@ -1841,14 +1844,6 @@ function RoomView({
                     }).start(() => {
                       setShowFirstTagSuccess(false);
                       firstTagFadeAnim.setValue(1);
-                      setShowPhotoNudge(true);
-                      photoNudgeAnim.setValue(0);
-                      Animated.timing(photoNudgeAnim, {
-                        toValue: 1,
-                        duration: 400,
-                        easing: Easing.out(Easing.cubic),
-                        useNativeDriver: true,
-                      }).start();
                     });
                   }, 2000);
                 }
@@ -1864,9 +1859,20 @@ function RoomView({
                     }).start(() => {
                       setShowFirstMsgSuccess(false);
                       firstMsgFadeAnim.setValue(1);
-                      setShowTagNudge(true);
+                      setShowPhotoNudge(true);
+                      photoNudgeAnim.setValue(0);
+                      Animated.timing(photoNudgeAnim, {
+                        toValue: 1,
+                        duration: 400,
+                        easing: Easing.out(Easing.cubic),
+                        useNativeDriver: true,
+                      }).start();
                     });
                   }, 2000);
+                }
+                if (!isFirstMsg && !isTagged && pendingTagNudge) {
+                  setPendingTagNudge(false);
+                  setTimeout(() => setShowTagNudge(true), 400);
                 }
               }}
               style={({ pressed }: any) => ({

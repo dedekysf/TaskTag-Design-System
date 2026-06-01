@@ -24,8 +24,10 @@ import {
   Link,
   Mail,
   MapPin,
+  MessageSquare,
   MoreVertical,
   Plus,
+  RotateCcw,
   Save,
   Search,
   Trash2,
@@ -49,6 +51,33 @@ interface ChecklistItemData {
 }
 
 const INITIAL_CHECKLIST: ChecklistItemData[] = [];
+
+interface ActiveMember {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  role: 'Owner' | 'Admin' | 'Editor' | 'Viewer';
+  initials: string;
+  color: string;
+  skills: string[];
+  photo?: any;
+}
+
+interface PendingInvite {
+  id: string;
+  email: string;
+  invitedBy: string;
+  dateSent: string;
+  expirationDate: string;
+  role: string;
+}
+
+const INITIAL_ACTIVE_MEMBERS: ActiveMember[] = [
+  { id: 'maria-jose', name: 'Maria Jose', email: 'mariajose@gmail.com', phone: '', role: 'Owner', initials: 'MJ', color: '#8b5cf6', skills: [], photo: require('@/assets/images/mj.png') },
+];
+
+const INITIAL_PENDING_INVITES: PendingInvite[] = [];
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 
@@ -142,12 +171,18 @@ export function ProjectDetail({
   const [newItemText, setNewItemText] = useState('');
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
 
+  // Members state
+  const [activeMembers, setActiveMembers] = useState<ActiveMember[]>(INITIAL_ACTIVE_MEMBERS);
+  const [pendingInvites, setPendingInvites] = useState<PendingInvite[]>(INITIAL_PENDING_INVITES);
+  const [activeSectionExpanded, setActiveSectionExpanded] = useState(true);
+  const [pendingSectionExpanded, setPendingSectionExpanded] = useState(true);
+
   const tabs = [
     { id: 'tasks', label: 'Tasks', icon: Hash },
     { id: 'checklist', label: 'Checklist', icon: FileText },
     { id: 'files', label: 'Files & Media', icon: ImageIcon },
     { id: 'activity', label: 'Activity Log', icon: Activity },
-    { id: 'members', label: 'Members', icon: Users, count: 1 },
+    { id: 'members', label: 'Members', icon: Users, count: activeMembers.length },
   ];
 
   // ── Task handlers ──────────────────────────────────────────────────────────
@@ -248,10 +283,25 @@ export function ProjectDetail({
   };
 
   const handleConvert = () => {
+    const selectedItems = checklistItems.filter(item => convertSelectedIds.has(item.id));
+    const now = Date.now();
+    const newTasks: Task[] = selectedItems.map((item, i) => ({
+      id: `current-${now}-${i}`,
+      name: item.text,
+      priority: 'medium' as TaskPriority,
+      dueDate: null,
+      assignees: [],
+      completed: false,
+    }));
+
+    setCurrentTasks(prev => [...newTasks, ...prev]);
+    setChecklistItems(prev => prev.filter(item => !convertSelectedIds.has(item.id)));
+    setExpandedSection('current');
     setConvertSelectedIds(new Set());
     setShowConvertConfirmModal(false);
     setShowConvertToTasksTooltip(false);
-    setShowConvertToast(true);
+
+    switchTab('tasks', () => setShowConvertToast(true));
   };
 
   const displayChecklist = showCompleted
@@ -953,12 +1003,235 @@ export function ProjectDetail({
       )}
 
       {/* ── Placeholder tabs ── */}
-      {(activeTab === 'files' || activeTab === 'activity' || activeTab === 'members') && (
+      {(activeTab === 'files' || activeTab === 'activity') && (
         <Box flex={1} alignItems="center" justifyContent="center">
           <Text style={{ fontSize: 14, color: theme.colors.grey04 }}>
             {tabs.find(t => t.id === activeTab)?.label} — coming soon
           </Text>
         </Box>
+      )}
+
+      {/* ── Members tab ── */}
+      {activeTab === 'members' && (
+        <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, gap: 16 }}>
+          {/* Toolbar */}
+          <View style={{ flexDirection: 'row', gap: 4 }}>
+            <Pressable style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8, backgroundColor: hovered ? theme.colors.grey02 : 'transparent' })}>
+              {({ hovered }: any) => (
+                <>
+                  <ListFilter size={14} color={hovered ? theme.colors.foreground : theme.colors.grey04} />
+                  <Text style={{ fontSize: 13, color: hovered ? theme.colors.foreground : theme.colors.grey04 }}>Filter</Text>
+                </>
+              )}
+            </Pressable>
+            <Pressable style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8, backgroundColor: hovered ? theme.colors.grey02 : 'transparent' })}>
+              {({ hovered }: any) => (
+                <>
+                  <MessageSquare size={14} color={hovered ? theme.colors.foreground : theme.colors.grey04} />
+                  <Text style={{ fontSize: 13, color: hovered ? theme.colors.foreground : theme.colors.grey04 }}>Start a Chat</Text>
+                </>
+              )}
+            </Pressable>
+          </View>
+
+          {/* Active Section */}
+          <Box backgroundColor="card" style={{ borderWidth: 1, borderColor: theme.colors.border, borderRadius: 8 }}>
+            <Pressable onPress={() => setActiveSectionExpanded(v => !v)}>
+              <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ height: 64, paddingHorizontal: 16 }}>
+                <Box flexDirection="row" alignItems="center" gap="8">
+                  <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>Active</Text>
+                  <Box width={20} height={20} alignItems="center" justifyContent="center" style={{ borderWidth: 1, borderColor: theme.colors.border, borderRadius: 10 }}>
+                    <Text style={{ fontSize: 11, color: theme.colors.grey05, fontWeight: '500' }}>{activeMembers.length}</Text>
+                  </Box>
+                </Box>
+                {activeSectionExpanded
+                  ? <ChevronUp size={20} color={theme.colors.grey06} />
+                  : <ChevronDown size={20} color={theme.colors.grey06} />}
+              </Box>
+            </Pressable>
+
+            {activeSectionExpanded && (
+              <>
+                <Box flexDirection="row" backgroundColor="grey01">
+                  <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }}>
+                    <Box flexDirection="row" alignItems="center" gap="4">
+                      <Text style={{ fontSize: 12, color: theme.colors.grey05 }}>Name</Text>
+                      <ArrowDownUp size={12} color={theme.colors.grey05} />
+                    </Box>
+                  </Box>
+                  <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }}>
+                    <Text style={{ fontSize: 12, color: theme.colors.grey05 }}>Skills</Text>
+                  </Box>
+                  <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }}>
+                    <Text style={{ fontSize: 12, color: theme.colors.grey05 }}>Email</Text>
+                  </Box>
+                  <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }} alignItems="flex-end">
+                    <Text style={{ fontSize: 12, color: theme.colors.grey05 }}>Phone</Text>
+                  </Box>
+                  <Box style={{ width: 120, paddingLeft: 22, paddingRight: 16, paddingVertical: 10 }}>
+                    <Text style={{ fontSize: 12, color: theme.colors.grey05 }}>Role</Text>
+                  </Box>
+                  <Box style={{ width: 128, paddingHorizontal: 8, paddingVertical: 10 }} alignItems="center">
+                    <Text style={{ fontSize: 12, color: theme.colors.grey05 }}>Action</Text>
+                  </Box>
+                </Box>
+
+                {activeMembers.map((member) => (
+                  <Box key={member.id} flexDirection="row" alignItems="center" borderTopWidth={1} borderColor="border" style={{ height: 48 }}>
+                    <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 8 }}>
+                      <Box flexDirection="row" alignItems="center" gap="8">
+                        {member.photo ? (
+                          <Image source={member.photo} style={{ width: 32, height: 32, borderRadius: 16 }} />
+                        ) : (
+                          <Box width={32} height={32} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: member.color }}>
+                            <Text style={{ fontSize: 11, fontWeight: '700', color: '#fff' }}>{member.initials}</Text>
+                          </Box>
+                        )}
+                        <Text style={{ fontSize: 13, color: theme.colors.foreground, flex: 1 }} numberOfLines={1}>{member.name}</Text>
+                      </Box>
+                    </Box>
+                    <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 8 }}>
+                      {member.skills.length > 0 && (
+                        <Box flexDirection="row" alignItems="center" gap="4">
+                          {member.skills.slice(0, 2).map((skill, i) => (
+                            <Box key={i} style={{ backgroundColor: theme.colors.grey02, borderRadius: 4, paddingHorizontal: 4, paddingVertical: 2 }}>
+                              <Text style={{ fontSize: 11, color: theme.colors.foreground }}>{skill}</Text>
+                            </Box>
+                          ))}
+                        </Box>
+                      )}
+                    </Box>
+                    <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 8 }}>
+                      <Text style={{ fontSize: 13, color: theme.colors.foreground }} numberOfLines={1}>{member.email}</Text>
+                    </Box>
+                    <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 8 }} alignItems="flex-end">
+                      <Text style={{ fontSize: 13, color: theme.colors.foreground }}>{member.phone}</Text>
+                    </Box>
+                    <Box style={{ width: 120, paddingHorizontal: 16, paddingVertical: 8, justifyContent: 'center' }}>
+                      {member.role === 'Owner' ? (
+                        <Text style={{ fontSize: 12, color: theme.colors.foreground, paddingHorizontal: 6 }}>{member.role}</Text>
+                      ) : (
+                        <Pressable style={({ hovered }: any) => ({ flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 6, paddingVertical: 4, borderRadius: 6, backgroundColor: hovered ? theme.colors.grey02 : 'transparent' })}>
+                          {({ hovered }: any) => (
+                            <>
+                              <Text style={{ fontSize: 12, color: theme.colors.foreground }}>{member.role}</Text>
+                              <ChevronDown size={14} color={theme.colors.grey06} />
+                            </>
+                          )}
+                        </Pressable>
+                      )}
+                    </Box>
+                    <Box style={{ width: 128, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+                      <Pressable style={({ hovered }: any) => ({ padding: 6, borderRadius: 6, backgroundColor: hovered ? theme.colors.grey02 : 'transparent' })}>
+                        {({ hovered }: any) => <MessageSquare size={16} color={hovered ? theme.colors.foreground : theme.colors.grey06} />}
+                      </Pressable>
+                      {member.role !== 'Owner' && (
+                        <Pressable
+                          onPress={() => setActiveMembers(prev => prev.filter(m => m.id !== member.id))}
+                          style={({ hovered }: any) => ({ padding: 6, borderRadius: 6, backgroundColor: hovered ? theme.colors.grey02 : 'transparent' })}
+                        >
+                          {({ hovered }: any) => <Trash2 size={16} color={hovered ? '#ef4444' : theme.colors.grey06} />}
+                        </Pressable>
+                      )}
+                    </Box>
+                  </Box>
+                ))}
+              </>
+            )}
+          </Box>
+
+          {/* Pending Section */}
+          <Box backgroundColor="card" style={{ borderWidth: 1, borderColor: theme.colors.border, borderRadius: 8 }}>
+            <Pressable onPress={() => setPendingSectionExpanded(v => !v)}>
+              <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ height: 64, paddingHorizontal: 16 }}>
+                <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>Pending</Text>
+                {pendingSectionExpanded
+                  ? <ChevronUp size={20} color={theme.colors.grey06} />
+                  : <ChevronDown size={20} color={theme.colors.grey06} />}
+              </Box>
+            </Pressable>
+
+            {pendingSectionExpanded && (
+              pendingInvites.length === 0 ? (
+                <View style={{ alignItems: 'center', paddingTop: 16, paddingBottom: 24, gap: 12 }}>
+                  <Box width={64} height={64} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.grey02 }}>
+                    <Mail size={28} color={theme.colors.grey05} />
+                  </Box>
+                  <Text style={{ fontSize: 14, color: theme.colors.grey04 }}>No invitations have been sent yet.</Text>
+                  <Pressable
+                    onPress={() => { setInviteModalMode('member'); setShowInviteModal(true); }}
+                    style={{ flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: theme.colors.foreground, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 10 }}
+                  >
+                    <UserPlus size={16} color="white" />
+                    <Text style={{ fontSize: 14, fontWeight: '500', color: 'white' }}>Invite members</Text>
+                  </Pressable>
+                </View>
+              ) : (
+                <>
+                  <Box flexDirection="row" backgroundColor="grey01">
+                    <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }}>
+                      <Text style={{ fontSize: 12, color: theme.colors.grey05 }}>Email or Name</Text>
+                    </Box>
+                    <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }}>
+                      <Text style={{ fontSize: 12, color: theme.colors.grey05 }}>Invited By</Text>
+                    </Box>
+                    <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }}>
+                      <Box flexDirection="row" alignItems="center" gap="4">
+                        <Text style={{ fontSize: 12, color: theme.colors.grey05 }}>Date Sent</Text>
+                        <ArrowDownUp size={11} color={theme.colors.grey05} />
+                      </Box>
+                    </Box>
+                    <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 10 }}>
+                      <Text style={{ fontSize: 12, color: theme.colors.grey05 }}>Expiration Date</Text>
+                    </Box>
+                    <Box style={{ width: 120, paddingLeft: 22, paddingRight: 16, paddingVertical: 10 }}>
+                      <Text style={{ fontSize: 12, color: theme.colors.grey05 }}>Role</Text>
+                    </Box>
+                    <Box style={{ width: 128, paddingHorizontal: 8, paddingVertical: 10 }} alignItems="center">
+                      <Text style={{ fontSize: 12, color: theme.colors.grey05 }}>Action</Text>
+                    </Box>
+                  </Box>
+
+                  {pendingInvites.map((invite) => (
+                    <Box key={invite.id} flexDirection="row" alignItems="center" borderTopWidth={1} borderColor="border" style={{ height: 48 }}>
+                      <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 8 }}>
+                        <Box flexDirection="row" alignItems="center" gap="8">
+                          <Box width={32} height={32} borderRadius="full" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.grey02 }}>
+                            <Mail size={16} color={theme.colors.grey05} />
+                          </Box>
+                          <Text style={{ fontSize: 13, color: theme.colors.foreground }} numberOfLines={1}>{invite.email}</Text>
+                        </Box>
+                      </Box>
+                      <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 8 }}>
+                        <Text style={{ fontSize: 13, color: theme.colors.foreground }}>{invite.invitedBy}</Text>
+                      </Box>
+                      <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 8 }}>
+                        <Text style={{ fontSize: 13, color: theme.colors.foreground }}>{invite.dateSent}</Text>
+                      </Box>
+                      <Box style={{ flex: 2, paddingHorizontal: 16, paddingVertical: 8 }}>
+                        <Text style={{ fontSize: 13, color: theme.colors.foreground }}>{invite.expirationDate}</Text>
+                      </Box>
+                      <Box style={{ width: 120, paddingHorizontal: 16, paddingVertical: 8, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 12, color: theme.colors.foreground, paddingHorizontal: 6 }}>{invite.role}</Text>
+                      </Box>
+                      <Box style={{ width: 128, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+                        <Pressable style={({ hovered }: any) => ({ padding: 6, borderRadius: 6, backgroundColor: hovered ? theme.colors.grey02 : 'transparent' })}>
+                          {({ hovered }: any) => <RotateCcw size={16} color={hovered ? theme.colors.foreground : theme.colors.grey06} />}
+                        </Pressable>
+                        <Pressable
+                          onPress={() => setPendingInvites(prev => prev.filter(p => p.id !== invite.id))}
+                          style={({ hovered }: any) => ({ padding: 6, borderRadius: 6, backgroundColor: hovered ? theme.colors.grey02 : 'transparent' })}
+                        >
+                          {({ hovered }: any) => <Trash2 size={16} color={hovered ? '#ef4444' : theme.colors.grey06} />}
+                        </Pressable>
+                      </Box>
+                    </Box>
+                  ))}
+                </>
+              )
+            )}
+          </Box>
+        </ScrollView>
       )}
 
       </Animated.View>
@@ -1203,10 +1476,27 @@ export function ProjectDetail({
         <InviteModal
           mode={inviteModalMode}
           onClose={() => setShowInviteModal(false)}
-          onSendInvite={() => {
+          onSendInvite={(invitees) => {
             setShowInviteModal(false);
             setShowInviteSentToast(false);
-            setTimeout(() => setShowInviteSentToast(true), 0);
+            if (inviteModalMode === 'member') {
+              const now = new Date();
+              const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+              const expiry = new Date(now);
+              expiry.setDate(expiry.getDate() + 7);
+              const newPending: PendingInvite[] = invitees.map(inv => ({
+                id: `pending-${inv.id}-${Date.now()}`,
+                email: inv.email,
+                invitedBy: activeMembers.find(m => m.role === 'Owner')?.name ?? 'Maria Jose',
+                dateSent: fmt(now),
+                expirationDate: fmt(expiry),
+                role: inv.role,
+              }));
+              setPendingInvites(prev => [...prev, ...newPending]);
+              switchTab('members', () => setShowInviteSentToast(true));
+            } else {
+              setTimeout(() => setShowInviteSentToast(true), 0);
+            }
           }}
         />
       )}
@@ -1564,8 +1854,8 @@ const ASSIGNEE_INVITE_ROLES: InviteRoleOption[] = [
 ];
 
 const INVITE_CONTACTS: InviteeContact[] = [
-  { id: 'chelsea-smith', name: 'Chelsea Smith', email: 'chelseasmith@gmail.com', avatar: { type: 'photo', src: require('@/assets/images/sample-three.jpg') } },
-  { id: 'chelsea-janson', name: 'Chelsea Janson', email: 'chelseajason@gmail.com', avatar: { type: 'initials', initials: 'CJ', color: INVITE_TEAL } },
+  { id: 'maria-jose', name: 'Maria Jose', email: 'mariajose@gmail.com', avatar: { type: 'initials', initials: 'MJ', color: '#8b5cf6' } },
+  { id: 'carlos-smith', name: 'Carlos Smith', email: 'carlossmith@gmail.com', avatar: { type: 'initials', initials: 'CS', color: '#0ea5e9' } },
 ];
 const INVITE_GROUPS: InviteGroup[] = [
   {
@@ -1733,7 +2023,7 @@ function InviteModal({
 }: {
   mode?: InviteModalMode;
   onClose: () => void;
-  onSendInvite: () => void;
+  onSendInvite: (invitees: InviteeEntry[]) => void;
 }) {
   const theme = useTheme<Theme>();
   const [inputValue, setInputValue] = useState('');
@@ -2002,7 +2292,7 @@ function InviteModal({
                 size="xl"
                 onPress={() => {
                   if (invitees.length === 0) return;
-                  onSendInvite();
+                  onSendInvite(invitees);
                 }}
                 style={{ width: '100%' as any }}
               >
