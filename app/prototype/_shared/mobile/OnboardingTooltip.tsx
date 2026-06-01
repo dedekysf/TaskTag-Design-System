@@ -29,7 +29,7 @@ export interface OnboardingTooltipProps {
   /** CTA button label — shown bottom-right, paired with step row */
   ctaText?: string;
   onCtaPress?: () => void;
-  /** Absolute positioning for the wrapper (bottom, top, left, right, zIndex…) */
+  /** Positioning/spacing for the wrapper. When inFlow=true, use margin/padding; otherwise use bottom/top/left/right/zIndex */
   style?: object;
   /** Which card edge the arrow caret appears on (default: 'bottom') */
   arrowEdge?: 'top' | 'bottom';
@@ -41,6 +41,8 @@ export interface OnboardingTooltipProps {
   anim: Animated.Value;
   /** Pass 'none' when tooltip is faded out so it doesn't block touches underneath */
   pointerEvents?: 'none' | 'box-none' | 'auto' | 'box-only';
+  /** When true, renders in normal layout flow instead of position: absolute */
+  inFlow?: boolean;
 }
 
 export function OnboardingTooltip({
@@ -55,6 +57,7 @@ export function OnboardingTooltip({
   arrowInset = 20,
   anim,
   pointerEvents = 'box-none',
+  inFlow = false,
 }: OnboardingTooltipProps) {
   const arrowStyle: any = {
     position: 'absolute',
@@ -73,7 +76,7 @@ export function OnboardingTooltip({
     <Animated.View
       pointerEvents={pointerEvents}
       style={[
-        { position: 'absolute', zIndex: 60, opacity: anim },
+        { ...(inFlow ? {} : { position: 'absolute' }), zIndex: 60, opacity: anim },
         style,
       ] as any}
     >

@@ -20,11 +20,13 @@ export interface ProjectDetailScreenProps {
   onInvite?: () => void;
   /** Forwarded to the Tasks card so the parent can measure its position and size. */
   taskCardRef?: React.Ref<View>;
+  /** Forwarded to the Members card so the parent can measure its position and size. */
+  memberCardRef?: React.Ref<View>;
   /** Pass false to lock scrolling — prevents spotlight from drifting off its target. */
   scrollEnabled?: boolean;
 }
 
-export function ProjectDetailScreen({ onInvite, taskCardRef, scrollEnabled = true }: ProjectDetailScreenProps = {}) {
+export function ProjectDetailScreen({ onInvite, taskCardRef, memberCardRef, scrollEnabled = true }: ProjectDetailScreenProps = {}) {
   return (
     <>
       {/* Header */}
@@ -90,7 +92,7 @@ export function ProjectDetailScreen({ onInvite, taskCardRef, scrollEnabled = tru
         </View>
 
         {/* TODO(BE): GET /api/projects/:id/members — members list + count */}
-        <View style={{ backgroundColor: '#fff', borderRadius: 8, padding: 15, gap: 12 } as any}>
+        <View ref={memberCardRef} style={{ backgroundColor: '#fff', borderRadius: 8, padding: 15, gap: 12 } as any}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <Text variant="mobileLabelEmphasized" color="foreground">Member (1)</Text>
             <Text variant="mobileMetadataPrimary" color="grey04">See All</Text>

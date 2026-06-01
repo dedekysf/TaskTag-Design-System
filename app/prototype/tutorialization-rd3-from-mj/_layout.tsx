@@ -24,7 +24,7 @@ export default function MobileLayout() {
       paddingVertical: paddingV,
     }}>
       <Box
-        width={375}
+        width={395}
         height={frameHeight}
         backgroundColor="background"
         style={{

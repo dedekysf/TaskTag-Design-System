@@ -119,8 +119,8 @@ function DateSeparator({ label }: { label: string }) {
 }
 
 /** Project pill — solid green, folder icon, white text */
-function ProjectTagChip({ label }: { label: string }) {
-  return (
+function ProjectTagChip({ label, onPress }: { label: string; onPress?: () => void }) {
+  const chip = (
     <View style={{
       borderRadius: 4,
       backgroundColor: TTTheme.colors.secondaryGreen,
@@ -132,6 +132,8 @@ function ProjectTagChip({ label }: { label: string }) {
       <Text variant="mobileLabelSmall" style={{ color: '#fff', flex: 1 }} numberOfLines={1}>{label}</Text>
     </View>
   );
+  if (onPress) return <Pressable onPress={onPress} style={{ flex: 1 } as any}>{chip}</Pressable>;
+  return chip;
 }
 
 /** Task pill — black, # prefix, optional × remove button */
@@ -179,7 +181,7 @@ function TaskAssignedMessage({ onTagPress }: { onTagPress: () => void }) {
   );
 }
 
-function OutgoingMessage({ text, showTags = false, showCelebration = false }: { text: string; showTags?: boolean; showCelebration?: boolean }) {
+function OutgoingMessage({ text, showTags = false, showCelebration = false, onProjectChipPress }: { text: string; showTags?: boolean; showCelebration?: boolean; onProjectChipPress?: () => void }) {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingHorizontal: 16, paddingVertical: 8 } as any}>
       {/* TODO(BE): currentUser.avatar */}
@@ -193,9 +195,9 @@ function OutgoingMessage({ text, showTags = false, showCelebration = false }: { 
         {/* TODO(BE): message.text */}
         <Text variant="mobileBody" color="textSecondary">{text}</Text>
         {showTags && (
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 } as any}>
+          <View style={{ flexDirection: 'row', gap: 6 } as any}>
             {/* TODO(BE): message.tags — project + task objects */}
-            <ProjectTagChip label={CHAT_CONTEXT.projectName} />
+            <ProjectTagChip label={CHAT_CONTEXT.projectName} onPress={onProjectChipPress} />
             <TaskTagChip label={CHAT_CONTEXT.taskName} />
           </View>
         )}
@@ -573,6 +575,8 @@ export function Case7Screen({
   const scrollRef = useRef<ScrollView>(null);
   const carlosReplyAnim    = useRef(new Animated.Value(0)).current;
   const nudgeCardAnim      = useRef(new Animated.Value(0)).current;
+  const [showChipTooltip, setShowChipTooltip] = useState(false);
+  const chipTooltipAnim    = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     return () => {

@@ -46,8 +46,8 @@ function Screen1({ onInvite }: { onInvite: () => void }) {
       <View
         pointerEvents="none"
         style={{
-          position: 'absolute', top: 355, left: 16,
-          width: 323, height: 139,
+          position: 'absolute', top: 331, left: 16,
+          width: 343, height: 139,
           borderRadius: 8,
           zIndex: 50,
           boxShadow: '0 0 0 9999px rgba(0,0,0,0.45)',
@@ -59,7 +59,7 @@ function Screen1({ onInvite }: { onInvite: () => void }) {
         title="Add your crew"
         description={'Tap "Invite" to add a crew member — they\'ll get invitation.'}
         step="Step 1/4"
-        style={{ top: 264, left: 16 }}
+        style={{ top: 244, left: 16 }}
         arrowEdge="bottom" arrowSide="left" arrowInset={31}
         anim={tooltipAnim}
       />
@@ -67,7 +67,7 @@ function Screen1({ onInvite }: { onInvite: () => void }) {
       {/* Tap target over tooltip */}
       <Pressable
         onPress={onInvite}
-        style={{ position: 'absolute', top: 264, left: 16, width: 312, height: 120, zIndex: 70 } as any}
+        style={{ position: 'absolute', top: 244, left: 16, width: 312, height: 120, zIndex: 70 } as any}
       />
     </View>
   );
@@ -182,7 +182,7 @@ const INVITE_CONTACTS: { key: string; type: 'mail' | 'initials'; initials: strin
 function ChangeRoleTooltip({
   anim,
   onRoleTap,
-  arrowInset = 8,
+  arrowInset = 50,
 }: {
   anim: Animated.Value;
   onRoleTap: () => void;
@@ -481,7 +481,7 @@ function Screen2({ onNext }: { onNext: () => void }) {
       {selected && <HomeIndicator />}
 
       {/* Step 3/4: Change Role tooltip — shown after selection, before role is confirmed */}
-      {selected && !roleConfirmed && <ChangeRoleTooltip anim={roleTooltipAnim} onRoleTap={handleOpenRoleSheet} arrowInset={50} />}
+      {selected && !roleConfirmed && <ChangeRoleTooltip anim={roleTooltipAnim} onRoleTap={handleOpenRoleSheet} arrowInset={35} />}
 
       {/* Step 4/4: Confirm Members tooltip — shown after role is selected */}
       {selected && roleConfirmed && (
@@ -489,7 +489,7 @@ function Screen2({ onNext }: { onNext: () => void }) {
           title="Confirm Members"
           description="After selecting your members, just hit this button to confirm your selection."
           step="Step 4/4"
-          style={{ left: 14, bottom: 97, zIndex: 61 }}
+          style={{ left: 34, bottom: 97, zIndex: 61 }}
           arrowEdge="bottom" arrowSide="right" arrowInset={34}
           anim={confirmTooltipAnim}
         />
@@ -812,7 +812,7 @@ function Screen4({ onRoleTap }: { onRoleTap: () => void }) {
         description="You can change the roles of your members by clicking on drop-down."
         step="Step 3/4"
         style={{ right: 14, top: 437, zIndex: 61 }}
-        arrowEdge="top" arrowSide="left" arrowInset={8}
+        arrowEdge="top" arrowSide="left" arrowInset={35}
         anim={tooltipAnim}
       />
 
@@ -892,7 +892,7 @@ function Screen6({ onSendInvite }: { onSendInvite: () => void }) {
         title="Confirm Members"
         description='Tap "Send Invite" to send an invite link to all selected members.'
         step="Step 4/4"
-        style={{ left: 16, top: 551, zIndex: 61 }}
+        style={{ left: 36, top: 551, zIndex: 61 }}
         arrowEdge="bottom" arrowSide="right" arrowInset={34}
         anim={tooltipAnim}
       />
@@ -900,7 +900,7 @@ function Screen6({ onSendInvite }: { onSendInvite: () => void }) {
       {/* Tap target over tooltip */}
       <Pressable
         onPress={onSendInvite}
-        style={{ position: 'absolute', left: 16, top: 551, width: 313, height: 90, zIndex: 70 } as any}
+        style={{ position: 'absolute', left: 36, top: 551, width: 313, height: 90, zIndex: 70 } as any}
       />
 
       <HomeIndicator />
