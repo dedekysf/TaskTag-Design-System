@@ -38,7 +38,7 @@ export function ProjectDetailScreen({ onInvite }: ProjectDetailScreenProps = {})
 
       {/* Scrollable content */}
       <ScrollView
-        style={{ flex: 1, backgroundColor: '#F7F8FA' }}
+        style={{ flex: 1, backgroundColor: TTTheme.colors.grey02 }}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 80 } as any}
       >
@@ -93,7 +93,7 @@ export function ProjectDetailScreen({ onInvite }: ProjectDetailScreenProps = {})
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 8 }}>
             {/* TODO(BE): action — POST /api/projects/:id/invites */}
             <Pressable onPress={onInvite} style={{ width: 56, alignItems: 'center', gap: 4 } as any}>
-              <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: '#F7F8FA', alignItems: 'center', justifyContent: 'center' }}>
+              <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: TTTheme.colors.grey02, alignItems: 'center', justifyContent: 'center' }}>
                 <UserPlus size={24} color={TTTheme.colors.grey04} />
               </View>
               <Text variant="mobileMetadataPrimary" color="grey04" style={{ textAlign: 'center' }}>Invite</Text>

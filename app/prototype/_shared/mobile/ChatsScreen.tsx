@@ -13,7 +13,7 @@ export function ChatsScreen() {
           <Image source={require('@/assets/images/mj.png')} style={{ width: 32, height: 32, borderRadius: 16 }} resizeMode="cover" />
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8, gap: 16 } as any}>
-          <View style={{ flex: 1, backgroundColor: TTTheme.colors.grey01, borderRadius: 8, height: 40, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, gap: 8 } as any}>
+          <View style={{ flex: 1, backgroundColor: TTTheme.colors.grey02, borderRadius: 8, height: 40, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, gap: 8 } as any}>
             <Search size={20} color={TTTheme.colors.grey04} />
             <Text variant="mobileBody" color="grey04">Search</Text>
           </View>

@@ -38,6 +38,8 @@ export interface TooltipOnboardingProps {
     trigger?: 'hover' | 'press';
     offset?: number; // Gap in px between trigger and tooltip (default 20)
     arrowAtTriggerCenter?: boolean; // Shift balloon so left-arrow aligns with trigger center
+    arrowOffset?: number; // Distance from the tooltip edge to the arrow for left/right aligned variants
+    fullWidth?: boolean; // Make wrapper take full width while keeping the same tooltip component
     triggerAnchorHeight?: number; // Use a fixed trigger height for vertical centering when child has helper/error text
 }
 
@@ -47,7 +49,7 @@ const sizeConfig = {
     lg: { paddingVertical: 16, paddingHorizontal: 20, fontSize: 16 },
 };
 
-function getArrowStyle(variant: TooltipOnboardingVariant, bgColor: string): ViewStyle {
+function getArrowStyle(variant: TooltipOnboardingVariant, bgColor: string, arrowOffset = 16): ViewStyle {
     const size = 24;
     const offset = -(size / 2);
     let radiusStyle: ViewStyle = {};
@@ -71,21 +73,21 @@ function getArrowStyle(variant: TooltipOnboardingVariant, bgColor: string): View
     };
 
     switch (variant) {
-        case 'top-left': return { ...baseStyle, bottom: offset, left: 16 };
+        case 'top-left': return { ...baseStyle, bottom: offset, left: arrowOffset };
         case 'top-center': return { ...baseStyle, bottom: offset, left: '50%', marginLeft: offset };
-        case 'top-right': return { ...baseStyle, bottom: offset, right: 16 };
+        case 'top-right': return { ...baseStyle, bottom: offset, right: arrowOffset };
         
-        case 'bottom-left': return { ...baseStyle, top: offset, left: 16 };
+        case 'bottom-left': return { ...baseStyle, top: offset, left: arrowOffset };
         case 'bottom-center': return { ...baseStyle, top: offset, left: '50%', marginLeft: offset };
-        case 'bottom-right': return { ...baseStyle, top: offset, right: 16 };
+        case 'bottom-right': return { ...baseStyle, top: offset, right: arrowOffset };
 
-        case 'left-top': return { ...baseStyle, right: offset, top: 16 };
+        case 'left-top': return { ...baseStyle, right: offset, top: arrowOffset };
         case 'left-center': return { ...baseStyle, right: offset, top: '50%', marginTop: offset };
-        case 'left-bottom': return { ...baseStyle, right: offset, bottom: 16 };
+        case 'left-bottom': return { ...baseStyle, right: offset, bottom: arrowOffset };
 
-        case 'right-top': return { ...baseStyle, left: offset, top: 16 };
+        case 'right-top': return { ...baseStyle, left: offset, top: arrowOffset };
         case 'right-center': return { ...baseStyle, left: offset, top: '50%', marginTop: offset };
-        case 'right-bottom': return { ...baseStyle, left: offset, bottom: 16 };
+        case 'right-bottom': return { ...baseStyle, left: offset, bottom: arrowOffset };
         
         default: return { ...baseStyle, bottom: offset, left: '50%', marginLeft: offset };
     }
@@ -102,6 +104,7 @@ function RichTooltipContent({
     variant,
     bgColor,
     avatar,
+    arrowOffset,
 }: any) {
     const theme = useTheme<Theme>();
     const currentSize = sizeConfig[size as TooltipOnboardingSize];
@@ -119,7 +122,7 @@ function RichTooltipContent({
                 })
             }}
         >
-            <View style={getArrowStyle(variant, bgColor)} />
+            <View style={getArrowStyle(variant, bgColor, arrowOffset)} />
 
             {content && !title && !description ? (
                 typeof content === 'string' ? (
@@ -198,6 +201,8 @@ export function TooltipOnboarding({
     trigger = 'hover',
     offset,
     arrowAtTriggerCenter = false,
+    arrowOffset,
+    fullWidth = false,
     triggerAnchorHeight,
 }: TooltipOnboardingProps) {
     const theme = useTheme<Theme>();
@@ -303,6 +308,7 @@ export function TooltipOnboarding({
                     step={step} ctaText={ctaText} onCtaPress={onCtaPress}
                     content={content} size={size} variant={variant} bgColor={backgroundColor}
                     avatar={avatar}
+                    arrowOffset={arrowOffset}
                 />
             );
         }
@@ -321,7 +327,7 @@ export function TooltipOnboarding({
                     default: { elevation: 5, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 4 }
                 })
             }}>
-                <View style={getArrowStyle(variant, backgroundColor)} />
+                <View style={getArrowStyle(variant, backgroundColor, arrowOffset)} />
                 {typeof content === 'string' ? (
                     <Text style={{ color: theme.colors.white, fontSize: currentSize.fontSize, fontFamily: 'Inter_400Regular', lineHeight: currentSize.fontSize * 1.5 }}>
                         {content}

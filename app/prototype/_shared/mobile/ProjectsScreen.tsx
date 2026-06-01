@@ -15,7 +15,7 @@ export function ProjectsScreen() {
           <Image source={require('@/assets/images/mj.png')} style={{ width: 32, height: 32, borderRadius: 16 }} resizeMode="cover" />
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }}>
-          <View style={{ flex: 1, backgroundColor: TTTheme.colors.grey01, borderRadius: 8, height: 40, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, gap: 8 } as any}>
+          <View style={{ flex: 1, backgroundColor: TTTheme.colors.grey02, borderRadius: 8, height: 40, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, gap: 8 } as any}>
             <Search size={20} color={TTTheme.colors.grey04} />
             <Text variant="mobileBody" color="grey04">Search</Text>
           </View>
@@ -49,14 +49,14 @@ export function ProjectsScreen() {
               </View>
               <View style={{ gap: 4 } as any}>
                 {/* TODO(BE): project.workspace.name + project.workspace.logo */}
-                <View style={{ backgroundColor: TTTheme.colors.grey01, flexDirection: 'row', alignItems: 'center', gap: 8, padding: 4, borderRadius: 4, alignSelf: 'flex-start' } as any}>
+                <View style={{ backgroundColor: TTTheme.colors.grey02, flexDirection: 'row', alignItems: 'center', gap: 8, padding: 4, borderRadius: 4, alignSelf: 'flex-start' } as any}>
                   <View style={{ width: 24, height: 24, backgroundColor: TTTheme.colors.secondaryGreen, borderRadius: 4, alignItems: 'center', justifyContent: 'center' }}>
                     <Building size={14} color="#fff" />
                   </View>
                   <Text variant="mobileMetadataPrimary" color="foreground">Personal Projects</Text>
                 </View>
                 {/* TODO(BE): project.owner.name + project.owner.avatar */}
-                <View style={{ backgroundColor: TTTheme.colors.grey01, flexDirection: 'row', alignItems: 'center', gap: 8, padding: 4, borderRadius: 4, alignSelf: 'flex-start' } as any}>
+                <View style={{ backgroundColor: TTTheme.colors.grey02, flexDirection: 'row', alignItems: 'center', gap: 8, padding: 4, borderRadius: 4, alignSelf: 'flex-start' } as any}>
                   <Image source={require('@/assets/images/mj.png')} style={{ width: 24, height: 24, borderRadius: 12 }} resizeMode="cover" />
                   <Text variant="mobileMetadataPrimary" color="foreground">Maria Jose</Text>
                 </View>
