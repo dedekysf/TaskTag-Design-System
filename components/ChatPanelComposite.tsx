@@ -26,6 +26,7 @@ import { TooltipOnboarding } from '@/components/TooltipOnboarding';
 import { Theme } from '@/constants/theme';
 import { useTheme } from '@shopify/restyle';
 import {
+  Building,
   Camera,
   Check,
   ChevronLeft,
@@ -34,6 +35,7 @@ import {
   FileText,
   Folder,
   Hash,
+  Home,
   Image as ImageIcon,
   Maximize2,
   MessageSquarePlus,
@@ -55,6 +57,7 @@ import {
   Pressable,
   ScrollView,
   TextInput,
+  View,
 } from 'react-native';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -342,14 +345,14 @@ const OWNER_AVATAR: ChatUser = { variant: 'photo', src: CURRENT_USER.avatarSrc }
 const CARLOS_AVATAR: ChatUser = { variant: 'text', initials: 'CS', color: 'darkGreen' };
 
 type PickerItem =
-  | { type: 'project'; label: string; assignees?: ChatUser[] }
+  | { type: 'project'; label: string; assignees?: ChatUser[]; icon?: React.ComponentType<any>; iconBg?: string }
   | { type: 'task'; label: string; assignees: ChatUser[] };
 
 // TODO (backend): replace with API — GET /projects/:id/tasks, include assignees per task
 const PICKER_ITEMS: PickerItem[] = [
-  { type: 'project', label: 'LA Avenue 34 G' },
+  { type: 'project', label: 'LA Avenue 34 G', icon: Building, iconBg: '#18a87d' },
   { type: 'task', label: 'Fix the sink', assignees: [OWNER_AVATAR] },
-  { type: 'project', label: 'Welcome to Tasktag! 🎉' },
+  { type: 'project', label: 'Welcome to Tasktag! 🎉', icon: Home, iconBg: '#8b5cf6' },
   { type: 'task', label: 'Create Your First Task', assignees: [OWNER_AVATAR] },
   { type: 'task', label: 'Invite Contacts', assignees: [OWNER_AVATAR] },
   { type: 'task', label: 'Set a Due Date', assignees: [OWNER_AVATAR] },
@@ -365,9 +368,9 @@ const PICKER_ITEMS_AFTER_ASSIGN: PickerItem[] = PICKER_ITEMS.map(item =>
 
 // TODO (backend): replace with API — GET /projects/:id/tasks, include assignees per task
 const TAG_PICKER_ITEMS: PickerItem[] = [
-  { type: 'project', label: 'LA Avenue 34 G' },
+  { type: 'project', label: 'LA Avenue 34 G', icon: Building, iconBg: '#18a87d' },
   { type: 'task', label: 'Fix the sink', assignees: [OWNER_AVATAR] },
-  { type: 'project', label: 'Welcome to Tasktag! 🎉' },
+  { type: 'project', label: 'Welcome to Tasktag! 🎉', icon: Home, iconBg: '#8b5cf6' },
   { type: 'task', label: 'Create Your First Task', assignees: [OWNER_AVATAR] },
   { type: 'task', label: 'Invite Contacts', assignees: [OWNER_AVATAR] },
   { type: 'task', label: 'Set a Due Date', assignees: [OWNER_AVATAR] },
@@ -995,8 +998,11 @@ function TagPicker({
             {filtered.map((item, idx) =>
               item.type === 'project' ? (
                 <Box key={idx} flexDirection="row" alignItems="center" style={{ paddingVertical: 10, gap: 8 }}>
-                  <Box width={24} height={24} borderRadius="6" alignItems="center" justifyContent="center" style={{ backgroundColor: theme.colors.foreground }}>
-                    <Text style={{ fontSize: 9, fontWeight: '800', color: theme.colors.white, letterSpacing: -0.5 }}>tt</Text>
+                  <Box width={24} height={24} borderRadius="6" alignItems="center" justifyContent="center" style={{ backgroundColor: item.iconBg ?? theme.colors.foreground }}>
+                    {item.icon
+                      ? <item.icon size={14} color="#ffffff" />
+                      : <Text style={{ fontSize: 9, fontWeight: '800', color: theme.colors.white, letterSpacing: -0.5 }}>tt</Text>
+                    }
                   </Box>
                   <Text style={{ fontSize: 15, fontWeight: '700', color: theme.colors.foreground, lineHeight: 20 }}>{item.label}</Text>
                 </Box>
@@ -1108,6 +1114,22 @@ function RoomView({
     return () => clearTimeout(t);
   }, [sentMessages.length, showTagNudge, showPhotoNudge]);
 
+  const pulseAnim = useRef(new Animated.Value(0)).current;
+  const pulseActiveRef = useRef(false);
+
+  const runPulse = () => {
+    if (!pulseActiveRef.current) return;
+    pulseAnim.setValue(0);
+    Animated.timing(pulseAnim, {
+      toValue: 1,
+      duration: 1100,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: true,
+    }).start(({ finished }) => {
+      if (finished && pulseActiveRef.current) runPulse();
+    });
+  };
+
   useEffect(() => {
     if (showTagNudge) {
       nudgeEnterAnim.setValue(0);
@@ -1117,6 +1139,12 @@ function RoomView({
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }).start();
+      pulseActiveRef.current = true;
+      runPulse();
+    } else {
+      pulseActiveRef.current = false;
+      pulseAnim.stopAnimation();
+      pulseAnim.setValue(0);
     }
   }, [showTagNudge]);
 
@@ -1163,7 +1191,7 @@ function RoomView({
       useNativeDriver: true,
     }).start(() => {
       setShowTagNudge(false);
-      setTagFlow('tooltip1');
+      setTagFlow('picker');
     });
   };
 
@@ -1626,7 +1654,7 @@ function RoomView({
       {/* Tag picker (Step 2/3) */}
       {tagFlow === 'picker' && (
         <TagPicker
-          onCancel={() => setTagFlow('tooltip1')}
+          onCancel={() => setTagFlow('none')}
           onSelectTask={(project, task) => {
             setTaggedProject(project);
             setTaggedTask(task);
@@ -1644,7 +1672,6 @@ function RoomView({
             tooltipStyle="success"
             title="Project vs Task"
             description="Projects are shown in Bold Text, while Tasks use the '#' icon."
-            step="Step 2/3"
             open
             forceShow
             offset={20}
@@ -1662,7 +1689,6 @@ function RoomView({
             tooltipStyle="success"
             title="Smart Tags"
             description="Nice! You've linked this message to a project and task. Send it and it'll stay connected — no more hunting through chats to find it."
-            step="Step 3/3"
             open
             forceShow
             offset={20}
@@ -1766,37 +1792,37 @@ function RoomView({
                 <Plus size={20} color={theme.colors.grey06} />
               </Pressable>
 
-              {/* # — Tag It tooltip (Step 1/3) */}
-              <TooltipOnboarding
-                variant="top-left"
-                tooltipStyle="success"
-                title="Tag It"
-                description="Tag a job or task to link any message so nothing gets lost."
-                step="Step 1/3"
-                ctaText="Try it!"
-                onCtaPress={() => { tagFadeAnim.setValue(1); setTagFlow('picker'); }}
-                open={tagFlow === 'tooltip1'}
-                forceShow={tagFlow === 'tooltip1'}
-                animatedOpacity={tagFadeAnim}
-                arrowAtTriggerCenter
+              {/* # — Tag button */}
+              <Pressable
+                onPress={() => {
+                  if (showTagNudge) handleHashClick();
+                  else if (tagFlow === 'none') setTagFlow('picker');
+                }}
+                style={({ hovered }: any) => ({
+                  width: 32, height: 32, borderRadius: 8,
+                  alignItems: 'center', justifyContent: 'center',
+                  backgroundColor: !showTagNudge && hovered ? theme.colors.grey02 : 'transparent',
+                })}
               >
-                <Pressable
-                  onPress={showTagNudge ? handleHashClick : undefined}
-                  style={({ hovered }: any) => ({
-                    width: 32, height: 32, borderRadius: 8,
-                    alignItems: 'center', justifyContent: 'center',
-                    backgroundColor: !showTagNudge && hovered ? theme.colors.grey02 : 'transparent',
-                  })}
-                >
-                  {showTagNudge ? (
+                {showTagNudge ? (
+                  <View style={{ width: 32, height: 32, alignItems: 'center', justifyContent: 'center' }}>
+                    {/* Pulse ripple ring */}
+                    <Animated.View style={{
+                      position: 'absolute',
+                      width: 32, height: 32, borderRadius: 16,
+                      backgroundColor: theme.colors.secondaryGreen,
+                      opacity: pulseAnim.interpolate({ inputRange: [0, 1], outputRange: [0.55, 0] }),
+                      transform: [{ scale: pulseAnim.interpolate({ inputRange: [0, 1], outputRange: [1, 2] }) }],
+                    }} />
+                    {/* Main green circle */}
                     <Animated.View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: theme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center', opacity: nudgeEnterAnim, transform: [{ scale: nudgeEnterAnim.interpolate({ inputRange: [0, 1], outputRange: [0.7, 1] }) }] }}>
                       <Hash size={20} color={theme.colors.white} />
                     </Animated.View>
-                  ) : (
-                    <Hash size={20} color={theme.colors.grey06} />
-                  )}
-                </Pressable>
-              </TooltipOnboarding>
+                  </View>
+                ) : (
+                  <Hash size={20} color={theme.colors.grey06} />
+                )}
+              </Pressable>
 
               {/* FileText, ImageIcon, Smile */}
               {[FileText, ImageIcon, Smile].map((Icon, i) => (
