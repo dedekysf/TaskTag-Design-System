@@ -18,9 +18,11 @@ import { Image, Pressable, ScrollView, View } from 'react-native';
 
 export interface ProjectDetailScreenProps {
   onInvite?: () => void;
+  /** Forwarded to the Tasks card so the parent can measure its position and size. */
+  taskCardRef?: React.Ref<View>;
 }
 
-export function ProjectDetailScreen({ onInvite }: ProjectDetailScreenProps = {}) {
+export function ProjectDetailScreen({ onInvite, taskCardRef }: ProjectDetailScreenProps = {}) {
   return (
     <>
       {/* Header */}
@@ -123,7 +125,7 @@ export function ProjectDetailScreen({ onInvite }: ProjectDetailScreenProps = {})
         </View>
 
         {/* Tasks */}
-        <View style={{ backgroundColor: '#fff', borderRadius: 8, padding: 15 }}>
+        <View ref={taskCardRef} style={{ backgroundColor: '#fff', borderRadius: 8, padding: 15 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 9 }}>
             <View style={{ width: 32, height: 32, backgroundColor: '#000', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}>
               <Hash size={20} color="#fff" />

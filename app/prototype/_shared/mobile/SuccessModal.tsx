@@ -32,16 +32,15 @@ export function SuccessModal({
       Animated.timing(backdropOpacity, { toValue: 1, duration: 200, useNativeDriver: true }),
       Animated.spring(cardScale,       { toValue: 1, damping: 20, stiffness: 260, useNativeDriver: true }),
       Animated.timing(cardOpacity,     { toValue: 1, duration: 200, useNativeDriver: true }),
-    ]).start(() => {
-      // Card settled → checkmark draws (40ms delay + 220ms) → buttons appear
+      // CTA appears shortly after checkmark finishes (40ms delay + 220ms draw = 260ms)
       Animated.timing(actionsAnim, {
         toValue: 1,
-        duration: 240,
-        delay: 280,
+        duration: 150,
+        delay: 300,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
-      }).start();
-    });
+      }),
+    ]).start();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -63,6 +62,7 @@ export function SuccessModal({
           position: 'absolute', bottom: 40, left: 16, right: 16,
           backgroundColor: '#fff',
           borderRadius: 20,
+          paddingTop: 28,
           paddingBottom: 28,
           overflow: 'hidden',
           zIndex: 60,
@@ -71,7 +71,7 @@ export function SuccessModal({
         } as any}
       >
         {/* Animated SVG checkmark */}
-        <View style={{ alignItems: 'center', paddingTop: 28 }}>
+        <View style={{ alignItems: 'center' }}>
           <AnimatedCheck size={96} delay={40} />
         </View>
 

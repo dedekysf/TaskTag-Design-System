@@ -6,9 +6,9 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronUp,
+  MoreVertical,
   Plus,
   Search,
-  SlidersHorizontal,
 } from 'lucide-react-native';
 import React from 'react';
 import { Pressable, View } from 'react-native';
@@ -46,7 +46,7 @@ export function TaskListScreen({ taskCreated = false, onNewTask }: TaskListScree
             <Text variant="mobileSecondaryBody" color="grey04">Search</Text>
           </View>
           <View style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
-            <SlidersHorizontal size={20} color={TTTheme.colors.textPrimary} />
+            <MoreVertical size={20} color={TTTheme.colors.textPrimary} />
           </View>
         </View>
 

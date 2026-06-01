@@ -383,8 +383,8 @@ export function Case2Screen({
             anim={nameTooltipOpacity}
           />
           <OnboardingTooltip
-            title="Add a brief description"
-            description="Tell the crew what this job is about."
+            title="Add Description"
+            description="Help others understand this project by adding a quick description."
             step="Step 2/2"
             style={{ bottom: TOOLTIP_DESC_BOTTOM, left: 31, zIndex: 43 }}
             arrowEdge="bottom"
@@ -397,14 +397,19 @@ export function Case2Screen({
 
       {/* ── Success phase ── */}
       {phase === 'success' && (
-        <SuccessModal
-          title="Project Created!"
-          description={"You've successfully set up a project! Now, let's explore your next steps."}
-          primaryLabel="Add Members"
-          onPrimary={onAddMembers ?? (() => {})}
-          secondaryLabel="View Project Details"
-          onSecondary={onViewProjectDetails ?? (() => {})}
-        />
+        <>
+          <SuccessModal
+            title="Project Created!"
+            description={"You've successfully set up a project! Now, let's explore your next steps."}
+            primaryLabel="Add Members"
+            onPrimary={onAddMembers ?? (() => {})}
+            secondaryLabel="View Project Details"
+            onSecondary={onViewProjectDetails ?? (() => {})}
+          />
+          <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 28, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 9 }}>
+            <View style={{ width: 134, height: 5, borderRadius: 5, backgroundColor: '#000' }} />
+          </View>
+        </>
       )}
 
     </Box>

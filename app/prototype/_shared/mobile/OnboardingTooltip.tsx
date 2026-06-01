@@ -39,6 +39,8 @@ export interface OnboardingTooltipProps {
   arrowInset?: number;
   /** Animated.Value 0→1 driving opacity + slide-in */
   anim: Animated.Value;
+  /** Pass 'none' when tooltip is faded out so it doesn't block touches underneath */
+  pointerEvents?: 'none' | 'box-none' | 'auto' | 'box-only';
 }
 
 export function OnboardingTooltip({
@@ -52,9 +54,8 @@ export function OnboardingTooltip({
   arrowSide = 'left',
   arrowInset = 20,
   anim,
+  pointerEvents = 'box-none',
 }: OnboardingTooltipProps) {
-  const translateY = anim.interpolate({ inputRange: [0, 1], outputRange: [8, 0] });
-
   const arrowStyle: any = {
     position: 'absolute',
     width: 24,
@@ -70,8 +71,9 @@ export function OnboardingTooltip({
 
   return (
     <Animated.View
+      pointerEvents={pointerEvents}
       style={[
-        { position: 'absolute', zIndex: 60, opacity: anim, transform: [{ translateY }] },
+        { position: 'absolute', zIndex: 60, opacity: anim },
         style,
       ] as any}
     >

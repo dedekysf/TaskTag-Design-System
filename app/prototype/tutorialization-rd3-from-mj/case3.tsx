@@ -2,24 +2,20 @@ import { Button } from '@/components/Button';
 import { Checkbox } from '@/components/Checkbox';
 import { Box, Text } from '@/components/primitives';
 import { theme as TTTheme } from '@/constants/theme';
+import { MembersScreen } from '../_shared/mobile/MembersScreen';
 import { MockKeyboard } from '../_shared/mobile/MockKeyboard';
-import { SuccessModal } from '../_shared/mobile/SuccessModal';
 import { OnboardingTooltip, useTooltipAnim } from '../_shared/mobile/OnboardingTooltip';
 import { ProjectDetailScreen } from '../_shared/mobile/ProjectDetailScreen';
 import { StatusBarRow } from '../_shared/mobile/StatusBarRow';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Image, Pressable, ScrollView, TextInput, View } from 'react-native';
+import { Animated, Pressable, ScrollView, TextInput, View } from 'react-native';
 import {
-  ArrowLeft,
   ChevronDown,
   ChevronLeft,
-  Copy,
   Link,
   Mail,
-  Plus,
   Search,
   Send,
-  UserPlus,
   X,
 } from 'lucide-react-native';
 
@@ -29,7 +25,7 @@ import {
 function HomeIndicator() {
   return (
     <View style={{ height: 28, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 9, backgroundColor: '#fff' }}>
-      <View style={{ width: 134, height: 5, backgroundColor: '#000', borderRadius: 5 }} />
+      <View style={{ width: 134, height: 5, backgroundColor: TTTheme.colors.grey06, borderRadius: 5 }} />
     </View>
   );
 }
@@ -180,16 +176,17 @@ function HighlightedSearchText({ text, query }: { text: string; query: string })
 }
 
 // TODO(BE): GET /api/contacts/search?q= — replace static list with real search
-const INVITE_CONTACTS = [
-  { key: 'ce', type: 'initials' as const, initials: 'CE', bg: TTTheme.colors.pastelOrange, label: 'Carlos Eduardo', role: 'Viewer' as const },
-];
+// TODO(BE): GET /api/contacts/search?q= — replace static list with real search
+const INVITE_CONTACTS: { key: string; type: 'mail' | 'initials'; initials: string; bg: string; label: string; role: 'Viewer' | 'Admin' | 'Editor' }[] = [];
 
 function ChangeRoleTooltip({
   anim,
   onRoleTap,
+  arrowInset = 8,
 }: {
   anim: Animated.Value;
   onRoleTap: () => void;
+  arrowInset?: number;
 }) {
   return (
     <>
@@ -197,25 +194,33 @@ function ChangeRoleTooltip({
         title="Change Role"
         description="You can change the roles of your members by clicking on drop-down."
         step="Step 3/4"
-        style={{ right: 14, top: 437, zIndex: 61 }}
-        arrowEdge="top" arrowSide="left" arrowInset={8}
+        style={{ right: 14, top: 391, zIndex: 61 }}
+        arrowEdge="top" arrowSide="left" arrowInset={arrowInset}
         anim={anim}
       />
 
       <Pressable
         onPress={onRoleTap}
-        style={{ position: 'absolute', right: 14, top: 437, width: 313, height: 150, zIndex: 70 } as any}
+        style={{ position: 'absolute', right: 14, top: 364, width: 313, height: 180, zIndex: 70 } as any}
       />
     </>
   );
 }
 
-function Screen2({ onNext, onRoleTap }: { onNext: () => void; onRoleTap: () => void }) {
+function Screen2({ onNext }: { onNext: () => void }) {
   const tooltipAnim = useTooltipAnim();
   const roleTooltipAnim = useRef(new Animated.Value(0)).current;
+  const confirmTooltipAnim = useRef(new Animated.Value(0)).current;
+  const sheetAnim = useRef(new Animated.Value(0)).current;
   const [query, setQuery]       = useState('');
   const [selected, setSelected] = useState<string | null>(null);
   const [isFocused, setIsFocused] = useState(false);
+  const [tooltipDismissed, setTooltipDismissed] = useState(false);
+  const [roleSheetVisible, setRoleSheetVisible] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<RoleType>('Viewer');
+  const [roleConfirmed, setRoleConfirmed] = useState(false);
+  const [roleTooltipDismissedBySearch, setRoleTooltipDismissedBySearch] = useState(false);
+  const [roleTooltipPerformed, setRoleTooltipPerformed] = useState(false);
   const inputRef = useRef<any>(null);
 
   // Auto-focus on mount
@@ -224,20 +229,38 @@ function Screen2({ onNext, onRoleTap }: { onNext: () => void; onRoleTap: () => v
     return () => clearTimeout(t);
   }, []);
 
-  // Fade out the search tooltip once the user starts interacting with results.
+  // Once user types or selects, dismiss tooltip permanently (don't re-show if query is cleared)
   useEffect(() => {
-    const shouldHideSearchTooltip = query.length > 0 || selected !== null;
-    Animated.timing(tooltipAnim, { toValue: shouldHideSearchTooltip ? 0 : 1, duration: 300, useNativeDriver: true }).start();
-  }, [query.length, selected, tooltipAnim]);
+    if (query.length > 0 || selected !== null) setTooltipDismissed(true);
+  }, [query.length, selected]);
 
   useEffect(() => {
-    Animated.timing(roleTooltipAnim, { toValue: selected ? 1 : 0, duration: 300, useNativeDriver: true }).start();
-  }, [roleTooltipAnim, selected]);
+    Animated.timing(tooltipAnim, { toValue: tooltipDismissed ? 0 : 1, duration: tooltipDismissed ? 2000 : 300, useNativeDriver: true }).start();
+  }, [tooltipDismissed, tooltipAnim]);
 
-  const showResults = query.length > 0 || selected !== null;
+  useEffect(() => {
+    const visible = !!selected && query.length > 0 && !roleTooltipDismissedBySearch && !roleTooltipPerformed;
+    Animated.timing(roleTooltipAnim, { toValue: visible ? 1 : 0, duration: visible ? 300 : 250, useNativeDriver: true }).start();
+  }, [query.length, selected, roleTooltipDismissedBySearch, roleTooltipPerformed, roleTooltipAnim]);
+
+  const handleOpenRoleSheet = () => {
+    setRoleSheetVisible(true);
+    setRoleTooltipPerformed(true);
+    Animated.timing(sheetAnim, { toValue: 1, duration: 300, useNativeDriver: true }).start();
+  };
+
+  const handleSelectRole = (role: RoleType) => {
+    setSelectedRole(role);
+    Animated.timing(sheetAnim, { toValue: 0, duration: 200, useNativeDriver: true }).start(() => {
+      setRoleSheetVisible(false);
+      setRoleConfirmed(true);
+      Animated.timing(confirmTooltipAnim, { toValue: 1, duration: 300, useNativeDriver: true }).start();
+    });
+  };
+
   const normalizedQuery = normalizeSearchText(query);
-  const directEmailRow = query.trim().length > 0 && !query.includes('@')
-    ? `${normalizedQuery}@gmail.com`
+  const directEmailRow = query.trim().length > 0
+    ? (query.includes('@') ? query.trim() : `${normalizedQuery}@gmail.com`)
     : null;
   const visibleContacts = query.trim().length >= 5
     ? INVITE_CONTACTS.filter((item) => contactMatchesQuery(item.label, query))
@@ -248,6 +271,8 @@ function Screen2({ onNext, onRoleTap }: { onNext: () => void; onRoleTap: () => v
 
   const handleSelect = (key: string) => {
     setSelected(key);
+    setRoleTooltipDismissedBySearch(false);
+    setRoleTooltipPerformed(false);
     inputRef.current?.blur();
   };
 
@@ -290,11 +315,11 @@ function Screen2({ onNext, onRoleTap }: { onNext: () => void; onRoleTap: () => v
         <Text variant="mobileLabelEmphasized" color="foreground" style={{ marginLeft: 8 }}>Invite or Add Member</Text>
       </View>
 
-      {/* Search — active = black border (2px) from DS textPrimary */}
+      {/* Search — active = black border color from DS textPrimary, width stays 1 */}
       <View style={{
         marginHorizontal: 16, marginTop: 16,
         flexDirection: 'row', alignItems: 'center',
-        borderWidth: isFocused || query.length > 0 ? 2 : 1,
+        borderWidth: 1,
         borderColor: isFocused || query.length > 0 ? TTTheme.colors.textPrimary : TTTheme.colors.grey03,
         borderRadius: 8, paddingHorizontal: 12, paddingVertical: 10, gap: 8,
       } as any}>
@@ -310,30 +335,62 @@ function Screen2({ onNext, onRoleTap }: { onNext: () => void; onRoleTap: () => v
           style={{ flex: 1, fontSize: 14, color: TTTheme.colors.foreground, padding: 0, outlineStyle: 'none' } as any}
         />
         {query.length > 0 && (
-          <Pressable onPress={() => setQuery('')}>
+          <Pressable onPress={() => { setQuery(''); if (selected) { setRoleTooltipDismissedBySearch(true); } else { setRoleConfirmed(false); setSelectedRole('Viewer'); } }}>
             <X size={16} color={TTTheme.colors.grey04} />
           </Pressable>
         )}
       </View>
 
+      {/* ── Selected Members — outside ScrollView so the X Pressable receives touches reliably ── */}
+      {(selectedContact || selectedEmail) && (
+        <View style={{ paddingHorizontal: 16, marginTop: 16, gap: 10 } as any}>
+          <Text variant="mobileLabelEmphasized" color="foreground" style={{ fontSize: 16 }}>Selected Members (1)</Text>
+          <View style={{ flexDirection: 'row', gap: 10 }}>
+            <View style={{ alignItems: 'center', gap: 4 } as any}>
+              <View style={{ width: 62, height: 62, alignItems: 'center', justifyContent: 'center' }}>
+                {selectedContact
+                  ? renderAvatar(selectedContact, 56)
+                  : (
+                    <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: TTTheme.colors.grey02, alignItems: 'center', justifyContent: 'center' }}>
+                      <Mail size={24} color={TTTheme.colors.grey05} />
+                    </View>
+                  )
+                }
+                <Pressable
+                  onPress={() => { setSelected(null); setQuery(''); setRoleConfirmed(false); setSelectedRole('Viewer'); setTooltipDismissed(false); setRoleTooltipDismissedBySearch(false); setRoleTooltipPerformed(false); }}
+                  style={{ position: 'absolute', top: 0, right: 0, width: 24, height: 24, borderRadius: 12, backgroundColor: TTTheme.colors.grey03, alignItems: 'center', justifyContent: 'center', zIndex: 200 } as any}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                  <X size={10} color={TTTheme.colors.textPrimary} />
+                </Pressable>
+              </View>
+              <Text variant="mobileMetadataPrimary" color="grey05" numberOfLines={1} style={{ maxWidth: 64, textAlign: 'center' }}>
+                {selectedContact ? getSelectedPreviewLabel(selectedContact) : selectedEmail?.split('@')[0].slice(0, 8) + '...'}
+              </Text>
+            </View>
+          </View>
+        </View>
+      )}
+
       {/* Scrollable content — paddingBottom so results aren't hidden behind keyboard */}
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: selected ? 120 : 295 } as any}>
 
-      {/* ── No query: copy link + Your Contact ── */}
-      {!showResults && (
+      {/* ── No query: copy link + Your Contact (always shown when query empty) ── */}
+      {query.length === 0 && (
         <>
-          {/* Copy link — green circle */}
-          <View style={{ marginHorizontal: 16, marginTop: 16, flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 8 }}>
-            <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: TTTheme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center' }}>
-              <Link size={20} color="#fff" />
+          {/* Copy link — hidden when a member is already selected */}
+          {!(selectedContact || selectedEmail) && (
+            <View style={{ marginHorizontal: 16, marginTop: 16, flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 8 }}>
+              <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: TTTheme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center' }}>
+                <Link size={20} color="#fff" />
+              </View>
+              <Text variant="mobileLabelSmall" color="foreground">Copy link to invite</Text>
             </View>
-            <Text variant="mobileLabelSmall" color="foreground">Copy link to invite</Text>
-          </View>
+          )}
 
-          {/* Your Contact header + sub-text */}
           <View style={{ paddingHorizontal: 16, marginTop: 12, gap: 3 } as any}>
-            <Text variant="mobileLabelSmall" color="foreground">Your Contact (1)</Text>
-            <Text variant="mobileSecondaryBody" color="grey05">Choose contact first to invite or add member</Text>
+            <Text variant="mobileLabelEmphasized" color="foreground" style={{ fontSize: 16 }}>Your Contact (1)</Text>
+            <Text variant="mobileMetadataPrimary" color="grey05">Choose contact first to invite or add member</Text>
           </View>
 
           {/* TODO(BE): GET /api/contacts — TaskTag Helpdesk with DS pastelOrange */}
@@ -346,8 +403,8 @@ function Screen2({ onNext, onRoleTap }: { onNext: () => void; onRoleTap: () => v
             </View>
             <View style={{ flex: 1, gap: 2 } as any}>
               <Text variant="mobileLabelSmall" color="foreground">TaskTag Helpdesk</Text>
-              <Button variant="ghost" color="secondary" size="xs" hoverBackgroundColor="transparent" style={{ justifyContent: 'flex-start', alignSelf: 'stretch', paddingHorizontal: 0 } as any} rightIcon={<ChevronDown size={12} color={TTTheme.colors.textPrimary} />}>
-                <Text variant="mobileLabelSmall" color="foreground">Viewer</Text>
+              <Button variant="ghost" color="secondary" size="xs" disabled hoverBackgroundColor="transparent" style={{ justifyContent: 'flex-start', alignSelf: 'stretch', paddingHorizontal: 0 } as any} rightIcon={<ChevronDown size={12} color={TTTheme.colors.grey05} />}>
+                <Text variant="mobileLabelSmall" color="grey05">Viewer</Text>
               </Button>
             </View>
             {renderSelectionCheckbox('carlos')}
@@ -355,45 +412,13 @@ function Screen2({ onNext, onRoleTap }: { onNext: () => void; onRoleTap: () => v
         </>
       )}
 
-      {/* ── Has query or selection: Selected Members + Suggested list ── */}
-      {showResults && (
+      {/* ── Has query: Suggested list ── */}
+      {query.length > 0 && (
         <>
-          {/* Selected Members — shown once a contact or direct email is selected */}
-          {(selectedContact || selectedEmail) && (
-            <View style={{ paddingHorizontal: 16, marginTop: 16, gap: 10 } as any}>
-              <Text variant="mobileLabelSmall" color="foreground">Selected Members (1)</Text>
-              <View style={{ flexDirection: 'row', gap: 10 }}>
-                <View style={{ alignItems: 'center', gap: 4 } as any}>
-                  <View>
-                    {selectedContact
-                      ? renderAvatar(selectedContact, 56)
-                      : (
-                        <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: TTTheme.colors.grey02, alignItems: 'center', justifyContent: 'center' }}>
-                          <Mail size={24} color={TTTheme.colors.grey05} />
-                        </View>
-                      )
-                    }
-                    <Pressable
-                      onPress={() => setSelected(null)}
-                      style={{ position: 'absolute', top: -2, right: -2, width: 20, height: 20, borderRadius: 10, backgroundColor: TTTheme.colors.grey03, alignItems: 'center', justifyContent: 'center' } as any}
-                    >
-                      <X size={10} color={TTTheme.colors.textPrimary} />
-                    </Pressable>
-                  </View>
-                  <Text variant="mobileMetadataPrimary" color="grey05" numberOfLines={1} style={{ maxWidth: 64, textAlign: 'center' }}>
-                    {selectedContact ? getSelectedPreviewLabel(selectedContact) : selectedEmail?.split('@')[0].slice(0, 8) + '...'}
-                  </Text>
-                </View>
-              </View>
-            </View>
-          )}
-
-          {/* Suggested */}
           <View style={{ paddingHorizontal: 16, marginTop: 16, marginBottom: 4 }}>
             <Text variant="mobileLabelEmphasized" color="foreground">Suggested</Text>
           </View>
 
-          {/* Direct email invite row — always visible and pressable; user invites by the email they're typing */}
           {directEmailRow && (
             <Pressable
               onPress={() => handleSelect(directEmailRow)}
@@ -404,8 +429,15 @@ function Screen2({ onNext, onRoleTap }: { onNext: () => void; onRoleTap: () => v
               </View>
               <View style={{ flex: 1, gap: 4 } as any}>
                 <HighlightedSearchText text={directEmailRow} query={query} />
-                <Button variant="ghost" color="secondary" size="xs" hoverBackgroundColor="transparent" style={{ justifyContent: 'flex-start', alignSelf: 'stretch', paddingHorizontal: 0 } as any} rightIcon={<ChevronDown size={12} color={TTTheme.colors.textPrimary} />}>
-                  <Text variant="mobileLabelSmall" color="foreground">Viewer</Text>
+                <Button
+                  variant="ghost" color="secondary" size="xs"
+                  onPress={selected === directEmailRow ? handleOpenRoleSheet : undefined}
+                  disabled={selected !== directEmailRow}
+                  hoverBackgroundColor="transparent"
+                  style={{ justifyContent: 'flex-start', alignSelf: 'stretch', paddingHorizontal: 0 } as any}
+                  rightIcon={<ChevronDown size={12} color={selected === directEmailRow ? TTTheme.colors.textPrimary : TTTheme.colors.grey05} />}
+                >
+                  <Text variant="mobileLabelSmall" color={selected === directEmailRow ? 'foreground' : 'grey05'}>{selected === directEmailRow ? selectedRole : 'Viewer'}</Text>
                 </Button>
               </View>
               {renderSelectionCheckbox(directEmailRow)}
@@ -423,8 +455,8 @@ function Screen2({ onNext, onRoleTap }: { onNext: () => void; onRoleTap: () => v
               <View style={{ flex: 1, gap: 4 } as any}>
                 <HighlightedSearchText text={item.label} query={query} />
                 {item.role && (
-                  <Button variant="ghost" color="secondary" size="xs" onPress={selected === item.key ? onRoleTap : undefined} hoverBackgroundColor="transparent" style={{ justifyContent: 'flex-start', alignSelf: 'stretch', paddingHorizontal: 0 } as any} rightIcon={<ChevronDown size={12} color={TTTheme.colors.textPrimary} />}>
-                    <Text variant="mobileLabelSmall" color="foreground">{item.role}</Text>
+                  <Button variant="ghost" color="secondary" size="xs" onPress={selected === item.key ? handleOpenRoleSheet : undefined} disabled={selected !== item.key} hoverBackgroundColor="transparent" style={{ justifyContent: 'flex-start', alignSelf: 'stretch', paddingHorizontal: 0 } as any} rightIcon={<ChevronDown size={12} color={selected === item.key ? TTTheme.colors.textPrimary : TTTheme.colors.grey05} />}>
+                    <Text variant="mobileLabelSmall" color={selected === item.key ? 'foreground' : 'grey05'}>{selected === item.key ? selectedRole : item.role}</Text>
                   </Button>
                 )}
               </View>
@@ -436,7 +468,7 @@ function Screen2({ onNext, onRoleTap }: { onNext: () => void; onRoleTap: () => v
 
       </ScrollView>
 
-      {/* Send Invite FAB — visible only when a contact is selected */}
+      {/* Send Invite FAB — visible only when a contact/email is selected */}
       {selected && (
         <Pressable onPress={onNext} style={{ position: 'absolute', bottom: 32, right: 16, zIndex: 2 } as any}>
           <View style={{ backgroundColor: '#000', borderRadius: 28, paddingHorizontal: 20, paddingVertical: 14, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
@@ -449,17 +481,64 @@ function Screen2({ onNext, onRoleTap }: { onNext: () => void; onRoleTap: () => v
       {!selected && <MockKeyboard />}
       {selected && <HomeIndicator />}
 
-      {selected && <ChangeRoleTooltip anim={roleTooltipAnim} onRoleTap={onRoleTap} />}
+      {/* Step 3/4: Change Role tooltip — shown after selection, before role is confirmed */}
+      {selected && !roleConfirmed && <ChangeRoleTooltip anim={roleTooltipAnim} onRoleTap={handleOpenRoleSheet} arrowInset={50} />}
 
-      {/* Tooltip — Step 2/4 guidance */}
+      {/* Step 4/4: Confirm Members tooltip — shown after role is selected */}
+      {selected && roleConfirmed && (
+        <OnboardingTooltip
+          title="Confirm Members"
+          description="After selecting your members, just hit this button to confirm your selection."
+          step="Step 4/4"
+          style={{ left: 14, bottom: 97, zIndex: 61 }}
+          arrowEdge="bottom" arrowSide="right" arrowInset={34}
+          anim={confirmTooltipAnim}
+        />
+      )}
+
+      {/* Step 2/4: Search guidance tooltip — 'none' when dismissed so it doesn't block the X button */}
       <OnboardingTooltip
         title="Search for your crew member"
-        description="Type their name or email address to find and invite them."
+        description="Type their email or name- if they're not on Tasktag yet, they'll get a link to join the project"
         step="Step 2/4"
         style={{ left: 16, top: 167, zIndex: 61 }}
         arrowEdge="top" arrowSide="left" arrowInset={26}
         anim={tooltipAnim}
+        pointerEvents={tooltipDismissed ? 'none' : 'box-none'}
       />
+
+      {/* Role selection bottom sheet */}
+      {roleSheetVisible && (
+        <>
+          <Animated.View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 50, opacity: sheetAnim } as any} />
+          <Animated.View
+            style={{
+              position: 'absolute', bottom: 0, left: 0, right: 0,
+              backgroundColor: '#fff',
+              borderTopLeftRadius: 24, borderTopRightRadius: 24,
+              paddingHorizontal: 20, paddingTop: 16, paddingBottom: 0,
+              zIndex: 51,
+              transform: [{ translateY: sheetAnim.interpolate({ inputRange: [0, 1], outputRange: [300, 0] }) }],
+            } as any}
+          >
+            <View style={{ width: 40, height: 4, backgroundColor: TTTheme.colors.grey04, borderRadius: 2, alignSelf: 'center', marginBottom: 20 }} />
+            <Text variant="mobileLargeLabel" color="foreground" style={{ fontWeight: '700', textAlign: 'center', marginBottom: 24 }}>Select Role</Text>
+            {(['Admin', 'Editor', 'Viewer'] as RoleType[]).map((role) => (
+              <Pressable key={role} onPress={() => handleSelectRole(role)}>
+                <View style={{ paddingVertical: 18 }}>
+                  <Text variant="mobileLabelEmphasized" color={role === selectedRole ? 'secondaryGreen' : 'foreground'}>
+                    {role}
+                  </Text>
+                </View>
+              </Pressable>
+            ))}
+            {/* Home bar */}
+            <View style={{ height: 24, alignItems: 'center', justifyContent: 'center' }}>
+              <View style={{ width: 124, height: 5, backgroundColor: TTTheme.colors.grey06, borderRadius: 5 }} />
+            </View>
+          </Animated.View>
+        </>
+      )}
     </View>
   );
 }
@@ -529,10 +608,10 @@ function Screen3({ onNext, onRoleTap }: { onNext: () => void; onRoleTap: () => v
 
       {(selectedContact || selectedEmail) && (
         <View style={{ paddingHorizontal: 16, marginTop: 16, gap: 10 } as any}>
-          <Text variant="mobileLabelSmall" color="foreground">Selected Members (1)</Text>
+          <Text variant="mobileLabelEmphasized" color="foreground" style={{ fontSize: 16 }}>Selected Members (1)</Text>
           <View style={{ flexDirection: 'row', gap: 10 }}>
             <View style={{ alignItems: 'center', gap: 4 } as any}>
-              <View>
+              <View style={{ width: 62, height: 62, alignItems: 'center', justifyContent: 'center' }}>
                 {selectedContact
                   ? renderAvatar(selectedContact, 56)
                   : (
@@ -543,7 +622,8 @@ function Screen3({ onNext, onRoleTap }: { onNext: () => void; onRoleTap: () => v
                 }
                 <Pressable
                   onPress={() => setSelected(null)}
-                  style={{ position: 'absolute', top: -2, right: -2, width: 20, height: 20, borderRadius: 10, backgroundColor: TTTheme.colors.grey03, alignItems: 'center', justifyContent: 'center' } as any}
+                  style={{ position: 'absolute', top: 0, right: 0, width: 20, height: 20, borderRadius: 10, backgroundColor: TTTheme.colors.grey03, alignItems: 'center', justifyContent: 'center', zIndex: 200 } as any}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 >
                   <X size={10} color={TTTheme.colors.textPrimary} />
                 </Pressable>
@@ -621,6 +701,7 @@ function MemberListLayout({
   onRoleTap?: () => void;
   onSendInvite?: () => void;
 }) {
+  const [carlosSelected, setCarlosSelected] = useState(true);
   const searchQuery = 'Carlos';
   const roleColor = carlosRole === 'Viewer' ? TTTheme.colors.textPrimary : TTTheme.colors.secondaryGreen;
 
@@ -640,22 +721,28 @@ function MemberListLayout({
       </View>
 
       {/* Selected Members */}
-      <View style={{ paddingHorizontal: 16, marginTop: 16, gap: 10 } as any}>
-        <Text variant="mobileLabelSmall" color="foreground">Selected Members (1)</Text>
-        <View style={{ flexDirection: 'row', gap: 10 }}>
-          <View style={{ alignItems: 'center', gap: 4 } as any}>
-            <View>
-              <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: TTTheme.colors.grey02, alignItems: 'center', justifyContent: 'center' }}>
-                <Mail size={24} color={TTTheme.colors.grey05} />
+      {carlosSelected && (
+        <View style={{ paddingHorizontal: 16, marginTop: 16, gap: 10 } as any}>
+          <Text variant="mobileLabelSmall" color="foreground">Selected Members (1)</Text>
+          <View style={{ flexDirection: 'row', gap: 10 }}>
+            <View style={{ alignItems: 'center', gap: 4 } as any}>
+              <View style={{ width: 62, height: 62, alignItems: 'center', justifyContent: 'center' }}>
+                <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: TTTheme.colors.grey02, alignItems: 'center', justifyContent: 'center' }}>
+                  <Mail size={24} color={TTTheme.colors.grey05} />
+                </View>
+                <Pressable
+                  onPress={() => setCarlosSelected(false)}
+                  style={{ position: 'absolute', top: 0, right: 0, width: 20, height: 20, borderRadius: 10, backgroundColor: TTTheme.colors.grey03, alignItems: 'center', justifyContent: 'center', zIndex: 200 } as any}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                  <X size={10} color={TTTheme.colors.textPrimary} />
+                </Pressable>
               </View>
-              <View style={{ position: 'absolute', top: -2, right: -2, width: 20, height: 20, borderRadius: 10, backgroundColor: TTTheme.colors.grey03, alignItems: 'center', justifyContent: 'center' }}>
-                <X size={10} color={TTTheme.colors.textPrimary} />
-              </View>
+              <Text variant="mobileMetadataPrimary" color="grey05" numberOfLines={1} style={{ maxWidth: 64, textAlign: 'center' }}>carlossm...</Text>
             </View>
-            <Text variant="mobileMetadataPrimary" color="grey05" numberOfLines={1} style={{ maxWidth: 64, textAlign: 'center' }}>carlossm...</Text>
           </View>
         </View>
-      </View>
+      )}
 
       {/* Suggested header */}
       <View style={{ paddingHorizontal: 16, marginTop: 16, marginBottom: 4 }}>
@@ -807,7 +894,7 @@ function Screen6({ onSendInvite }: { onSendInvite: () => void }) {
         description='Tap "Send Invite" to send an invite link to all selected members.'
         step="Step 4/4"
         style={{ left: 16, top: 551, zIndex: 61 }}
-        arrowEdge="bottom" arrowSide="right" arrowInset={8}
+        arrowEdge="bottom" arrowSide="right" arrowInset={34}
         anim={tooltipAnim}
       />
 
@@ -822,84 +909,10 @@ function Screen6({ onSendInvite }: { onSendInvite: () => void }) {
   );
 }
 
-// ── Screen 7: Invite Sent! ───────────────────────────────────────────────────
+// ── Screen 7: Members page ───────────────────────────────────────────────────
 
 function Screen7({ onDone }: { onDone: () => void }) {
-  return (
-    <View style={{ flex: 1, backgroundColor: '#fff' }}>
-      <StatusBarRow />
-
-      {/* Header */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: TTTheme.colors.border }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <ArrowLeft size={20} color={TTTheme.colors.textPrimary} />
-          <Text variant="mobileLabelEmphasized" color="foreground">Members</Text>
-        </View>
-        <Plus size={20} color={TTTheme.colors.textPrimary} />
-      </View>
-
-      {/* Invite row */}
-      <View style={{ marginHorizontal: 16, marginTop: 16, flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8 }}>
-        <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: TTTheme.colors.grey02, alignItems: 'center', justifyContent: 'center' }}>
-          <UserPlus size={20} color={TTTheme.colors.grey04} />
-        </View>
-        <Text variant="mobileLabelSmall" color="foreground">Invite or Add Member</Text>
-      </View>
-
-      {/* Copy link row */}
-      <View style={{ marginHorizontal: 16, flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: TTTheme.colors.border }}>
-        <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: TTTheme.colors.grey02, alignItems: 'center', justifyContent: 'center' }}>
-          <Copy size={18} color={TTTheme.colors.grey04} />
-        </View>
-        <Text variant="mobileLabelSmall" color="foreground">Copy link to invite</Text>
-      </View>
-
-      {/* TODO(BE): GET /api/projects/:id/invites?status=pending — pending invites list + count */}
-      <View style={{ paddingHorizontal: 16, marginTop: 16, marginBottom: 8 }}>
-        <Text variant="mobileMetadataSecondary" color="grey04" style={{ textTransform: 'uppercase', letterSpacing: 0.5 }}>Pending Member (1)</Text>
-      </View>
-      <View style={{ marginHorizontal: 16, flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8 }}>
-        {/* TODO(BE): invite.member.avatar + invite.member.initials */}
-        <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: TTTheme.colors.grey02, alignItems: 'center', justifyContent: 'center' }}>
-          <Mail size={18} color={TTTheme.colors.grey05} />
-        </View>
-        <View style={{ flex: 1 }}>
-          {/* TODO(BE): invite.member.email */}
-          <Text variant="mobileLabelSmall" color="foreground">carlos@gmail.com</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 }}>
-            {/* TODO(BE): invite.role + invite.expiresAt */}
-            <Text variant="mobileMetadataPrimary" color="grey04">Viewer</Text>
-            <View style={{ width: 3, height: 3, borderRadius: 1.5, backgroundColor: TTTheme.colors.grey04 }} />
-            <Text variant="mobileMetadataPrimary" color="alertRed">Expired May 28</Text>
-          </View>
-        </View>
-      </View>
-
-      {/* TODO(BE): GET /api/projects/:id/members — active members list + count */}
-      <View style={{ paddingHorizontal: 16, marginTop: 16, marginBottom: 8, borderTopWidth: 1, borderTopColor: TTTheme.colors.border, paddingTop: 12 }}>
-        <Text variant="mobileMetadataSecondary" color="grey04" style={{ textTransform: 'uppercase', letterSpacing: 0.5 }}>Members (2)</Text>
-      </View>
-      <View style={{ marginHorizontal: 16, flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8 }}>
-        {/* TODO(BE): member.avatar */}
-        <Image source={require('@/assets/images/mj.png')} style={{ width: 40, height: 40, borderRadius: 20 }} resizeMode="cover" />
-        <View style={{ flex: 1 }}>
-          {/* TODO(BE): member.name + member.role */}
-          <Text variant="mobileLabelSmall" color="foreground">Maria Jose</Text>
-          <Text variant="mobileMetadataPrimary" color="grey04">Owner</Text>
-        </View>
-      </View>
-
-      {/* Success modal — overlay + animated card */}
-      <SuccessModal
-        title="Invite Sent!"
-        description="Your crew member will receive an invite link via WhatsApp."
-        primaryLabel="Add Tasks Now"
-        onPrimary={onDone}
-        secondaryLabel="Back to Project"
-        onSecondary={onDone}
-      />
-    </View>
-  );
+  return <MembersScreen onDone={onDone} />;
 }
 
 // ── Main Case3Screen ─────────────────────────────────────────────────────────
@@ -917,7 +930,7 @@ export function Case3Screen({
   return (
     <Box flex={1} backgroundColor="white">
       {screen === 1 && <Screen1 onInvite={() => setScreen(2)} />}
-      {screen === 2 && <Screen2 onNext={() => setScreen(4)} onRoleTap={() => setScreen(5)} />}
+      {screen === 2 && <Screen2 onNext={() => setScreen(7)} />}
       {screen === 3 && <Screen3 onNext={() => setScreen(4)} onRoleTap={() => setScreen(5)} />}
       {screen === 4 && <Screen4 onRoleTap={() => setScreen(5)} />}
       {screen === 5 && <Screen5 onSelectAdmin={() => setScreen(6)} />}

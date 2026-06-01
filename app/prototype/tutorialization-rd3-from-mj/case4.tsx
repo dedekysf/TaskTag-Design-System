@@ -3,6 +3,7 @@ import { theme as TTTheme } from '@/constants/theme';
 import { MockKeyboard } from '../_shared/mobile/MockKeyboard';
 import { OnboardingTooltip, useTooltipAnim } from '../_shared/mobile/OnboardingTooltip';
 import { ProjectDetailScreen } from '../_shared/mobile/ProjectDetailScreen';
+import { StatusBarRow } from '../_shared/mobile/StatusBarRow';
 import { SuccessModal } from '../_shared/mobile/SuccessModal';
 import { TaskListScreen } from '../_shared/mobile/TaskListScreen';
 import React, { useEffect, useRef, useState } from 'react';
@@ -110,43 +111,78 @@ function TaskCreationSheet({
 // ── Phase 1: Project Detail with "Create Task" spotlight + tooltip ─────────────
 
 function ProjectPhase({ onCreateTask }: { onCreateTask: () => void }) {
-  const tooltipAnim = useTooltipAnim(200);
+  const tooltipAnim  = useTooltipAnim(200);
+  const containerRef = useRef<any>(null);
+  const taskCardRef  = useRef<any>(null);
+
+  // Spotlight rect — defaults match approximate layout while measurement is pending
+  const [spot, setSpot] = useState({ x: 16, y: 588, width: 343, height: 62 });
+
+  useEffect(() => {
+    // Defer until after the first layout pass
+    const t = setTimeout(() => {
+      taskCardRef.current?.measure((
+        _fx: number, _fy: number,
+        width: number, height: number,
+        pageX: number, pageY: number,
+      ) => {
+        containerRef.current?.measure((
+          _cfx: number, _cfy: number,
+          _cw: number, _ch: number,
+          cpageX: number, cpageY: number,
+        ) => {
+          // Coordinates relative to the container so position:absolute lines up correctly
+          setSpot({ x: pageX - cpageX, y: pageY - cpageY, width, height });
+        });
+      });
+    }, 80);
+    return () => clearTimeout(t);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Box flex={1} backgroundColor="background">
-      {/* Project detail screen (reused from case3) */}
-      <ProjectDetailScreen />
+    <View ref={containerRef} style={{ flex: 1, backgroundColor: 'transparent' }}>
+      <StatusBarRow />
+      <ProjectDetailScreen taskCardRef={taskCardRef} />
 
-      {/* Spotlight: box-shadow darkens everything except the Tasks card area */}
+      {/* Spotlight: box-shadow darkens everything except the Tasks card area.
+          Size and position are measured dynamically from the rendered Tasks card. */}
       <View
         pointerEvents="none"
         style={{
-          position: 'absolute', left: 12.5, top: 588,
-          width: 349, height: 68,
+          position: 'absolute',
+          left: spot.x, top: spot.y,
+          width: spot.width, height: spot.height,
           borderRadius: 8,
           zIndex: 50,
           boxShadow: '0 0 0 9999px rgba(0,0,0,0.45)',
         } as any}
       />
 
-      {/* Step 1/4 tooltip — CTA "Create a task" taps into the task form */}
+      {/* Step 1/4 tooltip — arrow tip sits exactly at the top edge of the Tasks card.
+          arrowInset: card padding(15) + icon(32) + gap(9) + half of "Tasks" text(~22) = 78px
+          top: spot.y minus estimated card height(138) minus arrow extension(12) = spot.y - 150 */}
       <OnboardingTooltip
         title="Create Task"
         description="Break your project into small steps — tap here to create one."
         step="Step 1/4"
         ctaText="Create a task"
         onCtaPress={onCreateTask}
-        style={{ top: 431, left: 45, zIndex: 60 }}
-        arrowEdge="bottom" arrowSide="left" arrowInset={8}
+        style={{ top: spot.y - 158, left: spot.x, zIndex: 60 }}
+        arrowEdge="bottom" arrowSide="left" arrowInset={48}
         anim={tooltipAnim}
       />
 
-      {/* Tap target spanning the full tooltip card */}
+      {/* Tap target covering the full tooltip area */}
       <Pressable
         onPress={onCreateTask}
-        style={{ position: 'absolute', top: 431, left: 45, width: 313, height: 139, zIndex: 70 } as any}
+        style={{ position: 'absolute', top: spot.y - 158, left: spot.x, width: 312, height: 154, zIndex: 70 } as any}
       />
-    </Box>
+
+      {/* Home bar */}
+      <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 28, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 9, backgroundColor: '#fff' }}>
+        <View style={{ width: 134, height: 5, borderRadius: 5, backgroundColor: '#000' }} />
+      </View>
+    </View>
   );
 }
 
