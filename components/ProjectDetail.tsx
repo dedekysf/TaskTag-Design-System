@@ -1144,7 +1144,14 @@ export function ProjectDetail({
           <Box backgroundColor="card" style={{ borderWidth: 1, borderColor: theme.colors.border, borderRadius: 8 }}>
             <Pressable onPress={() => setPendingSectionExpanded(v => !v)}>
               <Box flexDirection="row" alignItems="center" justifyContent="space-between" style={{ height: 64, paddingHorizontal: 16 }}>
-                <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>Pending</Text>
+                <Box flexDirection="row" alignItems="center" gap="8">
+                  <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.foreground }}>Pending</Text>
+                  {pendingInvites.length > 0 && (
+                    <Box width={20} height={20} alignItems="center" justifyContent="center" style={{ borderWidth: 1, borderColor: theme.colors.border, borderRadius: 10 }}>
+                      <Text style={{ fontSize: 11, color: theme.colors.grey05, fontWeight: '500' }}>{pendingInvites.length}</Text>
+                    </Box>
+                  )}
+                </Box>
                 {pendingSectionExpanded
                   ? <ChevronUp size={20} color={theme.colors.grey06} />
                   : <ChevronDown size={20} color={theme.colors.grey06} />}
