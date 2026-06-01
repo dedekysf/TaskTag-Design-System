@@ -36,6 +36,8 @@ export default function TutorializationRD3() {
   const [activeCase, setActiveCase] = useState<TutorialCase>(flowParam === 'after' ? 5 : 1);
   const [case3StartScreen, setCase3StartScreen] = useState<1 | 2>(1);
   const [case4StartPhase, setCase4StartPhase] = useState<'project' | 'taskForm'>('project');
+  const [case7StartPhase, setCase7StartPhase] = useState<'coach'>('coach');
+  const [case7FirstMessage, setCase7FirstMessage] = useState('');
 
   useEffect(() => {
     if (flowParam === 'before' || flowParam === 'after') {
@@ -156,12 +158,22 @@ export default function TutorializationRD3() {
 
       {/* Case 6: Chat for the first time after member joined */}
       {activeCase === 6 && (
-        <Case6Screen onComplete={() => setActiveCase(7)} />
+        <Case6Screen
+          onComplete={(sentMessage) => {
+            setCase7FirstMessage(sentMessage);
+            setCase7StartPhase('coach');
+            setActiveCase(7);
+          }}
+        />
       )}
 
       {/* Case 7: Tag for the first time — link message to project + task */}
       {activeCase === 7 && (
-        <Case7Screen onComplete={() => setActiveCase(8)} />
+        <Case7Screen
+          startPhase={case7StartPhase}
+          firstMessageText={case7FirstMessage}
+          onComplete={() => setActiveCase(8)}
+        />
       )}
 
       {/* Case 8: Tag for the first time (Bathroom Reno variant with nudge flow) */}

@@ -2,14 +2,16 @@
 import { Box, Text } from '@/components/primitives';
 import { theme as TTTheme } from '@/constants/theme';
 import { MockKeyboard } from '../../_shared/mobile/MockKeyboard';
-import { OnboardingTooltip } from '../../_shared/mobile/OnboardingTooltip';
+import { OnboardingTooltip, useTooltipAnim } from '../../_shared/mobile/OnboardingTooltip';
 import { StatusBarRow } from '../../_shared/mobile/StatusBarRow';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, Pressable, TextInput, View } from 'react-native';
+import { Animated, Easing, Image, Pressable, ScrollView, TextInput, View } from 'react-native';
 import {
   Camera,
   Check,
   ChevronLeft,
+  Folder,
+  HardHat,
   Hash,
   Home,
   Image as ImageIcon,
@@ -18,10 +20,15 @@ import {
   Plus,
   Search,
   Send,
+  X,
 } from 'lucide-react-native';
+import { MemberEventCard } from './MemberEventCard';
 
 // Phase progression: coach → (2s auto nudge) → picker → compose → success → done
-type Phase = 'coach' | 'picker' | 'compose' | 'success' | 'done';
+type Phase = 'coach' | 'picker' | 'compose' | 'success' | 'done' | 'nudgeCompose' | 'nudgeSent';
+
+const NUDGE_MESSAGE = "Can you send a site photo? It'll be saved to the job automatically.";
+const NUDGE_COMPOSER_HEIGHT = 100;
 
 // TODO(BE): GET /api/chats/:chatId/context
 const CHAT_CONTEXT = {
@@ -32,16 +39,35 @@ const CHAT_CONTEXT = {
   taskName: 'Fix kitchen sink',
   currentUserInitials: 'MJ',
   assignedAt: '12:25 PM',
-  sentAt: '12:38 PM',
-  replyAt: '12:47 PM',
+  sentAt: '12:26 PM',
+  replyAt: '12:27 PM',
+  nudgeSentAt: '12:50 PM',
 };
 
-// TODO(BE): GET /api/projects/:projectId/tasks?limit=8&sort=recent
-const PICKER_TASKS = [
-  { id: 'fix_sink', title: 'Fix kitchen sink',            assigneeInitials: 'CS', assigneeColor: '#E9A86D' },
-  { id: 'due_date', title: 'Set a Due Date',              assigneeInitials: 'MK', assigneeColor: '#EC4899' },
-  { id: 'all_done', title: 'Mark All the Tasks as Done',  assigneeInitials: 'AL', assigneeColor: '#14B8A6' },
-  { id: 'archive',  title: 'Archive the Projects',        assigneeInitials: '—',  assigneeColor: '#94A3B8' },
+// TODO(BE): GET /api/projects?context=chat — projects + tasks the user can tag
+const PICKER_PROJECTS = [
+  {
+    id: 'oliver',
+    name: '1520 Oliver Street',
+    bgColor: '#7B61FF',
+    iconType: 'hardhut' as const,
+    tasks: [
+      { id: 'fix_sink', title: 'Fix kitchen sink', showCS: true },
+    ],
+  },
+  {
+    id: 'welcome',
+    name: 'Welcome to Tasktag! 🎉',
+    bgColor: '#138eff',
+    iconType: 'home' as const,
+    tasks: [
+      { id: 'create_task', title: 'Create Your First Task',    showCS: false },
+      { id: 'invite',      title: 'Invite Contacts',           showCS: false },
+      { id: 'due_date',    title: 'Set a Due Date',            showCS: false },
+      { id: 'all_done',    title: 'Mark All the Tasks as Done', showCS: false },
+      { id: 'archive',     title: 'Archive the Projects',      showCS: false },
+    ],
+  },
 ];
 
 // ── Small helpers ─────────────────────────────────────────────────────────────
@@ -92,74 +118,44 @@ function DateSeparator({ label }: { label: string }) {
   );
 }
 
-/** Project pill — light mint background with home icon */
+/** Project pill — solid green, folder icon, white text */
 function ProjectTagChip({ label }: { label: string }) {
   return (
     <View style={{
-      minHeight: 24, borderRadius: 100,
-      backgroundColor: TTTheme.colors.lightMint,
-      paddingHorizontal: 8, paddingVertical: 3,
-      flexDirection: 'row', alignItems: 'center', gap: 6,
+      borderRadius: 4,
+      backgroundColor: TTTheme.colors.secondaryGreen,
+      paddingHorizontal: 10, paddingVertical: 5,
+      flexDirection: 'row', alignItems: 'center', gap: 4,
+      flex: 1,
     } as any}>
-      <Home size={12} color={TTTheme.colors.secondaryGreen} />
-      <Text variant="mobileMetadataPrimary" color="secondaryGreen">{label}</Text>
+      <Folder size={14} color="#fff" style={{ flexShrink: 0 } as any} />
+      <Text variant="mobileLabelSmall" style={{ color: '#fff', flex: 1 }} numberOfLines={1}>{label}</Text>
     </View>
   );
 }
 
-/** Task pill — solid green with # */
-function TaskTagChip({ label }: { label: string }) {
+/** Task pill — black, # prefix, optional × remove button */
+function TaskTagChip({ label, onRemove }: { label: string; onRemove?: () => void }) {
   return (
     <View style={{
-      minHeight: 24, borderRadius: 100,
-      backgroundColor: TTTheme.colors.secondaryGreen,
-      paddingHorizontal: 8, paddingVertical: 3,
+      borderRadius: 4,
+      backgroundColor: '#000',
+      paddingHorizontal: 10, paddingVertical: 5,
       flexDirection: 'row', alignItems: 'center', gap: 4,
+      flex: 1,
     } as any}>
-      <Hash size={11} color="#fff" />
-      <Text variant="mobileMetadataPrimary" style={{ color: '#fff' }}>{label}</Text>
+      <Hash size={14} color="#fff" style={{ flexShrink: 0 } as any} />
+      <Text variant="mobileLabelSmall" style={{ color: '#fff', flex: 1 }} numberOfLines={1}>{label}</Text>
+      {onRemove && (
+        <Pressable onPress={onRemove} hitSlop={8} style={{ flexShrink: 0 } as any}>
+          <X size={14} color="#fff" />
+        </Pressable>
+      )}
     </View>
   );
 }
 
 // ── Message components ────────────────────────────────────────────────────────
-
-/**
- * System card: task-assigned event — badge + description + CTAs.
- * "Assign more" button doubles as the entry point for the tagging flow.
- */
-function TaskAssignedCard({ onTagPress }: { onTagPress: () => void }) {
-  return (
-    <View style={{ backgroundColor: TTTheme.colors.grey01, borderRadius: 12, padding: 12 }}>
-      <View style={{ backgroundColor: TTTheme.colors.lightMint, borderRadius: 100, paddingHorizontal: 8, paddingVertical: 4, alignSelf: 'flex-start', marginBottom: 8 }}>
-        {/* 10px regular — hardcoded: DS has no 10px regular variant */}
-        <Text style={{ fontSize: 10, fontWeight: '400', color: TTTheme.colors.secondaryGreen, letterSpacing: 0.5 }}>
-          TASK ASSIGNED
-        </Text>
-      </View>
-      {/* TODO(BE): event.member.name, event.task.name */}
-      <Text variant="mobileLabelSmall" color="foreground" style={{ marginBottom: 2 }}>
-        {CHAT_CONTEXT.memberName} has been assigned a task
-      </Text>
-      <Text variant="mobileSecondaryBody" color="grey05" style={{ marginBottom: 10 }}>
-        {CHAT_CONTEXT.memberName} is now working on{' '}
-        <Text variant="mobileSecondaryBody" color="secondaryGreen" style={{ fontWeight: '600' }}>
-          {CHAT_CONTEXT.taskName}
-        </Text>
-      </Text>
-      <View style={{ flexDirection: 'row', gap: 8 }}>
-        {/* TODO(BE): navigate to /tasks/:id */}
-        <Pressable style={{ flex: 1, backgroundColor: TTTheme.colors.textPrimary, borderRadius: 8, paddingVertical: 8, alignItems: 'center' }}>
-          <Text variant="mobileLabelSmall" style={{ color: '#fff' }}>View task</Text>
-        </Pressable>
-        {/* TODO(BE): open assignment flow */}
-        <Pressable onPress={onTagPress} style={{ flex: 1, backgroundColor: '#fff', borderWidth: 1.5, borderColor: TTTheme.colors.textPrimary, borderRadius: 8, paddingVertical: 8, alignItems: 'center' }}>
-          <Text variant="mobileLabelSmall" color="foreground">Assign more</Text>
-        </Pressable>
-      </View>
-    </View>
-  );
-}
 
 function TaskAssignedMessage({ onTagPress }: { onTagPress: () => void }) {
   return (
@@ -171,17 +167,23 @@ function TaskAssignedMessage({ onTagPress }: { onTagPress: () => void }) {
           <Text variant="mobileLabelSmall" color="foreground">{CHAT_CONTEXT.memberName}</Text>
           <Text variant="mobileMetadataPrimary" color="grey05">{CHAT_CONTEXT.assignedAt}</Text>
         </View>
-        <TaskAssignedCard onTagPress={onTagPress} />
+        {/* TODO(BE): event.type — always 'taskAssigned' here */}
+        <MemberEventCard
+          variant="taskAssigned"
+          memberName={CHAT_CONTEXT.memberName}
+          taskName={CHAT_CONTEXT.taskName}
+          onSecondaryPress={onTagPress}
+        />
       </View>
     </View>
   );
 }
 
-function OutgoingMessage({ text, showTags = false }: { text: string; showTags?: boolean }) {
+function OutgoingMessage({ text, showTags = false, showCelebration = false }: { text: string; showTags?: boolean; showCelebration?: boolean }) {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingHorizontal: 16, paddingVertical: 8 } as any}>
       {/* TODO(BE): currentUser.avatar */}
-      <Avatar size="sm" type="text" initials={CHAT_CONTEXT.currentUserInitials} color="darkMagenta" />
+      <Image source={require('@/assets/images/mj.png')} style={{ width: 32, height: 32, borderRadius: 16, flexShrink: 0 }} resizeMode="cover" />
       <View style={{ flex: 1, gap: 6 } as any}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 } as any}>
           <Text variant="mobileLabelEmphasized" style={{ color: TTTheme.colors.darkMagenta }}>You</Text>
@@ -197,23 +199,99 @@ function OutgoingMessage({ text, showTags = false }: { text: string; showTags?: 
             <TaskTagChip label={CHAT_CONTEXT.taskName} />
           </View>
         )}
+        {showCelebration && (
+          <Text variant="mobileLabelSmall" color="foreground">First tag complete! 🎉</Text>
+        )}
       </View>
     </View>
   );
 }
 
-function CarlosReply() {
+function CarlosReply({ anim }: { anim: Animated.Value }) {
+  const translateY = anim.interpolate({ inputRange: [0, 1], outputRange: [10, 0] });
+  return (
+    <Animated.View style={{ opacity: anim, transform: [{ translateY }] } as any}>
+      <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingHorizontal: 16, paddingVertical: 8 } as any}>
+        {/* TODO(BE): message.sender.avatar */}
+        <Avatar size="sm" type="text" initials={CHAT_CONTEXT.memberInitials} color={TTTheme.colors.darkGreen} />
+        <View style={{ flex: 1, gap: 6 } as any}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 } as any}>
+            <Text variant="mobileLabelSmall" color="foreground">{CHAT_CONTEXT.memberName}</Text>
+            <Text variant="mobileMetadataPrimary" color="grey05">{CHAT_CONTEXT.replyAt}</Text>
+          </View>
+          {/* TODO(BE): message.text */}
+          <Text variant="mobileBody" color="textSecondary">{'Hi! Thank you\nI will do it.'}</Text>
+        </View>
+      </View>
+    </Animated.View>
+  );
+}
+
+function NudgeCard({ onSend, anim }: { onSend: () => void; anim: Animated.Value }) {
+  const translateY = anim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] });
+  return (
+    <Animated.View style={{ opacity: anim, transform: [{ translateY }] } as any}>
+      <View style={{ backgroundColor: '#000', borderRadius: 12, padding: 14, marginHorizontal: 16, marginTop: 10, gap: 12 } as any}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 } as any}>
+          <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: TTTheme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center' }}>
+            <Camera size={18} color="#fff" />
+          </View>
+          <Text variant="mobileLabelEmphasized" style={{ color: '#fff' }}>Get a site photo</Text>
+        </View>
+        <Text variant="mobileSecondaryBody" style={{ color: '#fff' }}>
+          Ask your crew to send one — it'll be saved to this job automatically
+        </Text>
+        <Pressable onPress={onSend} style={{ backgroundColor: TTTheme.colors.secondaryGreen, borderRadius: 8, paddingVertical: 10, alignItems: 'center' }}>
+          <Text variant="mobileLabelSmall" style={{ color: '#fff' }}>Send</Text>
+        </Pressable>
+      </View>
+    </Animated.View>
+  );
+}
+
+function NudgeSentMessage() {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingHorizontal: 16, paddingVertical: 8 } as any}>
-      {/* TODO(BE): message.sender.avatar */}
-      <Avatar size="sm" type="text" initials={CHAT_CONTEXT.memberInitials} color={TTTheme.colors.darkGreen} />
+      <Image source={require('@/assets/images/mj.png')} style={{ width: 32, height: 32, borderRadius: 16, flexShrink: 0 }} resizeMode="cover" />
       <View style={{ flex: 1, gap: 6 } as any}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 } as any}>
-          <Text variant="mobileLabelSmall" color="foreground">{CHAT_CONTEXT.memberName}</Text>
-          <Text variant="mobileMetadataPrimary" color="grey05">{CHAT_CONTEXT.replyAt}</Text>
+          <Text variant="mobileLabelEmphasized" style={{ color: TTTheme.colors.darkMagenta }}>You</Text>
+          <Text variant="mobileMetadataPrimary" color="grey05">{CHAT_CONTEXT.nudgeSentAt}</Text>
+          <Check size={12} color={TTTheme.colors.grey05} />
         </View>
-        {/* TODO(BE): message.text */}
-        <Text variant="mobileBody" color="textSecondary"># Hi Thank you{'\n'}I will do it.</Text>
+        <Text variant="mobileBody" color="textSecondary">{NUDGE_MESSAGE}</Text>
+      </View>
+    </View>
+  );
+}
+
+function NudgeComposerPanel({ onSend }: { onSend: () => void }) {
+  return (
+    <View style={{
+      position: 'absolute', bottom: 291, left: 0, right: 0, zIndex: 41,
+      backgroundColor: '#fff',
+      borderTopWidth: 1, borderTopColor: TTTheme.colors.border,
+      borderTopLeftRadius: 16, borderTopRightRadius: 16,
+    } as any}>
+      <View style={{ paddingHorizontal: 16, paddingTop: 8, paddingBottom: 0 }}>
+        <Text variant="mobileBody" color="textSecondary" style={{ minHeight: 34 }}>{NUDGE_MESSAGE}</Text>
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingBottom: 16 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 } as any}>
+          <View style={{ width: 40, height: 40, backgroundColor: TTTheme.colors.grey02, borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
+            <Plus size={20} color={TTTheme.colors.textPrimary} />
+          </View>
+          {[Hash, Camera, ImageIcon, MapPin, Mic].map((Icon, i) => (
+            <View key={i} style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
+              <Icon size={20} color={TTTheme.colors.textPrimary} />
+            </View>
+          ))}
+        </View>
+        <Pressable onPress={onSend}>
+          <View style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: TTTheme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center' }}>
+            <Send size={20} color="#fff" />
+          </View>
+        </Pressable>
       </View>
     </View>
   );
@@ -221,41 +299,47 @@ function CarlosReply() {
 
 // ── Input bars ────────────────────────────────────────────────────────────────
 
-function TagNudgeCard() {
+/** Inactive input bar — no # button, used before nudge and in success/done */
+function MinimalInputBar() {
   return (
-    <View style={{ marginHorizontal: 16, marginBottom: 12, backgroundColor: '#000', borderRadius: 16, padding: 16, flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
-      <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: TTTheme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center' }}>
-        <Hash size={20} color="#fff" />
+    <View style={{ backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: TTTheme.colors.border, borderTopLeftRadius: 16, borderTopRightRadius: 16 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 16, gap: 6 } as any}>
+        <View style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
+          <Plus size={20} color={TTTheme.colors.textPrimary} />
+        </View>
+        <Text variant="mobileBody" color="grey05" style={{ flex: 1 }}>Type message here...</Text>
+        <View style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
+          <Send size={20} color={TTTheme.colors.grey04} />
+        </View>
       </View>
-      <View style={{ flex: 1, gap: 4 } as any}>
-        <Text variant="mobileLabelEmphasized" style={{ color: '#fff' }}>Tag this message</Text>
-        <Text variant="mobileSecondaryBody" style={{ color: '#fff' }}>
-          {'Tap # below to tag this message so '}
-          {/* TODO(BE): chat.contact.name */}
-          {CHAT_CONTEXT.memberName}
-          {' knows exactly which site this is about'}
-        </Text>
-      </View>
+      <HomeIndicator />
     </View>
   );
 }
 
-function MinimalInputBar({ onHashPress, hashHighlighted = false }: { onHashPress: () => void; hashHighlighted?: boolean }) {
+/** Active input bar — # plain (tappable), no animation, used when nudge fires */
+function CoachInputBar({ onHashPress }: { onHashPress: () => void }) {
   return (
     <View style={{ backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: TTTheme.colors.border, borderTopLeftRadius: 16, borderTopRightRadius: 16 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 16, gap: 8 } as any}>
-        <View style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
-          <Plus size={20} color={TTTheme.colors.textPrimary} />
+      <View style={{ paddingHorizontal: 16, paddingTop: 8, paddingBottom: 0 }}>
+        <Text variant="mobileBody" color="grey05" style={{ minHeight: 28 }}>Type message here...</Text>
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingBottom: 16 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 } as any}>
+          <View style={{ width: 40, height: 40, backgroundColor: TTTheme.colors.grey02, borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
+            <Plus size={20} color={TTTheme.colors.textPrimary} />
+          </View>
+          <Pressable onPress={onHashPress} style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' } as any}>
+            <Hash size={20} color={TTTheme.colors.textPrimary} />
+          </Pressable>
+          {[Camera, ImageIcon, MapPin, Mic].map((Icon, i) => (
+            <View key={i} style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
+              <Icon size={20} color={TTTheme.colors.textPrimary} />
+            </View>
+          ))}
         </View>
-        <Pressable
-          onPress={onHashPress}
-          style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: hashHighlighted ? TTTheme.colors.secondaryGreen : 'transparent', alignItems: 'center', justifyContent: 'center' } as any}
-        >
-          <Hash size={20} color={hashHighlighted ? '#fff' : TTTheme.colors.textPrimary} />
-        </Pressable>
-        <Text variant="mobileBody" color="grey05" style={{ flex: 1 }}>Type message here...</Text>
-        <View style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
-          <Send size={20} color={TTTheme.colors.grey04} />
+        <View style={{ width: 40, height: 40, backgroundColor: TTTheme.colors.grey05, borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
+          <Send size={20} color="#fff" />
         </View>
       </View>
       <HomeIndicator />
@@ -274,11 +358,11 @@ function TaskPickerSheet({
 }) {
   const sheetAnim   = useRef(new Animated.Value(0)).current;
   const tooltipAnim = useTooltipAnim(400);
-  const translateY  = sheetAnim.interpolate({ inputRange: [0, 1], outputRange: [420, 0] });
+  const translateY  = sheetAnim.interpolate({ inputRange: [0, 1], outputRange: [500, 0] });
 
   useEffect(() => {
     Animated.timing(sheetAnim, {
-      toValue: 1, duration: 320,
+      toValue: 1, duration: 350,
       easing: Easing.out(Easing.cubic),
       useNativeDriver: true,
     }).start();
@@ -289,70 +373,94 @@ function TaskPickerSheet({
       {/* Dim overlay */}
       <Animated.View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 50, opacity: sheetAnim } as any} />
 
-      {/* Sheet */}
+      {/* Sheet — leaves status bar (44px) visible, same as case5 */}
       <Animated.View style={{
-        position: 'absolute', left: 0, right: 0, bottom: 0,
+        position: 'absolute', top: 44, bottom: 0, left: 0, right: 0,
         backgroundColor: '#fff',
-        borderTopLeftRadius: 20, borderTopRightRadius: 20,
-        paddingBottom: 32, zIndex: 51,
+        borderTopLeftRadius: 24, borderTopRightRadius: 24,
+        zIndex: 51,
         transform: [{ translateY }],
       } as any}>
-        {/* Drag handle */}
-        <View style={{ width: 40, height: 4, backgroundColor: TTTheme.colors.grey03, borderRadius: 2, alignSelf: 'center', marginTop: 12, marginBottom: 8 }} />
+        {/* Pull handle */}
+        <View style={{ alignItems: 'center', paddingTop: 16, paddingBottom: 8 }}>
+          <View style={{ width: 56, height: 4, backgroundColor: TTTheme.colors.grey04, borderRadius: 2.5 }} />
+        </View>
 
         {/* Search row */}
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16, paddingTop: 8, paddingBottom: 4 } as any}>
-          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: TTTheme.colors.grey01, borderRadius: 12, paddingHorizontal: 12, height: 40 } as any}>
-            <Search size={16} color={TTTheme.colors.grey04} />
-            <Text variant="mobileBody" color="grey04">Search</Text>
+          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: TTTheme.colors.border, borderRadius: 8, paddingHorizontal: 12, paddingVertical: 10, gap: 8, backgroundColor: TTTheme.colors.grey01 } as any}>
+            <Search size={18} color={TTTheme.colors.grey05} />
+            <Text variant="mobileBody" color="grey05" style={{ flex: 1 }}>Search</Text>
           </View>
           <Pressable onPress={onCancel}>
-            <Text variant="mobileLabelSmall" color="foreground">Cancel</Text>
+            <Text variant="mobileLabelSmall" style={{ color: TTTheme.colors.secondaryGreen }}>Cancel</Text>
           </Pressable>
         </View>
 
         {/* Section label */}
         <View style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 10 }}>
-          <Text variant="mobileMetadataSecondary" color="grey04" style={{ textTransform: 'uppercase', letterSpacing: 0.5 }}>
-            All Projects &amp; Tasks
-          </Text>
+          <Text variant="mobileSecondaryBody" color="grey05">All Projects & Tasks</Text>
         </View>
 
-        {/* Project row (bold) */}
-        {/* TODO(BE): project.name / project.avatar */}
-        <View style={{ paddingHorizontal: 16, paddingVertical: 12, flexDirection: 'row', alignItems: 'center', gap: 10 } as any}>
-          <Avatar size="sm" type="text" initials={CHAT_CONTEXT.projectInitials} color="pastelOrange" />
-          <Text variant="mobileLabelSmall" color="foreground" style={{ fontWeight: '700', flex: 1 }}>
-            {CHAT_CONTEXT.projectName}
-          </Text>
-        </View>
-
-        {/* Task rows */}
-        {PICKER_TASKS.map((task) => (
-          <Pressable
-            key={task.id}
-            onPress={() => onSelectTask(task.title)}
-            style={{ paddingLeft: 58, paddingRight: 16, paddingVertical: 12, borderTopWidth: 1, borderTopColor: TTTheme.colors.border, flexDirection: 'row', alignItems: 'center', gap: 10 } as any}
-          >
-            <Hash size={14} color={TTTheme.colors.secondaryGreen} />
-            <View style={{ flex: 1 }}>
-              {/* TODO(BE): task.name */}
-              <Text variant="mobileLabelSmall" color="foreground">{task.title}</Text>
+        {/* Projects + tasks */}
+        {PICKER_PROJECTS.map((project) => (
+          <View key={project.id}>
+            {/* TODO(BE): project.icon + project.name */}
+            <View style={{ paddingHorizontal: 16, paddingVertical: 12, flexDirection: 'row', alignItems: 'center', gap: 10 } as any}>
+              <View style={{ width: 32, height: 32, backgroundColor: project.bgColor, borderRadius: 4, alignItems: 'center', justifyContent: 'center' }}>
+                {project.iconType === 'hardhut' ? <HardHat size={18} color="#fff" /> : <Home size={18} color="#fff" />}
+              </View>
+              <Text variant="mobileLabelEmphasized" color="foreground">{project.name}</Text>
             </View>
-            {/* TODO(BE): task.assignee.avatar */}
-            <Avatar size="xs" type="text" initials={task.assigneeInitials} color={task.assigneeColor} />
-          </Pressable>
+            {project.tasks.map((task) => (
+              <Pressable
+                key={task.id}
+                onPress={() => onSelectTask(task.title)}
+                style={{ paddingLeft: 16, paddingRight: 16, paddingVertical: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' } as any}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 } as any}>
+                  <View style={{ width: 32, height: 32, alignItems: 'center', justifyContent: 'center' }}>
+                    <Hash size={18} color={TTTheme.colors.secondaryGreen} />
+                  </View>
+                  {/* TODO(BE): task.name */}
+                  <Text variant="mobileLabelSmall" color="foreground">{task.title}</Text>
+                </View>
+                {/* TODO(BE): task.assignees */}
+                <View style={{ flexDirection: 'row', alignItems: 'center' } as any}>
+                  {task.showCS && (
+                    <Avatar size="xs" type="text" initials="C" color={TTTheme.colors.darkGreen} />
+                  )}
+                  <Image
+                    source={require('@/assets/images/mj.png')}
+                    style={{ width: 24, height: 24, borderRadius: 12, marginLeft: task.showCS ? -8 : 0, borderWidth: task.showCS ? 1.5 : 0, borderColor: '#fff' } as any}
+                    resizeMode="cover"
+                  />
+                </View>
+              </Pressable>
+            ))}
+          </View>
         ))}
+
+        {/* New Task FAB */}
+        <View style={{ position: 'absolute', bottom: 40, right: 17 } as any}>
+          <View style={{ backgroundColor: '#000', borderRadius: 100, flexDirection: 'row', alignItems: 'center', paddingLeft: 12, paddingRight: 16, paddingVertical: 14, gap: 8 }}>
+            <Plus size={22} color="#fff" />
+            <Text variant="mobileBody" style={{ color: '#fff' }}>New Task</Text>
+          </View>
+        </View>
+
+        {/* Home bar */}
+        <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 28, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 9 } as any}>
+          <View style={{ width: 134, height: 5, backgroundColor: TTTheme.colors.grey06, borderRadius: 5 }} />
+        </View>
       </Animated.View>
 
-      {/* Tooltip 2: "Project vs Task" — explains bold = project, # = task */}
+      {/* Tooltip 2: "Project vs Task" — no CTA, tapping Fix kitchen sink proceeds */}
       <OnboardingTooltip
         title="Project vs Task"
         description="Projects are shown in Bold Text, while Tasks use the '#' icon."
         step="Step 2/3"
-        ctaText="Got it"
-        onCtaPress={() => onSelectTask(PICKER_TASKS[0].title)}
-        style={{ left: 20, top: 350, zIndex: 62 }}
+        style={{ left: 28, top: 280, zIndex: 62 }}
         arrowEdge="top"
         arrowSide="left"
         arrowInset={20}
@@ -371,6 +479,7 @@ function ComposerPanel({
   onChangeText,
   onPhysicalKeyPress,
   onSend,
+  onRemoveTask,
 }: {
   taskTitle: string;
   messageText: string;
@@ -378,6 +487,7 @@ function ComposerPanel({
   onChangeText: (text: string) => void;
   onPhysicalKeyPress: (key: string) => void;
   onSend: () => void;
+  onRemoveTask?: () => void;
 }) {
   const sendActive = messageText.trim().length > 0;
 
@@ -389,11 +499,13 @@ function ComposerPanel({
       borderTopLeftRadius: 16, borderTopRightRadius: 16,
     } as any}>
       <View style={{ paddingHorizontal: 16, paddingTop: 8, paddingBottom: 0 }}>
-        {/* Tag pills — project + task */}
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 6 } as any}>
-          {/* TODO(BE): selectedTags — project + task objects from picker */}
-          <ProjectTagChip label={CHAT_CONTEXT.projectName} />
-          <TaskTagChip label={taskTitle} />
+        {/* Tag pills — project + task, bordered wrapper */}
+        <View style={{ borderWidth: 1, borderColor: TTTheme.colors.border, borderRadius: 8, padding: 4, marginBottom: 6 } as any}>
+          <View style={{ flexDirection: 'row', gap: 6 } as any}>
+            {/* TODO(BE): selectedTags — project + task objects from picker */}
+            <ProjectTagChip label={CHAT_CONTEXT.projectName} />
+            <TaskTagChip label={taskTitle} onRemove={onRemoveTask} />
+          </View>
         </View>
 
         <TextInput
@@ -404,12 +516,14 @@ function ComposerPanel({
           placeholder="Type message here..."
           placeholderTextColor={TTTheme.colors.grey05}
           multiline
+          autoComplete="new-password"
+          autoCorrect={false}
           style={{ fontSize: 16, color: TTTheme.colors.foreground, padding: 0, outlineStyle: 'none', minHeight: 34 } as any}
         />
       </View>
 
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingBottom: 16 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 } as any}>
           <View style={{ width: 40, height: 40, backgroundColor: TTTheme.colors.grey02, borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
             <Plus size={20} color={TTTheme.colors.textPrimary} />
           </View>
@@ -431,34 +545,57 @@ function ComposerPanel({
 
 // ── Main Case7Screen ──────────────────────────────────────────────────────────
 
-export function Case7Screen({ onComplete }: { onComplete?: () => void } = {}) {
-  const [phase, setPhase]               = useState<Phase>('coach');
-  const [selectedTask, setSelectedTask] = useState(PICKER_TASKS[0].title);
+export function Case7Screen({
+  onComplete,
+  startPhase = 'coach',
+  firstMessageText,
+}: {
+  onComplete?: () => void;
+  startPhase?: Phase;
+  firstMessageText?: string;
+} = {}) {
+  const [phase, setPhase]               = useState<Phase>(startPhase);
+  const [selectedTask, setSelectedTask] = useState(PICKER_PROJECTS[0].tasks[0].title);
   const [messageText, setMessageText]   = useState('');
   const [pressedKey, setPressedKey]     = useState<string | null>(null);
 
-  const inputRef        = useRef<any>(null);
-  const messageTextRef  = useRef('');
-  const keyTimerRef     = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const successTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const inputRef           = useRef<any>(null);
+  const messageTextRef     = useRef('');
+  const keyTimerRef        = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const successTimerRef    = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const celebrationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const [showNudge, setShowNudge] = useState(false);
-  const nudgeTimerRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [showNudge, setShowNudge]           = useState(startPhase === 'coach');
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [composeKey, setComposeKey] = useState(0);
+  const coachTooltipAnim   = useRef(new Animated.Value(startPhase === 'coach' ? 1 : 0)).current;
   const composeTooltipAnim = useRef(new Animated.Value(0)).current;
+  const scrollRef = useRef<ScrollView>(null);
+  const carlosReplyAnim    = useRef(new Animated.Value(0)).current;
+  const nudgeCardAnim      = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     return () => {
-      if (keyTimerRef.current)    clearTimeout(keyTimerRef.current);
-      if (successTimerRef.current) clearTimeout(successTimerRef.current);
-      if (nudgeTimerRef.current)   clearTimeout(nudgeTimerRef.current);
+      if (keyTimerRef.current)        clearTimeout(keyTimerRef.current);
+      if (successTimerRef.current)    clearTimeout(successTimerRef.current);
+      if (celebrationTimerRef.current) clearTimeout(celebrationTimerRef.current);
     };
   }, []);
 
   useEffect(() => {
-    if (phase !== 'coach') { setShowNudge(false); return; }
-    nudgeTimerRef.current = setTimeout(() => setShowNudge(true), 2000);
-    return () => { if (nudgeTimerRef.current) clearTimeout(nudgeTimerRef.current); };
-  }, [phase]);
+    const t = setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 50);
+    return () => clearTimeout(t);
+  }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (phase !== 'coach') {
+      setShowNudge(false);
+      coachTooltipAnim.setValue(0);
+      return;
+    }
+    setShowNudge(true);
+    Animated.timing(coachTooltipAnim, { toValue: 1, duration: 350, useNativeDriver: true }).start();
+  }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (phase !== 'compose') return;
@@ -466,8 +603,20 @@ export function Case7Screen({ onComplete }: { onComplete?: () => void } = {}) {
     composeTooltipAnim.setValue(0);
     Animated.timing(composeTooltipAnim, { toValue: 1, duration: 350, delay: 250, useNativeDriver: true }).start();
 
+    // Explicitly reset so browser autocomplete can't override the empty value
+    setMessageText('');
+    messageTextRef.current = '';
+
     const t = setTimeout(() => inputRef.current?.focus(), 150);
     return () => clearTimeout(t);
+  }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (phase !== 'done') return;
+    carlosReplyAnim.setValue(0);
+    nudgeCardAnim.setValue(0);
+    Animated.timing(carlosReplyAnim, { toValue: 1, duration: 350, useNativeDriver: true }).start();
+    Animated.timing(nudgeCardAnim, { toValue: 1, duration: 350, delay: 800, useNativeDriver: true }).start();
   }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const openPicker   = () => setPhase('picker');
@@ -477,12 +626,17 @@ export function Case7Screen({ onComplete }: { onComplete?: () => void } = {}) {
     setSelectedTask(taskTitle);
     setMessageText('');
     messageTextRef.current = '';
+    setComposeKey(k => k + 1);
     setPhase('compose');
   };
 
   const handleChangeText = (text: string) => {
+    const wasEmpty = !messageTextRef.current.trim();
     messageTextRef.current = text;
     setMessageText(text);
+    if (wasEmpty && text.trim()) {
+      Animated.timing(composeTooltipAnim, { toValue: 0, duration: 2000, delay: 400, useNativeDriver: true }).start();
+    }
   };
 
   const flashKey = (keyId: string) => {
@@ -512,22 +666,33 @@ export function Case7Screen({ onComplete }: { onComplete?: () => void } = {}) {
   const handleSend = () => {
     if (!messageTextRef.current.trim()) return;
     setPhase('success');
-    // Carlos replies after a short delay
-    successTimerRef.current = setTimeout(() => setPhase('done'), 2200);
+    setShowCelebration(false);
+    // After 2s: show "First tag complete! 🎉"
+    celebrationTimerRef.current = setTimeout(() => {
+      setShowCelebration(true);
+      // After 2.2s more: done phase (Carlos reply + NudgeCard)
+      successTimerRef.current = setTimeout(() => {
+        setShowCelebration(false);
+        setPhase('done');
+      }, 2200);
+    }, 2000);
   };
 
-  // Tooltip 3 "Send" CTA — uses default text if input is empty so tutorial always progresses
-  const handleTooltipSend = () => {
-    if (!messageTextRef.current.trim()) {
-      messageTextRef.current = 'This is a task that I have assigned to you';
-      setMessageText(messageTextRef.current);
-    }
-    handleSend();
+  const handleNudgeSend = () => {
+    setPhase('nudgeSent');
   };
 
-  const showMinimalInput   = phase === 'coach' || phase === 'success' || phase === 'done';
-  const showFirstMessage   = phase === 'coach' || phase === 'success' || phase === 'done';
-  const showTaggedMessage  = phase === 'success' || phase === 'done';
+
+  const firstMessage = firstMessageText?.trim() ?? '';
+  const showFirstMessage   = firstMessage.length > 0;
+  const showTaggedMessage  = phase === 'success' || phase === 'done' || phase === 'nudgeCompose' || phase === 'nudgeSent';
+  const KEYBOARD_HEIGHT = 291;
+  const COMPOSER_PANEL_HEIGHT = 141; // paddingTop(8) + border-wrapper(36) + gap(6) + input(34) + actionBar(57)
+  const messagePaddingBottom = phase === 'compose'
+    ? KEYBOARD_HEIGHT + COMPOSER_PANEL_HEIGHT  // OutgoingMessage.paddingBottom(8) + composer.paddingTop(8) = 16px visual gap
+    : phase === 'nudgeCompose'
+      ? KEYBOARD_HEIGHT + NUDGE_COMPOSER_HEIGHT
+      : 8;
 
   return (
     <Box flex={1} backgroundColor="white">
@@ -535,24 +700,52 @@ export function Case7Screen({ onComplete }: { onComplete?: () => void } = {}) {
       <ChatHeader />
 
       {/* ── Message area ── */}
-      <View style={{ flex: 1, backgroundColor: '#fff', justifyContent: 'flex-end', paddingBottom: phase === 'compose' ? 168 : 0 }}>
+      <ScrollView
+        ref={scrollRef}
+        style={{ flex: 1, backgroundColor: '#fff' }}
+        contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end', paddingBottom: messagePaddingBottom }}
+        showsVerticalScrollIndicator={false}
+        onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
+      >
         <DateSeparator label="Friday, May 22" />
         <TaskAssignedMessage onTagPress={openPicker} />
         {showFirstMessage && (
-          <OutgoingMessage text="Hi Carlos! Welcome to the project, I have assigned one task." />
+          <OutgoingMessage text={firstMessage} />
         )}
         {showTaggedMessage && (
           <OutgoingMessage
             text="This is a task that I have assigned to you"
             showTags
+            showCelebration={showCelebration}
           />
         )}
-        {phase === 'coach' && showNudge && <TagNudgeCard />}
-        {phase === 'done' && <CarlosReply />}
-      </View>
+        {(phase === 'done' || phase === 'nudgeCompose' || phase === 'nudgeSent') && <CarlosReply anim={carlosReplyAnim} />}
+        {phase === 'done' && <NudgeCard onSend={() => setPhase('nudgeCompose')} anim={nudgeCardAnim} />}
+        {phase === 'nudgeSent' && <NudgeSentMessage />}
+      </ScrollView>
 
-      {/* ── Input bar (coach / success / done phases) ── */}
-      {showMinimalInput && <MinimalInputBar onHashPress={openPicker} hashHighlighted={phase === 'coach' && showNudge} />}
+      {/* ── Input bar (coach phase) ── */}
+      {phase === 'coach' && !showNudge && <MinimalInputBar />}
+      {phase === 'coach' && showNudge && <CoachInputBar onHashPress={openPicker} />}
+
+      {/* ── Input bar (success / done / nudgeSent phases) ── */}
+      {(phase === 'success' || phase === 'done' || phase === 'nudgeSent') && <MinimalInputBar />}
+
+      {/* ── Coach tooltip "Tag It" — Step 1/3 ── */}
+      {phase === 'coach' && showNudge && (
+        <OnboardingTooltip
+          title="Tag It"
+          description={`Tag a job or task to link any message so nothing gets lost.`}
+          step="Step 1/3"
+          ctaText="Try it!"
+          onCtaPress={openPicker}
+          style={{ bottom: 96, left: 28, zIndex: 43 }}
+          arrowEdge="bottom"
+          arrowSide="left"
+          arrowInset={44}
+          anim={coachTooltipAnim}
+        />
+      )}
 
       {/* ── Task picker (picker phase) ── */}
       {phase === 'picker' && (
@@ -563,41 +756,38 @@ export function Case7Screen({ onComplete }: { onComplete?: () => void } = {}) {
       {phase === 'compose' && (
         <>
           <ComposerPanel
+            key={composeKey}
             taskTitle={selectedTask}
             messageText={messageText}
             inputRef={inputRef}
             onChangeText={handleChangeText}
             onPhysicalKeyPress={handlePhysicalKeyPress}
             onSend={handleSend}
+            onRemoveTask={openPicker}
           />
           <MockKeyboard pressedKey={pressedKey} onKeyTap={handleKeyTap} />
           <OnboardingTooltip
             title="Smart Tags"
             description="Now! You've linked this message to a project and task. Send it and it'll stay connected — no more hunting through chats."
             step="Step 3/3"
-            ctaText="Send"
-            onCtaPress={handleTooltipSend}
-            style={{ bottom: 448, left: 31, zIndex: 43 }}
+            style={{ bottom: KEYBOARD_HEIGHT + COMPOSER_PANEL_HEIGHT + 32, left: 31, zIndex: 43 }}
             arrowEdge="bottom"
             arrowSide="left"
-            arrowInset={8}
+            arrowInset={24}
             anim={composeTooltipAnim}
           />
         </>
       )}
 
 
-      {/* ── Complete button (done phase) ── */}
-      {phase === 'done' && (
-        <Pressable
-          onPress={onComplete}
-          style={{ position: 'absolute', bottom: 88, left: 16, right: 16, zIndex: 50 } as any}
-        >
-          <View style={{ backgroundColor: TTTheme.colors.textPrimary, borderRadius: 8, paddingVertical: 14, alignItems: 'center' }}>
-            <Text variant="mobileLabelSmall" style={{ color: '#fff' }}>Next</Text>
-          </View>
-        </Pressable>
+      {/* ── Nudge compose panel + keyboard (nudgeCompose phase) ── */}
+      {phase === 'nudgeCompose' && (
+        <>
+          <NudgeComposerPanel onSend={handleNudgeSend} />
+          <MockKeyboard pressedKey={null} onKeyTap={() => {}} />
+        </>
       )}
+
     </Box>
   );
 }

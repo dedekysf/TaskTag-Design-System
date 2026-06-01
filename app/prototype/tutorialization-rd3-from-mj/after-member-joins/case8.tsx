@@ -7,7 +7,7 @@ import { MockKeyboard } from '../../_shared/mobile/MockKeyboard';
 import { OnboardingTooltip, useTooltipAnim } from '../../_shared/mobile/OnboardingTooltip';
 import { StatusBarRow } from '../../_shared/mobile/StatusBarRow';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, Pressable, TextInput, View } from 'react-native';
+import { Animated, Easing, Pressable, ScrollView, TextInput, View } from 'react-native';
 import {
   Camera,
   Check,
@@ -23,9 +23,10 @@ import {
   User,
   X,
 } from 'lucide-react-native';
+import { MemberEventCard } from './MemberEventCard';
 
 // Phase progression: coach → picker → compose → success → nudge → nudgeTyping → nudgeSent
-type Phase = 'coach' | 'picker' | 'compose' | 'success' | 'nudge' | 'nudgeTyping' | 'nudgeSent';
+type Phase = 'coach' | 'picker' | 'compose' | 'success' | 'carlosReply' | 'nudge' | 'nudgeTyping' | 'nudgeSent';
 
 type TaggableTask = {
   id: string;
@@ -123,13 +124,15 @@ function DateSeparator({ label }: { label: string }) {
 function TagChip({
   label,
   icon,
+  onPress,
 }: {
   label: string;
   icon: 'task' | 'member';
+  onPress?: () => void;
 }) {
   const Icon = icon === 'task' ? ClipboardList : User;
 
-  return (
+  const chip = (
     <View
       style={{
         minHeight: 24,
@@ -146,6 +149,9 @@ function TagChip({
       <Text variant="mobileMetadataPrimary" color="secondaryGreen">{label}</Text>
     </View>
   );
+
+  if (onPress) return <Pressable onPress={onPress}>{chip}</Pressable>;
+  return chip;
 }
 
 function TagDivider() {
@@ -167,55 +173,26 @@ function MemberJoinedCard({
   task?: TaggableTask;
   onOpenPicker?: () => void;
 }) {
-  return (
-    <View style={{ backgroundColor: TTTheme.colors.grey01, borderRadius: 12, padding: 12 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 } as any}>
-        {/* TODO(BE): event.member.avatar */}
-        <Avatar size="sm" type="text" initials={CHAT_CONTEXT.memberInitials} color="#6C3CE1" />
-        <View style={{ flex: 1 }}>
-          {/* TODO(BE): event.member.name */}
-          <Text variant="mobileLabelSmall" color="foreground">{CHAT_CONTEXT.memberName} joined</Text>
-          {/* TODO(BE): event.project.name */}
-          <Text variant="mobileMetadataPrimary" color="grey05">{CHAT_CONTEXT.projectName} project</Text>
-        </View>
-      </View>
+  if (!task) {
+    return (
+      <MemberEventCard
+        variant="memberJoined"
+        memberName={CHAT_CONTEXT.memberName}
+        projectName={CHAT_CONTEXT.projectName}
+        primaryLabel="Tag a task"
+        onPrimaryPress={onOpenPicker}
+      />
+    );
+  }
 
-      {task ? (
-        <View
-          style={{
-            backgroundColor: '#fff',
-            borderRadius: 8,
-            padding: 10,
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 8,
-          } as any}
-        >
-          {/* TODO(BE): assignment.task.id */}
-          <Checkbox variant="rectangular" checked disabled />
-          <Text variant="mobileLabelSmall" color="foreground" style={{ flex: 1 }}>
-            {task.title} - {CHAT_CONTEXT.memberName}
-          </Text>
-        </View>
-      ) : (
-        <View
-          style={{
-            backgroundColor: '#fff',
-            borderRadius: 8,
-            paddingHorizontal: 12,
-            paddingVertical: 10,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Text variant="mobileSecondaryBody" color="grey04">No task tagged yet</Text>
-          <Button variant="fill" color="secondary" size="sm" onPress={onOpenPicker}>
-            Tag a task
-          </Button>
-        </View>
-      )}
-    </View>
+  return (
+    <MemberEventCard
+      variant="taskAssigned"
+      memberName={CHAT_CONTEXT.memberName}
+      taskName={task.title}
+      secondaryLabel="Tag another"
+      onSecondaryPress={onOpenPicker}
+    />
   );
 }
 
@@ -245,10 +222,12 @@ function MyTaggedMessage({
   task,
   text,
   showSuccess,
+  onChipPress,
 }: {
   task: TaggableTask;
   text: string;
   showSuccess: boolean;
+  onChipPress?: () => void;
 }) {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingHorizontal: 16, paddingVertical: 8 } as any}>
@@ -270,8 +249,8 @@ function MyTaggedMessage({
 
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 } as any}>
           {/* TODO(BE): message.tags */}
-          <TagChip label={`# ${task.title}`} icon="task" />
-          <TagChip label={`@ ${CHAT_CONTEXT.memberName}`} icon="member" />
+          <TagChip label={`# ${task.title}`} icon="task" onPress={onChipPress} />
+          <TagChip label={`@ ${CHAT_CONTEXT.memberName}`} icon="member" onPress={onChipPress} />
         </View>
 
         {showSuccess && (
@@ -306,7 +285,7 @@ function NudgeCard({ onSend }: { onSend: () => void }) {
   return (
     <View style={{ backgroundColor: TTTheme.colors.textPrimary, borderRadius: 12, padding: 14, marginHorizontal: 16, marginTop: 10 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 } as any}>
-        <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: TTTheme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: TTTheme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <Camera size={18} color="#fff" />
         </View>
         <Text variant="mobileLabelEmphasized" style={{ color: '#fff' }}>Get a site photo</Text>
@@ -315,7 +294,7 @@ function NudgeCard({ onSend }: { onSend: () => void }) {
       <Text variant="mobileSecondaryBody" style={{ color: 'rgba(255,255,255,0.72)', marginBottom: 14 }}>
         Ask your crew to send one — it'll be saved to this job automatically
       </Text>
-      <Button variant="fill" color="secondary" size="md" onPress={onSend} style={{ alignSelf: 'stretch' }}>
+      <Button variant="fill" color="secondary" size="sm" onPress={onSend} style={{ alignSelf: 'stretch' }}>
         Send
       </Button>
     </View>
@@ -360,9 +339,9 @@ function NudgeInputBar({ onSend }: { onSend: () => void }) {
         borderTopRightRadius: 16,
       } as any}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 8, gap: 4 } as any}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 8, gap: 6 } as any}>
         {[Plus, Hash, Camera, ImageIcon, MapPin, Mic].map((Icon, i) => (
-          <View key={i} style={{ width: 36, height: 36, alignItems: 'center', justifyContent: 'center' }}>
+          <View key={i} style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
             <Icon size={19} color={TTTheme.colors.textPrimary} />
           </View>
         ))}
@@ -373,7 +352,7 @@ function NudgeInputBar({ onSend }: { onSend: () => void }) {
           {NUDGE_PHOTO_MESSAGE}
         </Text>
         <Pressable onPress={onSend}>
-          <View style={{ width: 36, height: 36, borderRadius: 8, backgroundColor: TTTheme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center' }}>
+          <View style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: TTTheme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center' }}>
             <Send size={18} color="#fff" />
           </View>
         </Pressable>
@@ -388,36 +367,59 @@ function ChatThread({
   messageText,
   onOpenPicker,
   onNudgeSend,
+  onChipPress,
 }: {
   phase: Phase;
   task?: TaggableTask;
   messageText: string;
   onOpenPicker: () => void;
   onNudgeSend: () => void;
+  onChipPress?: () => void;
 }) {
-  const showTaggedMessage = phase === 'success' || phase === 'nudge' || phase === 'nudgeTyping' || phase === 'nudgeSent';
-  const showCarlosResponse = phase === 'nudge' || phase === 'nudgeTyping' || phase === 'nudgeSent';
-  const paddingBottom = phase === 'compose' ? 168 : phase === 'nudgeTyping' ? 175 : 0;
+  const showTaggedMessage = phase === 'success' || phase === 'carlosReply' || phase === 'nudge' || phase === 'nudgeTyping' || phase === 'nudgeSent';
+  const showCarlosResponse = phase === 'carlosReply' || phase === 'nudge' || phase === 'nudgeTyping' || phase === 'nudgeSent';
+  const CHAT_INPUT_GAP = 8;
+  const KEYBOARD_HEIGHT = 291;
+  const COMPOSER_PANEL_HEIGHT = 128;
+  const NUDGE_INPUT_BAR_HEIGHT = 102;
+  const paddingBottom = phase === 'compose'
+    ? KEYBOARD_HEIGHT + COMPOSER_PANEL_HEIGHT + CHAT_INPUT_GAP
+    : phase === 'nudgeTyping'
+      ? KEYBOARD_HEIGHT + NUDGE_INPUT_BAR_HEIGHT + CHAT_INPUT_GAP
+      : CHAT_INPUT_GAP;
+
+  const scrollRef = useRef<ScrollView>(null);
+
+  useEffect(() => {
+    const t = setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 50);
+    return () => clearTimeout(t);
+  }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff', justifyContent: 'flex-end', paddingBottom }}>
+    <ScrollView
+      ref={scrollRef}
+      style={{ flex: 1, backgroundColor: '#fff' }}
+      contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end', paddingBottom }}
+      showsVerticalScrollIndicator={false}
+      onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
+    >
       <DateSeparator label="Today" />
       {(showTaggedMessage || phase === 'compose') && <TagDivider />}
       <MemberJoinedMessage task={showTaggedMessage ? task : undefined} onOpenPicker={onOpenPicker} />
       {showTaggedMessage && task && (
-        <MyTaggedMessage task={task} text={messageText} showSuccess={phase === 'success'} />
+        <MyTaggedMessage task={task} text={messageText} showSuccess={phase === 'success'} onChipPress={onChipPress} />
       )}
       {showCarlosResponse && <CarlosResponse />}
       {phase === 'nudge' && <NudgeCard onSend={onNudgeSend} />}
       {phase === 'nudgeSent' && <NudgeSentMessage />}
-    </View>
+    </ScrollView>
   );
 }
 
 function MinimalInputBar({ onOpenPicker }: { onOpenPicker: () => void }) {
   return (
     <View style={{ backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: TTTheme.colors.border, borderTopLeftRadius: 16, borderTopRightRadius: 16 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 16, gap: 8 } as any}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 16, gap: 6 } as any}>
         <View style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
           <Plus size={20} color={TTTheme.colors.textPrimary} />
         </View>
@@ -565,7 +567,7 @@ function ComposerPanel({
       </View>
 
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingBottom: 16 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 } as any}>
           <View style={{ width: 40, height: 40, backgroundColor: TTTheme.colors.grey02, borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
             <Plus size={20} color={TTTheme.colors.textPrimary} />
           </View>
@@ -599,6 +601,8 @@ export function Case8Screen({ onComplete }: Case8ScreenProps = {}) {
   const successTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const nudgeSentTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const composeTooltipAnim = useRef(new Animated.Value(0)).current;
+  const chipTooltipAnim    = useRef(new Animated.Value(0)).current;
+  const [showChipTooltip, setShowChipTooltip] = useState(false);
 
   const taskForThread = selectedTask ?? TAGGABLE_TASKS[0];
 
@@ -687,9 +691,12 @@ export function Case8Screen({ onComplete }: Case8ScreenProps = {}) {
     setShowComposeTooltip(false);
     setPhase('success');
 
-    // After success, Carlos responds + photo nudge appears (onComplete deferred to nudge flow)
+    // Carlos replies after 2.5s, then nudge card appears 1s later
     successTimerRef.current = setTimeout(() => {
-      setPhase('nudge');
+      setPhase('carlosReply');
+      successTimerRef.current = setTimeout(() => {
+        setPhase('nudge');
+      }, 1000);
     }, 2500);
   };
 
@@ -701,12 +708,18 @@ export function Case8Screen({ onComplete }: Case8ScreenProps = {}) {
   // TODO(BE): POST /api/chats/:chatId/messages - nudge-prefilled photo request message.
   const handleNudgeMessageSend = () => {
     setPhase('nudgeSent');
-    nudgeSentTimerRef.current = setTimeout(() => {
-      onComplete?.();
-    }, 2000);
   };
 
-  const showMinimalInput = phase === 'coach' || phase === 'success' || phase === 'nudge' || phase === 'nudgeSent';
+  const handleChipPress = () => {
+    setShowChipTooltip(true);
+    Animated.timing(chipTooltipAnim, { toValue: 1, duration: 350, useNativeDriver: true }).start();
+  };
+
+  const handleGotIt = () => {
+    onComplete?.();
+  };
+
+  const showMinimalInput = phase === 'coach' || phase === 'success' || phase === 'carlosReply' || phase === 'nudge' || phase === 'nudgeSent';
 
   return (
     <Box flex={1} backgroundColor="white">
@@ -719,9 +732,23 @@ export function Case8Screen({ onComplete }: Case8ScreenProps = {}) {
         messageText={messageTextRef.current || messageText}
         onOpenPicker={openPicker}
         onNudgeSend={handleNudgeSend}
+        onChipPress={phase === 'nudgeSent' && !showChipTooltip ? handleChipPress : undefined}
       />
 
       {showMinimalInput && <MinimalInputBar onOpenPicker={openPicker} />}
+
+      {/* "Everything's connected" tooltip — appears when user taps a tag chip on nudgeSent screen */}
+      {phase === 'nudgeSent' && showChipTooltip && (
+        <OnboardingTooltip
+          title="Everything's connected"
+          description="Tapping a chip takes you straight to the project — every task, message and photo tagged to it is there waiting."
+          style={{ bottom: 280, left: 16, zIndex: 62 }}
+          arrowEdge="bottom"
+          arrowSide="left"
+          arrowInset={24}
+          anim={chipTooltipAnim}
+        />
+      )}
 
       {phase === 'coach' && (
         <OnboardingTooltip

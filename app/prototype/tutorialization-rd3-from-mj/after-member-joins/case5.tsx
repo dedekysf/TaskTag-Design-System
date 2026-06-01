@@ -9,6 +9,7 @@ import { StatusBarRow } from '../../_shared/mobile/StatusBarRow';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Pressable, View } from 'react-native';
 import { Activity, Check, ChevronLeft, Folder, HardHat, Hash, MessageSquare, Mic, Plus, Search, Smile, X } from 'lucide-react-native';
+import { MemberEventCard } from './MemberEventCard';
 
 
 // ── Shared sub-components ────────────────────────────────────────────────────
@@ -88,68 +89,6 @@ function DateDivider() {
   );
 }
 
-// TODO(BE): event.memberJoined — system card rendered as special message type in chat thread
-function MemberJoinedCard({ onAssignTask, taskAssigned }: { onAssignTask?: () => void; taskAssigned?: boolean }) {
-  return (
-    <View style={{ borderWidth: 1, borderColor: TTTheme.colors.border, borderRadius: 12, borderTopLeftRadius: 0, padding: 12 }}>
-      {/* chip — 10px regular, hardcoded (DS has no 10px regular variant) */}
-      <View style={{ backgroundColor: TTTheme.colors.lightMint, borderRadius: 100, paddingHorizontal: 10, paddingVertical: 4, alignSelf: 'flex-start', marginBottom: 12 }}>
-        <Text style={{ fontSize: 10, fontWeight: '400', color: TTTheme.colors.secondaryGreen, letterSpacing: 0.5 }}>
-          {taskAssigned ? 'TASK ASSIGNED' : 'MEMBER JOINED'}
-        </Text>
-      </View>
-
-      {taskAssigned ? (
-        // After task is assigned — show task info
-        <View style={{ gap: 12 } as any}>
-          {/* TODO(BE): event.member.name */}
-          <Text variant="mobileLabelSmall" color="foreground">
-            Carlos Smith has been assigned a task
-          </Text>
-          <Text variant="mobileMetadataPrimary" color="grey05">
-            {'Carlos is now working on '}
-            {/* TODO(BE): assignment.task.name */}
-            <Text style={{ fontSize: 12, fontWeight: '500', color: TTTheme.colors.secondaryGreen }}>Fix bathroom tiles</Text>
-          </Text>
-          <View style={{ flexDirection: 'row', gap: 8 }}>
-            <Pressable style={{ flex: 1, backgroundColor: TTTheme.colors.textPrimary, borderRadius: 8, paddingVertical: 8, alignItems: 'center' }}>
-              <Text variant="mobileLabelSmall" style={{ color: '#fff' }}>View task</Text>
-            </Pressable>
-            <Pressable style={{ flex: 1, backgroundColor: '#fff', borderWidth: 1.5, borderColor: TTTheme.colors.textPrimary, borderRadius: 8, paddingVertical: 8, alignItems: 'center' }}>
-              <Text variant="mobileLabelSmall" color="foreground">Assign more</Text>
-            </Pressable>
-          </View>
-        </View>
-      ) : (
-        // Before task is assigned — chip → title → desc → button, gap 12 antar elemen
-        <View style={{ gap: 12 } as any}>
-          {/* TODO(BE): event.member.name — mobileLabelSmall = 14px 500 */}
-          <Text variant="mobileLabelSmall" color="foreground">
-            Carlos Smith joined the project
-          </Text>
-          {/* desc 12px, project name 12px medium (hardcode — DS mobileMetadataPrimary is 12px 400) */}
-          <Text variant="mobileMetadataPrimary" color="grey05">
-            {'Carlos is now part of '}
-            {/* TODO(BE): event.project.name */}
-            <Text style={{ fontSize: 12, fontWeight: '500', color: TTTheme.colors.secondaryGreen }}>1520 Oliver Street</Text>
-            {' and ready to collaborate.'}
-          </Text>
-          {/* TODO(BE): action — POST /api/tasks/assign with memberId */}
-          <Button
-            variant="fill"
-            color="secondary"
-            size="xs"
-            onPress={onAssignTask}
-            style={{ alignSelf: 'stretch' }}
-          >
-            Assign a task
-          </Button>
-        </View>
-      )}
-    </View>
-  );
-}
-
 function ChatMessage({ onAssignTask, taskAssigned }: { onAssignTask?: () => void; taskAssigned?: boolean }) {
   return (
     <View style={{ paddingHorizontal: 16, paddingVertical: 8, flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
@@ -161,7 +100,14 @@ function ChatMessage({ onAssignTask, taskAssigned }: { onAssignTask?: () => void
           <Text variant="mobileLabelEmphasized" color="foreground">Carlos Smith</Text>
           <Text variant="mobileMetadataSecondary" color="grey05">12:25 PM</Text>
         </View>
-        <MemberJoinedCard onAssignTask={onAssignTask} taskAssigned={taskAssigned} />
+        {/* TODO(BE): event.type — 'memberJoined' | 'taskAssigned' */}
+        <MemberEventCard
+          variant={taskAssigned ? 'taskAssigned' : 'memberJoined'}
+          memberName="Carlos Smith"
+          projectName="1520 Oliver Street"
+          taskName="Fix bathroom tiles"
+          onPrimaryPress={onAssignTask}
+        />
       </View>
     </View>
   );
@@ -170,7 +116,7 @@ function ChatMessage({ onAssignTask, taskAssigned }: { onAssignTask?: () => void
 function TextInputBar() {
   return (
     <View style={{ backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: TTTheme.colors.border, borderTopLeftRadius: 16, borderTopRightRadius: 16 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 16, gap: 8 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 16, gap: 6 }}>
         <View style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
           <Plus size={20} color={TTTheme.colors.textPrimary} />
         </View>
@@ -193,7 +139,7 @@ function ChatThreadLayout({ onAssignTask, taskAssigned }: { onAssignTask?: () =>
     <>
       <StatusBarRow />
       <ChatDMHeader />
-      <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+      <View style={{ flex: 1, justifyContent: 'flex-end', paddingBottom: 8 }}>
         <DateDivider />
         <ChatMessage onAssignTask={onAssignTask} taskAssigned={taskAssigned} />
       </View>
@@ -245,21 +191,21 @@ function Screen3({ onTapTooltip }: { onTapTooltip: () => void }) {
           frame-inner=355, card-right=355-16=339, tooltip-left=339-312=27
           button-center=(72+327)/2=200, arrowInset=200-27-12=161
           arrow geometric tip extension ≈17px (half-diagonal of 24×24 rotated 45°)
-          TextInputBar paddingBottom=16 (+8 from 8) → button-top≈139, gap 8 → tip=147, bottom=147+17=164 */}
+          TextInputBar paddingBottom=16 (+8 from 8) + chat gap=16 → button-top≈155, gap 8 → tip=163, bottom=163+17=180 */}
       <OnboardingTooltip
         title="Put someone on it"
         description="Tap the assign button to assign tasks to your project members."
-        style={{ bottom: 164, left: 27, zIndex: 61 }}
+        style={{ bottom: 180, right: 16, zIndex: 61 }}
         arrowEdge="bottom"
         arrowSide="left"
-        arrowInset={161}
+        arrowInset={155}
         anim={tooltipAnim}
       />
 
       {/* Tap target covers full tooltip card + arrow */}
       <Pressable
         onPress={onTapTooltip}
-        style={{ position: 'absolute', bottom: 152, left: 27, width: 312, height: 150, zIndex: 70 } as any}
+        style={{ position: 'absolute', bottom: 168, right: 16, width: 312, height: 150, zIndex: 70 } as any}
       />
     </View>
   );
