@@ -1834,9 +1834,9 @@ function RoomView({
               ))}
             </Box>
             <Pressable
-              disabled={!chatMessage.trim()}
+              disabled={!chatMessage.trim() || showTagNudge || tagFlow === 'picker'}
               onPress={() => {
-                if (!chatMessage.trim()) return;
+                if (!chatMessage.trim() || showTagNudge || tagFlow === 'picker') return;
                 if (fadeTimerRef.current) { clearTimeout(fadeTimerRef.current); fadeTimerRef.current = null; }
                 startConvFadeAnim.setValue(1);
                 const isFirstMsg = sentMessages.length === 0;
@@ -1899,12 +1899,12 @@ function RoomView({
               }}
               style={({ pressed }: any) => ({
                 width: 32, height: 32, borderRadius: 8,
-                backgroundColor: chatMessage.trim() ? theme.colors.foreground : theme.colors.grey02,
+                backgroundColor: (chatMessage.trim() && !showTagNudge && tagFlow !== 'picker') ? theme.colors.foreground : theme.colors.grey02,
                 alignItems: 'center', justifyContent: 'center',
                 opacity: pressed ? 0.8 : 1,
               })}
             >
-              <Send size={20} color={chatMessage.trim() ? theme.colors.white : theme.colors.grey04} />
+              <Send size={20} color={(chatMessage.trim() && !showTagNudge && tagFlow !== 'picker') ? theme.colors.white : theme.colors.grey04} />
             </Pressable>
           </Box>
         </Box>
