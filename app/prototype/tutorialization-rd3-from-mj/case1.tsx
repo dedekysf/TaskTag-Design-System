@@ -130,23 +130,20 @@ export function Case1Screen({ onComplete }: Props) {
               } as any} />
             </View>
             {/* Flow content */}
-            <View style={{ paddingHorizontal: 24, paddingBottom: 28 }}>
+            <View style={{ paddingHorizontal: 24, paddingTop: 40, paddingBottom: 40, gap: 16 }}>
               {/* Illustration — bounces in first (60ms delay) */}
-              <Animated.View style={{ alignItems: 'center', paddingTop: 32, opacity: illus.opacity, transform: [{ translateY: illus.translateY }, { scale: illus.scale }] } as any}>
+              <Animated.View style={{ alignItems: 'center', opacity: illus.opacity, transform: [{ translateY: illus.translateY }, { scale: illus.scale }] } as any}>
                 <Image source={require('@/assets/images/il_hot_air_ballon.png')} style={{ width: 210, height: 200 }} resizeMode="contain" />
               </Animated.View>
               {/* Text + button — bounces in second (180ms delay) */}
-              <Animated.View style={{ opacity: content.opacity, transform: [{ translateY: content.translateY }, { scale: content.scale }] } as any}>
-                <View style={{ marginTop: 16, alignItems: 'center', gap: 6 } as any}>
-                  <Text variant="mobileLabelEmphasized" color="secondaryGreen" style={{ textAlign: 'center' }}>You're in, Maria Jose</Text>
-                  <Text variant="mobileLargeLabel" color="foreground" style={{ textAlign: 'center' }}>We're glad you're here</Text>
-                  <Text variant="mobileMetadataPrimary" color="grey05" style={{ textAlign: 'center' }}>Let's set up your first job. Only a few minutes.</Text>
+              <Animated.View style={{ opacity: content.opacity, transform: [{ translateY: content.translateY }, { scale: content.scale }], gap: 16 } as any}>
+                <View style={{ alignItems: 'center', gap: 4 } as any}>
+                  <Text variant="mobileLabelEmphasized" color="secondaryGreen" style={{ textAlign: 'center', fontSize: 16 }}>You're in, Maria</Text>
+                  <Text variant="mobileLabelEmphasized" color="foreground" style={{ textAlign: 'center', fontSize: 14 }}>Everything you need to run your jobs</Text>
                 </View>
-                <View style={{ marginTop: 24 }}>
-                  <Button variant="fill" color="secondary" size="lg" onPress={handleGetStarted}>
-                    Get Started
-                  </Button>
-                </View>
+                <Button variant="fill" color="secondary" size="lg" onPress={handleGetStarted}>
+                  Set Up Your First Job
+                </Button>
               </Animated.View>
             </View>
           </Box>

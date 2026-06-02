@@ -57,7 +57,7 @@ function ProjectBottomSheet({
   const submitActive = projectName.length > 0;
 
   return (
-    <View style={{ position: 'absolute', bottom: 291, left: 0, right: 0, zIndex: 41 } as any}>
+    <View style={{ position: 'absolute', bottom: 291, left: 0, right: 0 } as any}>
       <Box backgroundColor="white" style={{ borderTopLeftRadius: 24, borderTopRightRadius: 24 } as any}>
         {/* Handle */}
         <Box alignItems="center" style={{ paddingTop: 16, paddingBottom: 8 } as any}>
@@ -149,7 +149,7 @@ export function Case2Screen({
   const descTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const keyTimerRef  = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const sheetTranslateY = sheetAnim.interpolate({ inputRange: [0, 1], outputRange: [320, 0] });
+  const sheetTranslateY = sheetAnim.interpolate({ inputRange: [0, 1], outputRange: [500, 0] });
 
   useEffect(() => {
     if (phase === 'modal') {
@@ -357,7 +357,7 @@ export function Case2Screen({
       {phase === 'form' && (
         <>
           <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 40 } as any} />
-          <Animated.View style={{ transform: [{ translateY: sheetTranslateY }], zIndex: 41 } as any}>
+          <Animated.View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 500, transform: [{ translateY: sheetTranslateY }], zIndex: 41 } as any}>
             <ProjectBottomSheet
               projectName={projectName}
               description={description}
