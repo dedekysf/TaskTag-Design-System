@@ -12,7 +12,7 @@ import { ArrowUp, ChevronDown, HardHat } from 'lucide-react-native';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-type Phase = 'project' | 'taskForm' | 'success' | 'projectClean' | 'taskFormAgain';
+type Phase = 'project' | 'taskForm' | 'success' | 'projectClean';
 
 // ── Task creation bottom sheet ────────────────────────────────────────────────
 

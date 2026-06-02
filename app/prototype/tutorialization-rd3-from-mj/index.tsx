@@ -10,7 +10,6 @@ import { Case4Screen } from './case4';
 import { Case5Screen } from './after-member-joins/case5';
 import { Case6Screen } from './after-member-joins/case6';
 import { Case7Screen } from './after-member-joins/case7';
-import { Case8Screen } from './after-member-joins/case8';
 
 type TutorialCase = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 type Flow = 'menu' | 'before' | 'after';
@@ -177,10 +176,6 @@ export default function TutorializationRD3() {
         />
       )}
 
-      {/* Case 8: Tag for the first time (Bathroom Reno variant with nudge flow) */}
-      {activeCase === 8 && (
-        <Case8Screen onComplete={() => setFlow('menu')} />
-      )}
     </Box>
   );
 }

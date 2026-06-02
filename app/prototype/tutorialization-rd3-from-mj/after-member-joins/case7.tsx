@@ -697,8 +697,6 @@ export function Case7Screen({
   const coachTooltipAnim   = useRef(new Animated.Value(startPhase === 'coach' ? 1 : 0)).current;
   const composeTooltipAnim = useRef(new Animated.Value(0)).current;
   const scrollRef = useRef<ScrollView>(null);
-  // carlosReplyAnim kept for done-phase useEffect; Carlos reply is not rendered in main flow
-  const carlosReplyAnim    = useRef(new Animated.Value(startAtDone ? 1 : 0)).current; // eslint-disable-line @typescript-eslint/no-unused-vars
   const nudgeCardAnim      = useRef(new Animated.Value(startAtDone ? 1 : 0)).current;
   const tagNudgeAnim       = useRef(new Animated.Value(0)).current;
   const nudgeSmartTagAnim  = useRef(new Animated.Value(0)).current;
