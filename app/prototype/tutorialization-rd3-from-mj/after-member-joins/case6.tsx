@@ -113,16 +113,16 @@ function GetSitePhotoNudge({ anim, onSend }: { anim: Animated.Value; onSend: () 
   const translateY = anim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] });
   return (
     <Animated.View style={{ opacity: anim, transform: [{ translateY }] } as any}>
-      <View style={{ backgroundColor: '#000', borderRadius: 12, padding: 14, marginHorizontal: 16, marginBottom: 12, gap: 12 } as any}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 } as any}>
-          <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: TTTheme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ backgroundColor: '#000', borderRadius: 8, padding: 12, marginHorizontal: 16 } as any}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 } as any}>
+          <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: 'rgba(3,91,96,0.5)', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             {/* TODO(BE): nudge.iconType */}
-            <Camera size={18} color="#fff" />
+            <Camera size={16} color={TTTheme.colors.secondaryGreen} />
           </View>
           <Text variant="mobileLabelEmphasized" style={{ color: '#fff' }}>Get a site photo</Text>
         </View>
         {/* TODO(BE): nudge.description */}
-        <Text variant="mobileSecondaryBody" style={{ color: '#fff' }}>
+        <Text variant="mobileMetadataPrimary" style={{ color: '#fff', marginBottom: 16 }}>
           Ask your crew to send one — it'll be saved to this job automatically
         </Text>
         <Pressable onPress={onSend} style={{ backgroundColor: TTTheme.colors.secondaryGreen, borderRadius: 8, paddingVertical: 10, alignItems: 'center' }}>
@@ -158,7 +158,7 @@ function ChatInputFull({
   const sendActive = value.length > 0;
 
   return (
-    <View style={{ backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: TTTheme.colors.border, borderTopLeftRadius: 16, borderTopRightRadius: 16 } as any}>
+    <View style={{ backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: TTTheme.colors.border, borderTopLeftRadius: 16, borderTopRightRadius: 16, gap: 12 } as any}>
       {/* Message text */}
       <View style={{ paddingHorizontal: 16, paddingTop: 8, paddingBottom: 0 }}>
         <TextInput
@@ -176,7 +176,7 @@ function ChatInputFull({
       {/* Icons row */}
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingBottom: 16 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 } as any}>
-          <View style={{ width: 40, height: 40, backgroundColor: TTTheme.colors.grey02, borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
+          <View style={{ width: 40, height: 40, backgroundColor: TTTheme.colors.grey03, borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
             <Plus size={20} color={TTTheme.colors.textPrimary} />
           </View>
           {/* "#" button — interactive + animated when nudge active */}
@@ -358,7 +358,7 @@ export function Case6Screen({ onComplete }: { onComplete?: (sentMessage: string)
       </View>
 
       {/* ── Message area — flex:1 shrinks/grows naturally as input below changes size ── */}
-      <Box flex={1} style={{ paddingTop: 16, paddingBottom: 8, gap: 16, justifyContent: 'flex-end' } as any}>
+      <Box flex={1} style={{ paddingTop: 16, paddingBottom: 16, gap: 16, justifyContent: 'flex-end' } as any}>
         <DateSeparator label="Friday, May 22" />
         <CarlosMessage taskAssigned />
         {showMessages && (

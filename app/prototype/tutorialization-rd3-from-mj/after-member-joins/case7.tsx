@@ -24,9 +24,9 @@ import {
 } from 'lucide-react-native';
 import { MemberEventCard } from './MemberEventCard';
 
-// Phase progression (main): msgSent → (2s) → done → nudgeCompose → nudgeSent
-// Phase progression (coach path): coach → picker → compose → success → done → nudgeCompose → nudgeSent
-type Phase = 'msgSent' | 'coach' | 'picker' | 'compose' | 'success' | 'done' | 'nudgeCompose' | 'nudgeSent';
+// Phase progression (main): msgSent → (2s) → done → nudgeCompose → nudgePicker → nudgeTagged → nudgeSent
+// Phase progression (coach path): coach → picker → compose → success → done → nudgeCompose → ...
+type Phase = 'msgSent' | 'coach' | 'picker' | 'compose' | 'success' | 'done' | 'nudgeCompose' | 'nudgePicker' | 'nudgeTagged' | 'nudgeSent';
 
 const NUDGE_MESSAGE = "Can you send a site photo? It'll be saved to the job automatically.";
 const NUDGE_COMPOSER_HEIGHT = 100;
@@ -237,14 +237,14 @@ function NudgeCard({ onSend, anim }: { onSend: () => void; anim: Animated.Value 
   const translateY = anim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] });
   return (
     <Animated.View style={{ opacity: anim, transform: [{ translateY }] } as any}>
-      <View style={{ backgroundColor: '#000', borderRadius: 12, padding: 14, marginHorizontal: 16, marginTop: 10, gap: 12 } as any}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 } as any}>
-          <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: TTTheme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center' }}>
-            <Camera size={18} color="#fff" />
+      <View style={{ backgroundColor: '#000', borderRadius: 8, padding: 12, marginHorizontal: 16, marginTop: 10 } as any}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 } as any}>
+          <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: 'rgba(3,91,96,0.5)', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Camera size={16} color={TTTheme.colors.secondaryGreen} />
           </View>
           <Text variant="mobileLabelEmphasized" style={{ color: '#fff' }}>Get a site photo</Text>
         </View>
-        <Text variant="mobileSecondaryBody" style={{ color: '#fff' }}>
+        <Text variant="mobileMetadataPrimary" style={{ color: '#fff', marginBottom: 16 }}>
           Ask your crew to send one — it'll be saved to this job automatically
         </Text>
         <Pressable onPress={onSend} style={{ backgroundColor: TTTheme.colors.secondaryGreen, borderRadius: 8, paddingVertical: 10, alignItems: 'center' }}>
@@ -275,14 +275,14 @@ function TagThisMessageNudge({ anim }: { anim: Animated.Value }) {
   const translateY = anim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] });
   return (
     <Animated.View style={{ opacity: anim, transform: [{ translateY }] } as any}>
-      <View style={{ backgroundColor: '#000', borderRadius: 12, padding: 14, marginHorizontal: 16, marginTop: 10 } as any}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 } as any}>
-          <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: TTTheme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center' }}>
-            <Hash size={18} color="#fff" />
+      <View style={{ backgroundColor: '#000', borderRadius: 8, padding: 12, marginHorizontal: 16, marginTop: 10 } as any}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 } as any}>
+          <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: 'rgba(3,91,96,0.5)', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Hash size={16} color={TTTheme.colors.secondaryGreen} />
           </View>
           <Text variant="mobileLabelEmphasized" style={{ color: '#fff' }}>Tag this message</Text>
         </View>
-        <Text variant="mobileSecondaryBody" style={{ color: 'rgba(255,255,255,0.72)' }}>
+        <Text variant="mobileMetadataPrimary" style={{ color: '#fff' }}>
           Tap # below to tag this message so {CHAT_CONTEXT.memberName} knows exactly which site this is about
         </Text>
       </View>
@@ -291,46 +291,95 @@ function TagThisMessageNudge({ anim }: { anim: Animated.Value }) {
 }
 
 function PulsingHashButton() {
-  const pulseAnim = useRef(new Animated.Value(0)).current;
+  const pulseAnim   = useRef(new Animated.Value(0)).current;
+  const enterAnim   = useRef(new Animated.Value(0)).current;
+  const pulseActive = useRef(true);
+
+  const runPulse = () => {
+    if (!pulseActive.current) return;
+    pulseAnim.setValue(0);
+    Animated.timing(pulseAnim, {
+      toValue: 1,
+      duration: 1100,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: true,
+    }).start(({ finished }) => {
+      if (finished && pulseActive.current) runPulse();
+    });
+  };
 
   useEffect(() => {
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, { toValue: 1, duration: 650, useNativeDriver: true }),
-        Animated.timing(pulseAnim, { toValue: 0, duration: 650, useNativeDriver: true }),
-      ])
-    );
-    loop.start();
-    return () => loop.stop();
+    Animated.timing(enterAnim, {
+      toValue: 1, duration: 400, easing: Easing.out(Easing.cubic), useNativeDriver: true,
+    }).start();
+    pulseActive.current = true;
+    runPulse();
+    return () => {
+      pulseActive.current = false;
+      pulseAnim.stopAnimation();
+    };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const scale = pulseAnim.interpolate({ inputRange: [0, 1], outputRange: [1, 1.22] });
-
   return (
-    <Animated.View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: TTTheme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center', transform: [{ scale }] } as any}>
-      <Hash size={20} color="#fff" />
-    </Animated.View>
+    <View style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
+      {/* Ripple ring — expands 1→2 and fades out */}
+      <Animated.View style={{
+        position: 'absolute', width: 40, height: 40, borderRadius: 20,
+        backgroundColor: TTTheme.colors.secondaryGreen,
+        opacity: pulseAnim.interpolate({ inputRange: [0, 1], outputRange: [0.55, 0] }),
+        transform: [{ scale: pulseAnim.interpolate({ inputRange: [0, 1], outputRange: [1, 2] }) }],
+      } as any} />
+      {/* Solid green circle — enters with scale+fade, stays fixed */}
+      <Animated.View style={{
+        width: 40, height: 40, borderRadius: 20,
+        backgroundColor: TTTheme.colors.secondaryGreen,
+        alignItems: 'center', justifyContent: 'center',
+        opacity: enterAnim,
+        transform: [{ scale: enterAnim.interpolate({ inputRange: [0, 1], outputRange: [0.7, 1] }) }],
+      } as any}>
+        <Hash size={20} color="#fff" />
+      </Animated.View>
+    </View>
   );
 }
 
-function NudgeComposerPanel({ onSend, showHashPulse }: { onSend: () => void; showHashPulse?: boolean }) {
+function NudgeComposerPanel({
+  onSend, showHashPulse, disabled, selectedTask, onHashPress,
+}: {
+  onSend: () => void;
+  showHashPulse?: boolean;
+  disabled?: boolean;
+  selectedTask?: string;
+  onHashPress?: () => void;
+}) {
   return (
     <View style={{
-      position: 'absolute', bottom: 291, left: 0, right: 0, zIndex: 41,
       backgroundColor: '#fff',
       borderTopWidth: 1, borderTopColor: TTTheme.colors.border,
       borderTopLeftRadius: 16, borderTopRightRadius: 16,
     } as any}>
-      <View style={{ paddingHorizontal: 16, paddingTop: 8, paddingBottom: 0 }}>
+      <View style={{ paddingHorizontal: 16, paddingTop: 12, paddingBottom: 12 }}>
+        {/* Tag pills — shown after task is selected */}
+        {selectedTask && (
+          <View style={{ borderWidth: 1, borderColor: TTTheme.colors.border, borderRadius: 8, padding: 4, marginBottom: 12 } as any}>
+            <View style={{ flexDirection: 'row', gap: 6 } as any}>
+              {/* TODO(BE): selected tags — project + task */}
+              <ProjectTagChip label={CHAT_CONTEXT.projectName} />
+              <TaskTagChip label={selectedTask} />
+            </View>
+          </View>
+        )}
         <Text variant="mobileBody" color="textSecondary" style={{ minHeight: 34 }}>{NUDGE_MESSAGE}</Text>
       </View>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingBottom: 16 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingBottom: 12 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 } as any}>
-          <View style={{ width: 40, height: 40, backgroundColor: TTTheme.colors.grey02, borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
+          <View style={{ width: 40, height: 40, backgroundColor: TTTheme.colors.grey03, borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
             <Plus size={20} color={TTTheme.colors.textPrimary} />
           </View>
           {showHashPulse ? (
-            <PulsingHashButton />
+            <Pressable onPress={onHashPress} style={{ width: 40, height: 40 } as any}>
+              <PulsingHashButton />
+            </Pressable>
           ) : (
             <View style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
               <Hash size={20} color={TTTheme.colors.textPrimary} />
@@ -342,8 +391,8 @@ function NudgeComposerPanel({ onSend, showHashPulse }: { onSend: () => void; sho
             </View>
           ))}
         </View>
-        <Pressable onPress={onSend}>
-          <View style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: TTTheme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center' }}>
+        <Pressable onPress={disabled ? undefined : onSend}>
+          <View style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: disabled ? TTTheme.colors.grey03 : '#000', alignItems: 'center', justifyContent: 'center' }}>
             <Send size={20} color="#fff" />
           </View>
         </Pressable>
@@ -375,13 +424,13 @@ function MinimalInputBar() {
 /** Active input bar — # plain (tappable), no animation, used when nudge fires */
 function CoachInputBar({ onHashPress }: { onHashPress: () => void }) {
   return (
-    <View style={{ backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: TTTheme.colors.border, borderTopLeftRadius: 16, borderTopRightRadius: 16 }}>
+    <View style={{ backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: TTTheme.colors.border, borderTopLeftRadius: 16, borderTopRightRadius: 16, gap: 12 }}>
       <View style={{ paddingHorizontal: 16, paddingTop: 8, paddingBottom: 0 }}>
         <Text variant="mobileBody" color="grey05" style={{ minHeight: 28 }}>Type message here...</Text>
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingBottom: 16 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 } as any}>
-          <View style={{ width: 40, height: 40, backgroundColor: TTTheme.colors.grey02, borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
+          <View style={{ width: 40, height: 40, backgroundColor: TTTheme.colors.grey03, borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
             <Plus size={20} color={TTTheme.colors.textPrimary} />
           </View>
           <Pressable onPress={onHashPress} style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' } as any}>
@@ -514,7 +563,6 @@ function TaskPickerSheet({
       <OnboardingTooltip
         title="Project vs Task"
         description="Projects are shown in Bold Text, while Tasks use the '#' icon."
-        step="Step 2/3"
         style={{ left: 28, top: 280, zIndex: 62 }}
         arrowEdge="top"
         arrowSide="left"
@@ -579,7 +627,7 @@ function ComposerPanel({
 
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingBottom: 16 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 } as any}>
-          <View style={{ width: 40, height: 40, backgroundColor: TTTheme.colors.grey02, borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
+          <View style={{ width: 40, height: 40, backgroundColor: TTTheme.colors.grey03, borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
             <Plus size={20} color={TTTheme.colors.textPrimary} />
           </View>
           {[Hash, Camera, ImageIcon, MapPin, Mic].map((Icon, i) => (
@@ -626,7 +674,9 @@ export function Case7Screen({
     (['success', 'done'] as Phase[]).includes(startPhase)
   );
 
-  const startAtDone = startPhase === 'done' || startPhase === 'nudgeCompose' || startPhase === 'nudgeSent';
+  const [nudgeSelectedTask, setNudgeSelectedTask] = useState('');
+
+  const startAtDone = startPhase === 'done' || startPhase === 'nudgeCompose' || startPhase === 'nudgePicker' || startPhase === 'nudgeTagged' || startPhase === 'nudgeSent';
 
   const [showNudge, setShowNudge]           = useState(startPhase === 'coach');
   const [showCelebration, setShowCelebration] = useState(false);
@@ -637,6 +687,7 @@ export function Case7Screen({
   const carlosReplyAnim    = useRef(new Animated.Value(startAtDone ? 1 : 0)).current;
   const nudgeCardAnim      = useRef(new Animated.Value(startAtDone ? 1 : 0)).current;
   const tagNudgeAnim       = useRef(new Animated.Value(0)).current;
+  const nudgeSmartTagAnim  = useRef(new Animated.Value(0)).current;
   const [showChipTooltip, setShowChipTooltip] = useState(false);
   const chipTooltipAnim    = useRef(new Animated.Value(0)).current;
 
@@ -694,6 +745,12 @@ export function Case7Screen({
     if (phase !== 'nudgeCompose') return;
     tagNudgeAnim.setValue(0);
     Animated.timing(tagNudgeAnim, { toValue: 1, duration: 350, delay: 100, useNativeDriver: true }).start();
+  }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (phase !== 'nudgeTagged') return;
+    nudgeSmartTagAnim.setValue(0);
+    Animated.timing(nudgeSmartTagAnim, { toValue: 1, duration: 350, delay: 250, useNativeDriver: true }).start();
   }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const openPicker   = () => setPhase('picker');
@@ -775,12 +832,11 @@ export function Case7Screen({
   const showFirstMessage   = firstMessage.length > 0;
   const showTaggedMessage  = hasCompletedTagFlow && (phase === 'success' || phase === 'done' || phase === 'nudgeCompose' || phase === 'nudgeSent');
   const KEYBOARD_HEIGHT = 291;
-  const COMPOSER_PANEL_HEIGHT = 141; // paddingTop(8) + border-wrapper(36) + gap(6) + input(34) + actionBar(57)
+  const COMPOSER_PANEL_HEIGHT = 141;
+  const GAP = 16;
   const messagePaddingBottom = phase === 'compose'
-    ? KEYBOARD_HEIGHT + COMPOSER_PANEL_HEIGHT  // OutgoingMessage.paddingBottom(8) + composer.paddingTop(8) = 16px visual gap
-    : phase === 'nudgeCompose'
-      ? KEYBOARD_HEIGHT + NUDGE_COMPOSER_HEIGHT
-      : 8;
+    ? KEYBOARD_HEIGHT + COMPOSER_PANEL_HEIGHT + GAP
+    : GAP; // nudgeCompose: panel is in normal flow so paddingBottom = GAP only
 
   return (
     <Box flex={1} backgroundColor="white">
@@ -809,7 +865,7 @@ export function Case7Screen({
           />
         )}
         {phase === 'done' && <NudgeCard onSend={() => setPhase('nudgeCompose')} anim={nudgeCardAnim} />}
-        {phase === 'nudgeCompose' && <TagThisMessageNudge anim={tagNudgeAnim} />}
+        {(phase === 'nudgeCompose' || phase === 'nudgePicker') && <TagThisMessageNudge anim={tagNudgeAnim} />}
         {phase === 'nudgeSent' && <NudgeSentMessage />}
       </ScrollView>
 
@@ -884,12 +940,41 @@ export function Case7Screen({
         />
       )}
 
-      {/* ── Nudge compose panel + keyboard (nudgeCompose phase) ── */}
-      {phase === 'nudgeCompose' && (
+      {/* ── Nudge compose panel + keyboard (nudgeCompose / nudgePicker / nudgeTagged) ── */}
+      {(phase === 'nudgeCompose' || phase === 'nudgePicker' || phase === 'nudgeTagged') && (
         <>
-          <NudgeComposerPanel onSend={handleNudgeSend} showHashPulse />
-          <MockKeyboard pressedKey={null} onKeyTap={() => {}} />
+          <NudgeComposerPanel
+            onSend={handleNudgeSend}
+            showHashPulse={phase === 'nudgeCompose'}
+            disabled={phase === 'nudgeCompose'}
+            selectedTask={phase === 'nudgeTagged' ? nudgeSelectedTask : undefined}
+            onHashPress={phase === 'nudgeCompose' ? () => setPhase('nudgePicker') : undefined}
+          />
+          <View style={{ height: 291 }}>
+            <MockKeyboard pressedKey={null} onKeyTap={() => {}} />
+          </View>
         </>
+      )}
+
+      {/* ── Task picker for nudge flow (nudgePicker phase) ── */}
+      {phase === 'nudgePicker' && (
+        <TaskPickerSheet
+          onSelectTask={(taskTitle) => { setNudgeSelectedTask(taskTitle); setPhase('nudgeTagged'); }}
+          onCancel={() => setPhase('nudgeCompose')}
+        />
+      )}
+
+      {/* ── "That's a tag" tooltip (nudgeTagged phase) ── */}
+      {phase === 'nudgeTagged' && (
+        <OnboardingTooltip
+          title="That's a tag"
+          description="Tap it to go straight to the project or task — your messages and photos are all there"
+          style={{ bottom: 474, left: 31, zIndex: 43 }}
+          arrowEdge="bottom"
+          arrowSide="left"
+          arrowInset={24}
+          anim={nudgeSmartTagAnim}
+        />
       )}
 
     </Box>
