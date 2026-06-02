@@ -299,28 +299,6 @@ function TagThisMessageNudge({ anim }: { anim: Animated.Value }) {
   );
 }
 
-function AllWorkSavedModal({ onGotIt, anim }: { onGotIt: () => void; anim: Animated.Value }) {
-  const scale = anim.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1] });
-  return (
-    <Animated.View style={{ position: 'absolute', left: 16, right: 16, bottom: 148, zIndex: 100, opacity: anim, transform: [{ scale }] } as any}>
-      <View style={{ backgroundColor: TTTheme.colors.secondaryGreen, borderRadius: 16, padding: 20 } as any}>
-        <Text variant="mobileLabelEmphasized" style={{ color: '#fff', fontSize: 18, marginBottom: 8 }}>
-          All your work is saved here
-        </Text>
-        <Text variant="mobileBody" style={{ color: '#fff', marginBottom: 20 }}>
-          Tap the tag anytime to open the project or task and find your messages and photos.
-        </Text>
-        <View style={{ alignItems: 'flex-end' } as any}>
-          <Pressable onPress={onGotIt} style={{ backgroundColor: '#000', borderRadius: 100, paddingHorizontal: 20, paddingVertical: 10 }}>
-            <Text variant="mobileLabelSmall" style={{ color: '#fff' }}>Got it</Text>
-          </Pressable>
-        </View>
-      </View>
-      {/* Arrow pointing down — aligned with project pill (marginLeft = 60px from screen left - 16px modal left = 44px) */}
-      <View style={{ marginLeft: 44, width: 0, height: 0, borderLeftWidth: 10, borderLeftColor: 'transparent', borderRightWidth: 10, borderRightColor: 'transparent', borderTopWidth: 12, borderTopColor: TTTheme.colors.secondaryGreen } as any} />
-    </Animated.View>
-  );
-}
 
 function PulsingHashButton() {
   const pulseAnim   = useRef(new Animated.Value(0)).current;
@@ -376,13 +354,14 @@ function PulsingHashButton() {
 }
 
 function NudgeComposerPanel({
-  onSend, showHashPulse, disabled, selectedTask, onHashPress,
+  onSend, showHashPulse, disabled, selectedTask, onHashPress, onRemoveTask,
 }: {
   onSend: () => void;
   showHashPulse?: boolean;
   disabled?: boolean;
   selectedTask?: string;
   onHashPress?: () => void;
+  onRemoveTask?: () => void;
 }) {
   return (
     <View style={{
@@ -397,7 +376,7 @@ function NudgeComposerPanel({
             <View style={{ flexDirection: 'row', gap: 6 } as any}>
               {/* TODO(BE): selected tags — project + task */}
               <ProjectTagChip label={CHAT_CONTEXT.projectName} />
-              <TaskTagChip label={selectedTask} />
+              <TaskTagChip label={selectedTask} onRemove={onRemoveTask} />
             </View>
           </View>
         )}
@@ -1022,6 +1001,7 @@ export function Case7Screen({
             disabled={phase === 'nudgeCompose'}
             selectedTask={phase === 'nudgeTagged' ? nudgeSelectedTask : undefined}
             onHashPress={phase === 'nudgeCompose' ? () => setPhase('nudgePicker') : undefined}
+            onRemoveTask={phase === 'nudgeTagged' ? () => setPhase('nudgePicker') : undefined}
           />
           <View style={{ height: 291 }}>
             <MockKeyboard pressedKey={null} onKeyTap={() => {}} />
@@ -1050,9 +1030,19 @@ export function Case7Screen({
         />
       )}
 
-      {/* ── "All your work is saved here" modal (tap tag pill in nudgeSent) ── */}
+      {/* ── "All your work is saved here" tooltip (tap tag pill in nudgeSent) ── */}
       {showAllWorkModal && (
-        <AllWorkSavedModal onGotIt={handleAllWorkGotIt} anim={allWorkModalAnim} />
+        <OnboardingTooltip
+          title="All your work is saved here"
+          description="Tap the tag anytime to open the project or task and find your messages and photos."
+          ctaText="Got it"
+          onCtaPress={handleAllWorkGotIt}
+          style={{ bottom: 164, right: 16, zIndex: 100 }}
+          arrowEdge="bottom"
+          arrowSide="left"
+          arrowInset={44}
+          anim={allWorkModalAnim}
+        />
       )}
 
     </Box>
