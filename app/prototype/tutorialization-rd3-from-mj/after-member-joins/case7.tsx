@@ -302,7 +302,7 @@ function TagThisMessageNudge({ anim }: { anim: Animated.Value }) {
 function AllWorkSavedModal({ onGotIt, anim }: { onGotIt: () => void; anim: Animated.Value }) {
   const scale = anim.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1] });
   return (
-    <Animated.View style={{ position: 'absolute', left: 16, right: 16, bottom: 130, zIndex: 100, opacity: anim, transform: [{ scale }] } as any}>
+    <Animated.View style={{ position: 'absolute', left: 16, right: 16, bottom: 148, zIndex: 100, opacity: anim, transform: [{ scale }] } as any}>
       <View style={{ backgroundColor: TTTheme.colors.secondaryGreen, borderRadius: 16, padding: 20 } as any}>
         <Text variant="mobileLabelEmphasized" style={{ color: '#fff', fontSize: 18, marginBottom: 8 }}>
           All your work is saved here
@@ -316,8 +316,8 @@ function AllWorkSavedModal({ onGotIt, anim }: { onGotIt: () => void; anim: Anima
           </Pressable>
         </View>
       </View>
-      {/* Arrow pointing down toward the tag pill */}
-      <View style={{ marginLeft: 20, width: 0, height: 0, borderLeftWidth: 10, borderLeftColor: 'transparent', borderRightWidth: 10, borderRightColor: 'transparent', borderTopWidth: 12, borderTopColor: TTTheme.colors.secondaryGreen } as any} />
+      {/* Arrow pointing down — aligned with project pill (marginLeft = 60px from screen left - 16px modal left = 44px) */}
+      <View style={{ marginLeft: 44, width: 0, height: 0, borderLeftWidth: 10, borderLeftColor: 'transparent', borderRightWidth: 10, borderRightColor: 'transparent', borderTopWidth: 12, borderTopColor: TTTheme.colors.secondaryGreen } as any} />
     </Animated.View>
   );
 }
@@ -393,7 +393,7 @@ function NudgeComposerPanel({
       <View style={{ paddingHorizontal: 16, paddingTop: 12, paddingBottom: 12 }}>
         {/* Tag pills — shown after task is selected */}
         {selectedTask && (
-          <View style={{ borderWidth: 1, borderColor: TTTheme.colors.border, borderRadius: 8, padding: 4, marginBottom: 12 } as any}>
+          <View style={{ borderWidth: 1, borderColor: TTTheme.colors.border, borderRadius: 8, padding: 4, marginBottom: 12, alignSelf: 'flex-start' } as any}>
             <View style={{ flexDirection: 'row', gap: 6 } as any}>
               {/* TODO(BE): selected tags — project + task */}
               <ProjectTagChip label={CHAT_CONTEXT.projectName} />
@@ -598,7 +598,7 @@ function TaskPickerSheet({
         style={{ left: 28, top: 280, zIndex: 62 }}
         arrowEdge="top"
         arrowSide="left"
-        arrowInset={20}
+        arrowInset={40}
         anim={tooltipAnim}
       />
     </>
@@ -635,7 +635,7 @@ function ComposerPanel({
     } as any}>
       <View style={{ paddingHorizontal: 16, paddingTop: 8, paddingBottom: 0 }}>
         {/* Tag pills — project + task, bordered wrapper */}
-        <View style={{ borderWidth: 1, borderColor: TTTheme.colors.border, borderRadius: 8, padding: 4, marginBottom: 6 } as any}>
+        <View style={{ borderWidth: 1, borderColor: TTTheme.colors.border, borderRadius: 8, padding: 4, marginBottom: 6, alignSelf: 'flex-start' } as any}>
           <View style={{ flexDirection: 'row', gap: 6 } as any}>
             {/* TODO(BE): selectedTags — project + task objects from picker */}
             <ProjectTagChip label={CHAT_CONTEXT.projectName} />
