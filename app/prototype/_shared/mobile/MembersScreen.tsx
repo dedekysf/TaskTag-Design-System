@@ -6,7 +6,7 @@ import { View } from 'react-native';
 import { StatusBarRow } from './StatusBarRow';
 import { SuccessModal } from './SuccessModal';
 
-export function MembersScreen({ onPrimary, onSecondary }: { onPrimary: () => void; onSecondary: () => void }) {
+export function MembersScreen({ onPrimary, onSecondary }: { onPrimary: () => void; onSecondary?: () => void }) {
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
       <StatusBarRow />
@@ -90,11 +90,10 @@ export function MembersScreen({ onPrimary, onSecondary }: { onPrimary: () => voi
       {/* Success modal — overlay + animated card */}
       <SuccessModal
         title="Invite Sent!"
-        description="Your invite is on its way. We'll let you know as soon as your teammate joins. In the meantime, get a head start by adding tasks so they can hit the ground running."
-        primaryLabel="Add Tasks Now"
+        pill="carlossmith@gmail.com"
+        description={"While the invite is pending, add task to the project. You'll be notified when your crew member join."}
+        primaryLabel="Add Task"
         onPrimary={onPrimary}
-        secondaryLabel="Back to Project"
-        onSecondary={onSecondary}
       />
     </View>
   );

@@ -2,13 +2,10 @@ import { Button } from '@/components/Button';
 import { Box, Text } from '@/components/primitives';
 import { theme as TTTheme } from '@/constants/theme';
 import { ChatsScreen } from '../_shared/mobile/ChatsScreen';
-import { OnboardingTooltip } from '../_shared/mobile/OnboardingTooltip';
 import { StatusBarRow } from '../_shared/mobile/StatusBarRow';
-import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, Image, Platform, Pressable, View } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Easing, Image, Platform, View } from 'react-native';
 import { Activity, Folder, Hash, MessageSquare } from 'lucide-react-native';
-
-type Step = 1 | 2 | 3;
 
 function useBounceIn(delay = 0) {
   const translateY = useRef(new Animated.Value(32)).current;
@@ -42,8 +39,6 @@ interface Props {
 }
 
 export function Case1Screen({ onComplete }: Props) {
-  const [step, setStep] = useState<Step>(1);
-  const tooltipOpacity = useRef(new Animated.Value(0)).current;
   const modalProgress = useRef(new Animated.Value(0)).current;
 
   const modalTranslateY = modalProgress.interpolate({ inputRange: [0, 1], outputRange: [18, 0] });
@@ -53,33 +48,20 @@ export function Case1Screen({ onComplete }: Props) {
   const content = useBounceIn(180);
 
   useEffect(() => {
-    if (step === 1) {
-      modalProgress.setValue(0);
-      Animated.timing(modalProgress, {
-        toValue: 1, duration: 280,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }).start();
-    }
-    if (step === 2) {
-      const t = setTimeout(() => setStep(3), 2000);
-      return () => clearTimeout(t);
-    }
-    if (step === 3) {
-      tooltipOpacity.setValue(0);
-      const t = setTimeout(() => {
-        Animated.timing(tooltipOpacity, { toValue: 1, duration: 400, useNativeDriver: true }).start();
-      }, 250);
-      return () => clearTimeout(t);
-    }
-  }, [step]); // eslint-disable-line react-hooks/exhaustive-deps
+    modalProgress.setValue(0);
+    Animated.timing(modalProgress, {
+      toValue: 1, duration: 280,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleGetStarted = () => {
     Animated.timing(modalProgress, {
       toValue: 0, duration: 300,
       easing: Easing.in(Easing.cubic),
       useNativeDriver: true,
-    }).start(() => setStep(3));
+    }).start(() => onComplete());
   };
 
   return (
@@ -111,18 +93,16 @@ export function Case1Screen({ onComplete }: Props) {
         <HomeIndicator />
       </View>
 
-      {/* ── Step 1: outer = opacity+backdrop, inner = transform only — matches onboarding ── */}
-      {step === 1 && (
+      {/* ── Welcome modal — outer = opacity+backdrop, inner = transform only ── */}
+      <Animated.View style={{
+        position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+        backgroundColor: 'rgba(10,22,41,0.42)', zIndex: 40,
+        opacity: modalProgress,
+      } as any}>
         <Animated.View style={{
-          position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(10,22,41,0.42)', zIndex: 40,
-          opacity: modalProgress,
+          position: 'absolute', bottom: 40, left: 16, right: 16,
+          transform: [{ translateY: modalTranslateY }, { scale: modalScale }],
         } as any}>
-          {/* Inner: card carries only transform (no own opacity), same as onboarding */}
-          <Animated.View style={{
-            position: 'absolute', bottom: 40, left: 16, right: 16,
-            transform: [{ translateY: modalTranslateY }, { scale: modalScale }],
-          } as any}>
           <Box
             backgroundColor="card"
             style={{
@@ -160,7 +140,7 @@ export function Case1Screen({ onComplete }: Props) {
                 <View style={{ marginTop: 16, alignItems: 'center', gap: 6 } as any}>
                   <Text variant="mobileLabelEmphasized" color="secondaryGreen" style={{ textAlign: 'center' }}>You're in, Maria Jose</Text>
                   <Text variant="mobileLargeLabel" color="foreground" style={{ textAlign: 'center' }}>We're glad you're here</Text>
-                  <Text variant="mobileMetadataPrimary" color="grey05" style={{ textAlign: 'center' }}>4 steps and your whole crew knows what to do</Text>
+                  <Text variant="mobileMetadataPrimary" color="grey05" style={{ textAlign: 'center' }}>Let's set up your first job. Only a few minutes.</Text>
                 </View>
                 <View style={{ marginTop: 24 }}>
                   <Button variant="fill" color="secondary" size="lg" onPress={handleGetStarted}>
@@ -172,43 +152,6 @@ export function Case1Screen({ onComplete }: Props) {
           </Box>
           </Animated.View>
         </Animated.View>
-      )}
-
-      {/* ── Step 3 — always mounted so DOM never changes when step hits 3 ── */}
-      <View
-        pointerEvents={step === 3 ? 'auto' : 'none'}
-        style={{
-          position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-          zIndex: step === 3 ? 40 : -1,
-          opacity: step === 3 ? 1 : 0,
-        } as any}
-      >
-        {/* Overlay */}
-        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)' } as any} />
-        {/* Tooltip — fades in 250ms after overlay + Projects */}
-        <OnboardingTooltip
-          title="Set up your crew"
-          description="Start by creating your first job and inviting a crew member"
-          style={{ bottom: 109, left: 32, zIndex: 2 }}
-          arrowEdge="bottom"
-          arrowSide="left"
-          arrowInset={86}
-          anim={tooltipOpacity}
-        />
-        {/* Floating Projects — sits at exactly the nav Projects position */}
-        <Pressable
-          onPress={onComplete}
-          style={{
-            position: 'absolute', bottom: 28, left: 94,
-            width: 72, height: 60,
-            alignItems: 'center', justifyContent: 'center', gap: 4,
-            backgroundColor: '#fff', borderRadius: 10, zIndex: 2,
-          } as any}
-        >
-          <Folder size={24} color={TTTheme.colors.textPrimary} />
-          <Text variant="mobileLabelSmall" color="foreground">Projects</Text>
-        </Pressable>
-      </View>
 
     </Box>
   );

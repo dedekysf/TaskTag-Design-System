@@ -1,21 +1,24 @@
 import { Text } from '@/components/primitives';
 import { theme as TTTheme } from '@/constants/theme';
 import { AnimatedCheck } from './AnimatedCheck';
+import { Mail } from 'lucide-react-native';
 import React, { useEffect, useRef } from 'react';
 import { Animated, Easing, Pressable, View } from 'react-native';
 
 export interface SuccessModalProps {
   title: string;
   description: string;
+  pill?: string;
   primaryLabel: string;
   onPrimary: () => void;
-  secondaryLabel: string;
-  onSecondary: () => void;
+  secondaryLabel?: string;
+  onSecondary?: () => void;
 }
 
 export function SuccessModal({
   title,
   description,
+  pill,
   primaryLabel,
   onPrimary,
   secondaryLabel,
@@ -76,10 +79,18 @@ export function SuccessModal({
         </View>
 
         {/* Title + description */}
-        <View style={{ paddingHorizontal: 24, marginTop: 24, gap: 8, alignItems: 'center' } as any}>
+        <View style={{ paddingHorizontal: 24, marginTop: 24, gap: 12, alignItems: 'center' } as any}>
           <Text style={{ fontSize: 22, fontWeight: '700', color: TTTheme.colors.textPrimary, textAlign: 'center' }}>
             {title}
           </Text>
+          {pill && (
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: TTTheme.colors.grey02, borderRadius: 10, paddingHorizontal: 16, paddingVertical: 12, alignSelf: 'stretch' } as any}>
+              <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: TTTheme.colors.grey03, alignItems: 'center', justifyContent: 'center' }}>
+                <Mail size={18} color={TTTheme.colors.grey05} />
+              </View>
+              <Text variant="mobileLabelSmall" color="foreground">{pill}</Text>
+            </View>
+          )}
           <Text variant="mobileBody" color="grey05" style={{ textAlign: 'center' }}>
             {description}
           </Text>
@@ -92,9 +103,11 @@ export function SuccessModal({
           <Pressable onPress={onPrimary} style={{ backgroundColor: '#000', borderRadius: 8, paddingVertical: 14, alignItems: 'center' }}>
             <Text style={{ fontSize: 14, fontWeight: '600', color: '#fff' }}>{primaryLabel}</Text>
           </Pressable>
-          <Pressable onPress={onSecondary} style={{ paddingVertical: 10, alignItems: 'center' }}>
-            <Text variant="mobileLabelSmall" color="secondaryGreen">{secondaryLabel}</Text>
-          </Pressable>
+          {secondaryLabel && onSecondary && (
+            <Pressable onPress={onSecondary} style={{ paddingVertical: 10, alignItems: 'center' }}>
+              <Text variant="mobileLabelSmall" color="secondaryGreen">{secondaryLabel}</Text>
+            </Pressable>
+          )}
         </Animated.View>
       </Animated.View>
     </>

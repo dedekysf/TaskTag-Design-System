@@ -24,8 +24,9 @@ import {
 } from 'lucide-react-native';
 import { MemberEventCard } from './MemberEventCard';
 
-// Phase progression: coach → (2s auto nudge) → picker → compose → success → done
-type Phase = 'coach' | 'picker' | 'compose' | 'success' | 'done' | 'nudgeCompose' | 'nudgeSent';
+// Phase progression (main): msgSent → (2s) → done → nudgeCompose → nudgeSent
+// Phase progression (coach path): coach → picker → compose → success → done → nudgeCompose → nudgeSent
+type Phase = 'msgSent' | 'coach' | 'picker' | 'compose' | 'success' | 'done' | 'nudgeCompose' | 'nudgeSent';
 
 const NUDGE_MESSAGE = "Can you send a site photo? It'll be saved to the job automatically.";
 const NUDGE_COMPOSER_HEIGHT = 100;
@@ -181,7 +182,7 @@ function TaskAssignedMessage({ onTagPress }: { onTagPress: () => void }) {
   );
 }
 
-function OutgoingMessage({ text, showTags = false, showCelebration = false, onProjectChipPress }: { text: string; showTags?: boolean; showCelebration?: boolean; onProjectChipPress?: () => void }) {
+function OutgoingMessage({ text, showTags = false, showCelebration = false, showSentBadge = false, onProjectChipPress }: { text: string; showTags?: boolean; showCelebration?: boolean; showSentBadge?: boolean; onProjectChipPress?: () => void }) {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingHorizontal: 16, paddingVertical: 8 } as any}>
       {/* TODO(BE): currentUser.avatar */}
@@ -203,6 +204,9 @@ function OutgoingMessage({ text, showTags = false, showCelebration = false, onPr
         )}
         {showCelebration && (
           <Text variant="mobileLabelSmall" color="foreground">First tag complete! 🎉</Text>
+        )}
+        {showSentBadge && (
+          <Text variant="mobileLabelSmall" style={{ color: TTTheme.colors.secondaryGreen }}>Sent ✓</Text>
         )}
       </View>
     </View>
@@ -267,7 +271,49 @@ function NudgeSentMessage() {
   );
 }
 
-function NudgeComposerPanel({ onSend }: { onSend: () => void }) {
+function TagThisMessageNudge({ anim }: { anim: Animated.Value }) {
+  const translateY = anim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] });
+  return (
+    <Animated.View style={{ opacity: anim, transform: [{ translateY }] } as any}>
+      <View style={{ backgroundColor: '#000', borderRadius: 12, padding: 14, marginHorizontal: 16, marginTop: 10 } as any}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 } as any}>
+          <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: TTTheme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center' }}>
+            <Hash size={18} color="#fff" />
+          </View>
+          <Text variant="mobileLabelEmphasized" style={{ color: '#fff' }}>Tag this message</Text>
+        </View>
+        <Text variant="mobileSecondaryBody" style={{ color: 'rgba(255,255,255,0.72)' }}>
+          Tap # below to tag this message so {CHAT_CONTEXT.memberName} knows exactly which site this is about
+        </Text>
+      </View>
+    </Animated.View>
+  );
+}
+
+function PulsingHashButton() {
+  const pulseAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, { toValue: 1, duration: 650, useNativeDriver: true }),
+        Animated.timing(pulseAnim, { toValue: 0, duration: 650, useNativeDriver: true }),
+      ])
+    );
+    loop.start();
+    return () => loop.stop();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const scale = pulseAnim.interpolate({ inputRange: [0, 1], outputRange: [1, 1.22] });
+
+  return (
+    <Animated.View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: TTTheme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center', transform: [{ scale }] } as any}>
+      <Hash size={20} color="#fff" />
+    </Animated.View>
+  );
+}
+
+function NudgeComposerPanel({ onSend, showHashPulse }: { onSend: () => void; showHashPulse?: boolean }) {
   return (
     <View style={{
       position: 'absolute', bottom: 291, left: 0, right: 0, zIndex: 41,
@@ -283,7 +329,14 @@ function NudgeComposerPanel({ onSend }: { onSend: () => void }) {
           <View style={{ width: 40, height: 40, backgroundColor: TTTheme.colors.grey02, borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
             <Plus size={20} color={TTTheme.colors.textPrimary} />
           </View>
-          {[Hash, Camera, ImageIcon, MapPin, Mic].map((Icon, i) => (
+          {showHashPulse ? (
+            <PulsingHashButton />
+          ) : (
+            <View style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
+              <Hash size={20} color={TTTheme.colors.textPrimary} />
+            </View>
+          )}
+          {[Camera, ImageIcon, MapPin, Mic].map((Icon, i) => (
             <View key={i} style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
               <Icon size={20} color={TTTheme.colors.textPrimary} />
             </View>
@@ -549,7 +602,7 @@ function ComposerPanel({
 
 export function Case7Screen({
   onComplete,
-  startPhase = 'coach',
+  startPhase = 'nudgeCompose',
   firstMessageText,
 }: {
   onComplete?: () => void;
@@ -561,11 +614,19 @@ export function Case7Screen({
   const [messageText, setMessageText]   = useState('');
   const [pressedKey, setPressedKey]     = useState<string | null>(null);
 
-  const inputRef           = useRef<any>(null);
-  const messageTextRef     = useRef('');
-  const keyTimerRef        = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const successTimerRef    = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const celebrationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const inputRef             = useRef<any>(null);
+  const messageTextRef       = useRef('');
+  const keyTimerRef          = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const successTimerRef      = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const celebrationTimerRef  = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const msgSentTimerRef      = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // True only when user completes the coach tagging flow; never true in the nudgeCompose-start path
+  const [hasCompletedTagFlow, setHasCompletedTagFlow] = useState(
+    (['success', 'done'] as Phase[]).includes(startPhase)
+  );
+
+  const startAtDone = startPhase === 'done' || startPhase === 'nudgeCompose' || startPhase === 'nudgeSent';
 
   const [showNudge, setShowNudge]           = useState(startPhase === 'coach');
   const [showCelebration, setShowCelebration] = useState(false);
@@ -573,16 +634,18 @@ export function Case7Screen({
   const coachTooltipAnim   = useRef(new Animated.Value(startPhase === 'coach' ? 1 : 0)).current;
   const composeTooltipAnim = useRef(new Animated.Value(0)).current;
   const scrollRef = useRef<ScrollView>(null);
-  const carlosReplyAnim    = useRef(new Animated.Value(0)).current;
-  const nudgeCardAnim      = useRef(new Animated.Value(0)).current;
+  const carlosReplyAnim    = useRef(new Animated.Value(startAtDone ? 1 : 0)).current;
+  const nudgeCardAnim      = useRef(new Animated.Value(startAtDone ? 1 : 0)).current;
+  const tagNudgeAnim       = useRef(new Animated.Value(0)).current;
   const [showChipTooltip, setShowChipTooltip] = useState(false);
   const chipTooltipAnim    = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     return () => {
-      if (keyTimerRef.current)        clearTimeout(keyTimerRef.current);
-      if (successTimerRef.current)    clearTimeout(successTimerRef.current);
+      if (keyTimerRef.current)         clearTimeout(keyTimerRef.current);
+      if (successTimerRef.current)     clearTimeout(successTimerRef.current);
       if (celebrationTimerRef.current) clearTimeout(celebrationTimerRef.current);
+      if (msgSentTimerRef.current)     clearTimeout(msgSentTimerRef.current);
     };
   }, []);
 
@@ -616,14 +679,34 @@ export function Case7Screen({
   }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    if (phase !== 'msgSent') return;
+    msgSentTimerRef.current = setTimeout(() => setPhase('done'), 2000);
+    return () => { if (msgSentTimerRef.current) clearTimeout(msgSentTimerRef.current); };
+  }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
     if (phase !== 'done') return;
-    carlosReplyAnim.setValue(0);
     nudgeCardAnim.setValue(0);
-    Animated.timing(carlosReplyAnim, { toValue: 1, duration: 350, useNativeDriver: true }).start();
-    Animated.timing(nudgeCardAnim, { toValue: 1, duration: 350, delay: 800, useNativeDriver: true }).start();
+    Animated.timing(nudgeCardAnim, { toValue: 1, duration: 350, useNativeDriver: true }).start();
+  }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (phase !== 'nudgeCompose') return;
+    tagNudgeAnim.setValue(0);
+    Animated.timing(tagNudgeAnim, { toValue: 1, duration: 350, delay: 100, useNativeDriver: true }).start();
   }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const openPicker   = () => setPhase('picker');
+
+  const handleChipPress = () => {
+    if (showChipTooltip) return;
+    setShowChipTooltip(true);
+    Animated.timing(chipTooltipAnim, { toValue: 1, duration: 350, useNativeDriver: true }).start();
+  };
+
+  const handleGotIt = () => {
+    onComplete?.();
+  };
   const closePicker  = () => setPhase('coach');
 
   const handleSelectTask = (taskTitle: string) => {
@@ -669,6 +752,7 @@ export function Case7Screen({
   // TODO(BE): POST /api/chats/:chatId/messages — include text + selectedTag ids
   const handleSend = () => {
     if (!messageTextRef.current.trim()) return;
+    setHasCompletedTagFlow(true);
     setPhase('success');
     setShowCelebration(false);
     // After 2s: show "First tag complete! 🎉"
@@ -689,7 +773,7 @@ export function Case7Screen({
 
   const firstMessage = firstMessageText?.trim() ?? '';
   const showFirstMessage   = firstMessage.length > 0;
-  const showTaggedMessage  = phase === 'success' || phase === 'done' || phase === 'nudgeCompose' || phase === 'nudgeSent';
+  const showTaggedMessage  = hasCompletedTagFlow && (phase === 'success' || phase === 'done' || phase === 'nudgeCompose' || phase === 'nudgeSent');
   const KEYBOARD_HEIGHT = 291;
   const COMPOSER_PANEL_HEIGHT = 141; // paddingTop(8) + border-wrapper(36) + gap(6) + input(34) + actionBar(57)
   const messagePaddingBottom = phase === 'compose'
@@ -714,17 +798,18 @@ export function Case7Screen({
         <DateSeparator label="Friday, May 22" />
         <TaskAssignedMessage onTagPress={openPicker} />
         {showFirstMessage && (
-          <OutgoingMessage text={firstMessage} />
+          <OutgoingMessage text={firstMessage} showSentBadge={phase === 'msgSent'} />
         )}
         {showTaggedMessage && (
           <OutgoingMessage
             text="This is a task that I have assigned to you"
             showTags
             showCelebration={showCelebration}
+            onProjectChipPress={!showChipTooltip && (phase === 'done' || phase === 'nudgeSent') ? handleChipPress : undefined}
           />
         )}
-        {(phase === 'done' || phase === 'nudgeCompose' || phase === 'nudgeSent') && <CarlosReply anim={carlosReplyAnim} />}
         {phase === 'done' && <NudgeCard onSend={() => setPhase('nudgeCompose')} anim={nudgeCardAnim} />}
+        {phase === 'nudgeCompose' && <TagThisMessageNudge anim={tagNudgeAnim} />}
         {phase === 'nudgeSent' && <NudgeSentMessage />}
       </ScrollView>
 
@@ -784,10 +869,25 @@ export function Case7Screen({
       )}
 
 
+      {/* ── "Everything's connected" tooltip — tap project chip in nudgeSent ── */}
+      {showChipTooltip && (
+        <OnboardingTooltip
+          title="Everything's connected"
+          description="Tapping a chip takes you straight to the project — every task, message and photo tagged to it is there waiting."
+          ctaText="Got it"
+          onCtaPress={handleGotIt}
+          style={{ bottom: 280, left: 16, zIndex: 62 }}
+          arrowEdge="bottom"
+          arrowSide="left"
+          arrowInset={24}
+          anim={chipTooltipAnim}
+        />
+      )}
+
       {/* ── Nudge compose panel + keyboard (nudgeCompose phase) ── */}
       {phase === 'nudgeCompose' && (
         <>
-          <NudgeComposerPanel onSend={handleNudgeSend} />
+          <NudgeComposerPanel onSend={handleNudgeSend} showHashPulse />
           <MockKeyboard pressedKey={null} onKeyTap={() => {}} />
         </>
       )}

@@ -109,22 +109,26 @@ function MyMessage({ text, showCelebration = true }: { text: string; showCelebra
   );
 }
 
-function TagNudgeCard({ anim }: { anim: Animated.Value }) {
+function GetSitePhotoNudge({ anim, onSend }: { anim: Animated.Value; onSend: () => void }) {
   const translateY = anim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] });
   return (
-    <Animated.View style={{ opacity: anim, transform: [{ translateY }], marginHorizontal: 16, marginBottom: 12, backgroundColor: '#000', borderRadius: 8, padding: 12, gap: 16 } as any}>
-      {/* Icon + title — 8px gap, vertically centered */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 } as any}>
-        {/* 32×32 darkGreen 50% opacity wrapper, 16×16 brand green icon */}
-        <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: 'rgba(3,91,96,0.5)', alignItems: 'center', justifyContent: 'center' }}>
-          <Hash size={16} color={TTTheme.colors.secondaryGreen} />
+    <Animated.View style={{ opacity: anim, transform: [{ translateY }] } as any}>
+      <View style={{ backgroundColor: '#000', borderRadius: 12, padding: 14, marginHorizontal: 16, marginBottom: 12, gap: 12 } as any}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 } as any}>
+          <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: TTTheme.colors.secondaryGreen, alignItems: 'center', justifyContent: 'center' }}>
+            {/* TODO(BE): nudge.iconType */}
+            <Camera size={18} color="#fff" />
+          </View>
+          <Text variant="mobileLabelEmphasized" style={{ color: '#fff' }}>Get a site photo</Text>
         </View>
-        <Text variant="mobileLabelEmphasized" style={{ color: '#fff' }}>Tag this message</Text>
+        {/* TODO(BE): nudge.description */}
+        <Text variant="mobileSecondaryBody" style={{ color: '#fff' }}>
+          Ask your crew to send one — it'll be saved to this job automatically
+        </Text>
+        <Pressable onPress={onSend} style={{ backgroundColor: TTTheme.colors.secondaryGreen, borderRadius: 8, paddingVertical: 10, alignItems: 'center' }}>
+          <Text variant="mobileLabelSmall" style={{ color: '#fff' }}>Send</Text>
+        </Pressable>
       </View>
-      {/* Description — left edge flush with icon */}
-      <Text variant="mobileMetadataPrimary" style={{ color: '#fff' }}>
-        Tap # below to tag this message so Carlos Smith knows exactly which site this is about
-      </Text>
     </Animated.View>
   );
 }
@@ -363,7 +367,7 @@ export function Case6Screen({ onComplete }: { onComplete?: (sentMessage: string)
             showCelebration={phase === 'sent'}
           />
         )}
-        {nudgeVisible && <TagNudgeCard anim={nudgeAnim} />}
+        {nudgeVisible && <GetSitePhotoNudge anim={nudgeAnim} onSend={() => onComplete?.(sentMessage)} />}
       </Box>
 
       {/* ── Tooltip "Start a Conversation" — absolute overlay, sits just above chat input ── */}
@@ -378,20 +382,8 @@ export function Case6Screen({ onComplete }: { onComplete?: (sentMessage: string)
       )}
 
       {/* ── Input area — normal flow, message area above shrinks/grows to fit ── */}
-      {phase === 'sent' || (phase === 'nudge' && !nudgeVisible) ? (
+      {phase === 'sent' || phase === 'nudge' ? (
         <ChatInputMinimal />
-      ) : phase === 'nudge' && nudgeVisible ? (
-        <ChatInputFull
-          value={messageText}
-          inputRef={inputRef}
-          onChangeText={handleChangeText}
-          onFocus={handleFocus}
-          onPhysicalKeyPress={handlePhysicalKeyPress}
-          nudgeAnim={nudgeAnim}
-          onHashNudgePress={handleHashNudgePress}
-          onSend={handleSend}
-          showHomeIndicator
-        />
       ) : (
         <Animated.View style={{ transform: [{ translateY: sheetTranslateY }] } as any}>
           <ChatInputFull

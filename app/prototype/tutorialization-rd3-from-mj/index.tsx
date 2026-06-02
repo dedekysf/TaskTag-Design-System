@@ -36,7 +36,7 @@ export default function TutorializationRD3() {
   const [activeCase, setActiveCase] = useState<TutorialCase>(flowParam === 'after' ? 5 : 1);
   const [case3StartScreen, setCase3StartScreen] = useState<1 | 2>(1);
   const [case4StartPhase, setCase4StartPhase] = useState<'project' | 'taskForm'>('project');
-  const [case7StartPhase, setCase7StartPhase] = useState<'coach'>('coach');
+  const [case7StartPhase, setCase7StartPhase] = useState<'nudgeCompose' | 'msgSent' | 'coach' | 'done'>('nudgeCompose');
   const [case7FirstMessage, setCase7FirstMessage] = useState('');
 
   useEffect(() => {
@@ -126,8 +126,8 @@ export default function TutorializationRD3() {
 
       {activeCase === 2 && (
         <Case2Screen
-          onAddMembers={() => { setCase3StartScreen(2); setActiveCase(3); }}
-          onViewProjectDetails={() => { setCase3StartScreen(1); setActiveCase(3); }}
+          startPhase="form"
+          onViewProject={() => { setCase3StartScreen(1); setActiveCase(3); }}
         />
       )}
 
@@ -161,7 +161,7 @@ export default function TutorializationRD3() {
         <Case6Screen
           onComplete={(sentMessage) => {
             setCase7FirstMessage(sentMessage);
-            setCase7StartPhase('coach');
+            setCase7StartPhase('nudgeCompose');
             setActiveCase(7);
           }}
         />
@@ -170,9 +170,10 @@ export default function TutorializationRD3() {
       {/* Case 7: Tag for the first time — link message to project + task */}
       {activeCase === 7 && (
         <Case7Screen
+          key={`case7-${case7StartPhase}`}
           startPhase={case7StartPhase}
           firstMessageText={case7FirstMessage}
-          onComplete={() => setActiveCase(8)}
+          onComplete={() => setFlow('menu')}
         />
       )}
 

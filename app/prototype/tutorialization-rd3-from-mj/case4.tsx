@@ -138,7 +138,6 @@ function ProjectPhase({ onCreateTask }: { onCreateTask: () => void }) {
       <OnboardingTooltip
         title="Create Task"
         description="Break your project into small steps — tap here to create one."
-        step="Step 1/3"
         ctaText="Create a task"
         onCtaPress={onCreateTask}
         style={{ top: SPOT.y - 158, left: SPOT.x, zIndex: 60 }}
@@ -321,24 +320,12 @@ function TaskFormPhase({ onComplete, showTooltips = true }: { onComplete: () => 
 
       {showTooltips && (
         <>
-          {/* Step 2/4 — Name your Task */}
           <OnboardingTooltip
             title="Name your Task"
             description="e.g. Fix kitchen sink, Install new pipes"
-            step="Step 2/3"
             style={{ bottom: TOOLTIP_NAME_BOTTOM, left: 31, zIndex: 43 }}
             arrowEdge="bottom" arrowSide="left" arrowInset={20}
             anim={nameTooltipOpacity}
-          />
-
-          {/* Step 3/4 — Add a description */}
-          <OnboardingTooltip
-            title="Add a description"
-            description="Tell the crew what this task is about."
-            step="Step 3/3"
-            style={{ bottom: TOOLTIP_DESC_BOTTOM, left: 31, zIndex: 43 }}
-            arrowEdge="bottom" arrowSide="left" arrowInset={20}
-            anim={descTooltipOpacity}
           />
         </>
       )}
@@ -367,14 +354,11 @@ export function Case4Screen({ onComplete, startPhase }: { onComplete?: () => voi
           {/* Background: task list now showing the created task */}
           <TaskListScreen taskCreated />
 
-          {/* Step 4/4 — Task Created! */}
           <SuccessModal
             title="Task Created!"
             description={"You've successfully created your first task!"}
-            primaryLabel="Create another Task"
-            onPrimary={() => setPhase('taskFormAgain')}
-            secondaryLabel="Back to Project"
-            onSecondary={() => setPhase('projectClean')}
+            primaryLabel="View Project"
+            onPrimary={() => setPhase('projectClean')}
           />
         </Box>
       )}

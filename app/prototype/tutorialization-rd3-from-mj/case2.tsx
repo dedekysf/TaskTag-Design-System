@@ -117,13 +117,13 @@ function ProjectBottomSheet({
 
 
 export function Case2Screen({
-  onAddMembers,
-  onViewProjectDetails,
+  onViewProject,
+  startPhase,
 }: {
-  onAddMembers?: () => void;
-  onViewProjectDetails?: () => void;
+  onViewProject?: () => void;
+  startPhase?: Phase;
 } = {}) {
-  const [phase, setPhase]           = useState<Phase>('modal');
+  const [phase, setPhase]           = useState<Phase>(startPhase ?? 'modal');
   const [projectName, setProjectName] = useState('');
   const [description, setDescription] = useState('');
   const [pressedKey, setPressedKey]   = useState<string | null>(null);
@@ -375,22 +375,11 @@ export function Case2Screen({
           <OnboardingTooltip
             title="Name your first job"
             description="e.g. Smith House, Office Renovation"
-            step="Step 1/2"
             style={{ bottom: TOOLTIP_NAME_BOTTOM, left: 31, zIndex: 43 }}
             arrowEdge="bottom"
             arrowSide="left"
             arrowInset={20}
             anim={nameTooltipOpacity}
-          />
-          <OnboardingTooltip
-            title="Add Description"
-            description="Help others understand this project by adding a quick description."
-            step="Step 2/2"
-            style={{ bottom: TOOLTIP_DESC_BOTTOM, left: 31, zIndex: 43 }}
-            arrowEdge="bottom"
-            arrowSide="left"
-            arrowInset={20}
-            anim={descTooltipOpacity}
           />
         </>
       )}
@@ -401,10 +390,8 @@ export function Case2Screen({
           <SuccessModal
             title="Project Created!"
             description={"You've successfully set up a project! Now, let's explore your next steps."}
-            primaryLabel="Add Members"
-            onPrimary={onAddMembers ?? (() => {})}
-            secondaryLabel="View Project Details"
-            onSecondary={onViewProjectDetails ?? (() => {})}
+            primaryLabel="View Project"
+            onPrimary={onViewProject ?? (() => {})}
           />
           <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 28, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 9 }}>
             <View style={{ width: 134, height: 5, borderRadius: 5, backgroundColor: '#000' }} />

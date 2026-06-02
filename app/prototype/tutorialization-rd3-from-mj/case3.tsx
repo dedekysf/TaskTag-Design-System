@@ -37,17 +37,21 @@ function HomeIndicator() {
 function Screen1({ onInvite }: { onInvite: () => void }) {
   const tooltipAnim = useTooltipAnim();
 
+  const SPOT_TOP    = 331;
+  const SPOT_HEIGHT = 139;
+  const TOOLTIP_TOP = 278;
+
   return (
     <View style={{ flex: 1, backgroundColor: '#fff', overflow: 'hidden' }}>
       <StatusBarRow />
       <ProjectDetailScreen onInvite={onInvite} scrollEnabled={false} />
 
-      {/* Spotlight: box-shadow covers full screen, element shape = Members card cutout with matching radius */}
+      {/* Spotlight: box-shadow covers full screen, cutout = member card bounds */}
       <View
         pointerEvents="none"
         style={{
-          position: 'absolute', top: 331, left: 16,
-          width: 343, height: 139,
+          position: 'absolute', top: SPOT_TOP, left: 16,
+          width: 343, height: SPOT_HEIGHT,
           borderRadius: 8,
           zIndex: 50,
           boxShadow: '0 0 0 9999px rgba(0,0,0,0.45)',
@@ -58,16 +62,15 @@ function Screen1({ onInvite }: { onInvite: () => void }) {
       <OnboardingTooltip
         title="Add your crew"
         description={'Tap "Invite" to add a crew member — they\'ll get invitation.'}
-        step="Step 1/4"
-        style={{ top: 244, left: 16 }}
+        style={{ top: TOOLTIP_TOP, left: 16 }}
         arrowEdge="bottom" arrowSide="left" arrowInset={31}
         anim={tooltipAnim}
       />
 
-      {/* Tap target over tooltip */}
+      {/* Tap target covering tooltip + spotlight */}
       <Pressable
         onPress={onInvite}
-        style={{ position: 'absolute', top: 244, left: 16, width: 312, height: 120, zIndex: 70 } as any}
+        style={{ position: 'absolute', top: TOOLTIP_TOP, left: 16, width: 312, height: SPOT_TOP - TOOLTIP_TOP + SPOT_HEIGHT, zIndex: 70 } as any}
       />
     </View>
   );
@@ -193,7 +196,6 @@ function ChangeRoleTooltip({
       <OnboardingTooltip
         title="Change Role"
         description="You can change the roles of your members by clicking on drop-down."
-        step="Step 3/4"
         style={{ right: 14, top: 391, zIndex: 61 }}
         arrowEdge="top" arrowSide="left" arrowInset={arrowInset}
         anim={anim}
@@ -488,7 +490,6 @@ function Screen2({ onNext }: { onNext: () => void }) {
         <OnboardingTooltip
           title="Confirm Members"
           description="After selecting your members, just hit this button to confirm your selection."
-          step="Step 4/4"
           style={{ left: 34, bottom: 97, zIndex: 61 }}
           arrowEdge="bottom" arrowSide="right" arrowInset={34}
           anim={confirmTooltipAnim}
@@ -499,7 +500,6 @@ function Screen2({ onNext }: { onNext: () => void }) {
       <OnboardingTooltip
         title="Search for your crew member"
         description="Type their email or name- if they're not on Tasktag yet, they'll get a link to join the project"
-        step="Step 2/4"
         style={{ left: 16, top: 167, zIndex: 61 }}
         arrowEdge="top" arrowSide="left" arrowInset={26}
         anim={tooltipAnim}
@@ -810,7 +810,6 @@ function Screen4({ onRoleTap }: { onRoleTap: () => void }) {
       <OnboardingTooltip
         title="Change Role"
         description="You can change the roles of your members by clicking on drop-down."
-        step="Step 3/4"
         style={{ right: 14, top: 437, zIndex: 61 }}
         arrowEdge="top" arrowSide="left" arrowInset={35}
         anim={tooltipAnim}
@@ -891,7 +890,6 @@ function Screen6({ onSendInvite }: { onSendInvite: () => void }) {
       <OnboardingTooltip
         title="Confirm Members"
         description='Tap "Send Invite" to send an invite link to all selected members.'
-        step="Step 4/4"
         style={{ left: 36, top: 551, zIndex: 61 }}
         arrowEdge="bottom" arrowSide="right" arrowInset={34}
         anim={tooltipAnim}
