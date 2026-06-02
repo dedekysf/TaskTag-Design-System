@@ -337,10 +337,14 @@ function NudgeInputBar({ onSend }: { onSend: () => void }) {
         borderTopColor: TTTheme.colors.border,
         borderTopLeftRadius: 16,
         borderTopRightRadius: 16,
+        gap: 12,
       } as any}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 8, gap: 6 } as any}>
-        {[Plus, Hash, Camera, ImageIcon, MapPin, Mic].map((Icon, i) => (
+        <View style={{ width: 40, height: 40, backgroundColor: TTTheme.colors.grey03, borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
+          <Plus size={19} color={TTTheme.colors.textPrimary} />
+        </View>
+        {[Hash, Camera, ImageIcon, MapPin, Mic].map((Icon, i) => (
           <View key={i} style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
             <Icon size={19} color={TTTheme.colors.textPrimary} />
           </View>

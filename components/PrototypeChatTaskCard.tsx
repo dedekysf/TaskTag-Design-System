@@ -34,8 +34,8 @@ export function PrototypeChatTaskCard({
     <View style={{ borderWidth: 1, borderColor: TTTheme.colors.border, borderRadius: 12, borderTopLeftRadius: 0, padding: 12 }}>
       <View style={{ gap: 12 }}>
         {/* Badge chip */}
-        <View style={{ backgroundColor: TTTheme.colors.lightMint, borderRadius: 100, paddingHorizontal: 10, paddingVertical: 4, alignSelf: 'flex-start' }}>
-          <Text variant="mobileMetadataSecondary" style={{ color: TTTheme.colors.secondaryGreen, letterSpacing: 0.5 }}>
+        <View style={{ backgroundColor: TTTheme.colors.lightMint, borderRadius: 100, paddingHorizontal: 8, paddingVertical: 4, alignSelf: 'flex-start' }}>
+          <Text variant="mobileMetadataSecondary" style={{ color: TTTheme.colors.textSecondary, letterSpacing: 0.5 }}>
             {badge}
           </Text>
         </View>
@@ -49,7 +49,7 @@ export function PrototypeChatTaskCard({
             <Text variant="mobileMetadataPrimary" style={{ color: TTTheme.colors.grey05 }}>
               {descriptionPrefix}
               {highlightText ? (
-                <Text variant="mobileMetadataPrimary" style={{ color: TTTheme.colors.secondaryGreen }}>
+                <Text variant="mobileMetadataPrimary" style={{ color: TTTheme.colors.secondaryGreen, fontSize: 12, fontWeight: '600' }}>
                   {highlightText}
                 </Text>
               ) : null}

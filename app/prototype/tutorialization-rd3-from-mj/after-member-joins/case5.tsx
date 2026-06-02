@@ -116,8 +116,8 @@ function ChatMessage({ onAssignTask, taskAssigned }: { onAssignTask?: () => void
 function TextInputBar() {
   return (
     <View style={{ backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: TTTheme.colors.border, borderTopLeftRadius: 16, borderTopRightRadius: 16 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 16, gap: 6 }}>
-        <View style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 16, gap: 12 }}>
+        <View style={{ width: 40, height: 40, backgroundColor: TTTheme.colors.grey03, borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
           <Plus size={20} color={TTTheme.colors.textPrimary} />
         </View>
         <Text variant="mobileBody" color="grey05" style={{ flex: 1 }}>Type message here...</Text>
