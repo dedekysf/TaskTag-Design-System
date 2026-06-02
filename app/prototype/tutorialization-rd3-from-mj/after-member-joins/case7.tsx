@@ -127,13 +127,12 @@ function ProjectTagChip({ label, onPress }: { label: string; onPress?: () => voi
       backgroundColor: TTTheme.colors.secondaryGreen,
       paddingHorizontal: 10, paddingVertical: 5,
       flexDirection: 'row', alignItems: 'center', gap: 4,
-      flex: 1,
     } as any}>
       <Folder size={14} color="#fff" style={{ flexShrink: 0 } as any} />
-      <Text variant="mobileLabelSmall" style={{ color: '#fff', flex: 1 }} numberOfLines={1}>{label}</Text>
+      <Text variant="mobileLabelSmall" style={{ color: '#fff', flexShrink: 1 }} numberOfLines={1}>{label}</Text>
     </View>
   );
-  if (onPress) return <Pressable onPress={onPress} style={{ flex: 1 } as any}>{chip}</Pressable>;
+  if (onPress) return <Pressable onPress={onPress}>{chip}</Pressable>;
   return chip;
 }
 
@@ -144,14 +143,15 @@ function TaskTagChip({ label, onRemove }: { label: string; onRemove?: () => void
       borderRadius: 4,
       backgroundColor: '#000',
       paddingHorizontal: 10, paddingVertical: 5,
-      flexDirection: 'row', alignItems: 'center', gap: 4,
-      flex: 1,
+      flexDirection: 'row', alignItems: 'center', gap: 6,
     } as any}>
       <Hash size={14} color="#fff" style={{ flexShrink: 0 } as any} />
-      <Text variant="mobileLabelSmall" style={{ color: '#fff', flex: 1 }} numberOfLines={1}>{label}</Text>
+      <Text variant="mobileLabelSmall" style={{ color: '#fff', flexShrink: 1 }} numberOfLines={1}>{label}</Text>
       {onRemove && (
         <Pressable onPress={onRemove} hitSlop={8} style={{ flexShrink: 0 } as any}>
-          <X size={14} color="#fff" />
+          <View style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: 'rgba(255,255,255,0.25)', alignItems: 'center', justifyContent: 'center' }}>
+            <X size={10} color="#fff" />
+          </View>
         </Pressable>
       )}
     </View>
@@ -255,7 +255,7 @@ function NudgeCard({ onSend, anim }: { onSend: () => void; anim: Animated.Value 
   );
 }
 
-function NudgeSentMessage() {
+function NudgeSentMessage({ showTags = false, showCelebration = false, taskName = '' }: { showTags?: boolean; showCelebration?: boolean; taskName?: string }) {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingHorizontal: 16, paddingVertical: 8 } as any}>
       <Image source={require('@/assets/images/mj.png')} style={{ width: 32, height: 32, borderRadius: 16, flexShrink: 0 }} resizeMode="cover" />
@@ -266,6 +266,15 @@ function NudgeSentMessage() {
           <Check size={12} color={TTTheme.colors.grey05} />
         </View>
         <Text variant="mobileBody" color="textSecondary">{NUDGE_MESSAGE}</Text>
+        {showTags && (
+          <View style={{ flexDirection: 'row', gap: 6 } as any}>
+            <ProjectTagChip label={CHAT_CONTEXT.projectName} />
+            <TaskTagChip label={taskName || CHAT_CONTEXT.taskName} />
+          </View>
+        )}
+        {showCelebration && (
+          <Text variant="mobileLabelSmall" color="foreground">First tag complete! 🎉</Text>
+        )}
       </View>
     </View>
   );
@@ -678,8 +687,10 @@ export function Case7Screen({
 
   const startAtDone = startPhase === 'done' || startPhase === 'nudgeCompose' || startPhase === 'nudgePicker' || startPhase === 'nudgeTagged' || startPhase === 'nudgeSent';
 
-  const [showNudge, setShowNudge]           = useState(startPhase === 'coach');
-  const [showCelebration, setShowCelebration] = useState(false);
+  const [showNudge, setShowNudge]               = useState(startPhase === 'coach');
+  const [showCelebration, setShowCelebration]   = useState(false);
+  const [showNudgeCelebration, setShowNudgeCelebration] = useState(false);
+  const nudgeCelebrationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [composeKey, setComposeKey] = useState(0);
   const coachTooltipAnim   = useRef(new Animated.Value(startPhase === 'coach' ? 1 : 0)).current;
   const composeTooltipAnim = useRef(new Animated.Value(0)).current;
@@ -693,10 +704,11 @@ export function Case7Screen({
 
   useEffect(() => {
     return () => {
-      if (keyTimerRef.current)         clearTimeout(keyTimerRef.current);
-      if (successTimerRef.current)     clearTimeout(successTimerRef.current);
-      if (celebrationTimerRef.current) clearTimeout(celebrationTimerRef.current);
-      if (msgSentTimerRef.current)     clearTimeout(msgSentTimerRef.current);
+      if (keyTimerRef.current)               clearTimeout(keyTimerRef.current);
+      if (successTimerRef.current)           clearTimeout(successTimerRef.current);
+      if (celebrationTimerRef.current)       clearTimeout(celebrationTimerRef.current);
+      if (msgSentTimerRef.current)           clearTimeout(msgSentTimerRef.current);
+      if (nudgeCelebrationTimerRef.current)  clearTimeout(nudgeCelebrationTimerRef.current);
     };
   }, []);
 
@@ -811,20 +823,22 @@ export function Case7Screen({
     if (!messageTextRef.current.trim()) return;
     setHasCompletedTagFlow(true);
     setPhase('success');
-    setShowCelebration(false);
-    // After 2s: show "First tag complete! 🎉"
+    setShowCelebration(true);
+    // After 2s: hide "First tag complete! 🎉" then transition to done phase
     celebrationTimerRef.current = setTimeout(() => {
-      setShowCelebration(true);
-      // After 2.2s more: done phase (Carlos reply + NudgeCard)
+      setShowCelebration(false);
       successTimerRef.current = setTimeout(() => {
-        setShowCelebration(false);
         setPhase('done');
-      }, 2200);
+      }, 300);
     }, 2000);
   };
 
   const handleNudgeSend = () => {
     setPhase('nudgeSent');
+    setShowNudgeCelebration(true);
+    nudgeCelebrationTimerRef.current = setTimeout(() => {
+      setShowNudgeCelebration(false);
+    }, 2000);
   };
 
 
@@ -854,9 +868,15 @@ export function Case7Screen({
         <DateSeparator label="Friday, May 22" />
         <TaskAssignedMessage onTagPress={openPicker} />
         {showFirstMessage && (
-          <OutgoingMessage text={firstMessage} showSentBadge={phase === 'msgSent'} />
+          <OutgoingMessage
+            text={firstMessage}
+            showSentBadge={phase === 'msgSent' && !hasCompletedTagFlow}
+            showTags={hasCompletedTagFlow}
+            showCelebration={showCelebration}
+            onProjectChipPress={hasCompletedTagFlow && !showChipTooltip && (phase === 'done' || phase === 'nudgeSent') ? handleChipPress : undefined}
+          />
         )}
-        {showTaggedMessage && (
+        {!showFirstMessage && showTaggedMessage && (
           <OutgoingMessage
             text="This is a task that I have assigned to you"
             showTags
@@ -866,7 +886,13 @@ export function Case7Screen({
         )}
         {phase === 'done' && <NudgeCard onSend={() => setPhase('nudgeCompose')} anim={nudgeCardAnim} />}
         {(phase === 'nudgeCompose' || phase === 'nudgePicker') && <TagThisMessageNudge anim={tagNudgeAnim} />}
-        {phase === 'nudgeSent' && <NudgeSentMessage />}
+        {phase === 'nudgeSent' && (
+          <NudgeSentMessage
+            showTags={!!nudgeSelectedTask}
+            showCelebration={showNudgeCelebration}
+            taskName={nudgeSelectedTask}
+          />
+        )}
       </ScrollView>
 
       {/* ── Input bar (coach phase) ── */}

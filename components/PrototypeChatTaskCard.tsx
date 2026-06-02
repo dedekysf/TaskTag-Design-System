@@ -34,7 +34,7 @@ export function PrototypeChatTaskCard({
     <View style={{ borderWidth: 1, borderColor: TTTheme.colors.border, borderRadius: 12, borderTopLeftRadius: 0, padding: 12 }}>
       <View style={{ gap: 12 }}>
         {/* Badge chip */}
-        <View style={{ backgroundColor: TTTheme.colors.lightMint, borderRadius: 100, paddingHorizontal: 8, paddingVertical: 4, alignSelf: 'flex-start' }}>
+        <View style={{ backgroundColor: TTTheme.colors.lightMint, borderRadius: 100, padding: 8, alignSelf: 'flex-start' }}>
           <Text variant="mobileMetadataSecondary" style={{ color: TTTheme.colors.textSecondary, letterSpacing: 0.5 }}>
             {badge}
           </Text>

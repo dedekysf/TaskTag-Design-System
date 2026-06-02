@@ -55,7 +55,7 @@ const CHAT_CONTEXT = {
 
 // TODO(BE): GET /api/projects/:projectId/tasks?taggable=true - replace suggestions.
 const TAGGABLE_TASKS: TaggableTask[] = [
-  { id: 'task_fix_tiles', title: 'Fix bathroom tiles', meta: 'Unassigned' },
+  { id: 'task_fix_sink', title: 'Fix kitchen sink', meta: 'Unassigned' },
   { id: 'task_order_grout', title: 'Order grout and sealant', meta: 'Due Friday' },
   { id: 'task_upload_photos', title: 'Upload before photos', meta: 'Needs update' },
 ];
