@@ -105,7 +105,7 @@ function ChatMessage({ onAssignTask, taskAssigned }: { onAssignTask?: () => void
           variant={taskAssigned ? 'taskAssigned' : 'memberJoined'}
           memberName="Carlos Smith"
           projectName="1520 Oliver Street"
-          taskName="Fix bathroom tiles"
+          taskName="Fix kitchen sink"
           onPrimaryPress={onAssignTask}
         />
       </View>
