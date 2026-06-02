@@ -114,7 +114,7 @@ function TaskCreationSheet({
 function ProjectPhase({ onCreateTask }: { onCreateTask: () => void }) {
   const tooltipAnim = useTooltipAnim(200);
 
-  const SPOT = { x: 16, y: 572, width: 343, height: 62 };
+  const SPOT = { x: 16, y: 601, width: 343, height: 62 };
 
   return (
     <View style={{ flex: 1, backgroundColor: 'transparent' }}>

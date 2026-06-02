@@ -115,17 +115,19 @@ export function ProjectDetailScreen({ onInvite, taskCardRef, memberCardRef, scro
           </View>
         </View>
 
-        {/* Checklist */}
-        <View style={{ backgroundColor: '#fff', borderRadius: 8, padding: 15 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 9 }}>
+        {/* Activity Log + Files & Media */}
+        <View style={{ flexDirection: 'row', gap: 12 }}>
+          <View style={{ flex: 1, backgroundColor: '#fff', borderRadius: 8, padding: 15, gap: 12, minHeight: 95 } as any}>
             <View style={{ width: 32, height: 32, backgroundColor: '#000', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}>
-              <FileText size={20} color="#fff" />
+              <Zap size={20} color="#fff" />
             </View>
-            <View style={{ flex: 1, gap: 4 } as any}>
-              <Text variant="mobileLabelEmphasized" color="foreground">Checklist</Text>
-              <Text variant="mobileMetadataPrimary">Start faster with a project template.</Text>
+            <Text variant="mobileLabelEmphasized" color="foreground">Activity Log</Text>
+          </View>
+          <View style={{ flex: 1, backgroundColor: '#fff', borderRadius: 8, padding: 15, gap: 12 } as any}>
+            <View style={{ width: 32, height: 32, backgroundColor: '#000', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}>
+              <ImageIcon size={20} color="#fff" />
             </View>
-            <ChevronRight size={24} color={TTTheme.colors.textPrimary} />
+            <Text variant="mobileLabelEmphasized" color="foreground">{'Files & Media'}</Text>
           </View>
         </View>
 
@@ -140,19 +142,17 @@ export function ProjectDetailScreen({ onInvite, taskCardRef, memberCardRef, scro
           </View>
         </View>
 
-        {/* Activity Log + Files & Media */}
-        <View style={{ flexDirection: 'row', gap: 12 }}>
-          <View style={{ flex: 1, backgroundColor: '#fff', borderRadius: 8, padding: 15, gap: 12, minHeight: 95 } as any}>
+        {/* Checklist */}
+        <View style={{ backgroundColor: '#fff', borderRadius: 8, padding: 15 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 9 }}>
             <View style={{ width: 32, height: 32, backgroundColor: '#000', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}>
-              <Zap size={20} color="#fff" />
+              <FileText size={20} color="#fff" />
             </View>
-            <Text variant="mobileLabelEmphasized" color="foreground">Activity Log</Text>
-          </View>
-          <View style={{ flex: 1, backgroundColor: '#fff', borderRadius: 8, padding: 15, gap: 12 } as any}>
-            <View style={{ width: 32, height: 32, backgroundColor: '#000', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}>
-              <ImageIcon size={20} color="#fff" />
+            <View style={{ flex: 1, gap: 4 } as any}>
+              <Text variant="mobileLabelEmphasized" color="foreground">Checklist</Text>
+              <Text variant="mobileMetadataPrimary">Start faster with a project template.</Text>
             </View>
-            <Text variant="mobileLabelEmphasized" color="foreground">{'Files & Media'}</Text>
+            <ChevronRight size={24} color={TTTheme.colors.textPrimary} />
           </View>
         </View>
       </ScrollView>
