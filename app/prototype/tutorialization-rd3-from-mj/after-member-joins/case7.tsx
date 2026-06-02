@@ -3,6 +3,7 @@ import { Box, Text } from '@/components/primitives';
 import { theme as TTTheme } from '@/constants/theme';
 import { MockKeyboard } from '../../_shared/mobile/MockKeyboard';
 import { OnboardingTooltip, useTooltipAnim } from '../../_shared/mobile/OnboardingTooltip';
+import { ProjectDetailScreen } from '../../_shared/mobile/ProjectDetailScreen';
 import { StatusBarRow } from '../../_shared/mobile/StatusBarRow';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Image, Pressable, ScrollView, TextInput, View } from 'react-native';
@@ -24,12 +25,11 @@ import {
 } from 'lucide-react-native';
 import { MemberEventCard } from './MemberEventCard';
 
-// Phase progression (main): msgSent → (2s) → done → nudgeCompose → nudgePicker → nudgeTagged → nudgeSent
+// Phase progression (main): msgSent → (2s) → done → nudgeCompose → nudgePicker → nudgeTagged → nudgeSent → projectDetail
 // Phase progression (coach path): coach → picker → compose → success → done → nudgeCompose → ...
-type Phase = 'msgSent' | 'coach' | 'picker' | 'compose' | 'success' | 'done' | 'nudgeCompose' | 'nudgePicker' | 'nudgeTagged' | 'nudgeSent';
+type Phase = 'msgSent' | 'coach' | 'picker' | 'compose' | 'success' | 'done' | 'nudgeCompose' | 'nudgePicker' | 'nudgeTagged' | 'nudgeSent' | 'projectDetail';
 
 const NUDGE_MESSAGE = "Can you send a site photo? It'll be saved to the job automatically.";
-const NUDGE_COMPOSER_HEIGHT = 100;
 
 // TODO(BE): GET /api/chats/:chatId/context
 const CHAT_CONTEXT = {
@@ -255,7 +255,7 @@ function NudgeCard({ onSend, anim }: { onSend: () => void; anim: Animated.Value 
   );
 }
 
-function NudgeSentMessage({ showTags = false, showCelebration = false, taskName = '' }: { showTags?: boolean; showCelebration?: boolean; taskName?: string }) {
+function NudgeSentMessage({ showTags = false, showCelebration = false, taskName = '', onChipPress }: { showTags?: boolean; showCelebration?: boolean; taskName?: string; onChipPress?: () => void }) {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingHorizontal: 16, paddingVertical: 8 } as any}>
       <Image source={require('@/assets/images/mj.png')} style={{ width: 32, height: 32, borderRadius: 16, flexShrink: 0 }} resizeMode="cover" />
@@ -268,7 +268,7 @@ function NudgeSentMessage({ showTags = false, showCelebration = false, taskName 
         <Text variant="mobileBody" color="textSecondary">{NUDGE_MESSAGE}</Text>
         {showTags && (
           <View style={{ flexDirection: 'row', gap: 6 } as any}>
-            <ProjectTagChip label={CHAT_CONTEXT.projectName} />
+            <ProjectTagChip label={CHAT_CONTEXT.projectName} onPress={onChipPress} />
             <TaskTagChip label={taskName || CHAT_CONTEXT.taskName} />
           </View>
         )}
@@ -295,6 +295,29 @@ function TagThisMessageNudge({ anim }: { anim: Animated.Value }) {
           Tap # below to tag this message so {CHAT_CONTEXT.memberName} knows exactly which site this is about
         </Text>
       </View>
+    </Animated.View>
+  );
+}
+
+function AllWorkSavedModal({ onGotIt, anim }: { onGotIt: () => void; anim: Animated.Value }) {
+  const scale = anim.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1] });
+  return (
+    <Animated.View style={{ position: 'absolute', left: 16, right: 16, bottom: 130, zIndex: 100, opacity: anim, transform: [{ scale }] } as any}>
+      <View style={{ backgroundColor: TTTheme.colors.secondaryGreen, borderRadius: 16, padding: 20 } as any}>
+        <Text variant="mobileLabelEmphasized" style={{ color: '#fff', fontSize: 18, marginBottom: 8 }}>
+          All your work is saved here
+        </Text>
+        <Text variant="mobileBody" style={{ color: '#fff', marginBottom: 20 }}>
+          Tap the tag anytime to open the project or task and find your messages and photos.
+        </Text>
+        <View style={{ alignItems: 'flex-end' } as any}>
+          <Pressable onPress={onGotIt} style={{ backgroundColor: '#000', borderRadius: 100, paddingHorizontal: 20, paddingVertical: 10 }}>
+            <Text variant="mobileLabelSmall" style={{ color: '#fff' }}>Got it</Text>
+          </Pressable>
+        </View>
+      </View>
+      {/* Arrow pointing down toward the tag pill */}
+      <View style={{ marginLeft: 20, width: 0, height: 0, borderLeftWidth: 10, borderLeftColor: 'transparent', borderRightWidth: 10, borderRightColor: 'transparent', borderTopWidth: 12, borderTopColor: TTTheme.colors.secondaryGreen } as any} />
     </Animated.View>
   );
 }
@@ -695,10 +718,13 @@ export function Case7Screen({
   const coachTooltipAnim   = useRef(new Animated.Value(startPhase === 'coach' ? 1 : 0)).current;
   const composeTooltipAnim = useRef(new Animated.Value(0)).current;
   const scrollRef = useRef<ScrollView>(null);
-  const carlosReplyAnim    = useRef(new Animated.Value(startAtDone ? 1 : 0)).current;
+  // carlosReplyAnim kept for done-phase useEffect; Carlos reply is not rendered in main flow
+  const carlosReplyAnim    = useRef(new Animated.Value(startAtDone ? 1 : 0)).current; // eslint-disable-line @typescript-eslint/no-unused-vars
   const nudgeCardAnim      = useRef(new Animated.Value(startAtDone ? 1 : 0)).current;
   const tagNudgeAnim       = useRef(new Animated.Value(0)).current;
   const nudgeSmartTagAnim  = useRef(new Animated.Value(0)).current;
+  const allWorkModalAnim   = useRef(new Animated.Value(0)).current;
+  const [showAllWorkModal, setShowAllWorkModal] = useState(false);
   const [showChipTooltip, setShowChipTooltip] = useState(false);
   const chipTooltipAnim    = useRef(new Animated.Value(0)).current;
 
@@ -833,6 +859,17 @@ export function Case7Screen({
     }, 2000);
   };
 
+  const handleNudgeChipPress = () => {
+    if (showAllWorkModal) return;
+    setShowAllWorkModal(true);
+    allWorkModalAnim.setValue(0);
+    Animated.timing(allWorkModalAnim, { toValue: 1, duration: 300, easing: Easing.out(Easing.cubic), useNativeDriver: true }).start();
+  };
+
+  const handleAllWorkGotIt = () => {
+    setPhase('projectDetail');
+  };
+
   const handleNudgeSend = () => {
     setPhase('nudgeSent');
     setShowNudgeCelebration(true);
@@ -851,6 +888,15 @@ export function Case7Screen({
   const messagePaddingBottom = phase === 'compose'
     ? KEYBOARD_HEIGHT + COMPOSER_PANEL_HEIGHT + GAP
     : GAP; // nudgeCompose: panel is in normal flow so paddingBottom = GAP only
+
+  if (phase === 'projectDetail') {
+    return (
+      <Box flex={1} backgroundColor="background">
+        <StatusBarRow />
+        <ProjectDetailScreen showCarlos scrollEnabled />
+      </Box>
+    );
+  }
 
   return (
     <Box flex={1} backgroundColor="white">
@@ -891,6 +937,7 @@ export function Case7Screen({
             showTags={!!nudgeSelectedTask}
             showCelebration={showNudgeCelebration}
             taskName={nudgeSelectedTask}
+            onChipPress={!showAllWorkModal ? handleNudgeChipPress : undefined}
           />
         )}
       </ScrollView>
@@ -1003,6 +1050,12 @@ export function Case7Screen({
         />
       )}
 
+      {/* ── "All your work is saved here" modal (tap tag pill in nudgeSent) ── */}
+      {showAllWorkModal && (
+        <AllWorkSavedModal onGotIt={handleAllWorkGotIt} anim={allWorkModalAnim} />
+      )}
+
     </Box>
   );
 }
+

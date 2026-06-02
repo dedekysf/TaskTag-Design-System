@@ -24,9 +24,11 @@ export interface ProjectDetailScreenProps {
   memberCardRef?: React.Ref<View>;
   /** Pass false to lock scrolling — prevents spotlight from drifting off its target. */
   scrollEnabled?: boolean;
+  /** Show Carlos Smith as a second member (darkGreen avatar, CS initials) */
+  showCarlos?: boolean;
 }
 
-export function ProjectDetailScreen({ onInvite, taskCardRef, memberCardRef, scrollEnabled = true }: ProjectDetailScreenProps = {}) {
+export function ProjectDetailScreen({ onInvite, taskCardRef, memberCardRef, scrollEnabled = true, showCarlos = false }: ProjectDetailScreenProps = {}) {
   return (
     <>
       {/* Header */}
@@ -94,7 +96,7 @@ export function ProjectDetailScreen({ onInvite, taskCardRef, memberCardRef, scro
         {/* TODO(BE): GET /api/projects/:id/members — members list + count */}
         <View ref={memberCardRef} style={{ backgroundColor: '#fff', borderRadius: 8, padding: 15, gap: 12 } as any}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Text variant="mobileLabelEmphasized" color="foreground">Member (1)</Text>
+            <Text variant="mobileLabelEmphasized" color="foreground">{showCarlos ? 'Member (2)' : 'Member (1)'}</Text>
             <Text variant="mobileMetadataPrimary" color="grey04">See All</Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 8 }}>
@@ -112,6 +114,17 @@ export function ProjectDetailScreen({ onInvite, taskCardRef, memberCardRef, scro
                 Maria J...
               </Text>
             </View>
+            {/* TODO(BE): member.name + member.avatar — Carlos Smith */}
+            {showCarlos && (
+              <View style={{ width: 56, alignItems: 'center', gap: 4 } as any}>
+                <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: TTTheme.colors.darkGreen, alignItems: 'center', justifyContent: 'center' }}>
+                  <Text style={{ color: '#fff', fontSize: 20, fontWeight: '700' }}>CS</Text>
+                </View>
+                <Text variant="mobileMetadataPrimary" color="grey04" style={{ textAlign: 'center' }} numberOfLines={1}>
+                  Carlos S...
+                </Text>
+              </View>
+            )}
           </View>
         </View>
 
