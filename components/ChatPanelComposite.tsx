@@ -1447,8 +1447,8 @@ function RoomView({
                     <TooltipOnboarding
                       variant="left-center"
                       tooltipStyle="success"
-                      title="Everything's connected"
-                      description="Tapping a chip takes you straight to the project — every task, message and photo tagged to it is there waiting."
+                      title="All your work is saved here"
+                      description="Tap the tag anytime to open the project or task and find your messages and photos."
                       ctaText="Got it"
                       onCtaPress={() => {
                         Animated.timing(chipTooltipFadeAnim, {
@@ -1690,8 +1690,8 @@ function RoomView({
         <TooltipOnboarding
           variant="left-center"
           tooltipStyle="success"
-          title="Smart Tags"
-          description="Nice! You've linked this message to a project and task. Send it and it'll stay connected — no more hunting through chats to find it."
+          title="That's a tag"
+          description="Tap it to go straight to the project or task — your messages and photos are all there"
           open={tagFlow === 'tagged' && showSmartTagsTooltip}
           forceShow={tagFlow === 'tagged' && showSmartTagsTooltip}
           offset={20}

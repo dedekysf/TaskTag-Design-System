@@ -59,9 +59,9 @@ function useBounceIn(delay = 0) {
 
 export function WelcomeModalScreen({
   name = 'Oscar',
-  title = "We're glad you're here",
-  description = "Let's set up your first job, it only takes a few minutes.",
-  buttonLabel = 'Get Started',
+  title = 'Everything you need to run your jobs',
+  description,
+  buttonLabel = 'Set Up Your First Job',
   onGetStarted,
   style,
 }: WelcomeModalScreenProps) {
@@ -193,7 +193,7 @@ export function WelcomeModalScreen({
         style={{
           width: '100%',
           alignItems: 'center',
-          paddingTop: 16,
+          paddingTop: 24,
           zIndex: 1,
           opacity: content.opacity,
           transform: [
@@ -202,44 +202,32 @@ export function WelcomeModalScreen({
           ],
         }}
       >
-        {/* "You're in" line */}
+        {/* "You're in, {name}" — 28px emphasized, secondary green */}
         <Text
           style={{
-            fontSize: 22,
-            lineHeight: 28,
-            fontWeight: '600',
+            fontSize: 28,
+            lineHeight: 34,
+            fontWeight: '700',
             color: theme.colors.secondaryGreen,
             textAlign: 'center',
-            marginBottom: 8,
+            marginBottom: 4,
           }}
         >
           {`You're in, ${name}`}
         </Text>
 
+        {/* Subtitle — 22px emphasized, black */}
         <Text
           style={{
-            fontSize: 28,
-            lineHeight: 36,
+            fontSize: 22,
+            lineHeight: 28,
             fontWeight: '700',
             color: theme.colors.foreground,
             textAlign: 'center',
-            marginBottom: 4,
+            marginBottom: 24,
           }}
         >
           {title}
-        </Text>
-
-        <Text
-          style={{
-            fontSize: 16,
-            lineHeight: 24,
-            fontWeight: '400',
-            color: theme.colors.grey05,
-            textAlign: 'center',
-            marginBottom: 16,
-          }}
-        >
-          {description}
         </Text>
 
         <Pressable
